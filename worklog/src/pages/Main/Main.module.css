@@ -1,0 +1,50 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 284px;
+}
+
+.h1 {
+    color: #4053ff;
+    text-align: center;
+    font-family: Pretendard;
+    font-size: 86px;
+    font-style: normal;
+    font-weight: 800;
+    line-height: normal;
+    margin-bottom: 50px; /* h3 요소에 마진 적용 */
+}
+
+.h3 {
+    color: #000;
+    text-align: center;
+    font-family: Inter;
+    font-size: 24px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+    margin-bottom: 50px; /* h3 요소에 마진 적용 */
+}
+
+.buttons {
+    display: flex;
+    flex-direction: column;
+}
+
+.button {
+    background-color: #4053ff;
+    border-radius: 10px;
+    border: none;
+    color: white;
+    font-size: 29px;
+    text-align: center;
+    width: 423px;
+    height: 84px;
+    align-self: center;
+    margin: 20px;
+}
+
+.button:hover {
+    color: rgb(255, 209, 42);
+}
