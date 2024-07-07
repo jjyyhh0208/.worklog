@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import styles from './Signup1.module.css';
-import backendApis from '../../utils/backendApis';
+import UserService from '../../utils/UserService';
 import { useNavigate } from 'react-router-dom';
 
 function Signup1({ signUpInfo, setSignUpInfo }) {
@@ -12,19 +12,23 @@ function Signup1({ signUpInfo, setSignUpInfo }) {
         setSignUpInfo({ ...signUpInfo, [e.target.name]: e.target.value });
     };
 
-    const checkIdHandler = async () => {
+    const checkIdHandler = async (e) => {
+        e.preventDefault();
+
         try {
-            const res = await backendApis.checkId('GET', signUpInfo.id);
-            if (res.isAvailable) {
-                setIsIdAvailable(false);
-                alert('이미 사용 중인 아이디입니다.');
-            } else {
+            const response = await UserService.checkId({
+                username: signUpInfo.id,
+            });
+
+            if (response.data.isUnique) {
+                alert('아이디가 중복되지 않았습니다.');
                 setIsIdAvailable(true);
-                alert('사용 가능한 아이디입니다.');
+            } else {
+                alert('아이디가 중복됩니다.');
             }
-        } catch (err) {
-            setError('서버 연결 실패');
-            alert(error);
+        } catch (error) {
+            setError(error);
+            alert(`${error.message}`);
         }
     };
 
@@ -34,18 +38,23 @@ function Signup1({ signUpInfo, setSignUpInfo }) {
 
     const signUpHandler = async (e) => {
         e.preventDefault();
+
+        if (!isIdAvailable) {
+            alert('아이디 중복을 먼저 확인해주세요.');
+            return;
+        }
+
         try {
-            const res = await backendApis.signUp('POST', signUpInfo);
-            if (res.message === 'User created') {
-                alert('가입 성공! 다음 단계로 이동합니다.');
-                handleSignUpClick(); // 성공 시 페이지 이동
-            } else {
-                setError('가입 실패 : ' + (res.message || '알 수 없는 오류'));
-                alert(error);
-            }
-        } catch (err) {
-            setError('서버 연결 실패');
-            alert(error);
+            await UserService.registerUser({
+                username: signUpInfo.id,
+                password1: signUpInfo.password1,
+                password2: signUpInfo.password2,
+            });
+            navigate('/signup/2');
+        } catch (error) {
+            console.error(error);
+            setError(error);
+            alert(`${error.message}`);
         }
     };
 
@@ -55,7 +64,7 @@ function Signup1({ signUpInfo, setSignUpInfo }) {
             <h2 className={styles.h2}>SIGN UP</h2>
             <form className={styles.signUp} onSubmit={signUpHandler}>
                 <div className={styles.idbox}>
-                    <button className={styles.duplicatebtn} onClick={checkIdHandler}>
+                    <button className={styles.duplicatebtn} type="button" onClick={checkIdHandler}>
                         중복확인
                     </button>
                     <div>
@@ -89,8 +98,8 @@ function Signup1({ signUpInfo, setSignUpInfo }) {
                     className={styles.input}
                     type="password"
                     placeholder="비밀번호를 입력해주세요"
-                    name="password"
-                    value={signUpInfo.password}
+                    name="password1"
+                    value={signUpInfo.password1}
                     onChange={signUpChangeHandler}
                 />
                 <span className={styles.span}>비밀번호 재입력</span>
@@ -98,8 +107,8 @@ function Signup1({ signUpInfo, setSignUpInfo }) {
                     className={styles.input}
                     type="password"
                     placeholder="비밀번호를 다시 입력해주세요"
-                    name="repassword"
-                    value={signUpInfo.repassword}
+                    name="password2"
+                    value={signUpInfo.password2}
                     onChange={signUpChangeHandler}
                 />
                 <button className={styles.signupbtn} type="submit">

@@ -1,6 +1,8 @@
 from .models import *
 from rest_framework import serializers
 from dj_rest_auth.registration.serializers import RegisterSerializer
+from rest_framework.authtoken.models import Token
+from rest_framework.validators import UniqueValidator
 
 
 class WorkStyleSerializer(serializers.ModelSerializer):
@@ -57,17 +59,22 @@ class UserGenderNameAgeSerializer(serializers.ModelSerializer):
         
 
 #회원가입 시 유저의 id, 비번 설정하기 위해 사용
+#토큰을 받아오기 위해 기능 추가
 class UserRegisterSerializer(RegisterSerializer):
     class Meta:
         model = User
         fields = ('username', 'password1', 'password2')
         
-    def create(self, validated_data):
-        user = User.objects.create_user(
-            username=validated_data['username'],
-            password=validated_data['password1']
-        )
+    def save(self, request):
+        user = super().save(request)
+        token, created = Token.objects.get_or_create(user=user)
+        self.token = token.key
         return user
+
+    def get_response_data(self, user):
+        data = super().get_response_data(user)
+        data['token'] = self.token
+        return data
     
     
 #유저프로필 조회 시 유저의 이름, 성별, 나이, 업무 성향, 관심 직종, gpt 요약, disc유형을 조회하기 위해 사용
@@ -78,3 +85,11 @@ class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('name', 'gender', 'age', 'work_styles', 'interests', 'disc_character', 'gpt_summarized_personality')
+
+# 아이디 중복 검사를 위한 로직
+class UserUniqueusernameSerializer(serializers.ModelSerializer):
+    username = serializers.CharField(required=True, min_length=3, max_length=30)
+
+    class Meta:
+        model = User
+        fields = ('username',)

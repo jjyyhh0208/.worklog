@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
+from datetime import timedelta
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -26,6 +27,16 @@ SECRET_KEY = "django-insecure-@5j2w%83edi$)wedcsd-&8)t)8zdd6acfi&d+*a*g&d&#4z!5n
 DEBUG = True
 
 ALLOWED_HOSTS = []
+
+# CORS
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+]
+CORS_ALLOW_HEADERS = '*'
+
+# CSRF
+CSRF_TRUSTED_ORIGINS = ["http://localhost:8000/"]
 
 
 # Application definition
@@ -47,12 +58,14 @@ INSTALLED_APPS = [
     "rest_framework.authtoken",
     
     "rest_framework",
+    "corsheaders",
     "profiles",
 ]
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -117,6 +130,7 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.TokenAuthentication',
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
@@ -128,7 +142,6 @@ REST_AUTH_REGISTER_SERIALIZERS = {
 }
 
 REST_USE_JWT = True     #JSON Web Token을 사용하겠다는 설정
-
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -151,7 +164,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = "en-us"
 
-TIME_ZONE = "UTC"
+TIME_ZONE = "Asia/Seoul"
 
 USE_I18N = True
 

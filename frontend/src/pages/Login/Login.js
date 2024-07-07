@@ -1,6 +1,6 @@
 import React from 'react';
 import styles from './Login.module.css';
-import backendApis from '../../utils/backendApis';
+import UserService from '../../utils/UserService';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -15,7 +15,7 @@ function Login() {
     const loginHandler = async (e) => {
         e.preventDefault();
         try {
-            const res = await backendApis.login('POST', loginInfo);
+            const res = await UserService.login('POST', loginInfo);
             if (res.token) {
                 alert('로그인 성공');
                 navigate('/my-profile');

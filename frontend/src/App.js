@@ -12,9 +12,9 @@ import MyProfile from './pages/MyProfile/MyProfile';
 
 function App() {
     const [signUpInfo, setSignUpInfo] = useState({
-        id: '',
-        password: '',
-        repassword: '',
+        username: '',
+        password1: '',
+        password2: '',
         name: '',
         gender: '',
         age: '',

@@ -1,7 +1,9 @@
-from rest_framework import viewsets, generics
+from rest_framework import viewsets, generics, status
+from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.authtoken.models import Token
 from .models import User, WorkStyle, Interest
-from .serializers import UserGenderNameAgeSerializer, UserWorkInterestSerializer, WorkStyleSerializer, InterestSerializer, UserRegisterSerializer, UserProfileSerializer
+from .serializers import UserGenderNameAgeSerializer, UserWorkInterestSerializer, WorkStyleSerializer, InterestSerializer, UserRegisterSerializer, UserProfileSerializer, UserUniqueusernameSerializer
 
 from dj_rest_auth.registration.views import RegisterView
 
@@ -67,3 +69,19 @@ class UserWorkInterestView(generics.UpdateAPIView):
 
     def get_object(self):
         return self.request.user
+    
+class UsernameUniqueCheck(generics.GenericAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserUniqueusernameSerializer
+    permission_classes = []
+
+    def post(self, request):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        username = serializer.validated_data['username']
+
+        try:
+            User.objects.get(username=username)
+            return Response({'isUnique': False}, status=status.HTTP_200_OK)
+        except User.DoesNotExist:
+            return Response({'isUnique': True}, status=status.HTTP_200_OK)
