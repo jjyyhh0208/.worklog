@@ -1,0 +1,160 @@
+.aboutUsBody {
+    background: #f6f6f6;
+    display: flex;
+    justify-content: center;
+    margin: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.aboutContainer {
+    padding: 10px;
+    font-family: 'Inter';
+    width: 80%;
+    border-radius: 50px;
+    background: #fff;
+    flex-shrink: 0;
+    padding-left: 50px;
+    padding-right: 50px;
+    margin-top: 50px;
+    margin-bottom: 50px;
+
+    justify-content: center;
+}
+
+.title {
+    color: #000;
+    font-size: 64px;
+    font-weight: 800;
+    margin-bottom: 10px;
+}
+.grayLine {
+    width: 100%;
+    height: 1px;
+    background: #cbcbcb;
+    margin-bottom: 30px;
+}
+
+.question {
+    margin-bottom: 40px;
+}
+
+.questionTitle {
+    font-size: 24px;
+    font-weight: bold;
+    color: #000;
+    margin-bottom: 10px;
+}
+
+.answer_1 {
+    font-size: 18px;
+    color: #000;
+    margin-left: 30px;
+}
+
+.answer_2 {
+    font-size: 18px;
+    color: #000;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    margin-bottom: 40px;
+}
+
+.worklog {
+    color: #4053ff;
+    font-family: 'Inter';
+    font-size: 32px;
+    font-style: normal;
+    font-weight: 800;
+    line-height: normal;
+    margin-bottom: 10px;
+}
+
+.leftAnswer {
+    width: 650px;
+}
+
+.rightAnswer {
+    width: 400px;
+    height: 400px;
+    flex-shrink: 0;
+    background: url('/public/images/discImage.png') lightgray 50% / cover no-repeat;
+}
+
+.types_1 {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.types_2 {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 70px;
+}
+
+.type {
+    padding: 10px 20px;
+    border-radius: 15px;
+    width: 110px;
+    height: 28px;
+    border-radius: 12.146px;
+    flex-shrink: 0;
+    color: #fff;
+    font-family: 'Inter';
+    font-size: 14.575px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+    text-align: center;
+}
+
+.discImage {
+    width: 100%;
+    max-width: 400px;
+    display: block;
+    margin: 0 auto 20px auto;
+    background: url('/public/images/discImage.png');
+}
+
+.typeCards {
+    display: flex;
+    margin-top: 50px;
+    justify-content: space-around;
+}
+
+.subtitle {
+    font-size: 24px;
+    font-weight: bold;
+    color: #000;
+    margin-bottom: 10px;
+}
+
+.typeCard {
+    width: 238px;
+    height: 60px;
+    border-radius: 20px;
+    padding: 10px 20px;
+    color: #fff;
+    text-align: center;
+    font-size: 24px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.typeDescription {
+    width: 70%;
+    color: #000;
+}
+
+.typeQuestion {
+    color: #000;
+    font-size: 15px;
+    font-weight: 600;
+    margin-top: 30px;
+    margin-bottom: 10px;
+}

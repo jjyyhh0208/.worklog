@@ -1,4 +1,3 @@
-import './App.css';
 import React, { useState } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import Main from './pages/Main/Main';
@@ -9,16 +8,21 @@ import Signup4 from './components/Signup4/Signup4';
 import Login from './pages/Login/Login';
 import Search from './pages/Search/Search';
 import MyProfile from './pages/MyProfile/MyProfile';
+import OnBoarding1 from './pages/OnBoarding1/OnBoarding1';
+import OnBoarding2 from './pages/OnBoarding2/OnBoarding2';
+import OnBoarding3 from './pages/OnBoarding3/OnBoarding3';
+import AboutUs from './pages/AboutUs/AboutUs';
 
 function App() {
     const [signUpInfo, setSignUpInfo] = useState({
         username: '',
-        password1: '',
-        password2: '',
+        password: '',
+        repassword: '',
         name: '',
         gender: '',
         age: '',
     });
+
     return (
         <Routes>
             <Route path="/" element={<Main />} />
@@ -29,6 +33,10 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/search" element={<Search />} />
             <Route path="/my-profile" element={<MyProfile />} />
+            <Route path="/on-boarding/1" element={<OnBoarding1 />} />
+            <Route path="/on-boarding/2" element={<OnBoarding2 />} />
+            <Route path="/on-boarding/3" element={<OnBoarding3 />} />
+            <Route path="/about-us" element={<AboutUs />} />
         </Routes>
     );
 }

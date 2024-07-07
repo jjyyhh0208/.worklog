@@ -11,7 +11,7 @@ const UserService = {
         return API.post('/profiles/auth/registration/', requestData)
             .then((response) => {
                 if (response.status === 204) {
-                    // 성공
+                    // 성공코드 204
                     console.log('사용자가 성공적으로 등록되었습니다.');
                 }
             })
