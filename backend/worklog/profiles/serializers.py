@@ -32,24 +32,41 @@ class UserGenderNameAgeSerializer(serializers.ModelSerializer):
         return instance       
         
 # 이름, 성별, 나이 설정 이후 유저의 업무 성향, 관심 직종 설정하기 위해 사용
-#PrimaryKeyRelatedField를 사용하여 유저의 업무 성향, 관심 직종을 설정할 수 있도록 함 -> 유저가 선택하여 특정 업무 성향, 관심 직종을 선택할 수 있도록 함
-class UserWorkInterestSerializer(serializers.ModelSerializer):
+# PrimaryKeyRelatedField를 사용하여 유저의 업무 성향, 관심 직종을 설정할 수 있도록 함 -> 유저가 선택하여 특정 업무 성향, 관심 직종을 선택할 수 있도록 함
+# (참고) 온보딩 과정 분리로 인해 엔드포인트도 분리하여 진행함
+class UserWorkStyleSerializer(serializers.ModelSerializer):
     work_styles = serializers.PrimaryKeyRelatedField(queryset=WorkStyle.objects.all(), many=True)
-    interests = serializers.PrimaryKeyRelatedField(queryset = Interest.objects.all(), many = True)
     
     class Meta:
         model = User
-        fields = ('work_styles', 'interests')
+        fields = ('work_styles', )
         
     def update(self, instance, validated_data):
         
         #클라이언트에서 보낸 유저의 (초기 설정) 데이터를 가지고 유저 인스턴스의 work_styles, interests 필드에 추가
         #왜 변수에 따로 빼놓은건가요? -> 클라이언트가 보낸 요청(validated_data)의 work_styles, interests 데이터를 따로 빼놓고 유저 인스턴스의 work_styles, interests 필드에 추가하는 작업을 하기 위함
         work_styles_data = validated_data.pop('work_styles', [])
-        interests_data = validated_data.pop('interests', [])
         
         #클라이언트에서 보낸 유저의 초기 설정 데이터를 가지고 유저 인스턴스의 work_styles, interests 필드에 추가
         instance.work_styles.set(work_styles_data)
+
+        instance.save()
+        return instance
+    
+class UserInterestSerializer(serializers.ModelSerializer):
+    interests = serializers.PrimaryKeyRelatedField(queryset = Interest.objects.all(), many = True)
+    
+    class Meta:
+        model = User
+        fields = ('interests', )
+        
+    def update(self, instance, validated_data):
+        
+        #클라이언트에서 보낸 유저의 (초기 설정) 데이터를 가지고 유저 인스턴스의 work_styles, interests 필드에 추가
+        #왜 변수에 따로 빼놓은건가요? -> 클라이언트가 보낸 요청(validated_data)의 work_styles, interests 데이터를 따로 빼놓고 유저 인스턴스의 work_styles, interests 필드에 추가하는 작업을 하기 위함
+        interests_data = validated_data.pop('interests', [])
+        
+        #클라이언트에서 보낸 유저의 초기 설정 데이터를 가지고 유저 인스턴스의 work_styles, interests 필드에 추가
         instance.interests.set(interests_data)
 
         instance.save()

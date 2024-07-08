@@ -2,8 +2,9 @@ from rest_framework import viewsets, generics, status
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authtoken.models import Token
+from rest_framework.decorators import action
 from .models import User, WorkStyle, Interest
-from .serializers import UserGenderNameAgeSerializer, UserWorkInterestSerializer, WorkStyleSerializer, InterestSerializer, UserRegisterSerializer, UserProfileSerializer, UserUniqueIdSerializer
+from .serializers import UserGenderNameAgeSerializer, UserWorkStyleSerializer, UserInterestSerializer, WorkStyleSerializer, InterestSerializer, UserRegisterSerializer, UserProfileSerializer, UserUniqueIdSerializer
 
 from dj_rest_auth.registration.views import RegisterView
 
@@ -13,18 +14,33 @@ from dj_rest_auth.registration.views import RegisterView
 #update, partial_update인 경우: UserWorkInterestSerializer를 사용하여 유저의 업무 성향, 관심 직종을 불러옴
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
-    serializer_class = UserWorkInterestSerializer
     permission_classes = [IsAuthenticated]
 
     def get_serializer_class(self):
         if self.action == 'retrieve':
             return UserProfileSerializer
         if self.action == 'update' or self.action == 'partial_update':
-            return UserWorkInterestSerializer
+            return super().get_serializer_class()
         return super().get_serializer_class()
 
     def get_object(self):
         return self.request.user
+    
+    @action(detail=False, methods=['put'], serializer_class=UserWorkStyleSerializer)
+    def set_user_work_styles(self, request):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
+
+    @action(detail=False, methods=['put'], serializer_class=UserInterestSerializer)
+    def set_user_interests(self, request):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
     
     
 #업무 성향을 유저에게 제공하는 ViewSet
@@ -61,10 +77,19 @@ class UserGenderNameAgeView(generics.UpdateAPIView):
         return self.request.user
     
     
-#회원가입 이후 유저의 업무 성향, 관심 직종 설정하기 위한 ViewSet    
-class UserWorkInterestView(generics.UpdateAPIView):
+#회원가입 이후 유저의 업무 성향 설정하기 위한 ViewSet    
+class UserWorkStyleView(generics.UpdateAPIView):
     queryset = User.objects.all()
-    serializer_class = UserWorkInterestSerializer
+    serializer_class = UserWorkStyleSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        return self.request.user
+    
+#회원가입 이후 유저의 관심 직종 설정하기 위한 ViewSet       
+class UserInterestView(generics.UpdateAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserInterestSerializer
     permission_classes = [IsAuthenticated]
 
     def get_object(self):
