@@ -1,10 +1,30 @@
 import React, { useState } from 'react';
 import styles from './Signup4.module.css';
+import UserService from '../../utils/UserService';
 import { useNavigate } from 'react-router-dom';
 
 function Signup4({ signUpInfo, setSignUpInfo }) {
     const navigate = useNavigate();
+    const [error, setError] = useState('');
     const [selectedKeywords, setSelectedKeywords] = useState([]);
+
+    const signUpHandler = async (e) => {
+        console.log(signUpInfo); // Check the data before sending
+        e.preventDefault();
+        try {
+            const res = await UserService.registerUser('POST', signUpInfo);
+            if (res.message === 'User created') {
+                alert('축하합니다! 회원가입이 완료되었습니다!');
+                navigate('/onboard/1'); // Replace '/next-step' with the actual next step route
+            } else {
+                setError('가입 실패 : ' + (res.message || '알 수 없는 오류'));
+                alert(error);
+            }
+        } catch (err) {
+            setError('서버 연결 실패라네요');
+            alert(error);
+        }
+    };
 
     const keywords = [
         '재무',
@@ -41,14 +61,16 @@ function Signup4({ signUpInfo, setSignUpInfo }) {
         setSelectedKeywords(newKeywords);
         setSignUpInfo({
             ...signUpInfo,
-            keyword1: newKeywords[0] || '',
-            keyword2: newKeywords[1] || '',
-            keyword3: newKeywords[2] || '',
+            interest: {
+                keyword1: newKeywords[0] || '',
+                keyword2: newKeywords[1] || '',
+                keyword3: newKeywords[2] || '',
+            },
         });
     };
 
     const handleCompleteClick = () => {
-        navigate('/on-boarding/1'); // Replace '/next-step' with the actual next step route
+        navigate('/on-boarding/1');
     };
 
     return (
@@ -88,8 +110,8 @@ function Signup4({ signUpInfo, setSignUpInfo }) {
                 ))}
             </div>
             <div className={styles.nextbox}>
-                <button className={styles.nextbtn} type="submit" onClick={handleCompleteClick}>
-                    완료
+                <button className={styles.completeBtn} type="submit" onClick={signUpHandler}>
+                    가입 완료
                 </button>
             </div>
         </div>

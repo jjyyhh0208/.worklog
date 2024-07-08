@@ -17,12 +17,23 @@ import AuthRedirect from './components/AuthRedirect';
 
 function App() {
     const [signUpInfo, setSignUpInfo] = useState({
-        username: '',
-        password: '',
-        repassword: '',
+        id: '',
+        password1: '',
+        password2: '',
         name: '',
         gender: '',
         age: '',
+        profile_image: '',
+        work_style: {
+            keyword1: '',
+            keyword2: '',
+            keyword3: '',
+        },
+        interest: {
+            keyword1: '',
+            keyword2: '',
+            keyword3: '',
+        },
     });
 
     return (

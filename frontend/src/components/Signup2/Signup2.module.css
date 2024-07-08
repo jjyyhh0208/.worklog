@@ -66,24 +66,7 @@
     border: 2px solid #4053ff;
     background: #fff;
     margin-bottom: 20px; /* 새로운 마진 추가 */
-}
-
-/* button 스타일 */
-.signupbtn {
-    width: 148px;
-    height: 49.109px;
-    flex-shrink: 0;
-    border-radius: 15.337px;
-    background: #4053ff;
-    border: none;
-    color: #fff;
-    font-family: Inter;
-    font-size: 24px;
-    font-style: normal;
-    font-weight: 700;
-    line-height: normal;
-    position: absolute;
-    left: 150px;
+    font-size: 21px;
 }
 
 .genderButtons {
@@ -133,4 +116,21 @@
     text-align: center;
     align-self: center;
     line-height: 70px;
+}
+/* button 스타일 */
+.nextBtn {
+    width: 148px;
+    height: 49.109px;
+    flex-shrink: 0;
+    border-radius: 15.337px;
+    background: #4053ff;
+    border: none;
+    color: #fff;
+    font-family: Inter;
+    font-size: 24px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+    position: absolute;
+    left: 150px;
 }

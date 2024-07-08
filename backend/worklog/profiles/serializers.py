@@ -46,10 +46,10 @@ class UserWorkInterestSerializer(serializers.ModelSerializer):
 class UserGenderNameAgeSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('name', 'gender', 'age')
+        fields = ('id','name', 'gender', 'age')
         
     def update(self,instance, validated_data):
-        #이름, 성별, 나이 설정
+        #이름, 성별, 출생연도 설정
         instance.name = validated_data.get('name', instance.name)
         instance.gender = validated_data.get('gender', instance.gender)
         instance.age = validated_data.get('age', instance.age)
@@ -63,7 +63,7 @@ class UserGenderNameAgeSerializer(serializers.ModelSerializer):
 class UserRegisterSerializer(RegisterSerializer):
     class Meta:
         model = User
-        fields = ('username', 'password1', 'password2')
+        fields = ('id', 'password1', 'password2')
         
     def save(self, request):
         user = super().save(request)
@@ -92,4 +92,4 @@ class UserUniqueusernameSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('username',)
+        fields = ('id',)
