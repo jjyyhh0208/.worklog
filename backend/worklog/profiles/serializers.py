@@ -20,7 +20,7 @@ class InterestSerializer(serializers.ModelSerializer):
 class UserGenderNameAgeSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('username','name', 'gender', 'age')
+        fields = ('name', 'gender', 'age')
         
     def update(self,instance, validated_data):
         #이름, 성별, 출생연도 설정
