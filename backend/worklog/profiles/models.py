@@ -5,6 +5,7 @@ class User(AbstractUser):
     GENDER_CHOICES = [
         ('M', '남성'),
         ('F', '여성'),
+        ('N', '없음')
     ]
     
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES)

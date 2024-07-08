@@ -15,9 +15,23 @@ class InterestSerializer(serializers.ModelSerializer):
     class Meta:
         model = Interest
         fields = '__all__'
+
+#회원가입 후 유저의 이름, 성별, 나이 설정하기 위해 사용    
+class UserGenderNameAgeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('username','name', 'gender', 'age')
         
+    def update(self,instance, validated_data):
+        #이름, 성별, 출생연도 설정
+        instance.name = validated_data.get('name', instance.name)
+        instance.gender = validated_data.get('gender', instance.gender)
+        instance.age = validated_data.get('age', instance.age)
         
-#회원가입 후 유저의 업무 성향, 관심 직종 설정하기 위해 사용
+        instance.save()
+        return instance       
+        
+# 이름, 성별, 나이 설정 이후 유저의 업무 성향, 관심 직종 설정하기 위해 사용
 #PrimaryKeyRelatedField를 사용하여 유저의 업무 성향, 관심 직종을 설정할 수 있도록 함 -> 유저가 선택하여 특정 업무 성향, 관심 직종을 선택할 수 있도록 함
 class UserWorkInterestSerializer(serializers.ModelSerializer):
     work_styles = serializers.PrimaryKeyRelatedField(queryset=WorkStyle.objects.all(), many=True)
@@ -40,22 +54,6 @@ class UserWorkInterestSerializer(serializers.ModelSerializer):
 
         instance.save()
         return instance
-    
-    
-#업무 성향, 관심 직종 설정 이후 유저의 이름, 성별, 나이 설정하기 위해 사용    
-class UserGenderNameAgeSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ('id','name', 'gender', 'age')
-        
-    def update(self,instance, validated_data):
-        #이름, 성별, 출생연도 설정
-        instance.name = validated_data.get('name', instance.name)
-        instance.gender = validated_data.get('gender', instance.gender)
-        instance.age = validated_data.get('age', instance.age)
-        
-        instance.save()
-        return instance
         
 
 #회원가입 시 유저의 id, 비번 설정하기 위해 사용
@@ -63,7 +61,7 @@ class UserGenderNameAgeSerializer(serializers.ModelSerializer):
 class UserRegisterSerializer(RegisterSerializer):
     class Meta:
         model = User
-        fields = ('id', 'password1', 'password2')
+        fields = ('username', 'password1', 'password2')
         
     def save(self, request):
         user = super().save(request)
