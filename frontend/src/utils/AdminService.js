@@ -31,7 +31,7 @@ const AdminService = {
             });
     },
 
-    checkId: (userName) => {
+    checkUserName: (userName) => {
         return API.post('/profiles/auth/check-username/', userName)
             .then((response) => {
                 return response;

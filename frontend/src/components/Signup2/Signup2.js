@@ -1,10 +1,7 @@
 import React, { useState } from 'react';
 import styles from './Signup2.module.css';
-<<<<<<< HEAD
-import AdminService from '../../utils/AdminService';
-=======
->>>>>>> aee13fa2a7021e6fe867767a8c1aae7cfd655883
 import { useNavigate } from 'react-router-dom';
+import ProfileService from '../../utils/ProfileService';
 
 function Signup2({ signUpInfo, setSignUpInfo }) {
     const navigate = useNavigate();
@@ -14,8 +11,18 @@ function Signup2({ signUpInfo, setSignUpInfo }) {
         setSignUpInfo({ ...signUpInfo, [e.target.name]: e.target.value });
     };
 
-    const handleNextClick = () => {
-        navigate('/signup/3');
+    const handleNextClick = async (e) => {
+        e.preventDefault();
+        try {
+            await ProfileService.setUserBasicInfo({
+                name: signUpInfo.name,
+                age: signUpInfo.age,
+                gender: signUpInfo.gender === 'None' ? null : signUpInfo.gender,
+            });
+            navigate('/signup/3');
+        } catch (error) {
+            console.error('Failed to update user info:', error);
+        }
     };
 
     const handleGenderClick = (gender) => {
@@ -23,25 +30,6 @@ function Signup2({ signUpInfo, setSignUpInfo }) {
         setSelectedGender(gender);
     };
 
-<<<<<<< HEAD
-    const signUpHandler = async (e) => {
-        e.preventDefault();
-        try {
-            const res = await AdminService.signUp('POST', signUpInfo);
-            if (res.message === 'User created') {
-                alert('가입 성공! 다음 단계로 이동합니다.');
-                handleSignUpClick(); // 성공 시 페이지 이동
-            } else {
-                setError('가입 실패 : ' + (res.message || '알 수 없는 오류'));
-                alert(error);
-            }
-        } catch (err) {
-            setError('서버 연결 실패');
-            alert(error);
-        }
-    };
-=======
->>>>>>> aee13fa2a7021e6fe867767a8c1aae7cfd655883
     return (
         <div className={styles.container}>
             <h1 className={styles.h1}>.WORKLOG</h1>
@@ -70,22 +58,22 @@ function Signup2({ signUpInfo, setSignUpInfo }) {
                 <div className={styles.genderButtons}>
                     <button
                         type="button"
-                        className={`${styles.genderButton} ${selectedGender === 'Male' ? styles.selected : ''}`}
-                        onClick={() => handleGenderClick('Male')}
+                        className={`${styles.genderButton} ${selectedGender === 'M' ? styles.selected : ''}`}
+                        onClick={() => handleGenderClick('M')}
                     >
                         Male
                     </button>
                     <button
                         type="button"
-                        className={`${styles.genderButton} ${selectedGender === 'Female' ? styles.selected : ''}`}
-                        onClick={() => handleGenderClick('Female')}
+                        className={`${styles.genderButton} ${selectedGender === 'F' ? styles.selected : ''}`}
+                        onClick={() => handleGenderClick('F')}
                     >
                         Female
                     </button>
                     <button
                         type="button"
-                        className={`${styles.genderButton} ${selectedGender === 'None' ? styles.selected : ''}`}
-                        onClick={() => handleGenderClick('None')}
+                        className={`${styles.genderButton} ${selectedGender === 'N' ? styles.selected : ''}`}
+                        onClick={() => handleGenderClick('N')}
                     >
                         None
                     </button>

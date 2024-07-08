@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 function Login() {
-    const [loginInfo, setLoginInfo] = useState({ id: '', password: '' });
+    const [loginInfo, setLoginInfo] = useState({ username: '', password: '' });
     const [error, setError] = useState('');
 
     const navigate = useNavigate();
@@ -18,7 +18,7 @@ function Login() {
         e.preventDefault();
         try {
             await AdminService.login({
-                username: loginInfo.id,
+                username: loginInfo.username,
                 password: loginInfo.password,
             });
             navigate('/my-profile');
@@ -39,8 +39,8 @@ function Login() {
                     className={styles.input}
                     type="text"
                     placeholder="아이디를 입력하세요"
-                    name="id"
-                    value={loginInfo.id}
+                    name="username"
+                    value={loginInfo.username}
                     onChange={loginChangeHandler}
                 />
                 <span className={styles.span}>비밀번호</span>
@@ -49,7 +49,7 @@ function Login() {
                     type="password"
                     placeholder="비밀번호를 입력하세요"
                     name="password"
-                    value={loginInfo.password1}
+                    value={loginInfo.password}
                     onChange={loginChangeHandler}
                 />
                 <button className={styles.button} type="submit">

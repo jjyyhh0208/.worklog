@@ -12,12 +12,12 @@ function Signup1({ signUpInfo, setSignUpInfo }) {
         setSignUpInfo({ ...signUpInfo, [e.target.name]: e.target.value });
     };
 
-    const checkIdHandler = async (e) => {
+    const checkUserNameHandler = async (e) => {
         e.preventDefault();
 
         try {
-            const response = await AdminService.checkId({
-                username: signUpInfo.id,
+            const response = await AdminService.checkUserName({
+                username: signUpInfo.username,
             });
 
             if (response.data.isUnique) {
@@ -42,9 +42,13 @@ function Signup1({ signUpInfo, setSignUpInfo }) {
 
         try {
             await AdminService.registerUser({
-                username: signUpInfo.id,
+                username: signUpInfo.username,
                 password1: signUpInfo.password1,
                 password2: signUpInfo.password2,
+            });
+            await AdminService.login({
+                username: signUpInfo.username,
+                password: signUpInfo.password1,
             });
             navigate('/signup/2');
         } catch (error) {
@@ -60,7 +64,7 @@ function Signup1({ signUpInfo, setSignUpInfo }) {
             <h2 className={styles.h2}>SIGN UP</h2>
             <form className={styles.signUp} onSubmit={signUpHandler}>
                 <div className={styles.idbox}>
-                    <button className={styles.duplicatebtn} type="button" onClick={checkIdHandler}>
+                    <button className={styles.duplicatebtn} type="button" onClick={checkUserNameHandler}>
                         중복 확인
                     </button>
                     <div>
@@ -85,8 +89,8 @@ function Signup1({ signUpInfo, setSignUpInfo }) {
                     className={styles.input}
                     type="text"
                     placeholder="영문자, 숫자 외 문자는 포함될 수 없습니다"
-                    name="id"
-                    value={signUpInfo.id}
+                    name="username"
+                    value={signUpInfo.username}
                     onChange={signUpChangeHandler}
                 />
                 <span className={styles.span}>비밀번호</span>

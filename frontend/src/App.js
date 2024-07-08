@@ -17,7 +17,7 @@ import AuthRedirect from './components/AuthRedirect';
 
 function App() {
     const [signUpInfo, setSignUpInfo] = useState({
-        id: '',
+        username: '',
         password1: '',
         password2: '',
         name: '',
@@ -39,22 +39,10 @@ function App() {
     return (
         <Routes>
             <Route path="/" element={<Main />} />
-            <Route
-                path="/signup/1"
-                element={<AuthRedirect element={Signup1} signUpInfo={signUpInfo} setSignUpInfo={setSignUpInfo} />}
-            />
-            <Route
-                path="/signup/2"
-                element={<AuthRedirect element={Signup2} signUpInfo={signUpInfo} setSignUpInfo={setSignUpInfo} />}
-            />
-            <Route
-                path="/signup/3"
-                element={<AuthRedirect element={Signup3} signUpInfo={signUpInfo} setSignUpInfo={setSignUpInfo} />}
-            />
-            <Route
-                path="/signup/4"
-                element={<AuthRedirect element={Signup4} signUpInfo={signUpInfo} setSignUpInfo={setSignUpInfo} />}
-            />
+            <Route path="/signup/1" element={<Signup1 signUpInfo={signUpInfo} setSignUpInfo={setSignUpInfo} />} />
+            <Route path="/signup/2" element={<Signup2 signUpInfo={signUpInfo} setSignUpInfo={setSignUpInfo} />} />
+            <Route path="/signup/3" element={<Signup3 signUpInfo={signUpInfo} setSignUpInfo={setSignUpInfo} />} />
+            <Route path="/signup/4" element={<Signup4 signUpInfo={signUpInfo} setSignUpInfo={setSignUpInfo} />} />
             <Route path="/login" element={<AuthRedirect element={Login} />} />
             <Route path="/search" element={<Search />} />
             <Route path="/my-profile" element={<ProtectedRoute element={MyProfile} />} />

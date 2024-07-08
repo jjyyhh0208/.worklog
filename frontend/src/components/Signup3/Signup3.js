@@ -1,39 +1,23 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styles from './Signup3.module.css';
 import { useNavigate } from 'react-router-dom';
+import ProfileService from '../../utils/ProfileService';
 
 function Signup3({ signUpInfo, setSignUpInfo }) {
     const navigate = useNavigate();
     const [selectedKeywords, setSelectedKeywords] = useState([]);
+    const [keywords, setKeywords] = useState([]);
 
-    const keywords = [
-        '사기를 불어넣는',
-        '도전적인',
-        '개성이 뚜렷한',
-        '결단력 있는',
-        '공감능력이 좋은',
-        '사교적인',
-        '경청하는',
-        '꼼꼼한',
-        '리더십 있는',
-        '계획적인',
-        '열정적인',
-        '눈치빠른',
-        '완벽주의적인',
-        '책임감 강한',
-        '논리적인',
-        '주관있는',
-        '융통성 있는',
-        '적응력 좋은',
-        '현실적인',
-        '협력적인',
-        '통찰력 있는',
-        '트렌드 빠른',
-        '추진력 있는',
-        '체계적인',
-        '창의적인',
-        '긍정적인',
-    ];
+    useEffect(() => {
+        ProfileService.fetchWorkStyles()
+            .then((data) => {
+                const fetchedKeywords = data.map((item) => item.name);
+                setKeywords(fetchedKeywords);
+            })
+            .catch((error) => {
+                console.error('Error fetching work styles:', error);
+            });
+    }, []);
 
     const handleKeywordClick = (keyword) => {
         let newKeywords = [...selectedKeywords];
@@ -58,7 +42,18 @@ function Signup3({ signUpInfo, setSignUpInfo }) {
     };
 
     const handleNextClick = () => {
-        navigate('/signup/4');
+        const selectedKeywordIds = selectedKeywords.map((keyword) => {
+            const foundKeyword = keywords.find((kw) => kw === keyword);
+            return foundKeyword ? keywords.indexOf(foundKeyword) + 1 : null;
+        });
+
+        ProfileService.setUserWorkStyles(selectedKeywordIds)
+            .then(() => {
+                navigate('/signup/4');
+            })
+            .catch((error) => {
+                console.error('Error setting user work styles:', error);
+            });
     };
 
     return (

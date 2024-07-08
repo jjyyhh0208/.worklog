@@ -1,51 +1,24 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styles from './Signup4.module.css';
-import UserService from '../../utils/UserService';
 import { useNavigate } from 'react-router-dom';
+import ProfileService from '../../utils/ProfileService';
 
 function Signup4({ signUpInfo, setSignUpInfo }) {
     const navigate = useNavigate();
     const [error, setError] = useState('');
     const [selectedKeywords, setSelectedKeywords] = useState([]);
+    const [keywords, setKeywords] = useState([]);
 
-    const signUpHandler = async (e) => {
-        console.log(signUpInfo); // Check the data before sending
-        e.preventDefault();
-        try {
-            const res = await UserService.registerUser('POST', signUpInfo);
-            if (res.message === 'User created') {
-                alert('축하합니다! 회원가입이 완료되었습니다!');
-                navigate('/onboard/1'); // Replace '/next-step' with the actual next step route
-            } else {
-                setError('가입 실패 : ' + (res.message || '알 수 없는 오류'));
-                alert(error);
-            }
-        } catch (err) {
-            setError('서버 연결 실패라네요');
-            alert(error);
-        }
-    };
-
-    const keywords = [
-        '재무',
-        '브랜딩',
-        '마케팅',
-        '기획/전략',
-        '투자',
-        '고객 서비스',
-        '인사관리',
-        '데이터',
-        '인공지능',
-        '운영관리',
-        '교육',
-        '헬스케어',
-        '법률',
-        '공공',
-        '콘텐츠/미디어',
-        '개발',
-        '디자인',
-        '회계',
-    ];
+    useEffect(() => {
+        ProfileService.fetchInterests()
+            .then((data) => {
+                const fetchedKeywords = data.map((item) => item.name);
+                setKeywords(fetchedKeywords);
+            })
+            .catch((error) => {
+                console.error('Error fetching work styles:', error);
+            });
+    }, []);
 
     const handleKeywordClick = (keyword) => {
         let newKeywords = [...selectedKeywords];
@@ -70,7 +43,18 @@ function Signup4({ signUpInfo, setSignUpInfo }) {
     };
 
     const handleCompleteClick = () => {
-        navigate('/on-boarding/1');
+        const selectedKeywordIds = selectedKeywords.map((keyword) => {
+            const foundKeyword = keywords.find((kw) => kw === keyword);
+            return foundKeyword ? keywords.indexOf(foundKeyword) + 1 : null;
+        });
+
+        ProfileService.setUserInterest(selectedKeywordIds)
+            .then(() => {
+                navigate('/on-boarding/1');
+            })
+            .catch((error) => {
+                console.error('Error setting user work styles:', error);
+            });
     };
 
     return (
@@ -110,7 +94,7 @@ function Signup4({ signUpInfo, setSignUpInfo }) {
                 ))}
             </div>
             <div className={styles.nextbox}>
-                <button className={styles.completeBtn} type="submit" onClick={signUpHandler}>
+                <button className={styles.completeBtn} type="submit" onClick={handleCompleteClick}>
                     가입 완료
                 </button>
             </div>
