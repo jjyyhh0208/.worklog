@@ -40,10 +40,9 @@ const ProfileService = {
     setUserWorkStyles: (workStyles) => {
         const requestData = {
             work_styles: workStyles,
-            interests: [],
         };
 
-        return API.put(`/profiles/user/set/work-interest/`, requestData)
+        return API.put(`/profiles/user/set/work-style/`, requestData)
             .then((response) => {
                 if (response.status === 200) {
                     console.log('사용자의 업무 스타일이 성공적으로 업데이트되었습니다.');
@@ -67,11 +66,10 @@ const ProfileService = {
 
     setUserInterest: (interests) => {
         const requestData = {
-            work_styles: [],
             interests: interests,
         };
 
-        return API.put(`/profiles/user/set/work-interest/`, requestData)
+        return API.put(`/profiles/user/set/interest/`, requestData)
             .then((response) => {
                 if (response.status === 200) {
                     console.log('사용자의 관심 분야가 성공적으로 업데이트되었습니다.');
@@ -80,6 +78,15 @@ const ProfileService = {
             })
             .catch((error) => {
                 console.error('관심 분야를 업데이트하는 동안 오류가 발생했습니다.', error);
+                throw error;
+            });
+    },
+
+    fetchUserProfile: () => {
+        return API.get(`/profiles/user/view/`)
+            .then((response) => response.data)
+            .catch((error) => {
+                console.error('사용자 프로필을 불러오는 동안 오류가 발생했습니다.', error);
                 throw error;
             });
     },

@@ -46,10 +46,13 @@ function Signup1({ signUpInfo, setSignUpInfo }) {
                 password1: signUpInfo.password1,
                 password2: signUpInfo.password2,
             });
+
+            // 회원가입이 성공했을 때 로그인을 시도
             await AdminService.login({
                 username: signUpInfo.username,
                 password: signUpInfo.password1,
             });
+
             navigate('/signup/2');
         } catch (error) {
             console.error(error);
