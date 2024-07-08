@@ -11,7 +11,6 @@ const AdminService = {
         return API.post('/profiles/auth/registration/', requestData)
             .then((response) => {
                 if (response.status === 204) {
-                    // 성공코드 204
                     console.log('사용자가 성공적으로 등록되었습니다.');
                 }
             })
@@ -23,6 +22,9 @@ const AdminService = {
                     if (error.response.data.password1) {
                         throw new Error('비밀번호는 영어나 특수문자를 포함하여 8자 이상으로 만들어주세요.');
                     }
+                    if (error.response.data.non_field_errors) {
+                        throw new Error('입력한 비밀번호가 일치하지 않습니다.');
+                    }
                 } else if (error.response) {
                     throw new Error('서버 오류가 발생했습니다.');
                 } else {
@@ -30,7 +32,6 @@ const AdminService = {
                 }
             });
     },
-
     checkId: (userName) => {
         return API.post('/profiles/auth/check-username/', userName)
             .then((response) => {
