@@ -3,9 +3,15 @@ import API from './API';
 const UserService = {
     registerUser: (userData) => {
         const requestData = {
-            username: userData.username,
+            id: userData.id,
             password1: userData.password1,
             password2: userData.password2,
+            name: userData.name,
+            gender: userData.gender,
+            age: userData.age,
+            Profile_image: userData.Profile_image,
+            work_style: userData.work_style,
+            interest: userData.interest,
         };
 
         return API.post('/profiles/auth/registration/', requestData)
@@ -17,7 +23,7 @@ const UserService = {
             })
             .catch((error) => {
                 if (error.response && error.response.data) {
-                    if (error.response.data.username) {
+                    if (error.response.data.id) {
                         throw new Error('유효하지 않은 사용자입니다.');
                     }
                     if (error.response.data.password1) {

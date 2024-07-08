@@ -1,18 +1,16 @@
 import React, { useState } from 'react';
 import styles from './Signup2.module.css';
-import UserService from '../../utils/UserService';
 import { useNavigate } from 'react-router-dom';
 
 function Signup2({ signUpInfo, setSignUpInfo }) {
     const navigate = useNavigate();
-    const [error, setError] = useState('');
     const [selectedGender, setSelectedGender] = useState(signUpInfo.gender);
 
     const signUpChangeHandler = (e) => {
         setSignUpInfo({ ...signUpInfo, [e.target.name]: e.target.value });
     };
 
-    const handleSignUpClick = () => {
+    const handleNextClick = () => {
         navigate('/signup/3');
     };
 
@@ -21,27 +19,11 @@ function Signup2({ signUpInfo, setSignUpInfo }) {
         setSelectedGender(gender);
     };
 
-    const signUpHandler = async (e) => {
-        e.preventDefault();
-        try {
-            const res = await UserService.signUp('POST', signUpInfo);
-            if (res.message === 'User created') {
-                alert('가입 성공! 다음 단계로 이동합니다.');
-                handleSignUpClick(); // 성공 시 페이지 이동
-            } else {
-                setError('가입 실패 : ' + (res.message || '알 수 없는 오류'));
-                alert(error);
-            }
-        } catch (err) {
-            setError('서버 연결 실패');
-            alert(error);
-        }
-    };
     return (
         <div className={styles.container}>
             <h1 className={styles.h1}>.WORKLOG</h1>
             <h2 className={styles.h2}>기본프로필 등록</h2>
-            <form className={styles.signUp} onSubmit={signUpHandler}>
+            <form className={styles.signUp}>
                 <div className={styles.idbox}></div>
                 <span className={styles.span}>이름</span>
                 <input
@@ -52,11 +34,11 @@ function Signup2({ signUpInfo, setSignUpInfo }) {
                     value={signUpInfo.name}
                     onChange={signUpChangeHandler}
                 />
-                <span className={styles.span}>나이</span>
+                <span className={styles.span}>출생연도</span>
                 <input
                     className={styles.input}
                     type="text"
-                    placeholder="만 나이 기준으로 입력해주세요"
+                    placeholder="예시: 2000 | 숫자 네자리만 입력해주세요"
                     name="age"
                     value={signUpInfo.age}
                     onChange={signUpChangeHandler}
@@ -65,28 +47,28 @@ function Signup2({ signUpInfo, setSignUpInfo }) {
                 <div className={styles.genderButtons}>
                     <button
                         type="button"
-                        className={`${styles.genderButton} ${selectedGender === '남자' ? styles.selected : ''}`}
-                        onClick={() => handleGenderClick('남자')}
+                        className={`${styles.genderButton} ${selectedGender === 'Male' ? styles.selected : ''}`}
+                        onClick={() => handleGenderClick('Male')}
                     >
                         Male
                     </button>
                     <button
                         type="button"
-                        className={`${styles.genderButton} ${selectedGender === '여자' ? styles.selected : ''}`}
-                        onClick={() => handleGenderClick('여자')}
+                        className={`${styles.genderButton} ${selectedGender === 'Female' ? styles.selected : ''}`}
+                        onClick={() => handleGenderClick('Female')}
                     >
                         Female
                     </button>
                     <button
                         type="button"
-                        className={`${styles.genderButton} ${selectedGender === 'none' ? styles.selected : ''}`}
-                        onClick={() => handleGenderClick('none')}
+                        className={`${styles.genderButton} ${selectedGender === 'None' ? styles.selected : ''}`}
+                        onClick={() => handleGenderClick('None')}
                     >
                         None
                     </button>
                 </div>
                 <div className={styles.nextbox}>
-                    <button className={styles.signupbtn} type="submit">
+                    <button className={styles.nextBtn} type="submit" onClick={handleNextClick}>
                         NEXT
                     </button>
                     <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="0 0 50 50" fill="none">

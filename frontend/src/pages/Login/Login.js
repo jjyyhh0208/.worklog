@@ -49,7 +49,7 @@ function Login() {
                     type="password"
                     placeholder="비밀번호를 입력하세요"
                     name="password"
-                    value={loginInfo.password}
+                    value={loginInfo.password1}
                     onChange={loginChangeHandler}
                 />
                 <button className={styles.button} type="submit">
