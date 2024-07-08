@@ -1,6 +1,6 @@
 import API from './API';
 
-const UserService = {
+const AdminService = {
     registerUser: (userData) => {
         const requestData = {
             username: userData.username,
@@ -30,6 +30,7 @@ const UserService = {
                 }
             });
     },
+
     checkId: (userName) => {
         return API.post('/profiles/auth/check-username/', userName)
             .then((response) => {
@@ -39,6 +40,46 @@ const UserService = {
                 throw new Error('아이디는 3자 이상 30자 이하로 설정해주세요.');
             });
     },
+
+    login: (userData) => {
+        const requestData = {
+            username: userData.username,
+            password: userData.password,
+        };
+
+        return API.post('/profiles/auth/login/', requestData)
+            .then((response) => {
+                if (response.status === 200) {
+                    // 성공코드 200
+                    console.log('사용자가 성공적으로 등록되었습니다.');
+                    const token = response.data.key;
+                    localStorage.setItem('authToken', token);
+                }
+            })
+            .catch((error) => {
+                if (error.response && error.response.data) {
+                    throw new Error('아이디 또는 비밀번호가 올바르지 않습니다.');
+                } else if (error.response) {
+                    throw new Error('서버 오류가 발생했습니다.');
+                } else {
+                    throw new Error(error.message);
+                }
+            });
+    },
+
+    logout: () => {
+        return API.post('/profiles/auth/logout/')
+            .then((response) => {
+                if (response.status === 200) {
+                    // 성공코드 200
+                    console.log('사용자가 성공적으로 로그아웃하였습니다.');
+                    localStorage.removeItem('authToken'); // Remove the token from local storage
+                }
+            })
+            .catch((error) => {
+                throw new Error(error.message);
+            });
+    },
 };
 
-export default UserService;
+export default AdminService;

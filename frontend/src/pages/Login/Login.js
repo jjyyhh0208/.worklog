@@ -1,6 +1,6 @@
 import React from 'react';
 import styles from './Login.module.css';
-import UserService from '../../utils/UserService';
+import AdminService from '../../utils/AdminService';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -9,23 +9,23 @@ function Login() {
     const [error, setError] = useState('');
 
     const navigate = useNavigate();
+
     const loginChangeHandler = (e) => {
         setLoginInfo({ ...loginInfo, [e.target.name]: e.target.value });
     };
+
     const loginHandler = async (e) => {
         e.preventDefault();
         try {
-            const res = await UserService.login('POST', loginInfo);
-            if (res.token) {
-                alert('로그인 성공');
-                navigate('/my-profile');
-            } else {
-                setError('로그인 실패 : ' + (res.message || '알 수 없는 오류'));
-                alert(error);
-            }
-        } catch (err) {
-            setError('서버 연결 실패');
-            alert(error);
+            await AdminService.login({
+                username: loginInfo.id,
+                password: loginInfo.password,
+            });
+            navigate('/my-profile');
+        } catch (error) {
+            console.error(error);
+            setError(error);
+            alert(`${error.message}`);
         }
     };
 

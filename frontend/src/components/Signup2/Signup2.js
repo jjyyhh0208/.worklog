@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import styles from './Signup2.module.css';
-import UserService from '../../utils/UserService';
+import AdminService from '../../utils/AdminService';
 import { useNavigate } from 'react-router-dom';
 
 function Signup2({ signUpInfo, setSignUpInfo }) {
@@ -24,7 +24,7 @@ function Signup2({ signUpInfo, setSignUpInfo }) {
     const signUpHandler = async (e) => {
         e.preventDefault();
         try {
-            const res = await UserService.signUp('POST', signUpInfo);
+            const res = await AdminService.signUp('POST', signUpInfo);
             if (res.message === 'User created') {
                 alert('가입 성공! 다음 단계로 이동합니다.');
                 handleSignUpClick(); // 성공 시 페이지 이동

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import styles from './Signup1.module.css';
-import UserService from '../../utils/UserService';
+import AdminService from '../../utils/AdminService';
 import { useNavigate } from 'react-router-dom';
 
 function Signup1({ signUpInfo, setSignUpInfo }) {
@@ -16,7 +16,7 @@ function Signup1({ signUpInfo, setSignUpInfo }) {
         e.preventDefault();
 
         try {
-            const response = await UserService.checkId({
+            const response = await AdminService.checkId({
                 username: signUpInfo.id,
             });
 
@@ -45,7 +45,7 @@ function Signup1({ signUpInfo, setSignUpInfo }) {
         }
 
         try {
-            await UserService.registerUser({
+            await AdminService.registerUser({
                 username: signUpInfo.id,
                 password1: signUpInfo.password1,
                 password2: signUpInfo.password2,

@@ -12,9 +12,9 @@ const API = axios.create({
 API.interceptors.request.use(
     async (config) => {
         // 회원 로직
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem('authToken');
         if (token) {
-            config.headers['Authorization'] = `Bearer ${token}`;
+            config.headers['Authorization'] = `Token ${token}`;
         }
         return config;
     },
