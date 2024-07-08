@@ -87,9 +87,9 @@ class UserProfileSerializer(serializers.ModelSerializer):
         fields = ('name', 'gender', 'age', 'work_styles', 'interests', 'disc_character', 'gpt_summarized_personality')
 
 # 아이디 중복 검사를 위한 로직
-class UserUniqueusernameSerializer(serializers.ModelSerializer):
+class UserUniqueIdSerializer(serializers.ModelSerializer):
     username = serializers.CharField(required=True, min_length=3, max_length=30)
 
     class Meta:
         model = User
-        fields = ('id',)
+        fields = ('username',)

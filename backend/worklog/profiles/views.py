@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authtoken.models import Token
 from .models import User, WorkStyle, Interest
-from .serializers import UserGenderNameAgeSerializer, UserWorkInterestSerializer, WorkStyleSerializer, InterestSerializer, UserRegisterSerializer, UserProfileSerializer, UserUniqueusernameSerializer
+from .serializers import UserGenderNameAgeSerializer, UserWorkInterestSerializer, WorkStyleSerializer, InterestSerializer, UserRegisterSerializer, UserProfileSerializer, UserUniqueIdSerializer
 
 from dj_rest_auth.registration.views import RegisterView
 
@@ -70,9 +70,9 @@ class UserWorkInterestView(generics.UpdateAPIView):
     def get_object(self):
         return self.request.user
     
-class UsernameUniqueCheck(generics.GenericAPIView):
+class UniqueIdCheck(generics.GenericAPIView):
     queryset = User.objects.all()
-    serializer_class = UserUniqueusernameSerializer
+    serializer_class = UserUniqueIdSerializer
     permission_classes = []
 
     def post(self, request):
