@@ -48,7 +48,7 @@ function Signup4({ signUpInfo, setSignUpInfo }) {
     };
 
     const handleCompleteClick = () => {
-        navigate('/onboard/1'); // Replace '/next-step' with the actual next step route
+        navigate('/on-boarding/1'); // Replace '/next-step' with the actual next step route
     };
 
     return (
