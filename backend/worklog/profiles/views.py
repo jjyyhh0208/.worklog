@@ -3,8 +3,14 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authtoken.models import Token
 from rest_framework.decorators import action
-from .models import User, WorkStyle, Interest
-from .serializers import UserGenderNameAgeSerializer, UserWorkStyleSerializer, UserInterestSerializer, WorkStyleSerializer, InterestSerializer, UserRegisterSerializer, UserProfileSerializer, UserUniqueIdSerializer
+from .models import User, WorkStyle, Interest, ShortQuestion
+from .serializers import (
+    UserGenderNameAgeSerializer, UserWorkStyleSerializer,
+    UserInterestSerializer, WorkStyleSerializer,
+    InterestSerializer, UserRegisterSerializer,
+    UserProfileSerializer, UserUniqueIdSerializer,
+    ShortQuestionSerializer 
+)
 
 from dj_rest_auth.registration.views import RegisterView
 
@@ -110,3 +116,8 @@ class UniqueIdCheck(generics.GenericAPIView):
             return Response({'isUnique': False}, status=status.HTTP_200_OK)
         except User.DoesNotExist:
             return Response({'isUnique': True}, status=status.HTTP_200_OK)
+        
+class ShortQuestionViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = ShortQuestion.objects.all()
+    serializer_class = ShortQuestionSerializer
+    permission_classes = []

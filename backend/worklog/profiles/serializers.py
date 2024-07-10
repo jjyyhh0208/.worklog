@@ -108,3 +108,8 @@ class UserUniqueIdSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('username',)
+
+class ShortQuestionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ShortQuestion
+        fields = ['id', 'question', 'answer1', 'answer2', 'answer3', 'answer4']
