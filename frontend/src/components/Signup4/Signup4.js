@@ -21,7 +21,8 @@ function Signup4({ signUpInfo, setSignUpInfo }) {
                 alert(error);
             }
         } catch (err) {
-            setError('서버 연결 실패라네요');
+            setError('서버 연결 실패라네요', err);
+            console.log(err);
             alert(error);
         }
     };
