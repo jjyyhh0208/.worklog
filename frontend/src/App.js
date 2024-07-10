@@ -14,6 +14,8 @@ import OnBoarding2 from './pages/OnBoarding2/OnBoarding2';
 import OnBoarding3 from './pages/OnBoarding3/OnBoarding3';
 import AboutUs from './pages/AboutUs/AboutUs';
 import Header from './components/Header/Header';
+import AuthRedirect from './components/AuthRedirect';
+import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
     const location = useLocation();
@@ -39,14 +41,17 @@ function App() {
     });
 
     const renderHeader = () => {
-        // Paths where the Header should be displayed
         const pathsWithHeader = ['/my-profile', '/about-us', '/search', '/feedback/long'];
         return pathsWithHeader.includes(location.pathname);
     };
 
+    const isLoggedIn = () => {
+        return !!localStorage.getItem('authToken');
+    };
+
     return (
         <>
-            {renderHeader() && <Header />}
+            {renderHeader() && <Header name={signUpInfo.name} isLoggedIn={isLoggedIn()} />}
             <Routes>
                 <Route path="/" element={<Main />} />
                 <Route path="/signup/1" element={<Signup1 signUpInfo={signUpInfo} setSignUpInfo={setSignUpInfo} />} />

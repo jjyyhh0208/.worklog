@@ -1,13 +1,19 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import styles from './Header.module.css';
+import AdminService from '../../utils/AdminService';
 
-function Header({ isLoggedIn, userName, handleLogout }) {
+function Header({ isLoggedIn, name }) {
     const navigate = useNavigate();
 
     const onLogoutClick = () => {
-        handleLogout();
-        navigate('/');
+        AdminService.logout()
+            .then(() => {
+                window.location.href = '/';
+            })
+            .catch((error) => {
+                console.error('로그아웃 중 오류가 발생했습니다.', error);
+            });
     };
 
     return (
@@ -47,7 +53,7 @@ function Header({ isLoggedIn, userName, handleLogout }) {
             <div className={styles.auth}>
                 {isLoggedIn ? (
                     <>
-                        <span className={styles.userName}>{userName} 님</span>
+                        <span className={styles.name}>{name} 님</span>
                         <button onClick={onLogoutClick} className={styles.logoutButton}>
                             Logout
                         </button>
