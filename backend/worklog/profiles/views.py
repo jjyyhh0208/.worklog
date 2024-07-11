@@ -1,15 +1,17 @@
 from rest_framework import viewsets, generics, status
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework.authtoken.models import Token
 from rest_framework.decorators import action
-from .models import User, WorkStyle, Interest, ShortQuestion
+from .models import User, WorkStyle, Interest, ShortQuestion, LongQuestion, QuestionAnswer, Score, Feedback
+from django.shortcuts import get_object_or_404
 from .serializers import (
     UserGenderNameAgeSerializer, UserWorkStyleSerializer,
     UserInterestSerializer, WorkStyleSerializer,
     InterestSerializer, UserRegisterSerializer,
     UserProfileSerializer, UserUniqueIdSerializer,
-    ShortQuestionSerializer 
+    ShortQuestionSerializer, LongQuestionSerializer, 
+    QuestionAnswerSerializer, ScoreSerializer, FeedbackSerializer
 )
 
 from dj_rest_auth.registration.views import RegisterView
@@ -121,3 +123,64 @@ class ShortQuestionViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = ShortQuestion.objects.all()
     serializer_class = ShortQuestionSerializer
     permission_classes = []
+
+class LongQuestionViewSet(viewsets.ModelViewSet):
+    queryset = LongQuestion.objects.all()
+    serializer_class = LongQuestionSerializer
+
+# GET: user 명에 맞는 서술형 질문 목록을 불러옵니다.
+class UserLongQuestionsView(generics.ListAPIView):
+    serializer_class = LongQuestionSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
+
+    def get_queryset(self):
+        username = self.kwargs['username']
+        user = get_object_or_404(User, username=username)
+        return LongQuestion.objects.filter(user__isnull=True) | LongQuestion.objects.filter(user=user)
+
+class QuestionAnswerViewSet(viewsets.ModelViewSet):
+    queryset = QuestionAnswer.objects.all()
+    serializer_class = QuestionAnswerSerializer
+
+class ScoreViewSet(viewsets.ModelViewSet):
+    queryset = Score.objects.all()
+    serializer_class = ScoreSerializer
+
+class FeedbackViewSet(viewsets.ModelViewSet):
+    queryset = Feedback.objects.all()
+    serializer_class = FeedbackSerializer
+
+    # Create
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
+    # Update
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+        if getattr(instance, '_prefetched_objects_cache', None):
+            instance._prefetched_objects_cache = {}
+        return Response(serializer.data)
+
+    # Delete
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        self.perform_destroy(instance)
+        return Response(status=status.HTTP_204_NO_CONTENT)
+    
+# GET: user 명에 맞는 피즈백 목록을 불러옵니다.
+class FeedbackByUserView(generics.ListAPIView):
+    serializer_class = FeedbackSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
+
+    def get_queryset(self):
+        username = self.kwargs['username']
+        user = get_object_or_404(User, username=username)
+        return Feedback.objects.filter(user=user) | Feedback.objects.filter(user_by=user)

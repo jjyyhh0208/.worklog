@@ -109,7 +109,104 @@ class UserUniqueIdSerializer(serializers.ModelSerializer):
         model = User
         fields = ('username',)
 
+# 서술형 기본 모델
+class LongQuestionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = LongQuestion
+        fields = ['user', 'long_question']
+    
+    def get_user(self, obj):
+        return obj.user.username
+
+
+# 서술형 질문 - 답 기본 모델
+class QuestionAnswerSerializer(serializers.ModelSerializer):
+    question = LongQuestionSerializer()
+
+    class Meta:
+        model = QuestionAnswer
+        fields = ['question', 'answer']
+
+
+# 점수 모델
+class ScoreSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Score
+        fields = ['d_score', 'i_score', 's_score', 'c_score']
+
+
+# 단답형 질문
 class ShortQuestionSerializer(serializers.ModelSerializer):
     class Meta:
         model = ShortQuestion
         fields = ['id', 'question', 'answer1', 'answer2', 'answer3', 'answer4']
+
+class FeedbackSerializer(serializers.ModelSerializer):
+    user = serializers.SlugRelatedField(slug_field='username', queryset=User.objects.all(), allow_null=True)
+    work_styles = WorkStyleSerializer(many=True)
+    score = ScoreSerializer(allow_null=True)
+    question_answers = QuestionAnswerSerializer(many=True)
+
+    class Meta:
+        model = Feedback
+        fields = ['id', 'user', 'user_by', 'work_styles', 'score', 'question_answers']
+
+    def create(self, validated_data):
+        work_styles_data = validated_data.pop('work_styles')
+        score_data = validated_data.pop('score', None)
+        question_answers_data = validated_data.pop('question_answers')
+        
+        feedback = Feedback.objects.create(**validated_data)
+        
+        # Workstyle
+        for work_style_data in work_styles_data:
+            work_style, created = WorkStyle.objects.get_or_create(**work_style_data)
+            feedback.work_styles.add(work_style)
+        
+        # Score Data
+        if score_data:
+            score = Score.objects.create(**score_data)
+            feedback.score = score
+        
+        # Question - Answer 쌍 추가
+        for question_answer_data in question_answers_data:
+            question_data = question_answer_data.pop('question')
+            question, created = LongQuestion.objects.get_or_create(**question_data)
+            question_answer = QuestionAnswer.objects.create(feedback=feedback, question=question, **question_answer_data)
+            feedback.question_answers.add(question_answer)
+        
+        feedback.save()
+        return feedback
+
+    def update(self, instance, validated_data):
+        work_styles_data = validated_data.pop('work_styles')
+        score_data = validated_data.pop('score', None)
+        question_answers_data = validated_data.pop('question_answers')
+        
+        instance.user = validated_data.get('user', instance.user)
+        instance.user_by = validated_data.get('user_by', instance.user_by)
+        instance.save()
+
+        # Workstyle
+        instance.work_styles.clear()
+        for work_style_data in work_styles_data:
+            work_style, created = WorkStyle.objects.get_or_create(**work_style_data)
+            instance.work_styles.add(work_style)
+        
+        # Score
+        if score_data:
+            if instance.score:
+                Score.objects.filter(id=instance.score.id).update(**score_data)
+            else:
+                instance.score = Score.objects.create(**score_data)
+        
+        # question answers
+        instance.question_answers.clear()
+        for question_answer_data in question_answers_data:
+            question_data = question_answer_data.pop('question')
+            question, created = LongQuestion.objects.get_or_create(**question_data)
+            question_answer = QuestionAnswer.objects.create(feedback=instance, question=question, **question_answer_data)
+            instance.question_answers.add(question_answer)
+        
+        instance.save()
+        return instance

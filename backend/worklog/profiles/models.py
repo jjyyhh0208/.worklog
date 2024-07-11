@@ -41,3 +41,37 @@ class ShortQuestion(models.Model):
 
     def __str__(self):
         return self.question
+
+class LongQuestion(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, related_name='longquestion_by')
+    long_question = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.long_question
+
+class QuestionAnswer(models.Model):
+    feedback = models.ForeignKey('Feedback', on_delete=models.CASCADE, related_name='question_answers')
+    question = models.ForeignKey('LongQuestion', on_delete=models.CASCADE)
+    answer = models.TextField()
+
+    def __str__(self):
+        return f"{self.question}: {self.answer[:50]}"
+
+class Score(models.Model):
+    d_score = models.PositiveIntegerField()
+    i_score = models.PositiveIntegerField()
+    s_score = models.PositiveIntegerField()
+    c_score = models.PositiveIntegerField()
+
+    def __str__(self):
+        return f"D: {self.d_score}, I: {self.i_score}, S: {self.s_score}, C: {self.c_score}"
+
+class Feedback(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, related_name='feedbacks_from')
+    user_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='feedbacks_by')
+    work_styles = models.ManyToManyField('WorkStyle', blank=False)
+    score = models.OneToOneField('Score', on_delete=models.CASCADE, blank=True, null=True)
+    long_questions = models.ManyToManyField('QuestionAnswer', blank=False, related_name='feedbacks')
+
+    def __str__(self):
+        return f"Feedback to {self.user_by if self.user is None else self.user.username}"
