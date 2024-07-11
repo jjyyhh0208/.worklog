@@ -184,7 +184,6 @@ const Feedback = () => {
 
     return (
         <>
-            <Header />
             <div className={styles.feedbackContainer}>
                 <div className={styles.feedbackPage}>
                     <div className={styles.pageIndicator}>{pageNum}/4</div>

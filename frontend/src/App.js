@@ -42,7 +42,13 @@ function App() {
     });
 
     const renderHeader = () => {
-        const pathsWithHeader = ['/my-profile', '/about-us', '/search', '/feedback/long'];
+        const pathsWithHeader = [
+            '/my-profile',
+            '/about-us',
+            '/search',
+            '/feedback/long',
+            `/feedback/${location.pathname.split('/')[2]}`,
+        ];
         return pathsWithHeader.includes(location.pathname);
     };
 
