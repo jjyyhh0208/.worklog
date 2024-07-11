@@ -3,7 +3,6 @@ import { useParams, useNavigate } from 'react-router-dom';
 import ProfileService from '../../utils/ProfileService';
 import FeedbackService from '../../utils/FeedbackService';
 import styles from './Feedback.module.css';
-import Header from '../../components/Header/Header';
 
 const questionsTemplate = [
     [
@@ -113,14 +112,6 @@ const Feedback = () => {
             .catch((error) => {
                 console.error('프로필 정보를 불러오는 동안 오류가 발생했습니다.', error);
             });
-
-        FeedbackService.fetchQuestions()
-            .then((data) => {
-                // Update questions template here if needed
-            })
-            .catch((error) => {
-                console.error('질문을 불러오는 동안 오류가 발생했습니다.', error);
-            });
     }, []);
 
     const handleAnswerChange = (question, option, value) => {
@@ -153,6 +144,7 @@ const Feedback = () => {
         if (pageIndex < questionsTemplate.length - 1) {
             navigate(`/feedback/${pageIndex + 2}`);
         } else {
+            // 논의 필요
             FeedbackService.submitAnswers({
                 disc_character: scores,
                 feedback_count: 1, // Assuming a single feedback session for simplicity
