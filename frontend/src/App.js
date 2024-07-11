@@ -17,6 +17,10 @@ import Header from './components/Header/Header';
 import Feedback from './pages/Feedback/Feedback';
 import AuthRedirect from './components/AuthRedirect';
 import ProtectedRoute from './components/ProtectedRoute';
+import axios from 'axios';
+
+axios.defaults.xsrfCookieName = 'csrftoken';
+axios.defaults.xsrfHeaderName = 'X-CSRFToken';
 
 function App() {
     const location = useLocation();
