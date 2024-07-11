@@ -49,16 +49,21 @@ const AdminService = {
             password: userData.password,
         };
 
+        console.log('로그인 요청 전:', requestData);
+
         return API.post('/profiles/auth/login/', requestData)
             .then((response) => {
+                console.log('로그인 요청 성공:', response.data);
+
                 if (response.status === 200) {
-                    // 성공코드 200
                     console.log('사용자가 성공적으로 로그인하였습니다.');
                     const token = response.data.key;
                     localStorage.setItem('authToken', token);
                 }
             })
             .catch((error) => {
+                console.error('로그인 요청 실패:', error);
+
                 if (error.response && error.response.data) {
                     throw new Error('아이디 또는 비밀번호가 올바르지 않습니다.');
                 } else if (error.response) {
