@@ -14,6 +14,7 @@ import OnBoarding2 from './pages/OnBoarding2/OnBoarding2';
 import OnBoarding3 from './pages/OnBoarding3/OnBoarding3';
 import AboutUs from './pages/AboutUs/AboutUs';
 import Header from './components/Header/Header';
+import Feedback from './pages/Feedback/Feedback';
 import AuthRedirect from './components/AuthRedirect';
 import ProtectedRoute from './components/ProtectedRoute';
 
@@ -51,7 +52,7 @@ function App() {
 
     return (
         <>
-            {renderHeader() && <Header name={signUpInfo.name} isLoggedIn={isLoggedIn()} />}
+            {renderHeader() && <Header isLoggedIn={isLoggedIn()} />}
             <Routes>
                 <Route path="/" element={<Main />} />
                 <Route path="/signup/1" element={<Signup1 signUpInfo={signUpInfo} setSignUpInfo={setSignUpInfo} />} />
@@ -65,6 +66,7 @@ function App() {
                 <Route path="/on-boarding/2" element={<OnBoarding2 />} />
                 <Route path="/on-boarding/3" element={<OnBoarding3 />} />
                 <Route path="/about-us" element={<AboutUs />} />
+                <Route path="/feedback/:pageNum" element={<Feedback />} />
                 <Route path="/feedback/long" element={<FeedbackLong />} />
             </Routes>
         </>

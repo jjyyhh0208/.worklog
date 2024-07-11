@@ -1,10 +1,24 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import styles from './Header.module.css';
 import AdminService from '../../utils/AdminService';
+import ProfileService from '../../utils/ProfileService';
 
-function Header({ isLoggedIn, name }) {
+function Header({ isLoggedIn }) {
     const navigate = useNavigate();
+    const [profileData, setProfileData] = useState(null);
+
+    useEffect(() => {
+        if (isLoggedIn) {
+            ProfileService.fetchUserProfile()
+                .then((data) => {
+                    setProfileData(data);
+                })
+                .catch((error) => {
+                    console.error('프로필 정보를 불러오는 동안 오류가 발생했습니다.', error);
+                });
+        }
+    }, [isLoggedIn]);
 
     const onLogoutClick = () => {
         AdminService.logout()
@@ -53,10 +67,16 @@ function Header({ isLoggedIn, name }) {
             <div className={styles.auth}>
                 {isLoggedIn ? (
                     <>
-                        <span className={styles.name}>{name} 님</span>
-                        <button onClick={onLogoutClick} className={styles.logoutButton}>
-                            Logout
-                        </button>
+                        {profileData ? (
+                            <>
+                                <span className={styles.name}>{profileData.name}님</span>
+                                <button onClick={onLogoutClick} className={styles.logoutButton}>
+                                    Logout
+                                </button>
+                            </>
+                        ) : (
+                            <span className={styles.name}>Loading...</span>
+                        )}
                     </>
                 ) : (
                     <Link to="/" className={styles.loginButton}>

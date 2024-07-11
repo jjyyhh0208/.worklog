@@ -1,0 +1,146 @@
+/* 기본 스타일 설정 */
+.feedbackContainer {
+    background: #f6f6f6;
+    display: flex;
+    justify-content: center;
+    margin: 0;
+    width: 100%;
+    height: 100%;
+    font-family: 'pretendard';
+}
+
+.feedbackPage {
+    padding-top: 30px;
+    padding-bottom: 30px;
+    padding-left: 100px;
+    padding-right: 100px;
+    font-family: 'Inter';
+    width: 80%;
+    border-radius: 50px;
+    background: #fff;
+    flex-shrink: 0;
+    margin-top: 50px;
+    margin-bottom: 50px;
+    font-family: 'pretendard';
+    justify-content: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    position: relative;
+}
+
+/* 프로그레스 바 스타일 */
+.progressContainer {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.progressBar {
+    height: 8px;
+    background-color: #4053ff;
+    width: 300px; /* Width for each page */
+    margin: 0 2px; /* Space between progress bars */
+    border-radius: 10px;
+}
+
+.question {
+    color: #4053ff;
+    font-family: 'Inter';
+    font-size: 20px;
+    font-style: normal;
+    font-weight: 800;
+    line-height: normal;
+    margin-bottom: 50px;
+}
+
+/* 옵션 스타일 */
+.optionGroup {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+    justify-content: space-between;
+    width: 50%;
+}
+
+.optionGroup p {
+    width: 400px;
+    font-size: 16px;
+    color: #333;
+    margin: 0;
+}
+
+.optionGroup .scores {
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* Adjust alignment */
+    width: 200px;
+}
+
+.scores label {
+    margin-right: 10px;
+    font-size: 16px;
+    color: #333;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    position: relative;
+}
+
+.scores input {
+    display: none;
+}
+
+.scores label span {
+    width: 24px;
+    height: 24px;
+    line-height: 24px;
+    text-align: center;
+    border-radius: 50%;
+    background-color: #f0f0f0;
+    margin-right: 5px;
+}
+
+.scores input:checked + span {
+    background-color: #ffa500; /* 선택된 항목의 색상 */
+    color: #fff;
+}
+
+/* 네비게이션 버튼 스타일 */
+.feedbackNextContainer {
+    position: absolute;
+    bottom: 40px;
+    right: 40px;
+    display: flex;
+}
+
+.feedbackNextContainer button {
+    display: inline-block;
+    padding: 10px 20px;
+    font-size: 16px;
+    color: #fff;
+    background-color: #4053ff;
+    border: none;
+    border-radius: 15.337px;
+    cursor: pointer;
+    margin-top: 25px;
+    transform: translate(-50%, -50%);
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+.feedbackNextContainer svg {
+    width: 40px;
+}
+/* Page Indicator Style */
+.pageIndicator {
+    position: absolute;
+    top: 20px;
+    right: 40px;
+    font-size: 16px;
+    font-weight: bold;
+    color: #000000;
+    background-color: #e1e1e1;
+    padding: 5px 10px;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
