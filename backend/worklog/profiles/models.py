@@ -16,6 +16,10 @@ class User(AbstractUser):
     friends = models.ManyToManyField('self', symmetrical=True, blank=True)
     disc_character = models.CharField(max_length=50, blank=True)
     gpt_summarized_personality = models.TextField(blank=True)
+    
+    @property
+    def feedback_count(self):
+        return self.feedbacks_from.count()
 
     def __str__(self):
         return self.username

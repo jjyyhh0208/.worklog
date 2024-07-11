@@ -96,11 +96,15 @@ class UserRegisterSerializer(RegisterSerializer):
 class UserProfileSerializer(serializers.ModelSerializer):
     work_styles = WorkStyleSerializer(many=True)
     interests = InterestSerializer(many=True)
+    feedback_count = serializers.SerializerMethodField()
     
     class Meta:
         model = User
-        fields = ('name', 'gender', 'age', 'work_styles', 'interests', 'disc_character', 'gpt_summarized_personality')
+        fields = ('name', 'gender', 'age', 'work_styles', 'interests', 'disc_character', 'gpt_summarized_personality', 'feedback_count')
 
+    def get_feedback_count(self, obj): # 피드백 횟수 추가
+        return obj.feedback_count
+    
 # 아이디 중복 검사를 위한 로직
 class UserUniqueIdSerializer(serializers.ModelSerializer):
     username = serializers.CharField(required=True, min_length=3, max_length=30)
@@ -143,6 +147,7 @@ class ShortQuestionSerializer(serializers.ModelSerializer):
 
 class FeedbackSerializer(serializers.ModelSerializer):
     user = serializers.SlugRelatedField(slug_field='username', queryset=User.objects.all(), allow_null=True)
+    user_by = serializers.SlugRelatedField(slug_field='username', queryset=User.objects.all(), allow_null=True)
     work_styles = WorkStyleSerializer(many=True)
     score = ScoreSerializer(allow_null=True)
     question_answers = QuestionAnswerSerializer(many=True)

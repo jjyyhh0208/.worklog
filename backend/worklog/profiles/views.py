@@ -3,8 +3,9 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework.authtoken.models import Token
 from rest_framework.decorators import action
-from .models import User, WorkStyle, Interest, ShortQuestion, LongQuestion, QuestionAnswer, Score, Feedback
 from django.shortcuts import get_object_or_404
+from .models import User, WorkStyle, Interest, ShortQuestion, LongQuestion, QuestionAnswer, Score, Feedback
+from .permissions import UnauthenticatedReadOrSafeMethods
 from .serializers import (
     UserGenderNameAgeSerializer, UserWorkStyleSerializer,
     UserInterestSerializer, WorkStyleSerializer,
@@ -122,16 +123,17 @@ class UniqueIdCheck(generics.GenericAPIView):
 class ShortQuestionViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = ShortQuestion.objects.all()
     serializer_class = ShortQuestionSerializer
-    permission_classes = []
+    permission_classes = [UnauthenticatedReadOrSafeMethods | IsAuthenticatedOrReadOnly]
 
 class LongQuestionViewSet(viewsets.ModelViewSet):
     queryset = LongQuestion.objects.all()
     serializer_class = LongQuestionSerializer
+    permission_classes = [UnauthenticatedReadOrSafeMethods | IsAuthenticatedOrReadOnly]
 
 # GET: user 명에 맞는 서술형 질문 목록을 불러옵니다.
 class UserLongQuestionsView(generics.ListAPIView):
     serializer_class = LongQuestionSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = []
 
     def get_queryset(self):
         username = self.kwargs['username']
