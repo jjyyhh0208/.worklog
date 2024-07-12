@@ -1,0 +1,124 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 226px;
+}
+
+.h1 {
+    position: absolute;
+    top: 27px;
+    left: 36px;
+    color: #4053ff;
+    text-align: center;
+    font-family: Inter;
+    font-size: 47.962px;
+    font-style: normal;
+    font-weight: 800;
+    font-family: Pretendard;
+    line-height: normal;
+}
+
+.h2 {
+    position: absolute;
+    top: 27px;
+    right: 36px;
+    color: #000;
+    font-family: Inter;
+    font-size: 30px;
+    font-style: normal;
+    font-weight: 700;
+    font-family: Pretendard;
+    line-height: normal;
+    margin-bottom: 20px; /* 새로운 마진 추가 */
+}
+
+.instructionbox {
+    position: absolute;
+    margin-top: 100px;
+    margin-left: -350px;
+    display: flex;
+    flex-direction: column;
+    width: 700px;
+    height: 26px;
+    flex-shrink: 0;
+}
+.span {
+    color: #9b8f8f;
+    font-family: Inter;
+    font-size: 18px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+    position: absolute;
+    justify-self: start;
+    margin-top: 5px;
+    margin-left: 30px;
+}
+.instruction {
+    color: #4053ff;
+    font-family: Pretendard;
+    font-size: 40px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: normal;
+    margin-left: -420px;
+}
+
+.keywordsContainer {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: start;
+    gap: 6px;
+    margin: 100px;
+    width: 721px;
+    height: 386px;
+    position: absolute;
+    top: 300px;
+    left: 350px;
+}
+
+.keywordButton {
+    padding: 10px 20px;
+    border: 1px solid #ccc;
+    background-color: #f0f0f0;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+    border-radius: 10px;
+    font-size: 14px;
+    width: fit-content;
+    min-width: 148px;
+    height: 49px;
+    flex-shrink: 0;
+    background: #ccd1ff;
+    color: #fff;
+    font-family: Inter;
+    font-size: 25.636px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+    margin-right: 20px;
+}
+
+.keywordButton.selected {
+    background: #909bff;
+    color: white;
+}
+
+.completeBtn {
+    width: 148px;
+    height: 49.109px;
+    flex-shrink: 0;
+    border-radius: 15.337px;
+    background: #4053ff;
+    border: none;
+    color: #fff;
+    font-family: Inter;
+    font-size: 24px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+    position: absolute;
+    top: 750px;
+    right: 250px;
+}
