@@ -12,11 +12,7 @@
     color: #4053ff;
     text-align: center;
     font-family: Inter;
-<<<<<<< HEAD
-    font-size: 47.962px;
-=======
     font-size: 48px;
->>>>>>> 436ccda7babdbe573faf0b3cf5f316a63aba652d
     font-style: normal;
     font-weight: 800;
     font-family: Pretendard;
@@ -35,11 +31,7 @@
     width: 25px;
     height: 25px;
     border-radius: 9999px;
-<<<<<<< HEAD
-    cursor: pointer; /* Add cursor pointer for clickable dots */
-=======
     cursor: pointer;
->>>>>>> 436ccda7babdbe573faf0b3cf5f316a63aba652d
 }
 
 .dotBlue {
@@ -89,9 +81,6 @@
 .mainImage {
     width: 100%;
     height: 100%;
-<<<<<<< HEAD
-    background: url('/public/images/onBoarding2.png') lightgray 50% / cover no-repeat;
-=======
     background: url('/public/images/onboarding1.png') lightgray 50% / cover no-repeat;
 }
 
@@ -103,7 +92,8 @@
         left: 30px;
     }
 
-    .description, .descriptionBold {
+    .description,
+    .descriptionBold {
         font-size: 28px;
     }
 
@@ -127,7 +117,8 @@
         left: 20px;
     }
 
-    .description, .descriptionBold {
+    .description,
+    .descriptionBold {
         font-size: 24px;
     }
 
@@ -148,7 +139,8 @@
         left: 10px;
     }
 
-    .description, .descriptionBold {
+    .description,
+    .descriptionBold {
         font-size: 20px;
     }
 
@@ -160,5 +152,4 @@
     .mainImage {
         height: auto;
     }
->>>>>>> 436ccda7babdbe573faf0b3cf5f316a63aba652d
 }

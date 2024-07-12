@@ -31,9 +31,6 @@ const FeedbackService = {
             });
     },
     submitAnswers: (answers) => {
-<<<<<<< HEAD
-        return API.post('/feedback/answers/', { answers })
-=======
         const transformedAnswers = {
             id: answers.id,
             user: answers.user,
@@ -44,7 +41,6 @@ const FeedbackService = {
         };
 
         return API.post('/feedback/answers/', transformedAnswers)
->>>>>>> 436ccda7babdbe573faf0b3cf5f316a63aba652d
             .then((response) => response.data)
             .catch((error) => {
                 console.error('답변을 제출하는 동안 오류가 발생했습니다.', error);

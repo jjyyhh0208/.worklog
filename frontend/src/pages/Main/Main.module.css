@@ -48,8 +48,6 @@
 .button:hover {
     color: rgb(255, 209, 42);
 }
-<<<<<<< HEAD
-=======
 
 /* 반응형 스타일 */
 @media (max-width: 1024px) {
@@ -113,4 +111,3 @@
         font-size: 18px;
     }
 }
->>>>>>> 436ccda7babdbe573faf0b3cf5f316a63aba652d
