@@ -1,10 +1,7 @@
-/* Inter 폰트 */
 @import url('https://rsms.me/inter/inter.css');
-
 html {
     font-family: 'Inter', sans-serif;
 }
-
 @supports (font-variation-settings: normal) {
     html {
         font-family: 'Inter var', sans-serif;
@@ -17,9 +14,6 @@ html {
     box-sizing: border-box;
     color: #334155;
 }
-
-/* Pretendard Variable 폰트 추가 */
-@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/variable/pretendardvariable.css');
 
 body {
     display: flex;

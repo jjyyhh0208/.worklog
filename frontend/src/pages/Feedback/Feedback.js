@@ -7,15 +7,16 @@ import styles from './Feedback.module.css';
 const questionsTemplate = [
     [
         {
-            question: 'OO은 팀에서 대화를 주도하는 편인가요?',
+            question: 'OO님은 팀에서 대화를 주도하는 편인가요?',
             options: [
                 { label: '대화를 주도하고 의견을 제시', value: 'D' },
-                { label: '다른 사람들과 잘 어울림', value: 'I, S' },
-                { label: '필요한 경우에만 의견을 제시', value: 'C' },
+                { label: '다른 사람들과 잘 어울림', value: 'I' },
+                { label: '필요한 경우에만 의견을 제시', value: 'S' },
+                { label: '대화 주도보다는 정확한 정보 제공에 집중', value: 'C' },
             ],
         },
         {
-            question: 'OO은 업무 중 같이 일하는 상대의 다양한 상황들을 파악하려고 하나요?',
+            question: 'OO님은 업무 중 같이 일하는 상대의 다양한 상황들을 파악하려고 하나요?',
             options: [
                 { label: '타인의 상황보다는 주로 목표 달성에 집중', value: 'D' },
                 { label: '모든 이의 감정을 잘 파악하려고 노력', value: 'I' },
@@ -24,7 +25,7 @@ const questionsTemplate = [
             ],
         },
         {
-            question: 'OO은 목표를 달성하기 위해 세부적인 계획을 잘 세우나요?',
+            question: 'OO님은 목표를 달성하기 위해 세부적인 계획을 잘 세우나요?',
             options: [
                 { label: '전체적인 전략 구상에 집중', value: 'D' },
                 { label: '계획보다는 사람들과의 상호작용을 중시', value: 'I' },
@@ -35,7 +36,7 @@ const questionsTemplate = [
     ],
     [
         {
-            question: 'OO은 새로운 아이디어를 제시하는 것을 잘하나요?',
+            question: 'OO님은 새로운 아이디어를 제시하는 것을 잘하나요?',
             options: [
                 { label: '새로운 아이디어를 강하게 제시', value: 'D' },
                 { label: '창의적인 아이디어를 제시', value: 'I' },
@@ -44,7 +45,7 @@ const questionsTemplate = [
             ],
         },
         {
-            question: 'OO은 여러가지 변수를 고려해서 대안을 생각하는 편인가요?',
+            question: 'OO님은 여러가지 변수를 고려해서 대안을 생각하는 편인가요?',
             options: [
                 { label: '아니요, 주로 하나의 목표에 집중', value: 'D' },
                 { label: '아니요, 상황에 따라 유연하게 대응', value: 'I' },
@@ -53,7 +54,7 @@ const questionsTemplate = [
             ],
         },
         {
-            question: 'OO의 업무에서의 의사 결정 방식은 어떤가요?',
+            question: 'OO님의 업무에서의 의사 결정 방식은 어떤가요?',
             options: [
                 { label: '빠르게 의사 결정', value: 'D' },
                 { label: '팀원들과 상의 후 결정', value: 'I' },
@@ -64,7 +65,7 @@ const questionsTemplate = [
     ],
     [
         {
-            question: 'OO의 업무에서의 성격은 어떤가요?',
+            question: 'OO님의 업무에서의 성격은 어떤가요?',
             options: [
                 { label: '주도적인 성격', value: 'D' },
                 { label: '사교적인 성격', value: 'I' },
@@ -73,7 +74,7 @@ const questionsTemplate = [
             ],
         },
         {
-            question: 'OO의 목표 달성 스타일은 ___한 경향이 있다.',
+            question: 'OO님의 목표 달성 스타일은 ___한 경향이 있다.',
             options: [
                 { label: '결과를 중시', value: 'D' },
                 { label: '사람을 중시', value: 'I' },
@@ -82,7 +83,7 @@ const questionsTemplate = [
             ],
         },
         {
-            question: '업무에서 OO의 역할은 주로 무엇인가요?',
+            question: '업무에서 OO님의 역할은 주로 무엇인가요?',
             options: [
                 { label: '지시하는 역할', value: 'D' },
                 { label: '영향을 미치는 역할', value: 'I' },
@@ -102,7 +103,6 @@ const Feedback = () => {
     const [profileData, setProfileData] = useState(null);
     const [answers, setAnswers] = useState({});
     const [scores, setScores] = useState({ D: 0, I: 0, S: 0, C: 0 });
-    const [longQuestions, setLongQuestions] = useState('');
 
     useEffect(() => {
         ProfileService.fetchUserProfile()
@@ -146,11 +146,32 @@ const Feedback = () => {
         } else {
             // 논의 필요
             FeedbackService.submitAnswers({
-                disc_character: scores,
-                feedback_count: 1, // Assuming a single feedback session for simplicity
-                feedback_id: profileData.id,
-                score: scores,
-                long_questions: longQuestions,
+                id: profileData.id,
+                user: profileData.username,
+                user_by: 'test1', // Assuming the user_by is 'test1', modify as necessary
+                work_styles: [], // Fill this based on your application logic
+                score: {
+                    d_score: scores.D,
+                    i_score: scores.I,
+                    s_score: scores.S,
+                    c_score: scores.C,
+                },
+                question_answers: [
+                    {
+                        question: {
+                            user: null,
+                            long_question: '과의 협업 경험에서 좋았던 점은 무엇이었나요?',
+                        },
+                        answer: '답입니다.',
+                    },
+                    {
+                        question: {
+                            user: null,
+                            long_question: '과의 협업 경험에서 아쉬웠던 점은 무엇이었나요?',
+                        },
+                        answer: '답입니다.',
+                    },
+                ],
             })
                 .then(() => {
                     navigate('../FeedbackLong/FeedbackLong');

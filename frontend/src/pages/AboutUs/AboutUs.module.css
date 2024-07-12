@@ -15,8 +15,8 @@
     border-radius: 50px;
     background: #fff;
     flex-shrink: 0;
-    padding-left: 50px;
-    padding-right: 50px;
+    padding-left: 100px;
+    padding-right: 100px;
     margin-top: 50px;
     margin-bottom: 50px;
     font-family: pretendard;
@@ -73,26 +73,30 @@
 }
 
 .leftAnswer {
-    width: 650px;
+    width: 100%;
 }
 
 .rightAnswer {
-    width: 400px;
-    height: 400px;
+    width: 450px;
+    height: 450px;
     flex-shrink: 0;
-    background: url('/public/images/discImage.png') lightgray 50% / cover no-repeat;
+    background: url('/public/images/discImage.png') no-repeat center center;
+    background-size: cover;
+    background-color: #ffffff;
 }
 
 .types_1 {
     display: flex;
     gap: 10px;
     margin-bottom: 20px;
+    cursor: pointer;
 }
 
 .types_2 {
     display: flex;
     gap: 10px;
     margin-bottom: 70px;
+    cursor: pointer;
 }
 
 .type {
@@ -111,16 +115,9 @@
     text-align: center;
 }
 
-.discImage {
-    width: 100%;
-    max-width: 400px;
-    display: block;
-    margin: 0 auto 20px auto;
-    background: url('/public/images/discImage.png');
-}
-
 .typeCards {
     display: flex;
+    flex-wrap: wrap;
     margin-top: 50px;
     justify-content: space-around;
 }
@@ -144,7 +141,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    cursor: pointer;
+    scroll-margin-top: 50px;
 }
 
 .typeDescription {
@@ -159,4 +156,116 @@
     font-weight: 600;
     margin-top: 30px;
     margin-bottom: 10px;
+}
+
+/* 반응형 스타일 */
+@media (max-width: 1024px) {
+    .title {
+        font-size: 48px;
+    }
+
+    .answer_1,
+    .answer_2 {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .rightAnswer {
+        width: 100%;
+        height: auto;
+    }
+}
+
+@media (max-width: 768px) {
+    .aboutContainer {
+        width: 90%;
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+
+    .title {
+        font-size: 36px;
+    }
+
+    .questionTitle {
+        font-size: 24px;
+    }
+
+    .answer_1,
+    .answer_2 {
+        font-size: 20px;
+    }
+
+    .worklog {
+        font-size: 28px;
+    }
+
+    .type {
+        width: 100px;
+        height: 32px;
+        font-size: 16px;
+        line-height: 32px;
+    }
+
+    .typeCard {
+        width: 180px;
+        height: 50px;
+        font-size: 20px;
+    }
+
+    .subtitle {
+        font-size: 24px;
+    }
+
+    .typeDescription,
+    .typeQuestion {
+        font-size: 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .aboutContainer {
+        width: 100%;
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+    .title {
+        font-size: 28px;
+    }
+
+    .questionTitle {
+        font-size: 20px;
+    }
+
+    .answer_1,
+    .answer_2 {
+        font-size: 18px;
+    }
+
+    .worklog {
+        font-size: 24px;
+    }
+
+    .type {
+        width: 80px;
+        height: 28px;
+        font-size: 14px;
+        line-height: 28px;
+    }
+
+    .typeCard {
+        width: 150px;
+        height: 40px;
+        font-size: 18px;
+    }
+
+    .subtitle {
+        font-size: 20px;
+    }
+
+    .typeDescription,
+    .typeQuestion {
+        font-size: 18px;
+    }
 }

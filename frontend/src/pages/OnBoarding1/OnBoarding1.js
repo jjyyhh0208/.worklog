@@ -10,17 +10,39 @@ const OnBoarding1 = () => {
         navigate(`/on-boarding/${page}`);
     };
 
+    const handleContainerClick = () => {
+        navigate('/on-boarding/2');
+    };
+
     const getDotClassName = (page) => {
         return location.pathname === `/on-boarding/${page}` ? styles.dotBlue : styles.dotGray;
     };
 
     return (
-        <div className={styles.container}>
+        <div className={styles.container} onClick={handleContainerClick}>
             <h1 className={styles.h1}>.WORKLOG</h1>
             <div className={styles.dotBox}>
-                <div className={getDotClassName(1)} onClick={() => handleDotClick(1)}></div>
-                <div className={getDotClassName(2)} onClick={() => handleDotClick(2)}></div>
-                <div className={getDotClassName(3)} onClick={() => handleDotClick(3)}></div>
+                <div
+                    className={getDotClassName(1)}
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        handleDotClick(1);
+                    }}
+                ></div>
+                <div
+                    className={getDotClassName(2)}
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        handleDotClick(2);
+                    }}
+                ></div>
+                <div
+                    className={getDotClassName(3)}
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        handleDotClick(3);
+                    }}
+                ></div>
             </div>
             <div className={styles.descriptionContainer}>
                 <span className={styles.description}>

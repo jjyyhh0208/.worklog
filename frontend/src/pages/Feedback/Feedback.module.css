@@ -99,6 +99,10 @@
     margin-right: 5px;
 }
 
+.scores label:hover span {
+    background-color: #b7b7b7; /* 마우스 오버 시 색상 */
+    color: #fff;
+}
 .scores input:checked + span {
     background-color: #ffa500; /* 선택된 항목의 색상 */
     color: #fff;
@@ -114,33 +118,166 @@
 
 .feedbackNextContainer button {
     display: inline-block;
-    padding: 10px 20px;
-    font-size: 16px;
+    padding: 13px 25px;
+    font-size: 18px;
     color: #fff;
     background-color: #4053ff;
     border: none;
     border-radius: 15.337px;
     cursor: pointer;
     margin-top: 25px;
-    transform: translate(-50%, -50%);
+    transform: translate(-30%, -50%);
 }
 
 button:hover {
     background-color: #0056b3;
 }
+
 .feedbackNextContainer svg {
     width: 40px;
 }
-/* Page Indicator Style */
+
+/* 페이지 인디케이터 스타일 */
 .pageIndicator {
     position: absolute;
-    top: 20px;
-    right: 40px;
-    font-size: 16px;
+    top: 30px;
+    right: 50px;
+    font-size: 18px;
     font-weight: bold;
     color: #000000;
     background-color: #e1e1e1;
     padding: 5px 10px;
     border-radius: 5px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* 반응형 스타일 */
+@media (max-width: 1024px) {
+    .feedbackPage {
+        padding-left: 50px;
+        padding-right: 50px;
+        width: 90%;
+    }
+
+    .optionGroup {
+        width: 70%;
+    }
+
+    .optionGroup p {
+        width: 300px;
+        font-size: 14px;
+    }
+
+    .optionGroup .scores {
+        width: 150px;
+    }
+
+    .scores label {
+        font-size: 14px;
+    }
+
+    .scores label span {
+        width: 20px;
+        height: 20px;
+        line-height: 20px;
+    }
+
+    .progressBar {
+        width: 200px;
+    }
+}
+
+@media (max-width: 768px) {
+    .feedbackPage {
+        padding-left: 30px;
+        padding-right: 30px;
+        width: 95%;
+    }
+
+    .optionGroup {
+        flex-direction: column;
+        align-items: flex-start;
+        width: 100%;
+    }
+
+    .optionGroup p {
+        width: 100%;
+        font-size: 14px;
+    }
+
+    .optionGroup .scores {
+        width: 100%;
+        justify-content: flex-start;
+    }
+
+    .scores label {
+        margin-right: 5px;
+        font-size: 12px;
+    }
+
+    .scores label span {
+        width: 20px;
+        height: 20px;
+        line-height: 20px;
+    }
+
+    .progressBar {
+        width: 150px;
+    }
+
+    .feedbackNextContainer {
+        position: static;
+        margin-top: 20px;
+    }
+
+    .feedbackNextContainer button {
+        width: 100%;
+    }
+
+    .pageIndicator {
+        position: static;
+        margin-top: 20px;
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 480px) {
+    .feedbackPage {
+        padding-left: 20px;
+        padding-right: 20px;
+        width: 100%;
+    }
+
+    .optionGroup p {
+        font-size: 12px;
+    }
+
+    .scores label {
+        font-size: 10px;
+    }
+
+    .scores label span {
+        width: 18px;
+        height: 18px;
+        line-height: 18px;
+    }
+
+    .progressBar {
+        width: 100px;
+    }
+
+    .feedbackNextContainer {
+        position: static;
+        margin-top: 10px;
+    }
+
+    .feedbackNextContainer button {
+        width: 100%;
+    }
+
+    .pageIndicator {
+        position: static;
+        margin-top: 10px;
+        font-size: 12px;
+    }
 }
