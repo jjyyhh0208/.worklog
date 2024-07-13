@@ -38,7 +38,12 @@ CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_HEADERS = '*'
 
 # CSRF
-CSRF_TRUSTED_ORIGINS = ["http://localhost:8000", "http://127.0.0.1:8000", ".ap-northeast-2.compute.amazonaws.com"]
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:8000", 
+    "http://127.0.0.1:8000", 
+    "http://ec2-43-202-115-16.ap-northeast-2.compute.amazonaws.com"
+    ]
+
 CSRF_COOKIE_NAME = "csrftoken"
 CSRF_COOKIE_HTTPONLY = False
 
