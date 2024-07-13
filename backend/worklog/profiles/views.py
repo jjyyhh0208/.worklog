@@ -1,9 +1,13 @@
 from rest_framework import viewsets, generics, status
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
+from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly, AllowAny
 from rest_framework.authtoken.models import Token
+import logging
+from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.decorators import action
 from django.shortcuts import get_object_or_404
+from dj_rest_auth.views import LoginView
+from dj_rest_auth.registration.views import RegisterView
 from .models import User, WorkStyle, Interest, ShortQuestion, LongQuestion, QuestionAnswer, Score, Feedback
 from .permissions import UnauthenticatedReadOrSafeMethods
 from .serializers import (
@@ -17,7 +21,19 @@ from .serializers import (
 
 from dj_rest_auth.registration.views import RegisterView
 
+logger = logging.getLogger(__name__)
 
+class CustomLoginView(ObtainAuthToken):
+    def post(self, request, *args, **kwargs):
+        logger.debug(f"Login request data: {request.data}")
+        serializer = self.serializer_class(data=request.data, context={'request': request})
+        serializer.is_valid(raise_exception=True)
+        user = serializer.validated_data['user']
+        token, created = Token.objects.get_or_create(user=user)
+        return Response({'key': token.key})
+    
+class CustomRegisterView(RegisterView):
+    permission_classes = [AllowAny]
 
 #유저의 정보를 불러오는 ViewSet -> retrieve인 경우: UserProfileSerializer를 사용하여 유저의 이름, 성별, 나이를 불러옴
 #update, partial_update인 경우: UserWorkInterestSerializer를 사용하여 유저의 업무 성향, 관심 직종을 불러옴
