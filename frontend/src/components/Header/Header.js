@@ -32,7 +32,7 @@ function Header({ isLoggedIn }) {
 
     return (
         <div className={styles.header}>
-            <Link to="/">
+            <Link to="/my-profile">
                 <span className={styles.logo}>.WORKLOG</span>
             </Link>
             <nav className={styles.nav}>
