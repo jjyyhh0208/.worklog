@@ -30,15 +30,20 @@ DEBUG = True
 ALLOWED_HOSTS = []
 
 # CORS
-CORS_ORIGIN_ALLOW_ALL = True
+CORS_ORIGIN_ALLOW_ALL = False
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
+        "http://ec2-43-202-115-16.ap-northeast-2.compute.amazonaws.com",
+
 ]
 CORS_ALLOW_HEADERS = '*'
+CSRF_COOKIE_HTTPONLY = False
+
 
 # CSRF
 # CSRF
-CSRF_TRUSTED_ORIGINS = ["http://localhost:8000", "http://localhost:3000"]
+CSRF_TRUSTED_ORIGINS = ["http://localhost:8000", "http://localhost:3000",    "http://ec2-43-202-115-16.ap-northeast-2.compute.amazonaws.com",
+]
 
 
 # Application definition
