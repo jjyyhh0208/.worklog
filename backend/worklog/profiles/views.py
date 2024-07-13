@@ -2,6 +2,8 @@ from rest_framework import viewsets, generics, status
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly, AllowAny
 from rest_framework.authtoken.models import Token
+import logging
+from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.decorators import action
 from django.shortcuts import get_object_or_404
 from dj_rest_auth.views import LoginView
@@ -19,13 +21,17 @@ from .serializers import (
 
 from dj_rest_auth.registration.views import RegisterView
 
+logger = logging.getLogger(__name__)
 
-class CustomLoginView(LoginView):
-    permission_classes = [AllowAny]
-
+class CustomLoginView(ObtainAuthToken):
     def post(self, request, *args, **kwargs):
-        return super().post(request, *args, **kwargs)
-
+        logger.debug(f"Login request data: {request.data}")
+        serializer = self.serializer_class(data=request.data, context={'request': request})
+        serializer.is_valid(raise_exception=True)
+        user = serializer.validated_data['user']
+        token, created = Token.objects.get_or_create(user=user)
+        return Response({'key': token.key})
+    
 class CustomRegisterView(RegisterView):
     permission_classes = [AllowAny]
 
