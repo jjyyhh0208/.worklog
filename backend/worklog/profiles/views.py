@@ -1,8 +1,6 @@
 from rest_framework import viewsets, generics, status
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly, AllowAny
-from rest_framework.authtoken.models import Token
-from rest_framework.authtoken.views import ObtainAuthToken
+from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework.decorators import action
 from django.shortcuts import get_object_or_404
 from dj_rest_auth.views import LoginView
@@ -69,10 +67,8 @@ class InterestViewSet(viewsets.ReadOnlyModelViewSet):
 class UserProfileView(generics.RetrieveAPIView):
     queryset = User.objects.all()
     serializer_class = UserProfileSerializer
-    permission_classes = [IsAuthenticated]
-    
-    def get_object(self):
-        return self.request.user
+    permission_classes = []
+    lookup_field = 'username'
     
     
 #회원가입 이후 유저의 이름, 성별, 나이 설정하기 위한 ViewSet
@@ -130,7 +126,7 @@ class LongQuestionViewSet(viewsets.ModelViewSet):
     permission_classes = [UnauthenticatedReadOrSafeMethods | IsAuthenticatedOrReadOnly]
 
 # GET: user 명에 맞는 서술형 질문 목록을 불러옵니다.
-class UserLongQuestionsView(generics.ListAPIView):
+class UserLongQuestionView(generics.ListAPIView):
     serializer_class = LongQuestionSerializer
     permission_classes = []
 

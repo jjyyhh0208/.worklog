@@ -97,6 +97,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
     work_styles = WorkStyleSerializer(many=True)
     interests = InterestSerializer(many=True)
     feedback_count = serializers.SerializerMethodField()
+    disc_character = serializers.SerializerMethodField()
     
     class Meta:
         model = User
@@ -104,6 +105,9 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
     def get_feedback_count(self, obj): # 피드백 횟수 추가
         return obj.feedback_count
+    
+    def get_disc_character(self, obj): # 타입 계산 추가
+        return obj.calculate_disc_character
     
 # 아이디 중복 검사를 위한 로직
 class UserUniqueIdSerializer(serializers.ModelSerializer):
@@ -150,7 +154,7 @@ class FeedbackSerializer(serializers.ModelSerializer):
     user_by = serializers.SlugRelatedField(slug_field='username', queryset=User.objects.all(), allow_null=True)
     work_styles = WorkStyleSerializer(many=True)
     score = ScoreSerializer(allow_null=True)
-    question_answers = QuestionAnswerSerializer(many=True)
+    question_answers = QuestionAnswerSerializer(many=True)  # Removed source keyword
 
     class Meta:
         model = Feedback
@@ -173,11 +177,11 @@ class FeedbackSerializer(serializers.ModelSerializer):
             score = Score.objects.create(**score_data)
             feedback.score = score
         
-        # Question - Answer 쌍 추가
+        # Question - Answer pairs
         for question_answer_data in question_answers_data:
             question_data = question_answer_data.pop('question')
             question, created = LongQuestion.objects.get_or_create(**question_data)
-            question_answer = QuestionAnswer.objects.create(feedback=feedback, question=question, **question_answer_data)
+            question_answer = QuestionAnswer.objects.create(question=question, **question_answer_data)
             feedback.question_answers.add(question_answer)
         
         feedback.save()
@@ -205,12 +209,12 @@ class FeedbackSerializer(serializers.ModelSerializer):
             else:
                 instance.score = Score.objects.create(**score_data)
         
-        # question answers
+        # Question - Answer pairs
         instance.question_answers.clear()
         for question_answer_data in question_answers_data:
             question_data = question_answer_data.pop('question')
             question, created = LongQuestion.objects.get_or_create(**question_data)
-            question_answer = QuestionAnswer.objects.create(feedback=instance, question=question, **question_answer_data)
+            question_answer = QuestionAnswer.objects.create(question=question, **question_answer_data)
             instance.question_answers.add(question_answer)
         
         instance.save()
