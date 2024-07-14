@@ -209,10 +209,10 @@ const Feedback = () => {
                             ></div>
                         ))}
                     </div>
-                    <p>
+                    <h3>
                         각 항목에 대해서 1~4점 중 가장 {profileData.name}과 가까운 것을 체크해주세요. <br /> **[ 1: 매우
                         아니다, 2: 아닌 편이다, 3: 그런 편이다, 4: 매우 그렇다 ]
-                    </p>
+                    </h3>
                     {currentPageQuestions.map((q, index) => (
                         <div key={index} className={styles.question}>
                             <p>{q.question}</p>

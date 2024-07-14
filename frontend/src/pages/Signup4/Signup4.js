@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import styles from './Signup3.module.css';
+import styles from './Signup4.module.css';
 import { useNavigate } from 'react-router-dom';
 import ProfileService from '../../utils/ProfileService';
 
-function Signup3({ signUpInfo, setSignUpInfo }) {
+function Signup4({ signUpInfo, setSignUpInfo }) {
     const navigate = useNavigate();
+    const [error, setError] = useState('');
     const [selectedKeywords, setSelectedKeywords] = useState([]);
     const [keywords, setKeywords] = useState([]);
 
     useEffect(() => {
-        ProfileService.fetchWorkStyles()
+        ProfileService.fetchInterests()
             .then((data) => {
                 const fetchedKeywords = data.map((item) => item.name);
                 setKeywords(fetchedKeywords);
@@ -33,7 +34,7 @@ function Signup3({ signUpInfo, setSignUpInfo }) {
         setSelectedKeywords(newKeywords);
         setSignUpInfo({
             ...signUpInfo,
-            work_style: {
+            interest: {
                 keyword1: newKeywords[0] || '',
                 keyword2: newKeywords[1] || '',
                 keyword3: newKeywords[2] || '',
@@ -41,26 +42,30 @@ function Signup3({ signUpInfo, setSignUpInfo }) {
         });
     };
 
-    const handleNextClick = () => {
+    const handleCompleteClick = () => {
         const selectedKeywordIds = selectedKeywords.map((keyword) => {
             const foundKeyword = keywords.find((kw) => kw === keyword);
             return foundKeyword ? keywords.indexOf(foundKeyword) + 1 : null;
         });
 
-        ProfileService.setUserWorkStyles(selectedKeywordIds)
+        ProfileService.setUserInterest(selectedKeywordIds)
             .then(() => {
-                navigate('/signup/4');
+                navigate('/on-boarding/1');
             })
             .catch((error) => {
                 console.error('Error setting user work styles:', error);
             });
     };
-
+    const logoHandler = () => {
+        navigate('/');
+    };
     return (
         <div className={styles.container}>
-            <h1 className={styles.h1}>.WORKLOG</h1>
+            <h1 className={styles.h1} onClick={logoHandler}>
+                .WORKLOG
+            </h1>
             <h2 className={styles.h2}>기본 프로필 등록</h2>
-            <p className={styles.instruction}>스스로 생각하기에 본인의 업무 스타일은 어떤 이미지가 돋보이나요?</p>
+            <p className={styles.instruction}>관심있는 업종/직군 분야를 골라 주세요.</p>
             <div className={styles.instructionbox}>
                 <svg xmlns="http://www.w3.org/2000/svg" width="25" height="26" viewBox="0 0 25 26" fill="none">
                     <g clipPath="url(#clip0_231_547)">
@@ -93,18 +98,12 @@ function Signup3({ signUpInfo, setSignUpInfo }) {
                 ))}
             </div>
             <div className={styles.nextbox}>
-                <button className={styles.nextBtn} type="submit" onClick={handleNextClick}>
-                    NEXT
+                <button className={styles.completeBtn} type="submit" onClick={handleCompleteClick}>
+                    가입 완료
                 </button>
-                <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="0 0 50 50" fill="none">
-                    <path
-                        d="M25.0314 27.7727L7.97165 48.5912C6.79252 50.0301 4.88585 50.0301 3.71927 48.5912L0.884345 45.1317C-0.294782 43.6927 -0.294782 41.366 0.884345 39.9424L12.9767 25.1857L0.884345 10.4291C-0.294782 8.99015 -0.294782 6.66338 0.884345 5.23976L3.70672 1.7496C4.88585 0.310679 6.79252 0.310679 7.95911 1.7496L25.0188 22.5681C26.2105 24.007 26.2105 26.3338 25.0314 27.7727ZM49.1157 22.5681L32.0559 1.7496C30.8768 0.310679 28.9701 0.310679 27.8036 1.7496L24.9686 5.20915C23.7895 6.64807 23.7895 8.97485 24.9686 10.3985L37.061 25.1551L24.9686 39.9117C23.7895 41.3507 23.7895 43.6774 24.9686 45.1011L27.8036 48.5606C28.9827 49.9995 30.8894 49.9995 32.0559 48.5606L49.1157 27.7421C50.2948 26.3338 50.2948 24.007 49.1157 22.5681Z"
-                        fill="#4053FF"
-                    />
-                </svg>
             </div>
         </div>
     );
 }
 
-export default Signup3;
+export default Signup4;

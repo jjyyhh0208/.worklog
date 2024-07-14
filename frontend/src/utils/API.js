@@ -2,6 +2,19 @@ import axios from 'axios';
 
 const baseURL = process.env.REACT_APP_BASE_URL;
 
+// CSRF 토큰을 가져오는 함수
+function getCsrfToken() {
+    const name = 'csrftoken';
+    const cookies = document.cookie.split(';');
+    for (let i = 0; i < cookies.length; i++) {
+        const cookie = cookies[i].trim();
+        if (cookie.startsWith(name + '=')) {
+            return cookie.substring(name.length + 1);
+        }
+    }
+    return '';
+}
+
 // Axios 인스턴스 생성
 const API = axios.create({
     baseURL: baseURL,

@@ -1,0 +1,229 @@
+/* container 스타일 */
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 226px;
+}
+
+/* h1 스타일 */
+.h1 {
+    position: absolute;
+    top: 27px;
+    left: 36px;
+    color: #4053ff;
+    text-align: center;
+    font-size: 47.962px;
+    font-weight: 800;
+    line-height: normal;
+}
+
+/* h2 스타일 */
+.h2 {
+    position: absolute;
+    top: 27px;
+    right: 36px;
+    color: #000;
+    font-size: 30px;
+    font-weight: 700;
+    line-height: normal;
+    margin-bottom: 20px;
+}
+
+/* instructionbox 스타일 */
+.instructionbox {
+    position: absolute;
+    margin-top: 100px;
+    margin-left: -350px;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 700px;
+    height: 26px;
+    flex-shrink: 0;
+}
+
+/* span 스타일 */
+.span {
+    color: #9b8f8f;
+    font-size: 18px;
+    font-weight: 500;
+    line-height: normal;
+    position: absolute;
+    justify-self: start;
+    margin-top: 5px;
+    margin-left: 30px;
+}
+
+/* instruction 스타일 */
+.instruction {
+    color: #4053ff;
+    font-size: 40px;
+    font-weight: 600;
+    line-height: normal;
+    margin-left: -420px;
+}
+
+/* keywordsContainer 스타일 */
+.keywordsContainer {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: start;
+    gap: 10px;
+    width: 120%;
+    max-width: 800px;
+    height: 386px;
+    position: absolute;
+    top: 35%;
+    left: 25%;
+}
+
+/* keywordButton 스타일 */
+.keywordButton {
+    padding: 15 20px;
+    border: 1px solid #ccc;
+    background-color: #f0f0f0;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+    border-radius: 10px;
+    width: fit-content;
+    min-width: 148px;
+    height: 50px;
+    flex-shrink: 0;
+    background: #ccd1ff;
+    color: #fff;
+    font-size: 30px;
+    font-weight: 700;
+    line-height: 50px;
+    text-align: center;
+}
+
+.keywordButton.selected {
+    background: #4053ff;
+    color: white;
+}
+
+/* completeBtn 스타일 */
+.completeBtn {
+    width: 148px;
+    height: 49.109px;
+    flex-shrink: 0;
+    border-radius: 15.337px;
+    background: #4053ff;
+    border: none;
+    color: #fff;
+    font-size: 24px;
+    font-weight: 700;
+    line-height: normal;
+    position: absolute;
+    top: 70%;
+    right: 30%;
+}
+
+/* Media queries for responsiveness */
+@media (max-width: 1024px) {
+    .h1 {
+        font-size: 36px;
+        top: 20px;
+        left: 20px;
+    }
+
+    .h2 {
+        font-size: 24px;
+        top: 20px;
+        right: 20px;
+    }
+
+    .instructionbox {
+        margin-left: 0;
+        width: 80%;
+    }
+
+    .instruction {
+        font-size: 32px;
+        margin-left: 0;
+    }
+
+    .keywordsContainer {
+        top: 200px;
+        left: 0;
+        width: 100%;
+    }
+
+    .completeBtn {
+        top: 650px;
+        right: 150px;
+    }
+}
+
+@media (max-width: 768px) {
+    .container {
+        margin-top: 150px;
+    }
+
+    .h1 {
+        font-size: 30px;
+        top: 15px;
+        left: 15px;
+    }
+
+    .h2 {
+        font-size: 20px;
+        top: 15px;
+        right: 15px;
+    }
+
+    .instructionbox {
+        width: 100%;
+    }
+
+    .instruction {
+        font-size: 28px;
+        margin-left: 0;
+    }
+
+    .keywordsContainer {
+        top: 150px;
+        left: 0;
+        width: 100%;
+    }
+
+    .completeBtn {
+        top: 600px;
+        right: 100px;
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        margin-top: 100px;
+    }
+
+    .h1 {
+        font-size: 24px;
+        top: 10px;
+        left: 10px;
+    }
+
+    .h2 {
+        font-size: 18px;
+        top: 10px;
+        right: 10px;
+    }
+
+    .instruction {
+        font-size: 24px;
+        margin-left: 0;
+    }
+
+    .keywordsContainer {
+        top: 100px;
+        left: 0;
+        width: 100%;
+    }
+
+    .completeBtn {
+        top: 550px;
+        right: 50px;
+    }
+}

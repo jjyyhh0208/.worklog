@@ -32,7 +32,7 @@ function Header({ isLoggedIn }) {
 
     return (
         <div className={styles.header}>
-            <Link to="/">
+            <Link to="/my-profile">
                 <span className={styles.logo}>.WORKLOG</span>
             </Link>
             <nav className={styles.nav}>
@@ -47,7 +47,7 @@ function Header({ isLoggedIn }) {
                 </Link>
                 <Link to="/friends" className={styles.navItem}>
                     둘러보기
-                    <svg xmlns="http://www.w3.org/2000/svg" width="27" height="23" viewBox=" 0 25 23" fill="none">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="27" height="23" viewBox=" 0 0 25 23" fill="none">
                         <path
                             d="M0 0.388672V3.57694H25V0.388672H0ZM0 9.85783V13.0461H25V9.85783H0ZM0 19.4226V22.6109H25V19.4226H0Z"
                             fill="#4053FF"

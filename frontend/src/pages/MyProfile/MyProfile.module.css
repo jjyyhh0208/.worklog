@@ -63,7 +63,6 @@
 .profileDetails p {
     margin: 5px 0;
     color: #000;
-    font-family: Inter;
     font-size: 25px;
     font-style: normal;
     font-weight: 700;
@@ -79,7 +78,7 @@
     width: 238px;
     height: 71.539px;
     flex-shrink: 0;
-    color: #FFF;
+    color: #fff;
     text-align: center;
     font-family: 'Inter';
     font-size: 24px;
@@ -102,7 +101,7 @@
     justify-content: center;
     align-items: center;
     border-radius: 11.812px;
-    background: #FFF;
+    background: #fff;
     width: 76px;
     height: 76px;
     flex-shrink: 0;
@@ -117,8 +116,8 @@
     width: 340px;
     height: 46px;
     flex-shrink: 0;
-    background-color: #9B8F8F;
-    color: #FFF;
+    background-color: #9b8f8f;
+    color: #fff;
     font-family: Inter;
     font-size: 21px;
     font-style: normal;
@@ -135,8 +134,8 @@
     width: 180px;
     height: 46px;
     flex-shrink: 0;
-    background-color: #9B8F8F;
-    color: #FFF;
+    background-color: #9b8f8f;
+    color: #fff;
     font-family: Inter;
     font-size: 21px;
     font-style: normal;
@@ -164,7 +163,6 @@
 
 .section h2 {
     color: #000;
-    font-family: Inter;
     font-size: 36px;
     font-style: normal;
     font-weight: 800;
@@ -184,7 +182,8 @@
     margin-top: 10px;
 }
 
-.styleTagMe, .interestTag {
+.styleTagMe,
+.interestTag {
     padding: 10px 20px;
     border-radius: 20px;
     font-size: 14px;
@@ -192,9 +191,8 @@
     height: 30px;
     flex-shrink: 0;
     border-radius: 53.409px;
-    background: #909BFF;
-    color: #FFF;
-    font-family: Inter;
+    background: #909bff;
+    color: #fff;
     font-size: 24px;
     font-style: normal;
     font-weight: 700;
@@ -212,8 +210,7 @@
     flex-shrink: 0;
     border-radius: 53.409px;
     background: #ffbf1c;
-    color: #FFF;
-    font-family: Inter;
+    color: #fff;
     font-size: 24px;
     font-style: normal;
     font-weight: 700;
@@ -230,9 +227,8 @@
     height: 30px;
     flex-shrink: 0;
     border-radius: 53.409px;
-    background: #909BFF;
-    color: #FFF;
-    font-family: Inter;
+    background: #909bff;
+    color: #fff;
     font-size: 24px;
     font-style: normal;
     font-weight: 700;
@@ -260,7 +256,6 @@
     font-weight: bold;
     margin-right: 10px;
     color: #000;
-    font-family: Inter;
     font-size: 24px;
     font-style: normal;
     font-weight: 700;
@@ -278,13 +273,13 @@
 
 .progress {
     height: 100%;
-    background-color: #4053FF;
+    background-color: #4053ff;
     border-radius: 20px;
 }
 
 .score {
     font-weight: bold;
-    color: #9B8F8F;
+    color: #9b8f8f;
 }
 
 .typeCards {
@@ -323,28 +318,25 @@
     margin-bottom: 10px;
 }
 
-
-.aiContainer{
+.aiContainer {
     margin: 20px;
 }
 
-.aiHeader{
+.aiHeader {
     display: flex;
     align-items: center;
     margin-left: 30px;
     margin-top: 50px;
- 
 }
 
-.aiHeader svg{
+.aiHeader svg {
     margin-left: 10px;
     margin-right: 5px;
 }
-.aiContainer h2{
+.aiContainer h2 {
     margin-top: 30px;
     margin-left: 0px;
-    color: #4053FF;
-    font-family: Inter;
+    color: #4053ff;
     font-size: 30px;
     font-style: normal;
     font-weight: 700;
@@ -357,10 +349,9 @@
     padding: 20px;
 }
 
-.aiSummary p{
+.aiSummary p {
     color: #000;
     text-align: center;
-    font-family: Inter;
     font-size: 24px;
     font-style: normal;
     font-weight: 600;
@@ -376,11 +367,10 @@
 
 .feedbackSummary {
     flex: 1;
-    background-color: rgba(204, 209, 255, 0.20);
+    background-color: rgba(204, 209, 255, 0.2);
     border-radius: 20px;
     margin-right: 10px;
     color: #000;
-    font-family: Inter;
     font-size: 20px;
     font-style: normal;
     line-height: normal;
