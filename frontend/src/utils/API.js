@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const baseURL = process.env.REACT_APP_BASE_URL;
+const baseURL = 'http://ec2-43-202-115-16.ap-northeast-2.compute.amazonaws.com/';
 
 // Axios 인스턴스 생성
 const API = axios.create({
@@ -18,6 +18,12 @@ API.interceptors.request.use(
         if (token) {
             config.headers['Authorization'] = `Token ${token}`;
         }
+        // CSRF 토큰 추가
+        const csrfToken = getCsrfToken();
+        if (csrfToken) {
+            config.headers['X-CSRFToken'] = csrfToken;
+        }
+
         return config;
     },
     (error) => {

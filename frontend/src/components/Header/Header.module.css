@@ -21,6 +21,7 @@ a {
     height: 93px;
     align-items: center;
     flex-shrink: 0;
+    width: 100%;
 }
 
 .nav {
@@ -61,9 +62,7 @@ a {
     line-height: normal;
     margin-right: 30px;
 }
-.auth:hover {
-    color: #0056b3;
-}
+
 .userName {
     font-weight: bold;
 }

@@ -1,0 +1,10 @@
+body {
+    font-family: 'pretendard', sans-serif;
+
+    display: flex;
+    justify-content: center;
+    min-height: 1024px;
+    min-width: 1440px;
+    overflow-y: auto;
+    overflow-x: auto;
+}

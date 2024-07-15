@@ -19,6 +19,7 @@ import Feedback from './pages/Feedback/Feedback';
 import AuthRedirect from './components/AuthRedirect';
 import ProtectedRoute from './components/ProtectedRoute';
 import axios from 'axios';
+import './styles/global.css'; // 글로벌 CSS 파일 import
 
 axios.defaults.xsrfCookieName = 'csrftoken';
 axios.defaults.xsrfHeaderName = 'X-CSRFToken';
