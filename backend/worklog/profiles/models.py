@@ -7,7 +7,7 @@ class User(AbstractUser):
         ('F', '여성'),
         ('N', '없음')
     ]
-    
+
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
     age = models.PositiveIntegerField(null=True, blank=True)
     name = models.CharField(max_length=50)
@@ -20,6 +20,53 @@ class User(AbstractUser):
     @property
     def feedback_count(self):
         return self.feedbacks_from.count()
+    
+    @property
+    def calculate_disc_character(self):
+        CHARACTER = {
+            'ID': '커뮤니케이터',
+            'IS': '중재자',
+            'SI': '프로세서',
+            'SC': '애널리스트',
+            'CS': '디테일리스트',
+            'CD': '컨트롤 타워',
+            'DC': '목표 달성자',
+            'DI': '불도저'
+        }
+    
+        feedbacks = self.feedbacks_from.all()
+        d_score_total, i_score_total = 0, 0
+        s_score_total, c_score_total = 0, 0
+
+        if feedbacks.exists(): # 피드백이 있는 경우
+            for feedback in feedbacks:
+                if feedback.score:
+                    d_score_total += feedback.score.d_score
+                    i_score_total += feedback.score.i_score
+                    s_score_total += feedback.score.s_score
+                    c_score_total += feedback.score.c_score
+
+            scores = {
+                'D': d_score_total,
+                'I': i_score_total,
+                'S': s_score_total,
+                'C': c_score_total
+            }
+
+            sorted_scores = sorted(scores.items(), key=lambda item: item[1], reverse=True)
+            top_disc = str(sorted_scores[1][0][0]) + str(sorted_scores[1][0][0])
+            if top_disc not in CHARACTER: # 1,2등 type 내로 설명이 불가능할 때 1,3 등 값 활용
+                top_disc = str(sorted_scores[1][0][0]) + str(sorted_scores[3][0][0])
+            new_disc_character = CHARACTER[top_disc]
+
+        else:
+            new_disc_character = 'None'
+
+        if self.disc_character != new_disc_character:
+            self.disc_character = new_disc_character
+            self.save()
+
+        return self.disc_character
 
     def __str__(self):
         return self.username
@@ -54,7 +101,6 @@ class LongQuestion(models.Model):
         return self.long_question
 
 class QuestionAnswer(models.Model):
-    feedback = models.ForeignKey('Feedback', on_delete=models.CASCADE, related_name='question_answers')
     question = models.ForeignKey('LongQuestion', on_delete=models.CASCADE)
     answer = models.TextField()
 
@@ -75,7 +121,7 @@ class Feedback(models.Model):
     user_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='feedbacks_by')
     work_styles = models.ManyToManyField('WorkStyle', blank=False)
     score = models.OneToOneField('Score', on_delete=models.CASCADE, blank=True, null=True)
-    long_questions = models.ManyToManyField('QuestionAnswer', blank=False, related_name='feedbacks')
+    question_answers = models.ManyToManyField('QuestionAnswer', blank=True, related_name='feedbacks')
 
     def __str__(self):
-        return f"Feedback to {self.user_by if self.user is None else self.user.username}"
+        return f"Feedback to {self.user} by {self.user_by}"

@@ -49,8 +49,6 @@ const AdminService = {
             password: userData.password,
         };
 
-        console.log('로그인 요청 전:', requestData);
-
         return API.post('/profiles/auth/login/', requestData)
             .then((response) => {
                 console.log('로그인 요청 성공:', response.data);
