@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import ProfileService from '../../utils/ProfileService';
 import FeedbackService from '../../utils/FeedbackService';
 import keywordIcons from '../../components/KeywordIcons/KeywordIcons';
+import ProgressBar from '../../components/ProgressBar/ProgressBar'; // ProgressBar import
 
 function FeedbackIntro() {
     const navigate = useNavigate();
@@ -51,13 +52,10 @@ function FeedbackIntro() {
         } else {
             FeedbackService.submitAnswers({
                 id: profileData.id,
-                // user: profileData.username,
-                //user_by: 'test1', // Assuming the user_by is 'test1', modify as necessary
-                //score
                 work_styles: selectedKeywords,
             })
                 .then(() => {
-                    navigate('./pages/Feedback/Feedback');
+                    navigate('/feedback/1'); // navigate to feedback/1
                 })
                 .catch((error) => {
                     console.error('피드백을 제출하는 동안 오류가 발생했습니다.', error);
@@ -68,9 +66,8 @@ function FeedbackIntro() {
     return (
         <div className={styles.container}>
             <div className={styles.feedbackPage}>
-                <div className={styles.pageIndicator}>INTRO</div>
-
-                {/* 수정 필요 : 로그인된 유저말고 대상 유저의 이름이 나와야 한다. */}
+                <ProgressBar progress={20} /> {/* ProgressBar 추가 */}
+                <div className={styles.pageIndicator}>1/5</div>
                 <p className={styles.instruction}>
                     {profileData
                         ? `${profileData.name}님의 업무 스타일은 어떤 이미지가 돋보이나요?`

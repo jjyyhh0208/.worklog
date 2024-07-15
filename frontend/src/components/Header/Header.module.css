@@ -52,9 +52,9 @@ a {
     gap: 10px;
     flex-shrink: 0;
     border-radius: 20px;
-    background: #4053ff;
-    color: #fff;
-    font-size: 16px;
+    background: #ffffff;
+    color: #000000;
+    font-size: 20px;
     font-style: normal;
     font-weight: 700;
     line-height: normal;
@@ -71,11 +71,11 @@ a {
     color: rgb(255, 255, 255);
     border: none;
     padding: 5px 10px;
-    border-radius: 5px;
+    border-radius: 15px;
     cursor: pointer;
     text-decoration: none;
     font-weight: bolder;
-    background-color: #043eea;
+    background-color: #4053ff;
 }
 
 /* Media Queries for Responsiveness */

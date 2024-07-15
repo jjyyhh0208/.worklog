@@ -1,25 +1,34 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import styles from './Signup4.module.css';
-import { useNavigate } from 'react-router-dom';
 import ProfileService from '../../utils/ProfileService';
 
 function Signup4({ signUpInfo, setSignUpInfo }) {
     const navigate = useNavigate();
-    const [error, setError] = useState('');
-    const [selectedKeywords, setSelectedKeywords] = useState([]);
-    const [keywords, setKeywords] = useState([]);
+    const location = useLocation();
+    const isEditing = location.state?.isEditing || false;
+    const profileData = location.state?.profileData || {};
+
+    // Initialize selectedKeywords based on whether it is editing mode and if there are already selected interests
+    const initialSelectedKeywords = isEditing
+        ? profileData.interests?.map((interest) => interest.name).filter(Boolean) || []
+        : [];
+
+    const [selectedKeywords, setSelectedKeywords] = useState(initialSelectedKeywords); // Selected keywords state
+    const [keywords, setKeywords] = useState([]); // All available keywords state
 
     useEffect(() => {
+        // Fetch available keywords from the server
         ProfileService.fetchInterests()
             .then((data) => {
-                const fetchedKeywords = data.map((item) => item.name);
-                setKeywords(fetchedKeywords);
+                setKeywords(data.map((item) => item.name)); // Set keywords
             })
             .catch((error) => {
-                console.error('Error fetching work styles:', error);
+                console.error('Error fetching interests:', error);
             });
     }, []);
 
+    // Handle keyword click to toggle selection
     const handleKeywordClick = (keyword) => {
         let newKeywords = [...selectedKeywords];
         if (newKeywords.includes(keyword)) {
@@ -28,37 +37,49 @@ function Signup4({ signUpInfo, setSignUpInfo }) {
             if (newKeywords.length < 3) {
                 newKeywords.push(keyword);
             } else {
-                alert('최대 3개의 키워드만 선택 가능합니다.');
+                alert('You can select up to 3 keywords only.');
             }
         }
         setSelectedKeywords(newKeywords);
-        setSignUpInfo({
-            ...signUpInfo,
-            interest: {
+
+        // Update selected keywords in signUpInfo
+        setSignUpInfo((prevSignUpInfo) => ({
+            ...prevSignUpInfo,
+            interests: {
                 keyword1: newKeywords[0] || '',
                 keyword2: newKeywords[1] || '',
                 keyword3: newKeywords[2] || '',
             },
-        });
+        }));
     };
 
+    // Handle 'Complete' button click to save selected keywords
     const handleCompleteClick = () => {
-        const selectedKeywordIds = selectedKeywords.map((keyword) => {
-            const foundKeyword = keywords.find((kw) => kw === keyword);
-            return foundKeyword ? keywords.indexOf(foundKeyword) + 1 : null;
-        });
+        const selectedKeywordIds = selectedKeywords
+            .map((keyword) => {
+                const index = keywords.indexOf(keyword);
+                return index > -1 ? index + 1 : null;
+            })
+            .filter((id) => id !== null);
 
+        // Save selected keywords and navigate accordingly
         ProfileService.setUserInterest(selectedKeywordIds)
             .then(() => {
-                navigate('/on-boarding/1');
+                if (isEditing) {
+                    navigate('/my-profile'); // Navigate to profile page if editing
+                } else {
+                    navigate('/on-boarding/1'); // Navigate to onboarding page if signing up
+                }
             })
             .catch((error) => {
-                console.error('Error setting user work styles:', error);
+                console.error('Error setting user interests:', error);
             });
     };
+
     const logoHandler = () => {
-        navigate('/');
+        navigate('/'); // Navigate to home page when logo is clicked
     };
+
     return (
         <div className={styles.container}>
             <h1 className={styles.h1} onClick={logoHandler}>
@@ -99,7 +120,7 @@ function Signup4({ signUpInfo, setSignUpInfo }) {
             </div>
             <div className={styles.nextbox}>
                 <button className={styles.completeBtn} type="submit" onClick={handleCompleteClick}>
-                    가입 완료
+                    {isEditing ? '수정 완료' : '가입 완료'} {/* Change button text based on editing mode */}
                 </button>
             </div>
         </div>

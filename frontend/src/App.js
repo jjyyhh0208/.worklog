@@ -10,6 +10,7 @@ import FeedbackIntro from './pages/FeedbackIntro/FeedbackIntro';
 import Login from './pages/Login/Login';
 import Search from './pages/Search/Search';
 import MyProfile from './pages/MyProfile/MyProfile';
+import MyProfile11 from './pages/MyProfile/MyProfile11';
 import OnBoarding1 from './pages/OnBoarding1/OnBoarding1';
 import OnBoarding2 from './pages/OnBoarding2/OnBoarding2';
 import OnBoarding3 from './pages/OnBoarding3/OnBoarding3';
@@ -37,6 +38,7 @@ function App() {
     const renderHeader = () => {
         const pathsWithHeader = [
             '/my-profile',
+            '/my-profile11',
             '/about-us',
             '/search',
             '/friends',
@@ -72,7 +74,9 @@ function App() {
                 <Route path="/on-boarding/3" element={<OnBoarding3 />} />
 
                 {/* 보호된 라우트 */}
-                <Route path="/my-profile" element={withAuth(MyProfile)} />
+                <Route path="/my-profile" element={<MyProfile />} />
+                <Route path="/my-profile11" element={<MyProfile11 />} />
+                {/* <Route path="/my-profile" element={withAuth(MyProfile)} /> */}
             </Routes>
         </>
     );

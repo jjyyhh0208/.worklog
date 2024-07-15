@@ -1,12 +1,22 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styles from './Signup2.module.css';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import ProfileService from '../../utils/ProfileService';
 
 function Signup2({ signUpInfo, setSignUpInfo }) {
     const navigate = useNavigate();
-    const [selectedGender, setSelectedGender] = useState(signUpInfo.gender);
-    const [selectedAge, setSelectedAge] = useState(signUpInfo.age || ''); // State to hold selected age
+    const location = useLocation();
+    const isEditing = location.state?.isEditing || false;
+    const profileData = location.state?.profileData || {};
+
+    const [selectedGender, setSelectedGender] = useState(signUpInfo.gender || profileData.gender || '');
+    const [selectedAge, setSelectedAge] = useState(signUpInfo.age || profileData.age || ''); // State to hold selected age
+
+    useEffect(() => {
+        if (isEditing) {
+            setSignUpInfo(profileData);
+        }
+    }, [isEditing, profileData, setSignUpInfo]);
 
     const signUpChangeHandler = (e) => {
         setSignUpInfo({ ...signUpInfo, [e.target.name]: e.target.value });
@@ -20,7 +30,11 @@ function Signup2({ signUpInfo, setSignUpInfo }) {
                 age: selectedAge,
                 gender: signUpInfo.gender === 'None' ? null : signUpInfo.gender,
             });
-            navigate('/signup/3');
+            if (isEditing) {
+                navigate('/my-profile');
+            } else {
+                navigate('/signup/3');
+            }
         } catch (error) {
             console.error('Failed to update user info:', error);
         }
@@ -43,6 +57,7 @@ function Signup2({ signUpInfo, setSignUpInfo }) {
         setSignUpInfo({ ...signUpInfo, gender });
         setSelectedGender(gender);
     };
+
     const logoHandler = () => {
         navigate('/');
     };
@@ -95,8 +110,8 @@ function Signup2({ signUpInfo, setSignUpInfo }) {
                 </div>
                 <div className={styles.nextbox}>
                     <div>
-                        <button className={styles.nextBtn} type="submit">
-                            NEXT
+                        <button className={styles.nextBtn} type="button" onClick={handleNextClick}>
+                            {isEditing ? '수정 완료' : 'NEXT'} {/* 수정 모드일 때 버튼 텍스트 변경 */}
                         </button>
                     </div>
                     <div>

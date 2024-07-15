@@ -5,7 +5,7 @@
     justify-content: center;
     margin: 0;
     width: 100%;
-    height: 120%;
+    height: 100%;
     overflow-y: auto;
 }
 
@@ -47,7 +47,7 @@
     font-style: normal;
     font-weight: 800;
     line-height: normal;
-    margin-bottom: 50px;
+    margin-bottom: 80px;
 }
 
 /* 옵션 스타일 */
@@ -56,21 +56,23 @@
     align-items: center;
     margin-bottom: 20px;
     justify-content: space-between;
-    width: 50%;
+    width: 70%;
 }
 
-.optionGroup p {
-    width: 500px;
-    font-size: 25px;
+.options {
+    width: 800px;
+    font-size: 24px;
     color: #333;
-    margin: 0;
+    margin:0;
+    
+
 }
 
 .optionGroup .scores {
     display: flex;
     align-items: center;
     justify-content: space-between; /* Adjust alignment */
-    width: 400px;
+    width: 300px;
 }
 
 .scores label {

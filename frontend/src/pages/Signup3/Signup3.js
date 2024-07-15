@@ -1,12 +1,20 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import styles from './Signup3.module.css';
-import { useNavigate } from 'react-router-dom';
 import ProfileService from '../../utils/ProfileService';
 import keywordIcons from '../../components/KeywordIcons/KeywordIcons';
 
 function Signup3({ signUpInfo, setSignUpInfo }) {
     const navigate = useNavigate();
-    const [selectedKeywords, setSelectedKeywords] = useState([]);
+    const location = useLocation();
+    const isEditing = location.state?.isEditing || false;
+    const profileData = location.state?.profileData || {};
+
+    const initialSelectedKeywords = isEditing
+        ? [profileData.work_styles[0]?.name, profileData.work_styles[1]?.name, profileData.work_styles[2]?.name]
+        : [];
+
+    const [selectedKeywords, setSelectedKeywords] = useState(initialSelectedKeywords);
     const [keywords, setKeywords] = useState([]);
 
     useEffect(() => {
@@ -50,7 +58,9 @@ function Signup3({ signUpInfo, setSignUpInfo }) {
 
         ProfileService.setUserWorkStyles(selectedKeywordIds)
             .then(() => {
-                navigate('/signup/4');
+                navigate('/signup/4', {
+                    state: { isEditing, profileData: { ...signUpInfo, work_styles: selectedKeywords } },
+                });
             })
             .catch((error) => {
                 console.error('Error setting user work styles:', error);
