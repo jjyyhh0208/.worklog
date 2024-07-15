@@ -22,16 +22,26 @@ import './styles/global.css';
 axios.defaults.xsrfCookieName = 'csrftoken';
 axios.defaults.xsrfHeaderName = 'X-CSRFToken';
 
-// withAuth HOC 정의
-const withAuth = (Component) => (props) => {
-    const isLoggedIn = !!localStorage.getItem('authToken');
-    return isLoggedIn ? <Component {...props} /> : <Navigate to="/login" />;
-};
-
 function App() {
     const location = useLocation();
     const [signUpInfo, setSignUpInfo] = useState({
-        // ... (기존 상태 유지)
+        username: '',
+        password1: '',
+        password2: '',
+        name: '',
+        gender: '',
+        age: '',
+        profile_image: '',
+        work_style: {
+            keyword1: '',
+            keyword2: '',
+            keyword3: '',
+        },
+        interest: {
+            keyword1: '',
+            keyword2: '',
+            keyword3: '',
+        },
     });
 
     const renderHeader = () => {
@@ -70,9 +80,7 @@ function App() {
                 <Route path="/on-boarding/1" element={<OnBoarding1 />} />
                 <Route path="/on-boarding/2" element={<OnBoarding2 />} />
                 <Route path="/on-boarding/3" element={<OnBoarding3 />} />
-
-                {/* 보호된 라우트 */}
-                <Route path="/my-profile" element={withAuth(MyProfile)} />
+                <Route path="/my-profile" element={<MyProfile />} />
             </Routes>
         </>
     );
