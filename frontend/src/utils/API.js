@@ -31,6 +31,12 @@ API.interceptors.request.use(
         if (token) {
             config.headers['Authorization'] = `Token ${token}`;
         }
+        // CSRF 토큰 추가
+        const csrfToken = getCsrfToken();
+        if (csrfToken) {
+            config.headers['X-CSRFToken'] = csrfToken;
+        }
+
         return config;
     },
     (error) => {
