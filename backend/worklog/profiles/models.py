@@ -24,14 +24,14 @@ class User(AbstractUser):
     @property
     def calculate_disc_character(self):
         CHARACTER = {
-            'ID': 'communicator',
-            'IS': 'mediator',
-            'SI': 'processor',
-            'SC': 'analyst',
-            'CS': 'detailist',
-            'CD': 'controller',
-            'DC': 'achiever',
-            'DI': 'goaltaker'
+            'ID': '커뮤니케이터',
+            'IS': '중재자',
+            'SI': '프로세서',
+            'SC': '애널리스트',
+            'CS': '디테일리스트',
+            'CD': '컨트롤 타워',
+            'DC': '목표 달성자',
+            'DI': '불도저'
         }
     
         feedbacks = self.feedbacks_from.all()
