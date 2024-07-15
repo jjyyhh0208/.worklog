@@ -4,7 +4,6 @@
     flex-direction: column;
     margin-top: 226px;
     align-items: center;
-    width: 140%;
 }
 
 /* h1 스타일 */
@@ -15,6 +14,7 @@
     color: #4053ff;
     text-align: center;
     font-size: 47.962px;
+    font-style: normal;
     font-weight: 800;
     line-height: normal;
 }
@@ -23,18 +23,16 @@
 .h2 {
     color: #000;
     font-size: 30px;
+    font-style: normal;
     font-weight: 700;
     line-height: normal;
-<<<<<<< HEAD:frontend/src/components/Signup1/Signup1.module.css
-    margin-bottom: 100px;
-=======
->>>>>>> 91ef59a6af0d1c1a384b68b6fb08454cfd021757:frontend/src/pages/Signup1/Signup1.module.css
 }
 
 /* span 스타일 */
 .span {
     color: #000;
     font-size: 25px;
+    font-style: normal;
     font-weight: 700;
     line-height: normal;
     margin-bottom: 10px;
@@ -44,11 +42,7 @@
 /* input 스타일 */
 .input {
     display: flex;
-<<<<<<< HEAD:frontend/src/components/Signup1/Signup1.module.css
-    width: 180%;
-=======
     width: 100%;
->>>>>>> 91ef59a6af0d1c1a384b68b6fb08454cfd021757:frontend/src/pages/Signup1/Signup1.module.css
     max-width: 422px;
     height: 73px;
     padding: 10px;
@@ -63,7 +57,6 @@
     font-size: 21px;
 }
 
-/* duplicate button 스타일 */
 .duplicatebtn {
     background-color: #9da4e5;
     width: 145px;
@@ -83,32 +76,19 @@
     flex-direction: column;
     align-items: center;
     gap: 10px;
-<<<<<<< HEAD:frontend/src/components/Signup1/Signup1.module.css
-    width: 100%;
-=======
     margin-top: 100px;
     min-width: 500px;
->>>>>>> 91ef59a6af0d1c1a384b68b6fb08454cfd021757:frontend/src/pages/Signup1/Signup1.module.css
 }
 
 /* idbox 스타일 */
 .idbox {
     position: absolute;
     top: 35px;
-<<<<<<< HEAD:frontend/src/components/Signup1/Signup1.module.css
-    left: 450px; /* 원래 값 유지 */
-    display: flex;
-    flex-direction: column;
-    align-items: start;
-    width: 100%; /* 전체 너비로 조정 */
-    max-width: 550px; /* 최대 너비 제한 추가 */
-=======
     left: 150%;
     transform: translateX(-50%);
     display: flex;
     flex-direction: column;
     align-items: start;
->>>>>>> 91ef59a6af0d1c1a384b68b6fb08454cfd021757:frontend/src/pages/Signup1/Signup1.module.css
     text-align: center;
     align-self: center;
     line-height: 70px;
@@ -118,7 +98,7 @@
 .idbox span {
     position: absolute;
     top: 83px;
-    left: 0px;
+    left: 30px;
     color: #9b8f8f;
 }
 
@@ -126,26 +106,15 @@
 .nextbox {
     position: absolute;
     top: 550px;
-<<<<<<< HEAD:frontend/src/components/Signup1/Signup1.module.css
-    left: 350px; /* 원래 값 유지 */
-    align-items: start;
-    width: 80%; /* 전체 너비로 조정 */
-=======
     left: 130%;
     transform: translateX(-50%);
     align-items: start;
     width: 110%;
->>>>>>> 91ef59a6af0d1c1a384b68b6fb08454cfd021757:frontend/src/pages/Signup1/Signup1.module.css
     text-align: center;
     align-self: center;
     line-height: 70px;
     display: flex;
-<<<<<<< HEAD:frontend/src/components/Signup1/Signup1.module.css
-    flex-direction: row;
-    justify-content: space-between;
-=======
     justify-content: space-around;
->>>>>>> 91ef59a6af0d1c1a384b68b6fb08454cfd021757:frontend/src/pages/Signup1/Signup1.module.css
 }
 
 /* button 스타일 */
@@ -158,56 +127,10 @@
     border: none;
     color: #fff;
     font-size: 24px;
+    font-style: normal;
     font-weight: 700;
     line-height: normal;
     position: absolute;
-<<<<<<< HEAD:frontend/src/components/Signup1/Signup1.module.css
-}
-
-.modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.modalContent {
-    background-color: white;
-    border: #4053ff;
-    border-style: solid;
-    border-width: 4px;
-    padding: 40px;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-    max-width: 100%;
-    text-align: center;
-    position: relative;
-}
-
-.close {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    font-size: 20px;
-    cursor: pointer;
-}
-
-.span {
-    font-size: 16px;
-    margin-bottom: 10px;
-}
-
-/* Media queries for responsiveness */
-@media (max-width: 1024px) {
-    .h1 {
-        font-size: 36px;
-        top: 20px;
-=======
     left: 50%;
     transform: translateX(-50%);
 }
@@ -224,16 +147,11 @@
 
     .h1 {
         font-size: 36px;
->>>>>>> 91ef59a6af0d1c1a384b68b6fb08454cfd021757:frontend/src/pages/Signup1/Signup1.module.css
         left: 20px;
     }
 
     .h2 {
         font-size: 24px;
-<<<<<<< HEAD:frontend/src/components/Signup1/Signup1.module.css
-        margin-bottom: 80px;
-=======
->>>>>>> 91ef59a6af0d1c1a384b68b6fb08454cfd021757:frontend/src/pages/Signup1/Signup1.module.css
     }
 
     .span {
@@ -241,81 +159,13 @@
     }
 
     .input {
-<<<<<<< HEAD:frontend/src/components/Signup1/Signup1.module.css
-        max-width: 350px;
-=======
         width: 100%;
         max-width: 100%;
->>>>>>> 91ef59a6af0d1c1a384b68b6fb08454cfd021757:frontend/src/pages/Signup1/Signup1.module.css
         height: 60px;
         font-size: 18px;
     }
 
     .duplicatebtn {
-<<<<<<< HEAD:frontend/src/components/Signup1/Signup1.module.css
-        font-size: 15px;
-    }
-
-    .idbox {
-        left: 300px;
-        max-width: 400px;
-    }
-
-    .nextbox {
-        left: 250px;
-        max-width: 500px;
-    }
-
-    .nextBtn {
-        font-size: 20px;
-        left: 100px;
-    }
-}
-
-@media (max-width: 768px) {
-    .aboutContainer {
-        width: 90%;
-        padding-left: 20px;
-        padding-right: 20px;
-    }
-
-    .title {
-        font-size: 36px;
-    }
-
-    .questionTitle {
-        font-size: 24px;
-    }
-
-    .answer_1,
-    .answer_2 {
-        font-size: 20px;
-    }
-
-    .worklog {
-        font-size: 28px;
-    }
-
-    .type {
-        width: 100px;
-        height: 32px;
-        font-size: 16px;
-        line-height: 32px;
-    }
-
-    .typeCard {
-        width: 180px;
-        height: 50px;
-        font-size: 20px;
-    }
-
-    .subtitle {
-        font-size: 24px;
-    }
-
-    .typeDescription,
-    .typeQuestion {
-=======
         width: 120px;
         height: 40px;
         font-size: 15px;
@@ -348,56 +198,11 @@
     .nextBtn {
         width: 120px;
         height: 40px;
->>>>>>> 91ef59a6af0d1c1a384b68b6fb08454cfd021757:frontend/src/pages/Signup1/Signup1.module.css
         font-size: 20px;
     }
 }
 
 @media (max-width: 480px) {
-<<<<<<< HEAD:frontend/src/components/Signup1/Signup1.module.css
-    .aboutContainer {
-        width: 100%;
-        padding-left: 10px;
-        padding-right: 10px;
-    }
-
-    .title {
-        font-size: 28px;
-    }
-
-    .questionTitle {
-        font-size: 20px;
-    }
-
-    .answer_1,
-    .answer_2 {
-        font-size: 18px;
-    }
-
-    .worklog {
-        font-size: 24px;
-    }
-
-    .type {
-        width: 80px;
-        height: 28px;
-        font-size: 14px;
-        line-height: 28px;
-    }
-
-    .typeCard {
-        width: 150px;
-        height: 40px;
-        font-size: 18px;
-    }
-
-    .subtitle {
-        font-size: 20px;
-    }
-
-    .typeDescription,
-    .typeQuestion {
-=======
     .h1 {
         font-size: 28px;
         top: 20px;
@@ -445,7 +250,6 @@
     .nextBtn {
         width: 100px;
         height: 35px;
->>>>>>> 91ef59a6af0d1c1a384b68b6fb08454cfd021757:frontend/src/pages/Signup1/Signup1.module.css
         font-size: 18px;
     }
 }

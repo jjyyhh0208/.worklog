@@ -1,5 +1,9 @@
 import React, { useState } from 'react';
-import { BrowserRouter as Router, Route, Routes, Navigate, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
+import axios from 'axios';
+import './styles/global.css';
+
+// Pages
 import Main from './pages/Main/Main';
 import Signup1 from './pages/Signup1/Signup1';
 import Signup2 from './pages/Signup2/Signup2';
@@ -10,24 +14,19 @@ import FeedbackIntro from './pages/FeedbackIntro/FeedbackIntro';
 import Login from './pages/Login/Login';
 import Search from './pages/Search/Search';
 import MyProfile from './pages/MyProfile/MyProfile';
-import MyProfile11 from './pages/MyProfile/MyProfile11';
 import OnBoarding1 from './pages/OnBoarding1/OnBoarding1';
 import OnBoarding2 from './pages/OnBoarding2/OnBoarding2';
 import OnBoarding3 from './pages/OnBoarding3/OnBoarding3';
 import AboutUs from './pages/AboutUs/AboutUs';
 import Header from './components/Header/Header';
 import Feedback from './pages/Feedback/Feedback';
-import axios from 'axios';
-import './styles/global.css';
+
+// Redirect Pages
+import AuthRedirect from './components/AuthRedirect';
+import ProtectedRoute from './components/ProtectedRoute';
 
 axios.defaults.xsrfCookieName = 'csrftoken';
 axios.defaults.xsrfHeaderName = 'X-CSRFToken';
-
-// withAuth HOC 정의
-const withAuth = (Component) => (props) => {
-    const isLoggedIn = !!localStorage.getItem('authToken');
-    return isLoggedIn ? <Component {...props} /> : <Navigate to="/login" />;
-};
 
 function App() {
     const location = useLocation();
@@ -75,8 +74,7 @@ function App() {
 
                 {/* 보호된 라우트 */}
                 <Route path="/my-profile" element={<MyProfile />} />
-                <Route path="/my-profile11" element={<MyProfile11 />} />
-                {/* <Route path="/my-profile" element={withAuth(MyProfile)} /> */}
+                {/* <Route path="/my-profile" element={<ProtectedRoute element={MyProfile} />} /> */}
             </Routes>
         </>
     );

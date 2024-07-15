@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const baseURL = 'http://ec2-43-202-115-16.ap-northeast-2.compute.amazonaws.com/';
+const baseURL = process.env.REACT_APP_BASE_URL;
 
 // CSRF 토큰을 가져오는 함수
 function getCsrfToken() {
@@ -22,18 +22,6 @@ const API = axios.create({
         'Content-Type': 'application/json',
     },
 });
-
-// CSRF 토큰 가져오기
-const getCsrfToken = () => {
-    const cookies = document.cookie.split(';');
-    for (let cookie of cookies) {
-        const [name, value] = cookie.trim().split('=');
-        if (name === 'csrftoken') {
-            return value;
-        }
-    }
-    return null;
-};
 
 // Axios 요청 전에 회원 / 비회원 확인
 API.interceptors.request.use(

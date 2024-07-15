@@ -126,18 +126,6 @@ function Signup1({ signUpInfo, setSignUpInfo }) {
                     onChange={signUpChangeHandler}
                 />
 
-                {/* 모달 */}
-                {showModal && (
-                    <div className={styles.modal}>
-                        <div className={styles.modalContent}>
-                            <span className={styles.close} onClick={closeModal}>
-                                &times;
-                            </span>
-                            <p>{error ? error.message : '아이디가 중복되었습니다. 다른 아이디를 입력해주세요.'}</p>
-                        </div>
-                    </div>
-                )}
-
                 <div className={styles.nextbox}>
                     <div>
                         <button className={styles.nextBtn} type="submit">
