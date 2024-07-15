@@ -1,0 +1,17 @@
+/* components/ProgressBar/ProgressBar.module.css */
+.progressBarContainer {
+    width: 80%;
+    background-color: #e0e0e0;
+    border-radius: 20px;
+    overflow: hidden;
+    margin: 0 auto; /* 가운데 정렬 */
+    
+    justify-content: center;
+}
+
+.progressBar {
+    height: 18px;
+    background-color: #4053FF;
+    width: 0%;
+    transition: width 0.3s ease-in-out;
+}

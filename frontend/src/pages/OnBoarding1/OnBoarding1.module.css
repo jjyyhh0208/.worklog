@@ -11,11 +11,9 @@
     left: 36px;
     color: #4053ff;
     text-align: center;
-    font-family: Inter;
     font-size: 47.962px;
     font-style: normal;
     font-weight: 800;
-    font-family: Pretendard;
     line-height: normal;
 }
 
@@ -49,7 +47,6 @@
 .description {
     color: black;
     font-size: 32px;
-    font-family: 'Inter';
     font-weight: 500;
     word-wrap: break-word;
 }
@@ -57,7 +54,6 @@
 .descriptionBold {
     color: black;
     font-size: 32px;
-    font-family: 'Inter';
     font-weight: 700;
     word-wrap: break-word;
 }

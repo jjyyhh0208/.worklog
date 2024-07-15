@@ -4,7 +4,6 @@ a {
 
 .logo {
     color: #4053ff;
-    font-family: pretendard;
     font-size: 32px;
     font-style: normal;
     font-weight: 800;
@@ -16,50 +15,50 @@ a {
     display: flex;
     justify-content: space-between;
     background-color: #fff;
-    /* box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); */
-    display: flex;
-    height: 93px;
+    height: 100px;
     align-items: center;
-    flex-shrink: 0;
     width: 100%;
+    padding: 0 20px;
+    box-sizing: border-box;
 }
 
 .nav {
     display: flex;
-    align-items: center;
-    gap: 20px;
+    width: 45%;
+    justify-content: space-between;
 }
 
 .navItem {
     text-decoration: none;
     color: #9699b9;
-    font-size: 25.636px;
+    font-size: 25px;
     font-style: normal;
     font-weight: 600;
-    line-height: normal;
-    width: 130px;
-    height: 24px;
+    line-height: 100px;
+    text-align: center;
+    padding: 0 10px;
     flex-shrink: 0;
-    display: flex;
-    padding-right: 100px;
-    padding-left: 100px;
+}
+
+.navItem svg {
+    width: 80px;
+    margin-top: 10px;
 }
 
 .auth {
     display: flex;
-    width: 182px;
-    height: 43px;
     justify-content: center;
     align-items: center;
     gap: 10px;
     flex-shrink: 0;
     border-radius: 20px;
-    background: #4053ff;
-    color: #fff;
-    font-size: 18px;
+    background: #ffffff;
+    color: #000000;
+    font-size: 20px;
     font-style: normal;
     font-weight: 700;
     line-height: normal;
+    padding: 10px 20px;
     margin-right: 30px;
 }
 
@@ -69,10 +68,67 @@ a {
 
 .logoutButton,
 .loginButton {
-    color: white;
+    color: rgb(255, 255, 255);
     border: none;
     padding: 5px 10px;
-    border-radius: 5px;
+    border-radius: 15px;
     cursor: pointer;
     text-decoration: none;
+    font-weight: bolder;
+    background-color: #4053ff;
+}
+
+/* Media Queries for Responsiveness */
+@media (max-width: 1200px) {
+    .navItem {
+        font-size: 16px;
+        padding: 0 8px;
+    }
+
+    .auth {
+        font-size: 14px;
+        padding: 8px 16px;
+    }
+}
+
+@media (max-width: 768px) {
+    .header {
+        flex-direction: column;
+        height: auto;
+        padding: 10px 20px;
+    }
+
+    .nav {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .navItem {
+        font-size: 14px;
+        padding: 5px 0;
+    }
+
+    .auth {
+        margin-right: 0;
+        width: 100%;
+        justify-content: center;
+        padding: 8px;
+    }
+}
+
+@media (max-width: 480px) {
+    .logo {
+        font-size: 24px;
+        margin-left: 10px;
+    }
+
+    .navItem {
+        font-size: 12px;
+    }
+
+    .auth {
+        font-size: 12px;
+        padding: 6px;
+    }
 }

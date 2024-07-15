@@ -14,7 +14,6 @@
     left: 36px;
     color: #4053ff;
     text-align: center;
-    font-family: Inter;
     font-size: 47.962px;
     font-weight: 800;
     line-height: normal;
@@ -23,17 +22,18 @@
 /* h2 스타일 */
 .h2 {
     color: #000;
-    font-family: Inter;
     font-size: 30px;
     font-weight: 700;
     line-height: normal;
+<<<<<<< HEAD:frontend/src/components/Signup1/Signup1.module.css
     margin-bottom: 100px;
+=======
+>>>>>>> 91ef59a6af0d1c1a384b68b6fb08454cfd021757:frontend/src/pages/Signup1/Signup1.module.css
 }
 
 /* span 스타일 */
 .span {
     color: #000;
-    font-family: Inter;
     font-size: 25px;
     font-weight: 700;
     line-height: normal;
@@ -44,7 +44,11 @@
 /* input 스타일 */
 .input {
     display: flex;
+<<<<<<< HEAD:frontend/src/components/Signup1/Signup1.module.css
     width: 180%;
+=======
+    width: 100%;
+>>>>>>> 91ef59a6af0d1c1a384b68b6fb08454cfd021757:frontend/src/pages/Signup1/Signup1.module.css
     max-width: 422px;
     height: 73px;
     padding: 10px;
@@ -79,23 +83,38 @@
     flex-direction: column;
     align-items: center;
     gap: 10px;
+<<<<<<< HEAD:frontend/src/components/Signup1/Signup1.module.css
     width: 100%;
+=======
+    margin-top: 100px;
+    min-width: 500px;
+>>>>>>> 91ef59a6af0d1c1a384b68b6fb08454cfd021757:frontend/src/pages/Signup1/Signup1.module.css
 }
 
 /* idbox 스타일 */
 .idbox {
     position: absolute;
     top: 35px;
+<<<<<<< HEAD:frontend/src/components/Signup1/Signup1.module.css
     left: 450px; /* 원래 값 유지 */
     display: flex;
     flex-direction: column;
     align-items: start;
     width: 100%; /* 전체 너비로 조정 */
     max-width: 550px; /* 최대 너비 제한 추가 */
+=======
+    left: 150%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+>>>>>>> 91ef59a6af0d1c1a384b68b6fb08454cfd021757:frontend/src/pages/Signup1/Signup1.module.css
     text-align: center;
     align-self: center;
     line-height: 70px;
+    min-width: 500px;
 }
+
 .idbox span {
     position: absolute;
     top: 83px;
@@ -107,15 +126,26 @@
 .nextbox {
     position: absolute;
     top: 550px;
+<<<<<<< HEAD:frontend/src/components/Signup1/Signup1.module.css
     left: 350px; /* 원래 값 유지 */
     align-items: start;
     width: 80%; /* 전체 너비로 조정 */
+=======
+    left: 130%;
+    transform: translateX(-50%);
+    align-items: start;
+    width: 110%;
+>>>>>>> 91ef59a6af0d1c1a384b68b6fb08454cfd021757:frontend/src/pages/Signup1/Signup1.module.css
     text-align: center;
     align-self: center;
     line-height: 70px;
     display: flex;
+<<<<<<< HEAD:frontend/src/components/Signup1/Signup1.module.css
     flex-direction: row;
     justify-content: space-between;
+=======
+    justify-content: space-around;
+>>>>>>> 91ef59a6af0d1c1a384b68b6fb08454cfd021757:frontend/src/pages/Signup1/Signup1.module.css
 }
 
 /* button 스타일 */
@@ -127,11 +157,11 @@
     background: #4053ff;
     border: none;
     color: #fff;
-    font-family: Inter;
     font-size: 24px;
     font-weight: 700;
     line-height: normal;
     position: absolute;
+<<<<<<< HEAD:frontend/src/components/Signup1/Signup1.module.css
 }
 
 .modal {
@@ -177,12 +207,33 @@
     .h1 {
         font-size: 36px;
         top: 20px;
+=======
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.availabilityMessage {
+    font-size: 20px;
+}
+
+/* Media Queries for Responsiveness */
+@media (max-width: 768px) {
+    .container {
+        margin-top: 100px;
+    }
+
+    .h1 {
+        font-size: 36px;
+>>>>>>> 91ef59a6af0d1c1a384b68b6fb08454cfd021757:frontend/src/pages/Signup1/Signup1.module.css
         left: 20px;
     }
 
     .h2 {
         font-size: 24px;
+<<<<<<< HEAD:frontend/src/components/Signup1/Signup1.module.css
         margin-bottom: 80px;
+=======
+>>>>>>> 91ef59a6af0d1c1a384b68b6fb08454cfd021757:frontend/src/pages/Signup1/Signup1.module.css
     }
 
     .span {
@@ -190,12 +241,18 @@
     }
 
     .input {
+<<<<<<< HEAD:frontend/src/components/Signup1/Signup1.module.css
         max-width: 350px;
+=======
+        width: 100%;
+        max-width: 100%;
+>>>>>>> 91ef59a6af0d1c1a384b68b6fb08454cfd021757:frontend/src/pages/Signup1/Signup1.module.css
         height: 60px;
         font-size: 18px;
     }
 
     .duplicatebtn {
+<<<<<<< HEAD:frontend/src/components/Signup1/Signup1.module.css
         font-size: 15px;
     }
 
@@ -258,11 +315,46 @@
 
     .typeDescription,
     .typeQuestion {
+=======
+        width: 120px;
+        height: 40px;
+        font-size: 15px;
+    }
+
+    .signUp {
+        gap: 5px;
+        margin-top: 50px;
+    }
+
+    .idbox {
+        top: 25px;
+        width: 100%;
+        max-width: 90%;
+        line-height: 50px;
+    }
+
+    .idbox span {
+        top: 60px;
+        left: 20px;
+    }
+
+    .nextbox {
+        top: 450px;
+        width: 100%;
+        max-width: 90%;
+        line-height: 50px;
+    }
+
+    .nextBtn {
+        width: 120px;
+        height: 40px;
+>>>>>>> 91ef59a6af0d1c1a384b68b6fb08454cfd021757:frontend/src/pages/Signup1/Signup1.module.css
         font-size: 20px;
     }
 }
 
 @media (max-width: 480px) {
+<<<<<<< HEAD:frontend/src/components/Signup1/Signup1.module.css
     .aboutContainer {
         width: 100%;
         padding-left: 10px;
@@ -305,6 +397,55 @@
 
     .typeDescription,
     .typeQuestion {
+=======
+    .h1 {
+        font-size: 28px;
+        top: 20px;
+        left: 10px;
+    }
+
+    .h2 {
+        font-size: 20px;
+    }
+
+    .span {
+        font-size: 18px;
+    }
+
+    .input {
+        height: 50px;
+        font-size: 16px;
+    }
+
+    .duplicatebtn {
+        width: 100px;
+        height: 35px;
+        font-size: 14px;
+    }
+
+    .signUp {
+        margin-top: 30px;
+    }
+
+    .idbox {
+        top: 20px;
+        line-height: 40px;
+    }
+
+    .idbox span {
+        top: 50px;
+        left: 15px;
+    }
+
+    .nextbox {
+        top: 400px;
+        line-height: 40px;
+    }
+
+    .nextBtn {
+        width: 100px;
+        height: 35px;
+>>>>>>> 91ef59a6af0d1c1a384b68b6fb08454cfd021757:frontend/src/pages/Signup1/Signup1.module.css
         font-size: 18px;
     }
 }
