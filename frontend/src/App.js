@@ -33,6 +33,11 @@ function App() {
     const [signUpInfo, setSignUpInfo] = useState({
         // ... (기존 상태 유지)
     });
+    const [name, setName] = useState('');
+
+    const isLoggedIn = () => {
+        return !!localStorage.getItem('authToken');
+    };
 
     const renderHeader = () => {
         const pathsWithHeader = [
@@ -46,10 +51,6 @@ function App() {
             `/feedback/${location.pathname.split('/')[2]}`,
         ];
         return pathsWithHeader.includes(location.pathname);
-    };
-
-    const isLoggedIn = () => {
-        return !!localStorage.getItem('authToken');
     };
 
     return (
