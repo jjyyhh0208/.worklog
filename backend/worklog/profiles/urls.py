@@ -4,8 +4,7 @@ from .views import (
     UserProfileView, UserWorkStyleView, UserInterestView, 
     UserGenderNameAgeView, WorkStyleViewSet, InterestViewSet, 
     UniqueIdCheck, ShortQuestionViewSet, LongQuestionViewSet,
-    QuestionAnswerViewSet, ScoreViewSet, FeedbackViewSet, 
-    UserLongQuestionView, FeedbackByUserView, UserFriendView,
+    FeedbackViewSet, UserLongQuestionView, UserFriendView,
     UserCurrentProfileView
     )
 
@@ -15,15 +14,14 @@ router.register(r'workstyles', WorkStyleViewSet, basename='workstyle')
 router.register(r'interests', InterestViewSet, basename='interest')
 router.register(r'short-questions', ShortQuestionViewSet, basename='short-question')
 router.register(r'long-questions', LongQuestionViewSet)
-router.register(r'user/set/feedbacks', FeedbackViewSet)
+router.register(r'feedbacks', FeedbackViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),
     # User View
-    path('user/view/current/', UserCurrentProfileView.as_view(), name='user-current-profile-view'),
+    path('user/current/', UserCurrentProfileView.as_view(), name='user-current-profile-view'), # 현재 로그인한 user의 정보를 불러올 수 있는 엔드포인트
     path('user/view/<str:username>/', UserProfileView.as_view(), name='user-profile-view'), # username 별로 user 값을 불러올 수 있는 엔드포인트
-    path('user/view/long-question/<str:username>/', UserLongQuestionView.as_view(), name='longquestions-by-user'), # 유저에 맞는 질문을 반환하는 엔드포인트
-    path('user/view/feedback/<str:username>/', FeedbackByUserView.as_view(), name='feedback-by-user'), # 유저에 맞는 피드백을 반환하는 엔드포인트
+    path('user/view/long-questions/<str:username>/', UserLongQuestionView.as_view(), name='longquestions-by-user'), # 유저에 맞는 질문을 반환하는 엔드포인트
     path('user/view/friends/<str:username>/', UserFriendView.as_view(), name='user-friend-view'), # 유저의 친구 목록을 보여주는 엔드포인트
     
     # User Setting
