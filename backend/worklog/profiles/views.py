@@ -70,6 +70,15 @@ class UserProfileView(generics.RetrieveAPIView):
     serializer_class = UserProfileSerializer
     permission_classes = []
     lookup_field = 'username'
+
+# 현재 내 프로필을 불러오는 View
+class UserCurrentProfileView(generics.RetrieveAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserProfileSerializer
+    permission_classes = [IsAuthenticated]
+    
+    def get_object(self):
+        return self.request.user
     
     
 #회원가입 이후 유저의 이름, 성별, 나이 설정하기 위한 ViewSet
