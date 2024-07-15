@@ -108,6 +108,12 @@ class UserProfileSerializer(serializers.ModelSerializer):
     
     def get_disc_character(self, obj): # 타입 계산 추가
         return obj.calculate_disc_character
+
+# 친구목록을 보여주는 모델    
+class FriendSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['name', 'disc_character']
     
 # 아이디 중복 검사를 위한 로직
 class UserUniqueIdSerializer(serializers.ModelSerializer):

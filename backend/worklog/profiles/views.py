@@ -13,7 +13,8 @@ from .serializers import (
     InterestSerializer, UserRegisterSerializer,
     UserProfileSerializer, UserUniqueIdSerializer,
     ShortQuestionSerializer, LongQuestionSerializer, 
-    QuestionAnswerSerializer, ScoreSerializer, FeedbackSerializer
+    QuestionAnswerSerializer, ScoreSerializer, FeedbackSerializer,
+    FriendSerializer
 )
 
 #유저의 정보를 불러오는 ViewSet -> retrieve인 경우: UserProfileSerializer를 사용하여 유저의 이름, 성별, 나이를 불러옴
@@ -172,7 +173,7 @@ class FeedbackViewSet(viewsets.ModelViewSet):
         self.perform_destroy(instance)
         return Response(status=status.HTTP_204_NO_CONTENT)
     
-# GET: user 명에 맞는 피즈백 목록을 불러옵니다.
+# GET: user 명에 맞는 피드백 목록을 불러옵니다.
 class FeedbackByUserView(generics.ListAPIView):
     serializer_class = FeedbackSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
@@ -181,3 +182,19 @@ class FeedbackByUserView(generics.ListAPIView):
         username = self.kwargs['username']
         user = get_object_or_404(User, username=username)
         return Feedback.objects.filter(user=user) | Feedback.objects.filter(user_by=user)
+
+# GET: 유저명에 맞는 친구목록을 불러옵니다.    
+class UserFriendView(generics.GenericAPIView):
+    queryset = User.objects.all()
+    serializer_class = FriendSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, username):
+        try:
+            user = User.objects.get(username=username)
+        except User.DoesNotExist:
+            return Response({"detail": "User not found"}, status=404)
+
+        friends = user.friends.all()
+        serializer = self.get_serializer(friends, many=True)
+        return Response(serializer.data)
