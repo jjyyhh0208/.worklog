@@ -7,6 +7,7 @@
     width: 100%;
     height: 100%;
     text-align: start;
+    overflow-y: auto;
 }
 
 .content {
@@ -18,6 +19,7 @@
     border-radius: 50px;
     background: #fff;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Optional: adds shadow for better visibility */
+    overflow-y: auto;
 }
 
 .progressBar {
