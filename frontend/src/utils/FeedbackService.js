@@ -31,6 +31,7 @@ const FeedbackService = {
             });
     },
     submitAnswers: (answers) => {
+        console.log(answers);
         const transformedAnswers = {
             id: answers.id,
             user: answers.user,

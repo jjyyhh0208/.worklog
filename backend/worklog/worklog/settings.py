@@ -13,7 +13,6 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 from datetime import timedelta
 from pathlib import Path
 
-
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -27,19 +26,26 @@ SECRET_KEY = "django-insecure-@5j2w%83edi$)wedcsd-&8)t)8zdd6acfi&d+*a*g&d&#4z!5n
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    "localhost",
+    "127.0.0.1",
+    ".ap-northeast-2.compute.amazonaws.com",
+]
 
 # CORS
-CORS_ORIGIN_ALLOW_ALL = True
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
-]
+CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_HEADERS = '*'
 
 # CSRF
-# CSRF
-CSRF_TRUSTED_ORIGINS = ["http://localhost:8000", "http://localhost:3000"]
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:3000", 
+    "http://127.0.0.1:3000", 
+    "http://ec2-43-202-115-16.ap-northeast-2.compute.amazonaws.com"
+    ]
 
+CSRF_COOKIE_NAME = "csrftoken"
+CSRF_COOKIE_HTTPONLY = False
 
 # Application definition
 

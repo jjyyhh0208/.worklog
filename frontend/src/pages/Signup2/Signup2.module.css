@@ -1,0 +1,259 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    margin-top: 226px;
+    align-items: center;
+}
+
+/* h1 스타일 */
+.h1 {
+    position: absolute;
+    top: 27px;
+    left: 36px;
+    color: #4053ff;
+    text-align: center;
+    font-size: 47.962px;
+    font-weight: 800;
+    line-height: normal;
+}
+
+/* h2 스타일 */
+.h2 {
+    color: #000;
+    font-size: 30px;
+    font-weight: 700;
+    line-height: normal;
+    margin-bottom: 100px;
+}
+
+/* instructionbox 스타일 */
+.instructionbox {
+    position: absolute;
+    justify-self: start;
+    margin-top: 100px;
+}
+
+/* span 스타일 */
+.span {
+    color: #000;
+    font-size: 25px;
+    font-weight: 700;
+    line-height: normal;
+    margin-bottom: 10px;
+    align-self: start;
+}
+
+/* input 스타일 */
+.input {
+    display: flex;
+    max-width: 440px;
+    min-width: 440px;
+    height: 90px;
+    padding-left: 10px;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+    border-radius: 10px;
+    border: 2px solid #4053ff;
+    background: #fff;
+    margin-bottom: 20px;
+    font-size: 21px;
+}
+
+/* genderButtons 스타일 */
+.genderButtons {
+    display: flex;
+    gap: 10px;
+}
+
+/* genderButton 스타일 */
+.genderButton {
+    padding: 10px 20px;
+    width: 138px;
+    height: 59px;
+    flex-shrink: 0;
+    border-radius: 10px;
+    background: #d9d9d9;
+    color: #000;
+    text-align: center;
+    font-size: 24px;
+    font-weight: 600;
+    border: none;
+    line-height: normal;
+    cursor: pointer;
+}
+
+.genderButton.selected {
+    color: white;
+    border-radius: 10px;
+    background: #4053ff;
+}
+
+/* signUp form 스타일 */
+.signUp {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+/* nextbox 스타일 */
+.nextbox {
+    position: absolute;
+    top: 550px;
+    left: 130%;
+    transform: translateX(-50%);
+    align-items: start;
+    width: 110%;
+    text-align: center;
+    align-self: center;
+    line-height: 70px;
+    display: flex;
+    justify-content: space-around;
+}
+
+/* button 스타일 */
+.nextBtn {
+    width: 148px;
+    height: 49.109px;
+    flex-shrink: 0;
+    border-radius: 15.337px;
+    background: #4053ff;
+    border: none;
+    color: #fff;
+    font-size: 24px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+/* Media queries for responsiveness */
+@media (max-width: 1024px) {
+    .h1 {
+        font-size: 36px;
+        top: 20px;
+        left: 20px;
+    }
+
+    .h2 {
+        font-size: 24px;
+        margin-bottom: 80px;
+    }
+
+    .span {
+        font-size: 20px;
+    }
+
+    .input {
+        max-width: 350px;
+        height: 60px;
+        font-size: 18px;
+    }
+
+    .genderButton {
+        width: 120px;
+        height: 50px;
+        font-size: 20px;
+    }
+
+    .nextbox {
+        left: 250px;
+        max-width: 500px;
+    }
+
+    .nextBtn {
+        font-size: 20px;
+        left: 100px;
+    }
+}
+
+@media (max-width: 768px) {
+    .container {
+        margin-top: 150px;
+    }
+
+    .h1 {
+        font-size: 30px;
+        top: 15px;
+        left: 15px;
+    }
+
+    .h2 {
+        font-size: 20px;
+        margin-bottom: 60px;
+    }
+
+    .span {
+        font-size: 18px;
+    }
+
+    .input {
+        max-width: 300px;
+        height: 50px;
+        font-size: 16px;
+    }
+
+    .genderButton {
+        width: 100px;
+        height: 40px;
+        font-size: 18px;
+    }
+
+    .nextbox {
+        left: 200px;
+        max-width: 450px;
+    }
+
+    .nextBtn {
+        font-size: 18px;
+        left: 80px;
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        margin-top: 100px;
+    }
+
+    .h1 {
+        font-size: 24px;
+        top: 10px;
+        left: 10px;
+    }
+
+    .h2 {
+        font-size: 18px;
+        margin-bottom: 50px;
+    }
+
+    .span {
+        font-size: 16px;
+    }
+
+    .input {
+        max-width: 250px;
+        height: 40px;
+        font-size: 14px;
+    }
+
+    .genderButton {
+        width: 80px;
+        height: 35px;
+        font-size: 16px;
+    }
+
+    .nextbox {
+        left: 100px;
+        max-width: 400px;
+    }
+
+    .nextBtn {
+        font-size: 16px;
+        left: 50px;
+    }
+}

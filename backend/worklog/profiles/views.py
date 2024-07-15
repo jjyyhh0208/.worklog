@@ -1,9 +1,12 @@
 from rest_framework import viewsets, generics, status
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
+from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly, AllowAny
 from rest_framework.authtoken.models import Token
+from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.decorators import action
 from django.shortcuts import get_object_or_404
+from dj_rest_auth.views import LoginView
+from dj_rest_auth.registration.views import RegisterView
 from .models import User, WorkStyle, Interest, ShortQuestion, LongQuestion, QuestionAnswer, Score, Feedback
 from .permissions import UnauthenticatedReadOrSafeMethods
 from .serializers import (
@@ -14,10 +17,6 @@ from .serializers import (
     ShortQuestionSerializer, LongQuestionSerializer, 
     QuestionAnswerSerializer, ScoreSerializer, FeedbackSerializer
 )
-
-from dj_rest_auth.registration.views import RegisterView
-
-
 
 #유저의 정보를 불러오는 ViewSet -> retrieve인 경우: UserProfileSerializer를 사용하여 유저의 이름, 성별, 나이를 불러옴
 #update, partial_update인 경우: UserWorkInterestSerializer를 사용하여 유저의 업무 성향, 관심 직종을 불러옴

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import styles from './FeedbackLong.module.css';
 import axios from 'axios';
+import ProgressBar from '../../components/ProgressBar/ProgressBar'; // ProgressBar import
 
 const FeedbackLong = () => {
     const [feedbackData, setFeedbackData] = useState({
@@ -41,16 +42,16 @@ const FeedbackLong = () => {
     };
 
     return (
-        <div className={styles.container}>
+        <div className={styles.feedbackLongcontainer}>
             <div className={styles.content}>
+                <ProgressBar progress={100} /> {/* ProgressBar 추가 */}
                 <div className={styles.top}>
-                    <div className={styles.progressBar}></div>
                     <div className={styles.textbox}>
-                        <p className={styles.text}>
+                        <h3 className={styles.text}>
                             ※해당 설문 내용은 익명으로 사용자에게 전달되며, 특정될 수 있는 정보 (회사명, 팀명) 등을 쓰지
                             않는 것을 권장드립니다.
-                        </p>
-                        <span className={styles.progress}>4 / 4</span>
+                        </h3>
+                        <div className={styles.pageIndicator}>5/5</div>
                     </div>
                 </div>
                 <div className={styles.qnabox}>

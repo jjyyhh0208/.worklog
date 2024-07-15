@@ -89,6 +89,10 @@ const ProfileService = {
                 throw error;
             });
     },
+
+    getUserProfileLink: (userId) => {
+        return `${window.location.origin}/my-profile/${userId}`;
+    },
 };
 
 export default ProfileService;

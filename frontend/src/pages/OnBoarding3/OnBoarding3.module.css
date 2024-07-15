@@ -11,11 +11,9 @@
     left: 36px;
     color: #4053ff;
     text-align: center;
-    font-family: Inter;
     font-size: 48px;
     font-style: normal;
     font-weight: 800;
-    font-family: Pretendard;
     line-height: normal;
 }
 
@@ -49,7 +47,6 @@
 .description {
     color: black;
     font-size: 32px;
-    font-family: 'Inter';
     font-weight: 500;
     word-wrap: break-word;
 }
@@ -57,7 +54,6 @@
 .descriptionBold {
     color: black;
     font-size: 32px;
-    font-family: 'Inter';
     font-weight: 700;
     word-wrap: break-word;
 }
@@ -99,7 +95,6 @@
     background: #4053ff;
     border: none;
     color: #fff;
-    font-family: Inter;
     font-size: 20px;
     font-style: normal;
     font-weight: 700;
@@ -118,7 +113,8 @@
         left: 30px;
     }
 
-    .description, .descriptionBold {
+    .description,
+    .descriptionBold {
         font-size: 28px;
     }
 
@@ -147,7 +143,8 @@
         left: 20px;
     }
 
-    .description, .descriptionBold {
+    .description,
+    .descriptionBold {
         font-size: 24px;
     }
 
@@ -173,7 +170,8 @@
         left: 10px;
     }
 
-    .description, .descriptionBold {
+    .description,
+    .descriptionBold {
         font-size: 20px;
     }
 
