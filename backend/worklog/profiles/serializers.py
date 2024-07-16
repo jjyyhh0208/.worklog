@@ -101,7 +101,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = User
-        fields = ('name', 'gender', 'age', 'work_styles', 'interests', 'disc_character', 'gpt_summarized_personality', 'feedback_count')
+        fields = ('username', 'name', 'gender', 'age', 'work_styles', 'interests', 'disc_character', 'gpt_summarized_personality', 'feedback_count')
 
     def get_feedback_count(self, obj): # 피드백 횟수 추가
         return obj.feedback_count
