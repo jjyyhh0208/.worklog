@@ -7,7 +7,7 @@ from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from dj_rest_auth.views import LoginView
 from dj_rest_auth.registration.views import RegisterView
-from .models import User, WorkStyle, Interest, ShortQuestion, LongQuestion, QuestionAnswer, Score, Feedback
+from .models import User, WorkStyle, Interest, ShortQuestion, LongQuestion, QuestionAnswer, Score, Feedback, DISCData
 from .permissions import UnauthenticatedReadOrSafeMethods
 from .serializers import (
     UserGenderNameAgeSerializer, UserWorkStyleSerializer,
@@ -16,7 +16,7 @@ from .serializers import (
     UserProfileSerializer, UserUniqueIdSerializer,
     ShortQuestionSerializer, LongQuestionSerializer, 
     QuestionAnswerSerializer, ScoreSerializer, FeedbackSerializer,
-    FriendSerializer, UserSearchResultSerializer
+    FriendSerializer, UserSearchResultSerializer, DISCDataSerializer
 )
 
 #유저의 정보를 불러오는 ViewSet -> retrieve인 경우: UserProfileSerializer를 사용하여 유저의 이름, 성별, 나이를 불러옴
@@ -226,3 +226,7 @@ class UserSearchView(APIView):
 
         serializer = UserSearchResultSerializer(users, many=True)
         return Response(serializer.data)
+    
+class DISCDataViewSet(viewsets.ModelViewSet):
+    queryset = DISCData.objects.all()
+    serializer_class = DISCDataSerializer

@@ -38,7 +38,7 @@ class User(AbstractUser):
         d_score_total, i_score_total = 0, 0
         s_score_total, c_score_total = 0, 0
 
-        if feedbacks.exists(): # 피드백이 있는 경우
+        if self.feedbacks_from.count() >= 3: # 피드백 3개 이상 있는 경우
             for feedback in feedbacks:
                 if feedback.score:
                     d_score_total += feedback.score.d_score
@@ -125,3 +125,14 @@ class Feedback(models.Model):
 
     def __str__(self):
         return f"Feedback to {self.user} by {self.user_by}"
+
+
+class DISCData(models.Model):
+    disc_character = models.CharField(max_length=100)
+    description = models.TextField()
+    strengths = models.TextField()
+    weaknesses = models.TextField()
+    suitable_types = models.TextField()
+
+    def __str__(self):
+        return self.disc_character

@@ -5,7 +5,7 @@ from .views import (
     UserGenderNameAgeView, WorkStyleViewSet, InterestViewSet, 
     UniqueIdCheck, ShortQuestionViewSet, LongQuestionViewSet,
     FeedbackViewSet, UserLongQuestionView, UserFriendView,
-    UserCurrentProfileView, UserSearchView
+    UserCurrentProfileView, UserSearchView, DISCDataViewSet
     )
 
 
@@ -15,6 +15,8 @@ router.register(r'interests', InterestViewSet, basename='interest')
 router.register(r'short-questions', ShortQuestionViewSet, basename='short-question')
 router.register(r'long-questions', LongQuestionViewSet)
 router.register(r'feedbacks', FeedbackViewSet)
+router.register(r'disc-data', DISCDataViewSet)
+
 
 urlpatterns = [
     path('', include(router.urls)),

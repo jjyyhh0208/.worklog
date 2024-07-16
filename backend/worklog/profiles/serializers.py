@@ -231,3 +231,7 @@ class FeedbackSerializer(serializers.ModelSerializer):
         instance.save()
         return instance
     
+class DISCDataSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = DISCData
+        fields = '__all__'
