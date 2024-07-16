@@ -33,22 +33,16 @@ ALLOWED_HOSTS = [
 ]
 
 # CORS
+CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
-    "http://ec2-43-202-115-16.ap-northeast-2.compute.amazonaws.com",
-
-]
 CORS_ALLOW_HEADERS = '*'
-CSRF_COOKIE_HTTPONLY = False
-
 
 # CSRF
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:3000", 
     "http://127.0.0.1:3000", 
     "http://ec2-43-202-115-16.ap-northeast-2.compute.amazonaws.com"
-]
+    ]
 
 CSRF_COOKIE_NAME = "csrftoken"
 CSRF_COOKIE_HTTPONLY = False
