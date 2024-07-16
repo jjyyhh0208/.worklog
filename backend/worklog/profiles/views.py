@@ -212,7 +212,7 @@ class UserFriendView(generics.GenericAPIView):
     
 # 유저ID 찾기
 class UserSearchView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = []
 
     def get(self, request):
         query = request.query_params.get('q', '')
