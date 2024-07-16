@@ -156,3 +156,6 @@ class SuitableType(models.Model):
 
     def __str__(self):
         return f"{self.with_name}: {self.name}"
+    class Meta:
+        # name과 with_name 필드를 같이 묶어 유니크 조건 설정
+        unique_together = ['name', 'with_name']
