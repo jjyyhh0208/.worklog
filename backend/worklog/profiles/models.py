@@ -1,5 +1,6 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from collections import Counter
 
 class User(AbstractUser):
     GENDER_CHOICES = [
@@ -20,6 +21,54 @@ class User(AbstractUser):
     @property
     def feedback_count(self):
         return self.feedbacks_from.count()
+    
+    @property
+    def calculate_disc_scores(self):
+        feedbacks = self.feedbacks_from.all()
+        d_score_total, i_score_total = 0, 0
+        s_score_total, c_score_total = 0, 0
+
+        if self.feedbacks_from.count() >= 3: 
+            feedback_count = self.feedbacks_from.count()
+            for feedback in feedbacks:
+                if feedback.score:
+                    d_score_total += feedback.score.d_score
+                    i_score_total += feedback.score.i_score
+                    s_score_total += feedback.score.s_score
+                    c_score_total += feedback.score.c_score
+        else:
+            return {'D': 0, 'I': 0, 'S': 0, 'C': 0}
+
+        scores = {
+            'D': round(100 * d_score_total / (feedback_count * 36)),
+            'I': round(100 * i_score_total / (feedback_count * 36)),
+            'S': round(100 * s_score_total / (feedback_count * 36)),
+            'C': round(100 * c_score_total / (feedback_count * 36)),
+        }
+
+        return scores
+
+    
+    @property
+    def calculate_workstyles(self):
+        from .serializers import WorkStyleSerializer
+
+        feedbacks = self.feedbacks_from.all()
+        workstyle_counter = Counter() # counter를 활용하여 개수를 셈.
+
+        for feedback in feedbacks:
+            workstyles = feedback.work_styles.all()
+            workstyle_counter.update(workstyles)
+
+        top_three_workstyles = workstyle_counter.most_common(3)
+
+        # serialized
+        serialized_workstyles = []
+        for workstyle, count in top_three_workstyles:
+            serialized_workstyle = WorkStyleSerializer(workstyle).data
+            serialized_workstyles.append(serialized_workstyle)
+
+        return serialized_workstyles
     
     @property
     def calculate_disc_character(self):

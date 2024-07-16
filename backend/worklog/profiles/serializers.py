@@ -97,14 +97,22 @@ class UserProfileSerializer(serializers.ModelSerializer):
     work_styles = WorkStyleSerializer(many=True)
     interests = InterestSerializer(many=True)
     feedback_count = serializers.SerializerMethodField()
+    feedback_workstyles = serializers.SerializerMethodField()
+    disc_scores = serializers.SerializerMethodField()
     disc_character = serializers.SerializerMethodField()
     
     class Meta:
         model = User
-        fields = ('username', 'name', 'gender', 'age', 'work_styles', 'interests', 'disc_character', 'gpt_summarized_personality', 'feedback_count')
+        fields = ('username', 'name', 'gender', 'age', 'work_styles', 'interests', 'disc_character', 'gpt_summarized_personality', 'feedback_count','disc_scores', 'feedback_workstyles')
 
     def get_feedback_count(self, obj): # 피드백 횟수 추가
         return obj.feedback_count
+    
+    def get_feedback_workstyles(self, obj): # workstyle 계산 추가
+        return obj.calculate_workstyles
+    
+    def get_disc_scores(self, obj): # 점수 백분율 추가
+        return obj.calculate_disc_scores
     
     def get_disc_character(self, obj): # 타입 계산 추가
         return obj.calculate_disc_character
