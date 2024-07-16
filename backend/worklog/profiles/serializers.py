@@ -114,6 +114,11 @@ class FriendSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['username', 'name', 'disc_character']
+
+class UserSearchResultSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['username', 'name']
     
 # 아이디 중복 검사를 위한 로직
 class UserUniqueIdSerializer(serializers.ModelSerializer):
@@ -225,3 +230,4 @@ class FeedbackSerializer(serializers.ModelSerializer):
         
         instance.save()
         return instance
+    
