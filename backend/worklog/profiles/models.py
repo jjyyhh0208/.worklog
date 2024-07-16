@@ -150,7 +150,7 @@ class Weakness(models.Model):
         return self.name
 
 class SuitableType(models.Model):
-    name = models.CharField(max_length=50, unique=True)
+    name = models.CharField(max_length=50)
     with_name = models.CharField(max_length=50, default="Default")
     description = models.TextField()
 
