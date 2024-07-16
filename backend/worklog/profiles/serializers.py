@@ -113,7 +113,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
 class FriendSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['name', 'disc_character']
+        fields = ['username', 'name', 'disc_character']
     
 # 아이디 중복 검사를 위한 로직
 class UserUniqueIdSerializer(serializers.ModelSerializer):
