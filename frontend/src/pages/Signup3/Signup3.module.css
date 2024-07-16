@@ -16,6 +16,7 @@
     font-size: 47.962px;
     font-weight: 800;
     line-height: normal;
+    cursor: pointer;
 }
 
 /* h2 스타일 */
@@ -136,6 +137,7 @@
     position: absolute;
     transform: translateX(-50%);
     margin-right: 100px;
+    cursor: pointer;
 }
 
 /* Media queries for responsiveness */

@@ -41,6 +41,7 @@
     height: 84px;
     align-self: center;
     margin: 20px;
+    cursor: pointer;
 }
 
 /* 반응형 스타일 */

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import './styles/global.css';
@@ -20,10 +20,12 @@ import OnBoarding3 from './pages/OnBoarding3/OnBoarding3';
 import AboutUs from './pages/AboutUs/AboutUs';
 import Header from './components/Header/Header';
 import Feedback from './pages/Feedback/Feedback';
+import List from './pages/List/List';
 
 // Redirect Pages
 import AuthRedirect from './components/AuthRedirect';
 import ProtectedRoute from './components/ProtectedRoute';
+import ProfileService from './utils/ProfileService';
 
 axios.defaults.xsrfCookieName = 'csrftoken';
 axios.defaults.xsrfHeaderName = 'X-CSRFToken';
@@ -31,9 +33,33 @@ axios.defaults.xsrfHeaderName = 'X-CSRFToken';
 function App() {
     const location = useLocation();
     const [signUpInfo, setSignUpInfo] = useState({
-        // ... (기존 상태 유지)
+        username: '',
+        password1: '',
+        password2: '',
+        name: '',
+        gender: '',
+        age: '',
+        profile_image: '',
+        work_style: {
+            keyword1: '',
+            keyword2: '',
+            keyword3: '',
+        },
+        interest: {
+            keyword1: '',
+            keyword2: '',
+            keyword3: '',
+        },
     });
-    const [name, setName] = useState('');
+    const [profileData, setProfileData] = useState(null);
+
+    useEffect(() => {
+        if (isLoggedIn()) {
+            ProfileService.fetchUserProfile()
+                .then((data) => setProfileData(data))
+                .catch((error) => console.error('프로필 정보를 불러오는 동안 오류가 발생했습니다.', error));
+        }
+    }, []);
 
     const isLoggedIn = () => {
         return !!localStorage.getItem('authToken');
@@ -42,15 +68,14 @@ function App() {
     const renderHeader = () => {
         const pathsWithHeader = [
             '/my-profile',
-            '/my-profile11',
             '/about-us',
             '/search',
-            '/friends',
+            '/list',
             '/feedback/long',
             '/feedback/intro',
             `/feedback/${location.pathname.split('/')[2]}`,
         ];
-        return pathsWithHeader.includes(location.pathname);
+        return pathsWithHeader.some((path) => location.pathname.includes(path));
     };
 
     return (
@@ -75,6 +100,7 @@ function App() {
 
                 {/* 보호된 라우트 */}
                 <Route path="/my-profile" element={<MyProfile />} />
+                <Route path="/list/:id" element={<List />} />
                 {/* <Route path="/my-profile" element={<ProtectedRoute element={MyProfile} />} /> */}
             </Routes>
         </>

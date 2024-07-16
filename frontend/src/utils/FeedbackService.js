@@ -41,7 +41,7 @@ const FeedbackService = {
             question_answers: answers.question_answers,
         };
 
-        return API.post('/profiles/feedback/', transformedAnswers)
+        return API.post('/profiles/user/set/feedbacks/', transformedAnswers)
             .then((response) => response.data)
             .catch((error) => {
                 console.error('답변을 제출하는 동안 오류가 발생했습니다.', error);

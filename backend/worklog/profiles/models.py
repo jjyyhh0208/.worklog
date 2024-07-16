@@ -25,7 +25,7 @@ class User(AbstractUser):
     def calculate_disc_character(self):
         CHARACTER = {
             'ID': '커뮤니케이터',
-            'IS': '중재자',
+            'IS': '중재가',
             'SI': '프로세서',
             'SC': '애널리스트',
             'CS': '디테일리스트',

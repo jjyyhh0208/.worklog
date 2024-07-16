@@ -82,7 +82,7 @@ const ProfileService = {
     },
 
     fetchUserProfile: () => {
-        return API.get(`/profiles/user/view/current`)
+        return API.get(`/profiles/user/current`)
             .then((response) => response.data)
             .catch((error) => {
                 console.error('사용자 프로필을 불러오는 동안 오류가 발생했습니다.', error);
@@ -92,6 +92,59 @@ const ProfileService = {
 
     getUserProfileLink: (userId) => {
         return `${window.location.origin}/my-profile/${userId}`;
+    },
+
+    fetchFriendProfile: (username) => {
+        return API.get(`/profiles/user/view/${username}`)
+            .then((response) => {
+                if (response.status === 200) {
+                    console.log('사용자의 정보를 성공적으로 가져왔습니다.');
+                }
+                return response.data;
+            })
+            .catch((error) => {
+                console.error('사용자의 정보를 가져오는 동안 오류가 발생했습니다.', error);
+                throw error;
+            });
+    },
+
+    fetchLongQuestions: (username) => {
+        return API.get(`/profiles/user/view/long-questions/${username}`)
+            .then((response) => {
+                if (response.status === 200) {
+                    console.log('사용자의 서술형 질문을 성공적으로 가져왔습니다.');
+                }
+                return response.data;
+            })
+            .catch((error) => {
+                console.error('사용자의 서술형 질문을 가져오는 동안 오류가 발생했습니다.', error);
+                throw error;
+            });
+    },
+
+    fetchFriends: (username) => {
+        return API.get(`/profiles/user/view/friends/${username}`)
+            .then((response) => {
+                if (response.status === 200) {
+                    console.log('사용자의 친구 목록을 성공적으로 가져왔습니다.');
+                }
+                return response.data;
+            })
+            .catch((error) => {
+                console.error('사용자의 친구 목록을 가져오는 동안 오류가 발생했습니다.', error);
+                throw error;
+            });
+    },
+    fetchSearchResults: async (query) => {
+        try {
+            const response = await API.get('/profiles/user/search', {
+                params: { q: query },
+            });
+            return response.data;
+        } catch (error) {
+            console.error('Error fetching search results:', error);
+            throw error;
+        }
     },
 };
 

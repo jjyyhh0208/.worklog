@@ -4,6 +4,8 @@ from rest_framework import viewsets, generics, status
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework.decorators import action
+from rest_framework.views import APIView
+from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from dj_rest_auth.views import LoginView
 from dj_rest_auth.registration.views import RegisterView
@@ -16,7 +18,7 @@ from .serializers import (
     UserProfileSerializer, UserUniqueIdSerializer,
     ShortQuestionSerializer, LongQuestionSerializer, 
     QuestionAnswerSerializer, ScoreSerializer, FeedbackSerializer,
-    FriendSerializer
+    FriendSerializer, UserSearchResultSerializer
 )
 
 #유저의 정보를 불러오는 ViewSet -> retrieve인 경우: UserProfileSerializer를 사용하여 유저의 이름, 성별, 나이를 불러옴
@@ -209,6 +211,23 @@ class UserFriendView(generics.GenericAPIView):
 
         friends = user.friends.all()
         serializer = self.get_serializer(friends, many=True)
+        return Response(serializer.data)
+    
+# 유저ID 찾기
+class UserSearchView(APIView):
+    permission_classes = []
+
+    def get(self, request):
+        query = request.query_params.get('q', '')
+        if not query:
+            return Response({"detail": "Query parameter 'q' is required."}, status=400)
+
+        # Search for users whose username or name contains the query (case insensitive)
+        users = User.objects.filter(
+            Q(username__icontains=query) | Q(name__icontains=query)
+        )
+
+        serializer = UserSearchResultSerializer(users, many=True)
         return Response(serializer.data)
     
     
