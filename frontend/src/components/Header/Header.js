@@ -45,7 +45,7 @@ function Header({ isLoggedIn }) {
                         />
                     </svg>
                 </Link>
-                <Link to={`/list/${profileData?.id}`} className={styles.navItem}>
+                <Link to={`/list/${profileData?.username}`} className={styles.navItem}>
                     둘러보기
                     <svg xmlns="http://www.w3.org/2000/svg" width="27" height="23" viewBox=" 0 0 25 23" fill="none">
                         <path
