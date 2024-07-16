@@ -86,7 +86,7 @@ function List() {
                             />
                             <h2 className={styles.name}>{friend.name}</h2>
                             <button
-                                onClick={() => handleEvaluationClick(friend.id)}
+                                onClick={() => handleEvaluationClick(friend.username)}
                                 className={styles.evaluationButton}
                             >
                                 협업 평가 작성
