@@ -227,6 +227,17 @@ class UserSearchView(APIView):
         serializer = UserSearchResultSerializer(users, many=True)
         return Response(serializer.data)
     
-class DISCDataViewSet(viewsets.ModelViewSet):
+class DISCDataList(generics.ListCreateAPIView):
     queryset = DISCData.objects.all()
     serializer_class = DISCDataSerializer
+
+class DISCDataDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = DISCData.objects.all()
+    serializer_class = DISCDataSerializer
+
+    def get_object(self):
+        disc_character = self.kwargs['disc_character']
+        try:
+            return DISCData.objects.get(disc_character=disc_character)
+        except DISCData.DoesNotExist:
+            raise Response({"detail": "DISC data is not found for the given type."}, status=400)
