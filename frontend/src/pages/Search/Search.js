@@ -1,17 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from './Search.module.css';
-
-// 검색 결과를 시뮬레이션하기 위한 더미 데이터
-const dummyProfiles = [
-    {
-        id: 1,
-        username: 'akinana',
-        name: 'ANIKA SCHNEIDER',
-        profileImage: '/images/basicProfile.png', // 기본 프로필 이미지 경로
-    },
-    // 필요한 만큼 프로필 추가
-];
+import ProfileService from '../../utils/ProfileService';
 
 function Search() {
     const [searchTerm, setSearchTerm] = useState('');
@@ -19,25 +9,28 @@ function Search() {
     const [notFound, setNotFound] = useState(false);
     const navigate = useNavigate();
 
-    // 검색 입력이 변경될 때 상태 업데이트
     const handleInputChange = (e) => {
         setSearchTerm(e.target.value);
         setNotFound(false);
     };
 
-    // 검색 버튼 클릭 시 호출
-    const handleSearch = () => {
-        const profile = dummyProfiles.find((profile) => profile.username === searchTerm);
-        if (profile) {
-            setSearchResult(profile);
-            setNotFound(false);
-        } else {
+    const handleSearch = async () => {
+        try {
+            const results = await ProfileService.fetchSearchResults(searchTerm);
+            if (results.length > 0) {
+                setSearchResult(results[0]);
+                setNotFound(false);
+            } else {
+                setSearchResult(null);
+                setNotFound(true);
+            }
+        } catch (error) {
+            console.error('Search error:', error);
             setSearchResult(null);
             setNotFound(true);
         }
     };
 
-    // 프로필 카드 클릭 시 호출
     const handleProfileClick = () => {
         navigate(`/friend-profile/${searchResult.id}`);
     };
@@ -62,7 +55,11 @@ function Search() {
             </div>
             {searchResult && (
                 <div className={styles.profileCard} onClick={handleProfileClick}>
-                    <img src={searchResult.profileImage} alt="Profile" className={styles.profileImage} />
+                    <img
+                        src={searchResult.profileImage || '/images/basicProfile.png'}
+                        alt="Profile"
+                        className={styles.profileImage}
+                    />
                     <h2 className={styles.name}>{searchResult.name}</h2>
                     <p className={styles.username}>ID: {searchResult.username}</p>
                     <button className={styles.viewProfileButton}>프로필 보러 가기</button>

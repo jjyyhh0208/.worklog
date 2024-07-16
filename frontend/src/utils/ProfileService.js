@@ -135,6 +135,17 @@ const ProfileService = {
                 throw error;
             });
     },
+    fetchSearchResults: async (query) => {
+        try {
+            const response = await API.get('/profiles/user/search', {
+                params: { q: query },
+            });
+            return response.data;
+        } catch (error) {
+            console.error('Error fetching search results:', error);
+            throw error;
+        }
+    },
 };
 
 export default ProfileService;
