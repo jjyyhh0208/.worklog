@@ -9,7 +9,7 @@ from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from dj_rest_auth.views import LoginView
 from dj_rest_auth.registration.views import RegisterView
-from .models import User, WorkStyle, Interest, ShortQuestion, LongQuestion, QuestionAnswer, Score, Feedback
+from .models import User, WorkStyle, Interest, ShortQuestion, LongQuestion, QuestionAnswer, Score, Feedback, DISCData
 from .permissions import UnauthenticatedReadOrSafeMethods
 from .serializers import (
     UserGenderNameAgeSerializer, UserWorkStyleSerializer,
@@ -18,7 +18,7 @@ from .serializers import (
     UserProfileSerializer, UserUniqueIdSerializer,
     ShortQuestionSerializer, LongQuestionSerializer, 
     QuestionAnswerSerializer, ScoreSerializer, FeedbackSerializer,
-    FriendSerializer, UserSearchResultSerializer
+    FriendSerializer, UserSearchResultSerializer, DISCDataSerializer
 )
 
 #유저의 정보를 불러오는 ViewSet -> retrieve인 경우: UserProfileSerializer를 사용하여 유저의 이름, 성별, 나이를 불러옴
@@ -281,3 +281,17 @@ class UserLongQuestionAnswersView(generics.GenericAPIView):
             return Response({"error": "Failed to decode OpenAI response"}, status=500)
 
         return Response(openai_response_json)
+class DISCDataList(generics.ListCreateAPIView):
+    queryset = DISCData.objects.all()
+    serializer_class = DISCDataSerializer
+
+class DISCDataDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = DISCData.objects.all()
+    serializer_class = DISCDataSerializer
+
+    def get_object(self):
+        disc_character = self.kwargs['disc_character']
+        try:
+            return DISCData.objects.get(disc_character=disc_character)
+        except DISCData.DoesNotExist:
+            raise Response({"detail": "DISC data is not found for the given type."}, status=400)

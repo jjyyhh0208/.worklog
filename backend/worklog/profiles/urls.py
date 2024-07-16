@@ -5,7 +5,8 @@ from .views import (
     UserGenderNameAgeView, WorkStyleViewSet, InterestViewSet, 
     UniqueIdCheck, ShortQuestionViewSet, LongQuestionViewSet,
     FeedbackViewSet, UserLongQuestionView, UserFriendView,
-    UserCurrentProfileView, UserSearchView, UserLongQuestionAnswersView
+    UserCurrentProfileView, UserSearchView, UserLongQuestionAnswersView,
+    DISCDataList, DISCDataDetail
     )
 
 
@@ -15,6 +16,7 @@ router.register(r'interests', InterestViewSet, basename='interest')
 router.register(r'short-questions', ShortQuestionViewSet, basename='short-question')
 router.register(r'long-questions', LongQuestionViewSet)
 router.register(r'feedbacks', FeedbackViewSet)
+
 
 urlpatterns = [
     path('', include(router.urls)),
@@ -37,4 +39,8 @@ urlpatterns = [
     
     #GPT용 답변 추출
     path('user/feedback-answers/', UserLongQuestionAnswersView.as_view(), name='user-feedback-answers'), # 유저의 답변을 저장하는 엔드포인트
+
+    # DISC 설명
+    path('disc-data/', DISCDataList.as_view(), name='discdata-list'),
+    path('disc-data/<str:disc_character>/', DISCDataDetail.as_view(), name='discdata-detail'),
 ]
