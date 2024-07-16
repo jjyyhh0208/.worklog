@@ -79,7 +79,7 @@ function Header({ isLoggedIn }) {
                         )}
                     </>
                 ) : (
-                    <Link to="/" className={styles.loginButton}>
+                    <Link to="/signup/1" className={styles.loginButton}>
                         내 계정 만들러 가기
                     </Link>
                 )}
