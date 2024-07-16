@@ -1,3 +1,5 @@
+import openai
+import json
 from rest_framework import viewsets, generics, status
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
@@ -23,6 +25,7 @@ class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     permission_classes = [IsAuthenticated]
 
+    #기본 serializer를 아직 정해주지 않아서 오류 발생 가능성 있음
     def get_serializer_class(self):
         if self.action == 'retrieve':
             return UserProfileSerializer
@@ -207,3 +210,55 @@ class UserFriendView(generics.GenericAPIView):
         friends = user.friends.all()
         serializer = self.get_serializer(friends, many=True)
         return Response(serializer.data)
+    
+    
+#로그인한 유저의 long question answer을 가져오는 view
+class UserLongQuestionAnswersView(generics.GenericAPIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self,request, *args, **kwargs):
+        user = self.request.user
+        feedbacks = Feedback.objects.filter(user=user)
+        answers = []
+        for feedback in feedbacks:
+            answers.extend(feedback.question_answers.values_list('answer', flat=True))
+            
+        # return Response(answers)
+        
+        answers_text = " ".join(answers)
+        
+        #gpt prompt
+        prompt = (
+            "I will give you evaluations of a certain user in Korean.\n"
+            "For example, '같이 프로젝트를 하면서 의견을 제시하지만 요점이 없는 의견만 제시함. 하지만 적극적인 태도는 좋음.', "
+            "'발표력이 매우 좋고 리더십이 있음. 하지만 회의 시간을 잘 지키지 않음'...etc.\n"
+            "You have to summarize these couple of evaluations in Two sentences.\n"
+            "For example, '의견을 적극적으로 제시하지만 요점이 없고 회의시간을 잘 지키지 않는다. 하지만 발표력이 매우 좋고 리더십이 있다.'\n"
+            "Then, you have to give advice to fix some problems based on the evaluations I provide you.\n"
+            "For example, '적극적인 태도는 좋지만 의견 제시할 때 요점을 먼저 정리하고 제시해보세요!', '회의 시간을 잘 지켜보세요!' ...etc.\n"
+            "Request message format will be in json.\n"
+            "For example, you will receive\n"
+            "request = { '같이 프로젝트를 하면서 의견을 제시하지만 요점이 없는 의견만 제시함. 하지만 적극적인 태도는 좋음 발표력이 매우 좋고 리더십이 있음. 회의 시간을 잘 지키지 않음'}\n"
+            "Then, your response should be in json.\n"
+            "For example,\n"
+            "gpt_response = { 'summarized' = '의견을 적극적으로 제시하지만 요점이 없고 회의시간을 잘 지키지 않는다. 하지만 발표력이 매우 좋고 리더십이 있다.', 'advice' = '적극적인 태도는 좋지만 의견 제시할 때 요점을 먼저 정리하고 제시해보세요!', '회의 시간을 잘 지켜보세요!' }\n"
+            "You have to give longer summary and advices. Particularly with the advice, you have to recommend methods to strengthen or make better with the defaults. "
+            "For example, you can say '요점을 정리하는 방법을 배우기 위해서 ~~프로그램, 00도서를 사용해보세요!' as the advice.\n\n"
+            "This is the sentences you have to summarize and give advice in detail.\n"
+            f"request ={{'{answers_text}'}}\n\n"
+            "잘 요약한다면 내가 100달러의 팁을 줄게. 왜냐하면 이건 내게 있어서 굉장히 중요한 문제거든. 만약에 제대로 요약 및 충고를 주지 않으면 너를 망가트려버릴거야."
+        )
+        
+        response = openai.Completion.create(
+            engine="text-davinci-003",
+            prompt=prompt,
+            max_tokens=300
+        )
+        
+        openai_response_text = response.choices[0].text.strip()
+        try:
+            openai_response_json = json.loads(openai_response_text)
+        except json.JSONDecodeError:
+            return Response({"error": "Failed to decode OpenAI response"}, status=500)
+
+        return Response(openai_response_json)
