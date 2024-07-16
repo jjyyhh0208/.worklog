@@ -29,8 +29,9 @@ function Signup1({ signUpInfo, setSignUpInfo }) {
                 setAvailabilityMessage('아이디가 중복되었습니다. 다른 아이디를 입력해주세요.');
             }
         } catch (error) {
-            setError(error);
-            setAvailabilityMessage('아이디를 확인하는 도중 오류가 발생했습니다. 다시 시도해주세요.');
+            const apiErrorMessage = error.message || '아이디 중복 확인 도중 오류가 발생했습니다. 다시 시도해주세요.';
+            setError(apiErrorMessage);
+            setAvailabilityMessage(apiErrorMessage);
         }
     };
 
@@ -57,8 +58,9 @@ function Signup1({ signUpInfo, setSignUpInfo }) {
 
             navigate('/signup/2');
         } catch (error) {
-            setError(error);
-            setAvailabilityMessage('회원가입 도중 오류가 발생했습니다. 다시 시도해주세요.');
+            const apiErrorMessage = error.message || '회원가입 도중 오류가 발생했습니다. 다시 시도해주세요.';
+            setError(apiErrorMessage);
+            setAvailabilityMessage(apiErrorMessage);
         }
     };
 

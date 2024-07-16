@@ -101,7 +101,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = User
-        fields = ('name', 'gender', 'age', 'work_styles', 'interests', 'disc_character', 'gpt_summarized_personality', 'feedback_count')
+        fields = ('username', 'name', 'gender', 'age', 'work_styles', 'interests', 'disc_character', 'gpt_summarized_personality', 'feedback_count')
 
     def get_feedback_count(self, obj): # 피드백 횟수 추가
         return obj.feedback_count
@@ -113,7 +113,12 @@ class UserProfileSerializer(serializers.ModelSerializer):
 class FriendSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['name', 'disc_character']
+        fields = ['username', 'name', 'disc_character']
+
+class UserSearchResultSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['username', 'name']
     
 # 아이디 중복 검사를 위한 로직
 class UserUniqueIdSerializer(serializers.ModelSerializer):
@@ -225,3 +230,4 @@ class FeedbackSerializer(serializers.ModelSerializer):
         
         instance.save()
         return instance
+    
