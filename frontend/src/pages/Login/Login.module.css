@@ -1,0 +1,177 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 10vh; /* 화면 맨 위에서 10% 위치에 위치하도록 조정 */
+    padding: 0 20px; /* 좌우 여백 추가 */
+}
+
+.h1 {
+    position: relative; /* 절대 위치를 상대 위치로 변경 */
+    margin-bottom: 20px; /* 아래 여백 추가 */
+    color: #4053ff;
+    text-align: center;
+    font-size: 47.962px;
+    font-style: normal;
+    font-weight: 800;
+    line-height: normal;
+}
+
+.h2 {
+    color: #000;
+    font-size: 30px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+    margin-bottom: 20px;
+    margin-top: 100px;
+}
+
+.span {
+    color: #000;
+    font-size: 25px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+    margin-bottom: 10px;
+}
+
+.input {
+    display: flex;
+    width: 90vw; /* viewport 너비의 90% 너비 */
+    max-width: 422px; /* 최대 너비 설정 */
+    height: 7vw; /* viewport 너비의 7% 높이 */
+    max-height: 73px; /* 최대 높이 설정 */
+    padding: 1vw; /* viewport 너비의 1% 패딩 */
+    gap: 1vw; /* viewport 너비의 1% 간격 */
+    border-radius: 1vw; /* viewport 너비의 1% 둥근 모서리 */
+    border: 0.5vw solid #4053ff; /* viewport 너비의 0.5% 두께의 테두리 */
+    background: #fff;
+    margin-bottom: 20px;
+    font-size: 21px;
+}
+
+.button {
+    background-color: #9da4e5;
+    border-radius: 1vw; /* viewport 너비의 1% 둥근 모서리 */
+    border: none;
+    align-self: center;
+    width: 20vw; /* viewport 너비의 20% 너비 */
+    height: 8vw; /* viewport 너비의 8% 높이 */
+    max-width: 157.848px; /* 최대 너비 설정 */
+    max-height: 62px; /* 최대 높이 설정 */
+    flex-shrink: 0;
+    color: #f6f6f6;
+    font-size: 21px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+    margin-top: 40px;
+}
+
+.login {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.errorMessage {
+    color: red;
+    margin-bottom: 20px;
+    font-size: 18px;
+}
+
+/* Media queries for responsiveness */
+@media (max-width: 1024px) {
+    .h1 {
+        font-size: 36px;
+        top: 20px;
+        left: 20px;
+    }
+
+    .h2 {
+        font-size: 24px;
+        margin-top: 80px;
+    }
+
+    .span {
+        font-size: 20px;
+    }
+
+    .input {
+        width: 350px;
+        height: 60px;
+        font-size: 18px;
+    }
+
+    .button {
+        width: 140px;
+        height: 50px;
+        font-size: 18px;
+    }
+}
+
+@media (max-width: 768px) {
+    .container {
+        margin-top: 150px;
+    }
+
+    .h1 {
+        font-size: 30px;
+        top: 15px;
+        left: 15px;
+    }
+
+    .h2 {
+        font-size: 20px;
+        margin-top: 60px;
+    }
+
+    .span {
+        font-size: 18px;
+    }
+
+    .input {
+        width: 300px;
+        height: 50px;
+        font-size: 16px;
+    }
+
+    .button {
+        width: 120px;
+        height: 45px;
+        font-size: 16px;
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        margin-top: 100px;
+    }
+
+    .h1 {
+        font-size: 24px;
+        top: 10px;
+        left: 10px;
+    }
+
+    .h2 {
+        font-size: 18px;
+        margin-top: 50px;
+    }
+
+    .span {
+        font-size: 16px;
+    }
+
+    .input {
+        width: 250px;
+        height: 40px;
+        font-size: 14px;
+    }
+
+    .button {
+        width: 100px;
+        height: 40px;
+        font-size: 14px;
+    }
+}

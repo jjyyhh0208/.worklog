@@ -1,0 +1,423 @@
+.profileContainer {
+    padding: 20px;
+    background-color: #f6f6f6;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.sectionsContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+.profileHeader {
+    display: flex;
+    align-items: center;
+    align-items: flex-end;
+    margin-bottom: 20px;
+    margin-top: 20px;
+}
+
+.mainProfile {
+    display: flex;
+    align-items: center;
+    background-color: #fff;
+    border-radius: 50px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 30px 40px;
+    width: 600px;
+    height: 180px;
+    flex-shrink: 0;
+    padding-bottom: 50px;
+    margin-right: 50px;
+    position: relative;
+}
+
+.profileImage {
+    width: 130px;
+    height: 130px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1px solid #000;
+    margin: 20px;
+}
+
+.profileDetails {
+    flex: 1;
+    margin-left: 20px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+}
+
+.profileDetails h1 {
+    color: #000;
+    font-family: Inter;
+    font-size: 40px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+}
+
+.profileDetails p {
+    margin: 5px 0;
+    color: #000;
+    font-size: 25px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+}
+
+.profileDisc {
+    background-color: #4655f9; /* Blue background */
+    color: #fff; /* White text */
+    border: none;
+    padding: 10px 20px;
+    border-radius: 20px;
+    width: 120px;
+    height: 40px;
+    flex-shrink: 0;
+    text-align: center;
+    font-family: 'Inter';
+    font-size: 22px;
+    font-style: normal;
+    font-weight: 550;
+    line-height: 65px; /* Align text vertically */
+    display: flex;
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
+    margin: 0 auto; /* Center horizontally within parent */
+}
+
+
+.rightHeader {
+    margin-left: 20px;
+}
+
+.socialLinks {
+    display: flex;
+    gap: 10px;
+}
+
+.socialLinks a {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 11.812px;
+    background: #fff;
+    width: 76px;
+    height: 76px;
+    flex-shrink: 0;
+}
+
+.socialLinks img {
+    max-width: 100%;
+    max-height: 100%;
+}
+
+.profileEditButton {
+    width: 340px;
+    height: 46px;
+    flex-shrink: 0;
+    background-color: #9b8f8f;
+    color: #fff;
+    font-family: Inter;
+    font-size: 21px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.keywordEditButton {
+    width: 180px;
+    height: 46px;
+    flex-shrink: 0;
+    background-color: #9b8f8f;
+    color: #fff;
+    font-family: Inter;
+    font-size: 21px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    margin-top: 10px;
+    position: absolute;
+    bottom: 30px;
+    right: 30px;
+}
+
+.section {
+    background-color: #fff;
+    border-radius: 50px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    width: 1150px;
+    padding: 30px 60px;
+    position: relative;
+}
+
+.section h2 {
+    color: #000;
+    font-size: 36px;
+    font-style: normal;
+    font-weight: 800;
+    line-height: normal;
+}
+
+.divider {
+    border: none;
+    border-top: 1px solid #ddd;
+    margin: 10px 0;
+}
+
+.stylesContainer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.styleTagMe {
+    padding: 10px 20px;
+    border-radius: 20px;
+    font-size: 14px;
+    width: fit-content;
+    height: 30px;
+    flex-shrink: 0;
+    border-radius: 53.409px;
+    background: #909bff;
+    color: #fff;
+    font-size: 24px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+    margin-top: 20px;
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.styleTagYou {
+    padding: 10px 20px;
+    border-radius: 20px;
+    font-size: 14px;
+    width: fit-content;
+    height: 30px;
+    flex-shrink: 0;
+    border-radius: 53.409px;
+    background: #ffbf1c;
+    color: #fff;
+    font-size: 24px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+    margin-top: 20px;
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.interestTag {
+    padding: 10px 20px;
+    border-radius: 20px;
+    font-size: 14px;
+    width: fit-content;
+    height: 30px;
+    flex-shrink: 0;
+    border-radius: 53.409px;
+    background: #909bff;
+    color: #fff;
+    font-size: 24px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+    margin-top: 20px;
+    margin-bottom: 80px;
+    text-align: center;
+}
+
+.editButton:hover {
+    background-color: #5a6268;
+}
+
+.discContainer {
+    width: 1200px;
+}
+
+.discBar {
+    display: flex;
+    align-items: center;
+    margin: 40px;
+}
+
+.discLabel {
+    width: 80px;
+    font-weight: bold;
+    margin-right: 10px;
+    color: #000;
+    font-size: 24px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+}
+
+.progressBar {
+    width: 80%;
+    height: 30px;
+    background-color: #e0e0e0;
+    border-radius: 20px;
+    overflow: hidden;
+    margin: 10px;
+}
+
+.progress {
+    height: 100%;
+    background-color: #4053ff;
+    border-radius: 20px;
+}
+
+.score {
+    font-weight: bold;
+    color: #9b8f8f;
+}
+
+.typeCards {
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 30px;
+    justify-content: space-around;
+}
+
+.typeCard {
+    width: 238px;
+    height: 60px;
+    border-radius: 20px;
+    padding: 10px 20px;
+    color: #fff;
+    text-align: center;
+    font-size: 24px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.typeDescription {
+    width: 70%;
+    color: #000;
+    font-size: 23px;
+}
+
+.typeQuestion {
+    color: #000;
+    font-size: 23px;
+    font-weight: 600;
+    margin-top: 30px;
+    margin-bottom: 10px;
+}
+
+.aiContainer {
+    margin: 20px;
+}
+
+.aiHeader {
+    display: flex;
+    align-items: center;
+    margin-left: 30px;
+    margin-top: 50px;
+}
+
+.aiHeader svg {
+    margin-left: 10px;
+    margin-right: 5px;
+}
+.aiContainer h2 {
+    margin-top: 30px;
+    margin-left: 0px;
+    color: #4053ff;
+    font-size: 30px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+}
+
+.aiSummary {
+    background-color: #ffffff;
+    border-radius: 20px;
+    padding: 20px;
+}
+
+.aiSummary p {
+    color: #000;
+    text-align: center;
+    font-size: 24px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: normal;
+    margin-bottom: 50px;
+}
+
+.aiFeedback {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.feedbackSummary {
+    flex: 1;
+    background-color: rgba(204, 209, 255, 0.2);
+    border-radius: 20px;
+    margin-right: 10px;
+    color: #000;
+    font-size: 20px;
+    font-style: normal;
+    line-height: normal;
+    padding: 50px;
+    margin: 50px;
+}
+.blurWrapper {
+    position: relative;
+    
+}
+
+.blurred {
+    filter: blur(5px);
+}
+
+.lockIcon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0.5;
+    margin: 0 auto;
+    display: block;
+    margin-top: 30px;
+}
+.feedbackMessage {
+    text-align: center;
+    
+    
+    border-radius: 50px;
+    
+    margin-bottom: 30px;
+    
+    padding: 40px 60px;
+    position: relative;
+}
+
+.feedbackMessage p {
+    font-size: 20px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+}

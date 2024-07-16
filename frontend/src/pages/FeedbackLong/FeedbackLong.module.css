@@ -1,0 +1,237 @@
+.feedbackLongcontainer {
+    background: #f6f6f6;
+    display: flex;
+    justify-content: center;
+    margin: 0;
+    width: 100%;
+    height: 100%;
+    overflow-y: auto;
+}
+
+.content {
+    justify-content: center;
+    padding: 50px;
+    margin: 50px 0;
+    width: 80%;
+    flex-shrink: 0;
+    border-radius: 50px;
+    background: #fff;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Optional: adds shadow for better visibility */
+}
+
+.progressBar {
+    width: 100%; /* Full width of the content */
+    height: 15px; /* Line height */
+    background: #4053ff; /* Line color */
+    border-radius: 10px;
+}
+
+.top {
+    width: 90%;
+    margin-top: 0;
+}
+
+.textbox {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 3%;
+}
+
+.text {
+    color: #000;
+    font-size: 24px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+    width: 85%;
+    height: 69px;
+    flex-shrink: 0;
+    position: relative;
+}
+
+.progress {
+    background-color: #e0e0e0;
+    border-radius: 20px;
+    padding: 10px 20px;
+    position: relative;
+    color: #fff;
+    font-size: 24px;
+    font-style: normal;
+    font-weight: 700;
+    height: fit-content;
+    top: 20px;
+    left: 100px;
+}
+
+.qnabox {
+    position: relative;
+    padding-top: 50px;
+    width: 100%;
+    margin-left: 5%;
+}
+
+.answers textarea {
+    padding: 30px 30px;
+    font-size: 18px;
+    resize: none;
+    background-color: #f0f8ff;
+    border-radius: 38.739px;
+    background: rgba(187, 220, 238, 0.27);
+    width: 85%;
+    height: 250px;
+    flex-shrink: 0;
+    border: none;
+    margin-bottom: 50px;
+}
+
+.questions {
+    color: #4053ff;
+    font-size: 32px;
+    font-style: normal;
+    font-weight: 800;
+    line-height: normal;
+    margin-bottom: 30px;
+}
+
+.submitButton {
+    position: relative;
+    width: 150px;
+    height: 50px;
+    flex-shrink: 0;
+    border-radius: 15.337px;
+    background: #4053ff;
+    color: #fff;
+    font-size: 24px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+    border: none;
+    text-align: center;
+    margin-left: auto;
+}
+
+.submitButton:hover {
+    background-color: #2563eb;
+}
+.pageIndicator {
+    position: absolute;
+    top: 30px;
+    right: 50px;
+    font-size: 24px;
+    font-weight: bold;
+    color: #000000;
+    background-color: #e1e1e1;
+    padding: 10px 15px;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Media queries for responsiveness */
+@media (max-width: 1024px) {
+    .content {
+        width: 90%;
+        padding: 30px;
+    }
+
+    .text {
+        font-size: 20px;
+    }
+
+    .progress {
+        font-size: 20px;
+        padding: 8px 16px;
+        top: 15px;
+        left: 50px;
+    }
+
+    .answers textarea {
+        font-size: 16px;
+        height: 200px;
+    }
+
+    .questions {
+        font-size: 28px;
+    }
+
+    .submitButton {
+        width: 130px;
+        height: 45px;
+        font-size: 20px;
+    }
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 20px;
+    }
+
+    .content {
+        width: 100%;
+        padding: 20px;
+        margin: 20px 0;
+    }
+
+    .text {
+        font-size: 18px;
+    }
+
+    .progress {
+        font-size: 18px;
+        padding: 6px 12px;
+        top: 10px;
+        left: 30px;
+    }
+
+    .answers textarea {
+        font-size: 14px;
+        height: 180px;
+    }
+
+    .questions {
+        font-size: 24px;
+    }
+
+    .submitButton {
+        width: 120px;
+        height: 40px;
+        font-size: 18px;
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        padding: 10px;
+    }
+
+    .content {
+        width: 100%;
+        padding: 10px;
+        margin: 10px 0;
+    }
+
+    .text {
+        font-size: 16px;
+    }
+
+    .progress {
+        font-size: 16px;
+        padding: 4px 8px;
+        top: 5px;
+        left: 20px;
+    }
+
+    .answers textarea {
+        font-size: 12px;
+        height: 150px;
+    }
+
+    .questions {
+        font-size: 20px;
+    }
+
+    .submitButton {
+        width: 100px;
+        height: 35px;
+        font-size: 16px;
+    }
+}
