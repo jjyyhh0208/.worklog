@@ -6,26 +6,39 @@ import DataService from '../../utils/DataService';
 import keywordIcons from '../../components/KeywordIcons/KeywordIcons';
 
 function MyProfile() {
-    const [profileData, setProfileData] = useState(null);
     const [DISCData, setDISCData] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [profileData, setProfileData] = useState(null);
     const navigate = useNavigate();
     const calculatePercentage = (score) => (score / 9) * 100;
 
     useEffect(() => {
-        ProfileService.fetchUserProfile()
-            .then((data) => {
-                setProfileData(data);
-                if (data.disc_character != 'None') {
-                    return DataService.fetchDISCData(data.disc_character);
+        const fetchData = async () => {
+            try {
+                const profileData = await ProfileService.fetchUserProfile();
+                setProfileData(profileData);
+
+                if (profileData.disc_character !== 'None') {
+                    const discData = await DataService.fetchDISCData('프로세서');
+                    setDISCData(discData);
                 }
-            })
-            .then((discData) => {
-                setDISCData(discData);
-            })
-            .catch((error) => {
+            } catch (error) {
                 console.error('프로필 정보를 불러오는 동안 오류가 발생했습니다.', error);
-            });
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchData();
     }, []);
+
+    if (loading) {
+        return <div>Loading...</div>;
+    }
+
+    if (!DISCData) {
+        return <div>Error loading data</div>;
+    }
 
     const handleCopyLink = () => {
         if (profileData && profileData.id) {
@@ -199,7 +212,7 @@ function MyProfile() {
                             <div className={styles.section}>
                                 <h2>타인이 평가하는 {profileData.name}</h2>
                                 <hr className={styles.divider} />
-                                {profileData.feedbackCount >= 3 ? (
+                                {profileData.feedback_count >= 3 ? (
                                     <>
                                         <div className={styles.discContainer}>
                                             {profileData.discScores &&
@@ -220,20 +233,20 @@ function MyProfile() {
                                         </div>
                                         <div className={styles.typeCards}>
                                             <div className={styles.typeCard} style={{ backgroundColor: '#1E74D9' }}>
-                                                {DISCData.typeName}
+                                                {DISCData.disc_character}
                                             </div>
                                             <div className={styles.typeDescription}>
                                                 <p>{DISCData.description}</p>
                                                 <div className={styles.typeQuestion}>
                                                     <strong>강점 및 약점은?</strong>
                                                 </div>
-                                                <strong>• 강점:</strong> {DISCData.strengths.join(', ')}
+                                                <strong>• 강점:</strong> {DISCData.strength.join(', ')}
                                                 <br />
-                                                <strong>• 약점:</strong> {DISCData.weaknesses.join(', ')}
+                                                <strong>• 약점:</strong> {DISCData.weakness.join(', ')}
                                                 <div className={styles.typeQuestion}>
-                                                    <strong>{DISCData.typeName}와 맞는 협업 유형은?</strong>
+                                                    <strong>{DISCData.disc_character}와 맞는 협업 유형은?</strong>
                                                 </div>
-                                                {DISCData.suitableTypes.map((type, index) => (
+                                                {DISCData.suitable_type.map((type, index) => (
                                                     <div key={index}>
                                                         <strong>• {type.name}:</strong>
                                                         <p>{type.description}</p>
