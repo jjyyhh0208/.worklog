@@ -82,7 +82,7 @@ const ProfileService = {
     },
 
     fetchUserProfile: () => {
-        return API.get(`/profiles/user/view/current`)
+        return API.get(`/profiles/user/current`)
             .then((response) => response.data)
             .catch((error) => {
                 console.error('사용자 프로필을 불러오는 동안 오류가 발생했습니다.', error);
@@ -122,7 +122,6 @@ const ProfileService = {
             });
     },
 
-    
     fetchFriends: (username) => {
         return API.get(`/profiles/user/view/friends/${username}`)
             .then((response) => {

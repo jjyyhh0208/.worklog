@@ -108,10 +108,10 @@ function MyProfile() {
                                         <h1>{profileData.name}</h1>
                                         <p>나이: {profileData.age}</p>
                                         <p>성별: {profileData.gender}</p>
-                                        <p>ID: {profileData.id}</p>
+                                        <p>ID: {profileData.username}</p>
                                     </div>
                                     <div className={styles.basicDetails}>
-                                        <div className={styles.profileDisc}>프로세서</div>
+                                        <div className={styles.profileDisc}>{profileData.disc_character}</div>
                                     </div>
                                 </div>
                             </div>
@@ -207,11 +207,11 @@ function MyProfile() {
                                     키워드 수정
                                 </button>
                             </div>
-                            
-                                <div className={styles.section}>
-                                    <h2>타인이 평가하는 {profileData.name}</h2>
-                                    <hr className={styles.divider} />
-                                    {profileData.feedbackCount >= 3 ? (
+
+                            <div className={styles.section}>
+                                <h2>타인이 평가하는 {profileData.name}</h2>
+                                <hr className={styles.divider} />
+                                {profileData.feedbackCount >= 3 ? (
                                     <>
                                         <div className={styles.discContainer}>
                                             {profileData.discScores &&
@@ -280,27 +280,26 @@ function MyProfile() {
                                         </div>
                                     </>
                                 ) : (
-                                <div className={styles.feedbackMessage}>
-                                    <div className={styles.lockIcon}>
-                                        <svg
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            width="164"
-                                            height="187"
-                                            viewBox="0 0 164 187"
-                                            fill="none"
-                                        >
-                                            <path
-                                                d="M145.592 81.5315H136.856V55.3249C136.856 24.8234 112.033 0 81.5315 0C51.03 0 26.2066 24.8234 26.2066 55.3249V81.5315H17.471C7.82557 81.5315 0 89.3571 0 99.0025V168.887C0 178.532 7.82557 186.358 17.471 186.358H145.592C155.237 186.358 163.063 178.532 163.063 168.887V99.0025C163.063 89.3571 155.237 81.5315 145.592 81.5315ZM107.738 81.5315H55.3249V55.3249C55.3249 40.8749 67.0815 29.1184 81.5315 29.1184C95.9815 29.1184 107.738 40.8749 107.738 55.3249V81.5315Z"
-                                                fill="black"
-                                                fillOpacity="0.25"
-                                            />
-                                        </svg>
+                                    <div className={styles.feedbackMessage}>
+                                        <div className={styles.lockIcon}>
+                                            <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                width="164"
+                                                height="187"
+                                                viewBox="0 0 164 187"
+                                                fill="none"
+                                            >
+                                                <path
+                                                    d="M145.592 81.5315H136.856V55.3249C136.856 24.8234 112.033 0 81.5315 0C51.03 0 26.2066 24.8234 26.2066 55.3249V81.5315H17.471C7.82557 81.5315 0 89.3571 0 99.0025V168.887C0 178.532 7.82557 186.358 17.471 186.358H145.592C155.237 186.358 163.063 178.532 163.063 168.887V99.0025C163.063 89.3571 155.237 81.5315 145.592 81.5315ZM107.738 81.5315H55.3249V55.3249C55.3249 40.8749 67.0815 29.1184 81.5315 29.1184C95.9815 29.1184 107.738 40.8749 107.738 55.3249V81.5315Z"
+                                                    fill="black"
+                                                    fillOpacity="0.25"
+                                                />
+                                            </svg>
+                                        </div>
+                                        <p>피드백을 좀 더 모아볼까요? 최소 3명의 응답이 모이면 응답이 공개됩니다.</p>
                                     </div>
-                                    <p>피드백을 좀 더 모아볼까요? 최소 3명의 응답이 모이면 응답이 공개됩니다.</p>
-                                </div>
-                            )}
-                                </div>
-                            
+                                )}
+                            </div>
                         </div>
                     </div>
                 </React.Fragment>
