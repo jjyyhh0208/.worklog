@@ -15,7 +15,9 @@ function MyProfile() {
         ProfileService.fetchUserProfile()
             .then((data) => {
                 setProfileData(data);
-                return DataService.fetchDISCData(data.disc_character);
+                if (data.disc_character != 'None') {
+                    return DataService.fetchDISCData(data.disc_character);
+                }
             })
             .then((discData) => {
                 setDISCData(discData);

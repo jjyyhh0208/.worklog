@@ -54,11 +54,10 @@ class User(AbstractUser):
             }
 
             sorted_scores = sorted(scores.items(), key=lambda item: item[1], reverse=True)
-            top_disc = str(sorted_scores[1][0][0]) + str(sorted_scores[2][0][0])
-            if top_disc not in CHARACTER: # 1,2등 type 내로 설명이 불가능할 때 1,3 등 값 활용
-                top_disc = str(sorted_scores[1][0][0]) + str(sorted_scores[3][0][0])
-            new_disc_character = CHARACTER[top_disc]
-
+            top_disc = str(sorted_scores[0][0]) + str(sorted_scores[1][0])
+            if top_disc not in CHARACTER:  # 1,2등 type 내로 설명이 불가능할 때 1,3 등 값 활용
+                top_disc = str(sorted_scores[0][0]) + str(sorted_scores[2][0])
+            new_disc_character = CHARACTER.get(top_disc, 'None')
         else:
             new_disc_character = 'None'
 
