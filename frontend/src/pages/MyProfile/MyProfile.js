@@ -2,10 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from './MyProfile.module.css';
 import ProfileService from '../../utils/ProfileService';
+import DataService from '../../utils/DataService';
 import keywordIcons from '../../components/KeywordIcons/KeywordIcons';
 
 function MyProfile() {
     const [profileData, setProfileData] = useState(null);
+    const [DISCData, setDISCData] = useState(null);
     const navigate = useNavigate();
     const calculatePercentage = (score) => (score / 9) * 100;
 
@@ -13,6 +15,10 @@ function MyProfile() {
         ProfileService.fetchUserProfile()
             .then((data) => {
                 setProfileData(data);
+                return DataService.fetchDISCData(data.disc_character);
+            })
+            .then((discData) => {
+                setDISCData(discData);
             })
             .catch((error) => {
                 console.error('프로필 정보를 불러오는 동안 오류가 발생했습니다.', error);
@@ -69,26 +75,6 @@ function MyProfile() {
 
     const handleProfileEdit = () => {
         navigate('/signup/2', { state: { isEditing: true, profileData } });
-    };
-
-    const typeData = {
-        typeName: '프로세서',
-        description:
-            '친절하고 협력적인 성격으로, 자신보다 타인을 우선시합니다. 책임감이 강하며, 안정성을 중시합니다. 또한 다른 사람을 지지하고 그들의 아이디어를 응원합니다. 한계가 뚜렷하지 않으면 무언가를 결정하는데 어려움을 겪으며 평화주의적인 사람이 되고자 합니다.',
-        strengths: ['배려심', '친절함', '인내심'],
-        weaknesses: ['비능률적', '의존적', '과도한 친절'],
-        suitableTypes: [
-            {
-                name: '애널리스트형',
-                description:
-                    '애널리스트형과 협업하면 프로세서형의 협력적 성향이 더욱 강화됩니다. 평화롭고 조화로운 분위기를 추구하기 때문에 더욱 안정적인 업무 환경을 만들 수 있습니다.',
-            },
-            {
-                name: '목표 달성자형',
-                description:
-                    '프로세서형은 안정적인 환경을 선호하고 남을 먼저 생각하기에 일의 진행속도가 느린편입니다. 효율적이고 분석적인 목표 달성자형과 협업함으로써 더 체계적이고 빠르게 일을 처리하여 업무 효율을 높여줍니다.',
-            },
-        ],
     };
 
     return (
@@ -232,20 +218,20 @@ function MyProfile() {
                                         </div>
                                         <div className={styles.typeCards}>
                                             <div className={styles.typeCard} style={{ backgroundColor: '#1E74D9' }}>
-                                                {typeData.typeName}
+                                                {DISCData.typeName}
                                             </div>
                                             <div className={styles.typeDescription}>
-                                                <p>{typeData.description}</p>
+                                                <p>{DISCData.description}</p>
                                                 <div className={styles.typeQuestion}>
                                                     <strong>강점 및 약점은?</strong>
                                                 </div>
-                                                <strong>• 강점:</strong> {typeData.strengths.join(', ')}
+                                                <strong>• 강점:</strong> {DISCData.strengths.join(', ')}
                                                 <br />
-                                                <strong>• 약점:</strong> {typeData.weaknesses.join(', ')}
+                                                <strong>• 약점:</strong> {DISCData.weaknesses.join(', ')}
                                                 <div className={styles.typeQuestion}>
-                                                    <strong>{typeData.typeName}와 맞는 협업 유형은?</strong>
+                                                    <strong>{DISCData.typeName}와 맞는 협업 유형은?</strong>
                                                 </div>
-                                                {typeData.suitableTypes.map((type, index) => (
+                                                {DISCData.suitableTypes.map((type, index) => (
                                                     <div key={index}>
                                                         <strong>• {type.name}:</strong>
                                                         <p>{type.description}</p>

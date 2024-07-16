@@ -230,7 +230,26 @@ class FeedbackSerializer(serializers.ModelSerializer):
         
         instance.save()
         return instance
+    
+class StrengthSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Strength
+        fields = ['name']
+
+class WeaknessSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Weakness
+        fields = ['name']
+
+class SuitableTypeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SuitableType
+        fields = ['name', 'description']
+
 class DISCDataSerializer(serializers.ModelSerializer):
+    strength = serializers.StringRelatedField(many=True) 
+    weakness = serializers.StringRelatedField(many=True)
+    suitable_type = SuitableTypeSerializer(many=True)
     class Meta:
         model = DISCData
         fields = ['id', 'disc_character', 'description', 'strength', 'weakness', 'suitable_type']

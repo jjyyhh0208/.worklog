@@ -15,7 +15,6 @@ router.register(r'interests', InterestViewSet, basename='interest')
 router.register(r'short-questions', ShortQuestionViewSet, basename='short-question')
 router.register(r'long-questions', LongQuestionViewSet)
 router.register(r'feedbacks', FeedbackViewSet)
-router.register(r'disc-data', DISCDataViewSet)
 
 
 urlpatterns = [

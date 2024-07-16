@@ -152,7 +152,8 @@ class Weakness(models.Model):
 
 class SuitableType(models.Model):
     name = models.CharField(max_length=50, unique=True)
-    desciption = models.TextField()
+    with_name = models.CharField(max_length=50, default="Default")
+    description = models.TextField()
 
     def __str__(self):
-        return self.name
+        return f"{self.with_name}: {self.name}"
