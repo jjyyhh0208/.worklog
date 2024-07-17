@@ -11,6 +11,7 @@
 # env
 .env
 /backend/.env
+/backend/worklog/.env
 /frontend/.env
 /backend/Pipfile.lock
 
