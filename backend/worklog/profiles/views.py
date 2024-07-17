@@ -1,6 +1,8 @@
+from pyexpat import model
 import openai
+from worklog import settings
 import json
-from rest_framework import viewsets, generics, status
+from rest_framework import viewsets, generics, status, permissions
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework.decorators import action
@@ -20,6 +22,7 @@ from .serializers import (
     QuestionAnswerSerializer, ScoreSerializer, FeedbackSerializer,
     FriendSerializer, UserSearchResultSerializer
 )
+
 
 #유저의 정보를 불러오는 ViewSet -> retrieve인 경우: UserProfileSerializer를 사용하여 유저의 이름, 성별, 나이를 불러옴
 #update, partial_update인 경우: UserWorkInterestSerializer를 사용하여 유저의 업무 성향, 관심 직종을 불러옴
@@ -237,7 +240,7 @@ class UserLongQuestionAnswersView(generics.GenericAPIView):
 
     def get(self,request, *args, **kwargs):
         user = self.request.user
-        feedbacks = Feedback.objects.filter(user=user)
+        feedbacks = Feedback.objects.filter(user=user).prefetch_related('question_answers')
         answers = []
         for feedback in feedbacks:
             answers.extend(feedback.question_answers.values_list('answer', flat=True))
@@ -263,21 +266,74 @@ class UserLongQuestionAnswersView(generics.GenericAPIView):
             "gpt_response = { 'summarized' = '의견을 적극적으로 제시하지만 요점이 없고 회의시간을 잘 지키지 않는다. 하지만 발표력이 매우 좋고 리더십이 있다.', 'advice' = '적극적인 태도는 좋지만 의견 제시할 때 요점을 먼저 정리하고 제시해보세요!', '회의 시간을 잘 지켜보세요!' }\n"
             "You have to give longer summary and advices. Particularly with the advice, you have to recommend methods to strengthen or make better with the defaults. "
             "For example, you can say '요점을 정리하는 방법을 배우기 위해서 ~~프로그램, 00도서를 사용해보세요!' as the advice.\n\n"
+            "In addition, DO NOT add any random or irrelevant information in the response. If you do, I will destroy you.\n"
             "This is the sentences you have to summarize and give advice in detail.\n"
             f"request ={{'{answers_text}'}}\n\n"
             "잘 요약한다면 내가 100달러의 팁을 줄게. 왜냐하면 이건 내게 있어서 굉장히 중요한 문제거든. 만약에 제대로 요약 및 충고를 주지 않으면 너를 망가트려버릴거야."
         )
         
-        response = openai.Completion.create(
-            engine="text-davinci-003",
-            prompt=prompt,
+        openai.api_key = settings.OPENAI_API_KEY
+        response = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",
+            messages=[
+                {"role": "system", "content": "You are a helpful assistant."},
+                {"role": "user", "content": prompt}
+            ],
             max_tokens=300
         )
         
-        openai_response_text = response.choices[0].text.strip()
+        openai_response_text = response['choices'][0]['message']['content'].strip()
         try:
             openai_response_json = json.loads(openai_response_text)
         except json.JSONDecodeError:
             return Response({"error": "Failed to decode OpenAI response"}, status=500)
+        
+        user.gpt_summarized_personality = openai_response_json
+        user.save()
 
-        return Response(openai_response_json)
+        return Response(user.gpt_summarized_personality)
+    
+    
+#db 테스트용 뷰
+class TestAnswers(generics.GenericAPIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, *args, **kwargs):
+        user = self.request.user
+        feedbacks = Feedback.objects.filter(user=user)
+        answers = []
+        for feedback in feedbacks:
+            answers.extend(feedback.question_answers.values_list('answer', flat=True))
+        return Response(answers)
+    
+    
+class UserDeleteView(generics.DestroyAPIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_object(self):
+        # 현재 로그인한 사용자 객체를 반환
+        return self.request.user
+
+    def delete(self, request, *args, **kwargs):
+        user = self.get_object()
+        user.delete()
+        return Response({"detail": "User account deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
+    
+    
+class FollowFriendView(generics.GenericAPIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        user = request.user
+        friend_name = request.data.get('friend_name')
+
+        if not friend_name:
+            return Response({"detail": "Friend name is required."}, status=status.HTTP_400_BAD_REQUEST)
+        
+        friend = get_object_or_404(User, username=friend_name)
+
+        if friend == user:
+            return Response({"detail": "You cannot follow yourself."}, status=status.HTTP_400_BAD_REQUEST)
+
+        user.friends.add(friend)
+        return Response({"detail": f"You are now following {friend.name}"}, status=status.HTTP_200_OK)

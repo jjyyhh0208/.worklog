@@ -5,7 +5,9 @@ from .views import (
     UserGenderNameAgeView, WorkStyleViewSet, InterestViewSet, 
     UniqueIdCheck, ShortQuestionViewSet, LongQuestionViewSet,
     FeedbackViewSet, UserLongQuestionView, UserFriendView,
-    UserCurrentProfileView, UserSearchView, UserLongQuestionAnswersView
+    UserCurrentProfileView, UserSearchView, UserLongQuestionAnswersView,
+    TestAnswers,
+    UserDeleteView, FollowFriendView,
     )
 
 
@@ -36,5 +38,12 @@ urlpatterns = [
     path('auth/check-username/', UniqueIdCheck.as_view(), name='check-username'), # 유저 이름 중복 검사
     
     #GPT용 답변 추출
-    path('user/feedback-answers/', UserLongQuestionAnswersView.as_view(), name='user-feedback-answers'), # 유저의 답변을 저장하는 엔드포인트
+    path('user/feedback-answers/', UserLongQuestionAnswersView.as_view(), name='user-feedback-answers'), # 유저의 답변을 저장하고 gpt 요약을 불러오는 엔드포인트
+
+    path('user/delete/', UserDeleteView.as_view(), name='user-delete'), # 유저 회원 탈퇴 엔드포인트
+    
+    path('user/follow/', FollowFriendView.as_view(), name='follow-friend'), # 유저 친구 추가 엔드포인트
+    
+    #test용 url
+    path('user/test/', TestAnswers.as_view(), name='test-answers'),
 ]

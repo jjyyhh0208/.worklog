@@ -15,7 +15,7 @@ class User(AbstractUser):
     interests = models.ManyToManyField('Interest', blank=False)         # Interest 모델과 다대다 관계 -> 여러 유저가 여러 Interest를 가질 수 있음
     friends = models.ManyToManyField('self', symmetrical=True, blank=True)
     disc_character = models.CharField(max_length=50, blank=True)
-    gpt_summarized_personality = models.TextField(blank=True)
+    gpt_summarized_personality = models.JSONField(blank=True, null=True)
     
     @property
     def feedback_count(self):
