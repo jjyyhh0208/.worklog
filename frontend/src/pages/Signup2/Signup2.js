@@ -95,7 +95,7 @@ function Signup2({ signUpInfo, setSignUpInfo }) {
                 </div>
                 <div className={styles.nextbox}>
                     <div>
-                        <button className={styles.nextBtn} type="submit">
+                        <button className={styles.nextBtn} type="submit" onClick={handleNextClick}>
                             NEXT
                         </button>
                     </div>
