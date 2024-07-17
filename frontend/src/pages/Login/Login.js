@@ -23,7 +23,6 @@ function Login() {
             });
             navigate('/my-profile');
         } catch (error) {
-            console.error(error);
             setError('아이디 또는 비밀번호가 일치하지 않습니다.');
         }
     };
