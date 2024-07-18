@@ -204,7 +204,7 @@ class FeedbackByUserView(generics.ListAPIView):
 class UserFriendView(generics.GenericAPIView):
     queryset = User.objects.all()
     serializer_class = FriendSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = []
 
     def get(self, request, username):
         try:

@@ -1,7 +1,7 @@
 import React from 'react';
 import styles from './Login.module.css';
 import AdminService from '../../utils/AdminService';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 function Login() {
@@ -13,6 +13,13 @@ function Login() {
     const loginChangeHandler = (e) => {
         setLoginInfo({ ...loginInfo, [e.target.name]: e.target.value });
     };
+
+    useEffect(() => {
+        const authToken = localStorage.getItem('authToken');
+        if (authToken) {
+            localStorage.removeItem('authToken');
+        }
+    }, []);
 
     const loginHandler = async (e) => {
         e.preventDefault();
