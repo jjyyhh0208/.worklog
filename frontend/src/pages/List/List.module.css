@@ -114,3 +114,13 @@
 .evaluationButton:hover {
     background: #e5b800;
 }
+.noFriendsMessage{
+    color: #000;
+    font-family: Inter;
+    font-size: 20px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+
+    text-align: center;
+}

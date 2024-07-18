@@ -150,11 +150,19 @@
         },
         "django-allauth": {
             "hashes": [
+<<<<<<< HEAD
                 "sha256:f15f49defb09e0604dad5214e53a69a1f723cb03176bb115c8930bcd19b91749"
             ],
             "index": "pypi",
             "markers": "python_version >= '3.7'",
             "version": "==0.63.6"
+=======
+                "sha256:2374164c468a309e6badf70bc3405136df6036f24a20a13387f2a063066bdaa9"
+            ],
+            "index": "pypi",
+            "markers": "python_version >= '3.7'",
+            "version": "==0.63.3"
+>>>>>>> 71da7982108c4b3f0b39c62bba59e36e17635194
         },
         "django-cors-headers": {
             "hashes": [
@@ -218,14 +226,6 @@
             "index": "pypi",
             "markers": "python_version >= '3.8'",
             "version": "==0.5.0"
-        },
-        "tzdata": {
-            "hashes": [
-                "sha256:2674120f8d891909751c38abcdfd386ac0a5a1127954fbc332af6b5ceae07efd",
-                "sha256:9068bc196136463f5245e51efda838afa15aaeca9903f49050dfa2679db4d252"
-            ],
-            "markers": "sys_platform == 'win32'",
-            "version": "==2024.1"
         },
         "urllib3": {
             "hashes": [
