@@ -1,115 +1,31 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import ProfileService from '../../utils/ProfileService';
 import FeedbackService from '../../utils/FeedbackService';
 import styles from './Feedback.module.css';
 import ProgressBar from '../../components/ProgressBar/ProgressBar';
 
-const questionsTemplate = [
-    [
-        {
-            question: 'OO님은 팀에서 대화를 주도하는 편인가요?',
-            options: [
-                { label: '대화를 주도하고 의견을 제시', value: 'D' },
-                { label: '다른 사람들과 잘 어울림', value: 'I' },
-                { label: '필요한 경우에만 의견을 제시', value: 'S' },
-                { label: '대화 주도보다는 정확한 정보 제공에 집중', value: 'C' },
-            ],
-        },
-        {
-            question: 'OO님은 업무 중 같이 일하는 상대의 다양한 상황들을 파악하려고 하나요?',
-            options: [
-                { label: '타인의 상황보다는 주로 목표 달성에 집중', value: 'D' },
-                { label: '모든 이의 감정을 잘 파악하려고 노력', value: 'I' },
-                { label: '일부 타인의 상황만을 잘 파악하고 배려', value: 'S' },
-                { label: '타인의 상황에 대한 분석', value: 'C' },
-            ],
-        },
-        {
-            question: 'OO님은 목표를 달성하기 위해 세부적인 계획을 잘 세우나요?',
-            options: [
-                { label: '전체적인 전략 구상에 집중', value: 'D' },
-                { label: '계획보다는 사람들과의 상호작용을 중시', value: 'I' },
-                { label: '유연하게 상황에 맞춰 행동', value: 'S' },
-                { label: '세부적인 계획 구상', value: 'C' },
-            ],
-        },
-    ],
-    [
-        {
-            question: 'OO님은 새로운 아이디어를 제시하는 것을 잘하나요?',
-            options: [
-                { label: '새로운 아이디어를 강하게 제시', value: 'D' },
-                { label: '창의적인 아이디어를 제시', value: 'I' },
-                { label: '기존의 아이디어 보완', value: 'S' },
-                { label: '사실과 데이터에 기반한 아이디어 제시', value: 'C' },
-            ],
-        },
-        {
-            question: 'OO님은 여러가지 변수를 고려해서 대안을 생각하는 편인가요?',
-            options: [
-                { label: '아니요, 주로 하나의 목표에 집중', value: 'D' },
-                { label: '아니요, 상황에 따라 유연하게 대응', value: 'I' },
-                { label: '네, 여러 가지 상황을 고려하여 계획 구성', value: 'S' },
-                { label: '네, 다양한 변수를 분석하여 대안을 마련', value: 'C' },
-            ],
-        },
-        {
-            question: 'OO님의 업무에서의 의사 결정 방식은 어떤가요?',
-            options: [
-                { label: '빠르게 의사 결정', value: 'D' },
-                { label: '팀원들과 상의 후 결정', value: 'I' },
-                { label: '신중하게 생각하고 결정', value: 'S' },
-                { label: '충분한 정보를 수집한 후 결정', value: 'C' },
-            ],
-        },
-    ],
-    [
-        {
-            question: 'OO님의 업무에서의 성격은 어떤가요?',
-            options: [
-                { label: '주도적인 성격', value: 'D' },
-                { label: '사교적인 성격', value: 'I' },
-                { label: '여유 있는 성격', value: 'S' },
-                { label: '진지하며 세심한 성격', value: 'C' },
-            ],
-        },
-        {
-            question: 'OO님의 목표 달성 스타일은 ___한 경향이 있다.',
-            options: [
-                { label: '결과를 중시', value: 'D' },
-                { label: '사람을 중시', value: 'I' },
-                { label: '팀을 중시', value: 'S' },
-                { label: '세부사항을 중시', value: 'C' },
-            ],
-        },
-        {
-            question: '업무에서 OO님의 역할은 주로 무엇인가요?',
-            options: [
-                { label: '지시하는 역할', value: 'D' },
-                { label: '영향을 미치는 역할', value: 'I' },
-                { label: '신중히 계획하는 역할', value: 'S' },
-                { label: '필요성을 따져 보는 역할', value: 'C' },
-            ],
-        },
-    ],
-];
-
-const requiredAnswersCount = [12, 12, 12]; // Number of required answers per page
+const requiredAnswersCount = [3, 3, 3]; // Number of required answers per page
 
 const Feedback = () => {
-    const { pageNum } = useParams();
+    const { pageNum, username } = useParams();
+    const location = useLocation();
     const navigate = useNavigate();
     const pageIndex = parseInt(pageNum, 10) - 1;
     const [profileData, setProfileData] = useState(null);
+    const [questionsTemplate, setQuestionsTemplate] = useState([]);
     const [answers, setAnswers] = useState({});
     const [scores, setScores] = useState({ D: 0, I: 0, S: 0, C: 0 });
 
     useEffect(() => {
-        ProfileService.fetchUserProfile()
+        ProfileService.fetchFriendProfile(username)
             .then((data) => setProfileData(data))
             .catch((error) => console.error('Error fetching profile data:', error));
-    }, []);
+
+        FeedbackService.fetchQuestions()
+            .then((questions) => setQuestionsTemplate(questions))
+            .catch((error) => console.error('Error fetching questions:', error));
+    }, [username]);
 
     const handleAnswerChange = (question, option, value) => {
         setAnswers((prevAnswers) => {
@@ -137,47 +53,18 @@ const Feedback = () => {
         }
 
         if (pageIndex < questionsTemplate.length - 1) {
-            navigate(`/feedback/${pageIndex + 2}`);
+            navigate(`/feedback/${pageIndex + 2}/${username}`, {
+                state: { ...location.state, answers, scores },
+            });
         } else {
-            FeedbackService.submitAnswers({
-                id: profileData.id,
-                user: profileData.username,
-                user_by: 'test1', // Assuming the user_by is 'test1', modify as necessary
-                work_styles: [], // Fill this based on your application logic
-                score: {
-                    d_score: scores.D,
-                    i_score: scores.I,
-                    s_score: scores.S,
-                    c_score: scores.C,
-                },
-                question_answers: [
-                    {
-                        question: {
-                            user: null,
-                            long_question: '과의 협업 경험에서 좋았던 점은 무엇이었나요?',
-                        },
-                        answer: '답입니다.',
-                    },
-                    {
-                        question: {
-                            user: null,
-                            long_question: '과의 협업 경험에서 아쉬웠던 점은 무엇이었나요?',
-                        },
-                        answer: '답입니다.',
-                    },
-                ],
-            })
-                .then(() => navigate('../FeedbackLong/FeedbackLong'))
-                .catch((error) => console.error('Error submitting answers:', error));
+            navigate(`/feedback/long/${username}`, {
+                state: { ...location.state, answers, scores },
+            });
         }
     };
 
-    if (!profileData) {
-        return <p>프로필 정보를 불러오는 중입니다...</p>;
-    }
-
-    if (!questionsTemplate[pageIndex]) {
-        return <p>잘못된 페이지 번호입니다.</p>;
+    if (!profileData || questionsTemplate.length === 0) {
+        return <div className={styles.feedbackContainer}></div>;
     }
 
     const currentPageQuestions = questionsTemplate[pageIndex].map((q) => ({
@@ -185,7 +72,7 @@ const Feedback = () => {
         question: q.question.replace('OO', profileData.name),
     }));
 
-    const progress = 20+(pageIndex + 1) * 20; // Progress 계산
+    const progress = 20 + (pageIndex + 1) * 20; // Progress 계산
 
     return (
         <div className={styles.feedbackContainer}>
@@ -193,7 +80,7 @@ const Feedback = () => {
                 <ProgressBar progress={progress} /> {/* ProgressBar 추가 */}
                 <div className={styles.pageIndicator}>{parseInt(pageNum) + 1}/5</div>
                 <h3>
-                    각 항목에 대해서 1~4점 중 가장 {profileData.name}과 가까운 것을 체크해주세요. <br /> **[ 1: 매우
+                    각 항목에 대해서 1~4점 중 가장 {profileData.name}님과 가까운 것을 체크해주세요. <br /> **[ 1: 매우
                     아니다, 2: 아닌 편이다, 3: 그런 편이다, 4: 매우 그렇다 ]
                 </h3>
                 {currentPageQuestions.map((q, index) => (

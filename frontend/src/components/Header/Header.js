@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import styles from './Header.module.css';
 import AdminService from '../../utils/AdminService';
 import ProfileService from '../../utils/ProfileService';
 
 function Header({ isLoggedIn }) {
-    const navigate = useNavigate();
     const [profileData, setProfileData] = useState(null);
 
     useEffect(() => {
@@ -45,7 +44,7 @@ function Header({ isLoggedIn }) {
                         />
                     </svg>
                 </Link>
-                <Link to={`/list/${profileData?.id}`} className={styles.navItem}>
+                <Link to={`/list/${profileData?.username}`} className={styles.navItem}>
                     둘러보기
                     <svg xmlns="http://www.w3.org/2000/svg" width="27" height="23" viewBox=" 0 0 25 23" fill="none">
                         <path
@@ -79,7 +78,7 @@ function Header({ isLoggedIn }) {
                         )}
                     </>
                 ) : (
-                    <Link to="/" className={styles.loginButton}>
+                    <Link to="/signup/1" className={styles.loginButton}>
                         내 계정 만들러 가기
                     </Link>
                 )}

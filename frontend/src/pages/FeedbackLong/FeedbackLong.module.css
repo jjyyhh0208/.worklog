@@ -17,6 +17,7 @@
     border-radius: 50px;
     background: #fff;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Optional: adds shadow for better visibility */
+    position: relative;
 }
 
 .progressBar {
@@ -94,7 +95,8 @@
 }
 
 .submitButton {
-    position: relative;
+    position: absolute;
+    right: 30px;
     width: 150px;
     height: 50px;
     flex-shrink: 0;
@@ -124,6 +126,7 @@
     padding: 10px 15px;
     border-radius: 10px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    
 }
 
 /* Media queries for responsiveness */

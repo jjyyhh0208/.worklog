@@ -97,14 +97,22 @@ class UserProfileSerializer(serializers.ModelSerializer):
     work_styles = WorkStyleSerializer(many=True)
     interests = InterestSerializer(many=True)
     feedback_count = serializers.SerializerMethodField()
+    feedback_workstyles = serializers.SerializerMethodField()
+    disc_scores = serializers.SerializerMethodField()
     disc_character = serializers.SerializerMethodField()
     
     class Meta:
         model = User
-        fields = ('name', 'gender', 'age', 'work_styles', 'interests', 'disc_character', 'gpt_summarized_personality', 'feedback_count')
+        fields = ('username', 'name', 'gender', 'age', 'work_styles', 'interests', 'disc_character', 'gpt_summarized_personality', 'feedback_count','disc_scores', 'feedback_workstyles')
 
     def get_feedback_count(self, obj): # 피드백 횟수 추가
         return obj.feedback_count
+    
+    def get_feedback_workstyles(self, obj): # workstyle 계산 추가
+        return obj.calculate_workstyles
+    
+    def get_disc_scores(self, obj): # 점수 백분율 추가
+        return obj.calculate_disc_scores
     
     def get_disc_character(self, obj): # 타입 계산 추가
         return obj.calculate_disc_character
@@ -113,7 +121,12 @@ class UserProfileSerializer(serializers.ModelSerializer):
 class FriendSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['name', 'disc_character']
+        fields = ['username', 'name', 'disc_character']
+
+class UserSearchResultSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['username', 'name']
     
 # 아이디 중복 검사를 위한 로직
 class UserUniqueIdSerializer(serializers.ModelSerializer):
@@ -225,3 +238,26 @@ class FeedbackSerializer(serializers.ModelSerializer):
         
         instance.save()
         return instance
+    
+class StrengthSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Strength
+        fields = ['name']
+
+class WeaknessSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Weakness
+        fields = ['name']
+
+class SuitableTypeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SuitableType
+        fields = ['name', 'description']
+
+class DISCDataSerializer(serializers.ModelSerializer):
+    strength = serializers.StringRelatedField(many=True) 
+    weakness = serializers.StringRelatedField(many=True)
+    suitable_type = SuitableTypeSerializer(many=True)
+    class Meta:
+        model = DISCData
+        fields = ['id', 'disc_character', 'description', 'strength', 'weakness', 'suitable_type']

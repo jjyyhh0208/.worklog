@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import styles from './FeedbackIntro.module.css';
-import { useNavigate } from 'react-router-dom';
 import ProfileService from '../../utils/ProfileService';
 import FeedbackService from '../../utils/FeedbackService';
 import keywordIcons from '../../components/KeywordIcons/KeywordIcons';
@@ -8,6 +8,7 @@ import ProgressBar from '../../components/ProgressBar/ProgressBar'; // ProgressB
 
 function FeedbackIntro() {
     const navigate = useNavigate();
+    const { username } = useParams();
     const [selectedKeywords, setSelectedKeywords] = useState([]);
     const [keywords, setKeywords] = useState([]);
     const [profileData, setProfileData] = useState(null);
@@ -22,14 +23,14 @@ function FeedbackIntro() {
                 console.error('Error fetching work styles:', error);
             });
 
-        ProfileService.fetchUserProfile()
+        ProfileService.fetchFriendProfile(username)
             .then((data) => {
                 setProfileData(data);
             })
             .catch((error) => {
                 console.error('Error fetching user data:', error);
             });
-    }, []);
+    }, [username]);
 
     const handleKeywordClick = (keyword) => {
         let newKeywords = [...selectedKeywords];
@@ -46,21 +47,11 @@ function FeedbackIntro() {
     };
 
     const handleNextClick = () => {
-        if (!profileData) {
-            console.error('프로필 데이터를 불러오는 중 오류가 발생했습니다.');
+        if (selectedKeywords.length === 0) {
+            alert('최소 1개의 키워드를 선택해주세요.');
             return;
-        } else {
-            FeedbackService.submitAnswers({
-                id: profileData.id,
-                work_styles: selectedKeywords,
-            })
-                .then(() => {
-                    navigate('/feedback/1'); // navigate to feedback/1
-                })
-                .catch((error) => {
-                    console.error('피드백을 제출하는 동안 오류가 발생했습니다.', error);
-                });
         }
+        navigate(`/feedback/1/${username}`, { state: { work_styles: selectedKeywords } });
     };
 
     return (

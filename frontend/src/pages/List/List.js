@@ -3,45 +3,6 @@ import { useNavigate, useParams } from 'react-router-dom';
 import ProfileService from '../../utils/ProfileService';
 import styles from './List.module.css';
 
-const dummyFriendsData = [
-    {
-        id: 1,
-        name: 'Alice Johnson',
-        profileImage: '/images/basicProfile.png',
-        discType: '목표달성자',
-    },
-    {
-        id: 2,
-        name: 'Bob Smith',
-        profileImage: '/images/basicProfile.png',
-        discType: '디테일리스트',
-    },
-    {
-        id: 3,
-        name: 'Charlie Brown',
-        profileImage: '/images/basicProfile.png',
-        discType: '중재가',
-    },
-    {
-        id: 4,
-        name: 'Kim So Yoon',
-        profileImage: '/images/basicProfile.png',
-        discType: '컨트롤타워',
-    },
-    {
-        id: 5,
-        name: 'Kim Jung Hyun',
-        profileImage: '/images/basicProfile.png',
-        discType: '불도저',
-    },
-    {
-        id: 6,
-        name: 'Kim Sung Min',
-        profileImage: '/images/basicProfile.png',
-        discType: '프로세서',
-    },
-];
-
 const discTypeColors = {
     목표달성자: '#FF5473',
     디테일리스트: '#55B807',
@@ -54,16 +15,27 @@ const discTypeColors = {
 };
 
 function List() {
-    const { id } = useParams();
+    const { username } = useParams();
     const [friends, setFriends] = useState([]);
+    const [profileData, setProfileData] = useState(null);
     const navigate = useNavigate();
 
     useEffect(() => {
-        setFriends(dummyFriendsData);
+        ProfileService.fetchUserProfile()
+            .then((data) => {
+                setProfileData(data);
+                return ProfileService.fetchFriends(data.username);
+            })
+            .then((friendsData) => {
+                setFriends(friendsData);
+            })
+            .catch((error) => {
+                console.error('오류가 발생했습니다.', error);
+            });
     }, []);
 
-    const handleEvaluationClick = (friendId) => {
-        navigate(`/friend-profile/${friendId}`);
+    const handleEvaluationClick = (username) => {
+        navigate(`/friend-profile/${username}`);
     };
 
     const handleSearchClick = () => {
@@ -100,22 +72,24 @@ function List() {
             <div className={styles.list}>
                 {friends.map((friend) => (
                     <div key={friend.id} className={styles.friendCard}>
-                        <div className={styles.discType} style={{ backgroundColor: discTypeColors[friend.discType] }}>
-                            {friend.discType}
+                        <div
+                            className={styles.disc_character}
+                            style={{ backgroundColor: discTypeColors[friend.disc_character] }}
+                        >
+                            {friend.disc_character}
                         </div>
                         <div className={styles.friendDescription}>
                             <img
-                                src={friend.profileImage}
+                                src={friend.profileImage || '/images/basicProfile.png'}
                                 alt={`${friend.name}'s profile`}
                                 className={styles.profileImage}
-                                
                             />
                             <h2 className={styles.name}>{friend.name}</h2>
                             <button
-                                onClick={() => handleEvaluationClick(friend.id)}
+                                onClick={() => handleEvaluationClick(friend.username)}
                                 className={styles.evaluationButton}
                             >
-                                협업 평가 작성
+                                프로필 보러가기
                             </button>
                         </div>
                     </div>

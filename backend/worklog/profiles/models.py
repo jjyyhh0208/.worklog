@@ -1,5 +1,6 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from collections import Counter
 
 class User(AbstractUser):
     GENDER_CHOICES = [
@@ -15,17 +16,65 @@ class User(AbstractUser):
     interests = models.ManyToManyField('Interest', blank=False)         # Interest 모델과 다대다 관계 -> 여러 유저가 여러 Interest를 가질 수 있음
     friends = models.ManyToManyField('self', symmetrical=True, blank=True)
     disc_character = models.CharField(max_length=50, blank=True)
-    gpt_summarized_personality = models.TextField(blank=True)
+    gpt_summarized_personality = models.JSONField(blank=True, null=True)
     
     @property
     def feedback_count(self):
         return self.feedbacks_from.count()
     
     @property
+    def calculate_disc_scores(self):
+        feedbacks = self.feedbacks_from.all()
+        d_score_total, i_score_total = 0, 0
+        s_score_total, c_score_total = 0, 0
+
+        if self.feedbacks_from.count() >= 3: 
+            feedback_count = self.feedbacks_from.count()
+            for feedback in feedbacks:
+                if feedback.score:
+                    d_score_total += feedback.score.d_score
+                    i_score_total += feedback.score.i_score
+                    s_score_total += feedback.score.s_score
+                    c_score_total += feedback.score.c_score
+        else:
+            return {'D': 0, 'I': 0, 'S': 0, 'C': 0}
+
+        scores = {
+            'D': round(100 * d_score_total / (feedback_count * 36)),
+            'I': round(100 * i_score_total / (feedback_count * 36)),
+            'S': round(100 * s_score_total / (feedback_count * 36)),
+            'C': round(100 * c_score_total / (feedback_count * 36)),
+        }
+
+        return scores
+
+    
+    @property
+    def calculate_workstyles(self):
+        from .serializers import WorkStyleSerializer
+
+        feedbacks = self.feedbacks_from.all()
+        workstyle_counter = Counter() # counter를 활용하여 개수를 셈.
+
+        for feedback in feedbacks:
+            workstyles = feedback.work_styles.all()
+            workstyle_counter.update(workstyles)
+
+        top_three_workstyles = workstyle_counter.most_common(3)
+
+        # serialized
+        serialized_workstyles = []
+        for workstyle, count in top_three_workstyles:
+            serialized_workstyle = WorkStyleSerializer(workstyle).data
+            serialized_workstyles.append(serialized_workstyle)
+
+        return serialized_workstyles
+    
+    @property
     def calculate_disc_character(self):
         CHARACTER = {
             'ID': '커뮤니케이터',
-            'IS': '중재자',
+            'IS': '중재가',
             'SI': '프로세서',
             'SC': '애널리스트',
             'CS': '디테일리스트',
@@ -38,7 +87,7 @@ class User(AbstractUser):
         d_score_total, i_score_total = 0, 0
         s_score_total, c_score_total = 0, 0
 
-        if feedbacks.exists(): # 피드백이 있는 경우
+        if self.feedbacks_from.count() >= 3: # 피드백 3개 이상 있는 경우
             for feedback in feedbacks:
                 if feedback.score:
                     d_score_total += feedback.score.d_score
@@ -54,11 +103,10 @@ class User(AbstractUser):
             }
 
             sorted_scores = sorted(scores.items(), key=lambda item: item[1], reverse=True)
-            top_disc = str(sorted_scores[1][0][0]) + str(sorted_scores[1][0][0])
-            if top_disc not in CHARACTER: # 1,2등 type 내로 설명이 불가능할 때 1,3 등 값 활용
-                top_disc = str(sorted_scores[1][0][0]) + str(sorted_scores[3][0][0])
-            new_disc_character = CHARACTER[top_disc]
-
+            top_disc = str(sorted_scores[0][0]) + str(sorted_scores[1][0])
+            if top_disc not in CHARACTER:  # 1,2등 type 내로 설명이 불가능할 때 1,3 등 값 활용
+                top_disc = str(sorted_scores[0][0]) + str(sorted_scores[2][0])
+            new_disc_character = CHARACTER.get(top_disc, 'None')
         else:
             new_disc_character = 'None'
 
@@ -125,3 +173,38 @@ class Feedback(models.Model):
 
     def __str__(self):
         return f"Feedback to {self.user} by {self.user_by}"
+    
+
+# DISC 설명
+class DISCData(models.Model):
+    disc_character = models.CharField(max_length=100)
+    description = models.TextField()
+    strength = models.ManyToManyField('Strength', blank=False)
+    weakness = models.ManyToManyField('Weakness', blank=False)
+    suitable_type = models.ManyToManyField('SuitableType', blank=False)
+
+    def __str__(self):
+        return self.disc_character
+    
+class Strength(models.Model):
+    name = models.CharField(max_length=50, unique=True)
+
+    def __str__(self):
+        return self.name
+    
+class Weakness(models.Model):
+    name = models.CharField(max_length=50, unique=True)
+    
+    def __str__(self):
+        return self.name
+
+class SuitableType(models.Model):
+    name = models.CharField(max_length=50)
+    with_name = models.CharField(max_length=50, default="Default")
+    description = models.TextField()
+
+    def __str__(self):
+        return f"{self.with_name}: {self.name}"
+    class Meta:
+        # name과 with_name 필드를 같이 묶어 유니크 조건 설정
+        unique_together = ['name', 'with_name']
