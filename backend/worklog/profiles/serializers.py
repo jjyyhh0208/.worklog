@@ -184,11 +184,13 @@ class FeedbackSerializer(serializers.ModelSerializer):
         score_data = validated_data.pop('score', None)
         question_answers_data = validated_data.pop('question_answers')
         
+        # User 관련 데이터는 이미 validated_data에 포함되어 있음
         feedback = Feedback.objects.create(**validated_data)
         
-        # Workstyle
+        # Workstyles
         for work_style_data in work_styles_data:
-            work_style, created = WorkStyle.objects.get_or_create(**work_style_data)
+            # 이미 있는 WorkStyle 찾기
+            work_style, created = WorkStyle.objects.get(name=work_style_data['name'])
             feedback.work_styles.add(work_style)
         
         # Score Data
