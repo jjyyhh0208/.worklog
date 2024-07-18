@@ -6,7 +6,7 @@ from .views import (
     UniqueIdCheck, ShortQuestionViewSet, LongQuestionViewSet,
     FeedbackViewSet, UserLongQuestionView, UserFriendView,
     UserCurrentProfileView, UserSearchView, UserLongQuestionAnswersView,
-    TestAnswers, FollowFriendView, UserDeleteView,
+    TestAnswers, FollowFriendView, UserDeleteView, DISCDataList, DISCDataDetail
     )
 
 
@@ -43,4 +43,8 @@ urlpatterns = [
     
     path('user/test/', TestAnswers.as_view(), name='test-answers'), # 테스트용 답변을 저장하는 엔드포인트
     path('user/follow/', FollowFriendView.as_view(), name='user-follow'), # 유저 팔로우 엔드포인트
+
+    # DISC
+    path('disc-data/', DISCDataList.as_view(), name='discdata-list'),
+    path('disc-data/<str:disc_character>/', DISCDataDetail.as_view(), name='discdata-detail'),
 ]

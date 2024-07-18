@@ -57,6 +57,7 @@ const Feedback = () => {
                 state: { ...location.state, answers, scores },
             });
         } else {
+            localStorage.setItem('scores', JSON.stringify(scores));
             navigate(`/feedback/long/${username}`, {
                 state: { ...location.state, answers, scores },
             });

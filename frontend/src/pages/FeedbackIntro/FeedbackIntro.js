@@ -51,7 +51,8 @@ function FeedbackIntro() {
             alert('최소 1개의 키워드를 선택해주세요.');
             return;
         }
-        navigate(`/feedback/1/${username}`, { state: { work_styles: selectedKeywords } });
+        localStorage.setItem('selectedKeywords', JSON.stringify(selectedKeywords));
+        navigate(`/feedback/1/${username}`);
     };
 
     return (
