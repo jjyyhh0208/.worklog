@@ -46,6 +46,23 @@ const FeedbackService = {
                 throw error;
             });
     },
+    saveTempAnswers: (answers) => {
+        return API.post('/feedback/temp-answers/', answers)
+            .then((response) => response.data)
+            .catch((error) => {
+                console.error('임시 답변을 저장하는 동안 오류가 발생했습니다.', error);
+                throw error;
+            });
+    },
+
+    fetchTempAnswers: () => {
+        return API.get('/feedback/temp-answers/')
+            .then((response) => response.data)
+            .catch((error) => {
+                console.error('임시 답변을 불러오는 동안 오류가 발생했습니다.', error);
+                throw error;
+            });
+    },
 };
 
 export default FeedbackService;

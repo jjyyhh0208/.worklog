@@ -6,8 +6,7 @@ from .views import (
     UniqueIdCheck, ShortQuestionViewSet, LongQuestionViewSet,
     FeedbackViewSet, UserLongQuestionView, UserFriendView,
     UserCurrentProfileView, UserSearchView, UserLongQuestionAnswersView,
-    TestAnswers,
-    FollowFriendView, UserDeleteView,
+    TestAnswers, FollowFriendView, UserDeleteView,
     )
 
 
