@@ -55,6 +55,8 @@ function Signup4({ signUpInfo, setSignUpInfo }) {
 
     // Handle 'Complete' button click to save selected keywords
     const handleCompleteClick = () => {
+        
+
         const selectedKeywordIds = selectedKeywords
             .map((keyword) => {
                 const index = keywords.indexOf(keyword);

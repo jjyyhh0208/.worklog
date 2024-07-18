@@ -34,7 +34,11 @@
     background: none;
     border: none;
     cursor: pointer;
+
 }
+.searchBar button:hover{
+    background: #cccccc00;
+} 
 
 .profileCard {
     background: #fff;

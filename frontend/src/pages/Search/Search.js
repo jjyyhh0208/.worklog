@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from './Search.module.css';
 import ProfileService from '../../utils/ProfileService';
@@ -7,15 +7,38 @@ function Search() {
     const [searchTerm, setSearchTerm] = useState('');
     const [searchResult, setSearchResult] = useState(null);
     const [notFound, setNotFound] = useState(false);
+    const [isOwnProfile, setIsOwnProfile] = useState(false);
+    const [currentUser, setCurrentUser] = useState(null);
     const navigate = useNavigate();
+
+    useEffect(() => {
+        fetchCurrentUser();
+    }, []);
+
+    const fetchCurrentUser = async () => {
+        try {
+            const userProfile = await ProfileService.fetchUserProfile();
+            setCurrentUser(userProfile);
+        } catch (error) {
+            console.error('Error fetching current user profile:', error);
+        }
+    };
 
     const handleInputChange = (e) => {
         setSearchTerm(e.target.value);
         setNotFound(false);
+        setIsOwnProfile(false);
     };
 
     const handleSearch = async () => {
         try {
+            if (currentUser && searchTerm === currentUser.username) {
+                setIsOwnProfile(true);
+                setSearchResult(null);
+                setNotFound(false);
+                return;
+            }
+
             const results = await ProfileService.fetchSearchResults(searchTerm);
             if (results.length > 0) {
                 setSearchResult(results[0]);
@@ -53,7 +76,12 @@ function Search() {
                     </svg>
                 </button>
             </div>
-            {searchResult && (
+            {isOwnProfile && (
+                <div className={styles.notFoundMessage}>
+                    <h3>자기 자신과 더 친해지는 건 언제나 환영이에요.</h3>
+                </div>
+            )}
+            {searchResult && !isOwnProfile && (
                 <div className={styles.profileCard} onClick={() => handleProfileClick(searchResult.username)}>
                     <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 47 47" fill="none">
                         <path
@@ -81,9 +109,9 @@ function Search() {
                     </div>
                 </div>
             )}
-            {notFound && (
+            {notFound && !isOwnProfile && (
                 <div className={styles.notFoundMessage}>
-                    <h3>‘{searchTerm}’를 찾을 수 없습니다.</h3>
+                    <h3>'{searchTerm}'를 찾을 수 없습니다.</h3>
                     <p>입력하신 아이디로 등록한 회원이 없습니다.</p>
                     <p>링크를 통해 친구 프로필을 찾거나, 다시 한 번 아이디를 확인해 주세요.</p>
                 </div>

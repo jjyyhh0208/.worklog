@@ -6,6 +6,18 @@ import DataService from '../../utils/DataService';
 import keywordIcons from '../../components/KeywordIcons/KeywordIcons';
 
 function FriendProfile() {
+
+    const discTypeColors = {
+        목표달성자: '#FF5473',
+        디테일리스트: '#55B807',
+        중재가: '#92604B',
+        컨트롤타워: '#00B680',
+        불도저: '#FF4B40',
+        애널리스트: '#7D40FF',
+        커뮤니케이터: '#FFC554',
+        프로세서: '#1E74D9',
+    };
+
     const { username } = useParams();
     const [DISCData, setDISCData] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -17,6 +29,9 @@ function FriendProfile() {
         const fetchData = async () => {
             try {
                 const profileData = await ProfileService.fetchFriendProfile(username);
+                profileData.old = 2025 - profileData.age; // 나이 계산
+                profileData.gender =
+                    profileData.gender === 'F' ? 'Female' : profileData.gender === 'M' ? 'Male' : 'None';
                 setProfileData(profileData);
                 setIsFollowing(profileData.is_following);
 
@@ -75,12 +90,26 @@ function FriendProfile() {
                             <div className={styles.profileDetails}>
                                 <div className={styles.basicDetails}>
                                     <h1>{profileData.name}</h1>
-                                    <p>나이: {profileData.age}</p>
-                                    <p>성별: {profileData.gender}</p>
-                                    <p>ID: {profileData.username}</p>
+                                    <div className={styles.detailsContainer}>
+                                        <div className={styles.detailLabel}>나이</div>
+                                        <div className={styles.detailValue}>{profileData.old}</div>
+                                    </div>
+                                    <div className={styles.detailsContainer}>
+                                        <div className={styles.detailLabel}>성별</div>
+                                        <div className={styles.detailValue}>{profileData.gender}</div>
+                                    </div>
+                                    <div className={styles.detailsContainer}>
+                                        <div className={styles.detailLabel}>ID</div>
+                                        <div className={styles.detailValue}>{profileData.username}</div>
+                                    </div>
                                 </div>
                                 <div className={styles.basicDetails}>
-                                    <div className={styles.profileDisc}>{profileData.disc_character}</div>
+                                    <div
+                                        className={styles.profileDisc}
+                                        style={{ backgroundColor: discTypeColors[profileData.disc_character] }}
+                                    >
+                                        {profileData.disc_character}
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -157,6 +186,7 @@ function FriendProfile() {
 
                         <div className={styles.section}>
                             <h2>타인이 평가하는 {profileData.name}</h2>
+                            <div className={styles.feedbackCount}>답변수: {profileData.feedback_count}</div>
                             <hr className={styles.divider} />
                             {profileData.feedback_count >= 3 ? (
                                 <>
@@ -176,7 +206,10 @@ function FriendProfile() {
                                             ))}
                                     </div>
                                     <div className={styles.typeCards}>
-                                        <div className={styles.typeCard} style={{ backgroundColor: '#1E74D9' }}>
+                                        <div
+                                            className={styles.typeCard}
+                                            style={{ backgroundColor: discTypeColors[profileData.disc_character] }}
+                                        >
                                             {DISCData.disc_character}
                                         </div>
                                         <div className={styles.typeDescription}>
