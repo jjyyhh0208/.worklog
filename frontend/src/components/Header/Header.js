@@ -6,7 +6,7 @@ import ProfileService from '../../utils/ProfileService';
 
 function Header({ isLoggedIn }) {
     const [profileData, setProfileData] = useState(null);
-
+    const [showMenu, setShowMenu] = useState(false);
     useEffect(() => {
         if (isLoggedIn) {
             ProfileService.fetchUserProfile()
@@ -29,9 +29,17 @@ function Header({ isLoggedIn }) {
             });
     };
 
+    const onDeleteAccountClick = () => {
+        console.log('회원탈퇴');
+    };
+
+    const onToggleClick = () => {
+        setShowMenu(!showMenu);
+    };
+
     return (
         <div className={styles.header}>
-            <Link to="/my-profile">
+            <Link to={profileData ? '/my-profile' : '/'}>
                 <span className={styles.logo}>.WORKLOG</span>
             </Link>
             <nav className={styles.nav}>
@@ -69,13 +77,23 @@ function Header({ isLoggedIn }) {
                         {profileData ? (
                             <>
                                 <span className={styles.name}>{profileData.name}님</span>
-                                <button onClick={onLogoutClick} className={styles.logoutButton}>
-                                    Logout
-                                </button>
                             </>
                         ) : (
-                            <span className={styles.name}>Loading...</span>
+                            <span className={styles.name}></span>
                         )}
+                        <button onClick={onToggleClick} className={styles.menuButton}>
+                            Menu
+                        </button>
+                        {showMenu ? (
+                            <div className={`${styles.menu} ${styles.show}`}>
+                                <button onClick={onLogoutClick} className={styles.logoutButton}>
+                                    로그아웃
+                                </button>
+                                <button onClick={onDeleteAccountClick} className={styles.logoutButton}>
+                                    회원탈퇴
+                                </button>
+                            </div>
+                        ) : null}
                     </>
                 ) : (
                     <Link to="/signup/1" className={styles.loginButton}>

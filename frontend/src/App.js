@@ -102,9 +102,8 @@ function App() {
                 <Route path="/friend-profile/:username" element={<FriendProfile />} />
 
                 {/* 보호된 라우트 */}
-                <Route path="/my-profile" element={<MyProfile />} />
-                <Route path="/list/:username" element={<List />} />
-                {/* <Route path="/my-profile" element={<ProtectedRoute element={MyProfile} />} /> */}
+                <Route path="/my-profile" element={<ProtectedRoute element={MyProfile} />} />
+                <Route path="/list/:username" element={<ProtectedRoute element={List} />} />
             </Routes>
         </>
     );
