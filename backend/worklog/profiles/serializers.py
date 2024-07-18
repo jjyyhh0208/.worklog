@@ -189,8 +189,10 @@ class FeedbackSerializer(serializers.ModelSerializer):
         
         # Workstyles
         for work_style_data in work_styles_data:
-            # 이미 있는 WorkStyle 찾기
-            work_style, created = WorkStyle.objects.get(name=work_style_data['name'])
+            try:
+                work_style = WorkStyle.objects.get(name=work_style_data['name'])
+            except WorkStyle.DoesNotExist:
+                raise serializers.ValidationError(f"WorkStyle with name '{work_style_data['name']}' does not exist.")
             feedback.work_styles.add(work_style)
         
         # Score Data
@@ -218,9 +220,11 @@ class FeedbackSerializer(serializers.ModelSerializer):
         instance.save()
 
         # Workstyle
-        instance.work_styles.clear()
         for work_style_data in work_styles_data:
-            work_style, created = WorkStyle.objects.get_or_create(**work_style_data)
+            try:
+                work_style = WorkStyle.objects.get(name=work_style_data['name'])
+            except WorkStyle.DoesNotExist:
+                raise serializers.ValidationError(f"WorkStyle with name '{work_style_data['name']}' does not exist.")
             instance.work_styles.add(work_style)
         
         # Score
