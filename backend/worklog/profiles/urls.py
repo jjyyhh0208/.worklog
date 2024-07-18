@@ -42,6 +42,6 @@ urlpatterns = [
     
     path('user/test/', TestAnswers.as_view(), name='test-answers'), # 테스트용 답변을 저장하는 엔드포인트
     
-    path('user/delete/', UserDeleteView.as_view(), name='user-delete'), # 유저 삭제 엔드포인트
+    path('auth/delete/', UserDeleteView.as_view(), name='user-delete'), # 유저 삭제 엔드포인트
     path('user/follow/', FollowFriendView.as_view(), name='user-follow'), # 유저 팔로우 엔드포인트
 ]

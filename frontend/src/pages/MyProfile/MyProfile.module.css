@@ -32,6 +32,7 @@
     height: 180px;
     flex-shrink: 0;
     padding-bottom: 50px;
+    padding-right: 8%;
     margin-right: 50px;
     position: relative;
 }
@@ -91,7 +92,6 @@
     align-items: center; /* Center vertically */
     margin: 0 auto; /* Center horizontally within parent */
 }
-
 
 .rightHeader {
     margin-left: 20px;
@@ -270,6 +270,14 @@
     line-height: normal;
 }
 
+.defaultDiscSvg {
+    width: 150px;
+    height: 40px;
+    border-radius: 10px;
+    padding: 10%;
+    background-color: #a7a7a76f;
+}
+
 .progressBar {
     width: 80%;
     height: 30px;
@@ -387,7 +395,6 @@
 }
 .blurWrapper {
     position: relative;
-    
 }
 
 .blurred {
@@ -405,12 +412,11 @@
 }
 .feedbackMessage {
     text-align: center;
-    
-    
+
     border-radius: 50px;
-    
+
     margin-bottom: 30px;
-    
+
     padding: 40px 60px;
     position: relative;
 }

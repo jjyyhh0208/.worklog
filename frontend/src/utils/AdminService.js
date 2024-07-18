@@ -83,6 +83,22 @@ const AdminService = {
                 throw new Error(error.message);
             });
     },
+
+    userDelete: () => {
+        return API.delete('/profiles/auth/delete/')
+            .then((response) => {
+                if (response.status === 200) {
+                    // 성공코드 200
+                    console.log('성공적으로 회원 탈퇴가 이루어졌습니다.');
+                    localStorage.removeItem('authToken'); // Remove the token from local storage
+                }
+                return response.data;
+            })
+            .catch((error) => {
+                console.error('Error details:', error.response?.data); // 더 자세한 에러 로깅
+                throw error;
+            });
+    },
 };
 
 export default AdminService;

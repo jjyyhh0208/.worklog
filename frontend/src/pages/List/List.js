@@ -12,6 +12,7 @@ const discTypeColors = {
     애널리스트: '#7D40FF',
     커뮤니케이터: '#FFC554',
     프로세서: '#1E74D9',
+    None: '#a7a7a76f', // 'None'을 위한 회색 추가
 };
 
 function List() {
@@ -74,9 +75,9 @@ function List() {
                     <div key={friend.id} className={styles.friendCard}>
                         <div
                             className={styles.disc_character}
-                            style={{ backgroundColor: discTypeColors[friend.disc_character] }}
+                            style={{ backgroundColor: discTypeColors[friend.disc_character] || discTypeColors.None }}
                         >
-                            {friend.disc_character}
+                            {friend.disc_character !== 'None' && friend.disc_character}
                         </div>
                         <div className={styles.friendDescription}>
                             <img
