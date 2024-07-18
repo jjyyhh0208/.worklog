@@ -86,6 +86,7 @@
     height: 110px;
     width: 110px;
     margin: 30px auto 5px; /* Adjust margin to place image below the discType label */
+    border: 1px solid #000;
 }
 
 .name {

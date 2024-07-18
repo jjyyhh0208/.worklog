@@ -15,7 +15,7 @@ const discTypeColors = {
 };
 
 function List() {
-    const { id } = useParams();
+    const { username } = useParams();
     const [friends, setFriends] = useState([]);
     const [profileData, setProfileData] = useState(null);
     const navigate = useNavigate();
@@ -34,8 +34,8 @@ function List() {
             });
     }, []);
 
-    const handleEvaluationClick = (friendId) => {
-        navigate(`/friend-profile/${friendId}`);
+    const handleEvaluationClick = (username) => {
+        navigate(`/friend-profile/${username}`);
     };
 
     const handleSearchClick = () => {
@@ -89,7 +89,7 @@ function List() {
                                 onClick={() => handleEvaluationClick(friend.username)}
                                 className={styles.evaluationButton}
                             >
-                                협업 평가 작성
+                                프로필 보러가기
                             </button>
                         </div>
                     </div>

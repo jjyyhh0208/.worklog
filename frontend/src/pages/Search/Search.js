@@ -31,8 +31,8 @@ function Search() {
         }
     };
 
-    const handleProfileClick = () => {
-        navigate(`/friend-profile/${searchResult.id}`);
+    const handleProfileClick = (username) => {
+        navigate(`/friend-profile/${username}`);
     };
 
     return (
@@ -54,7 +54,21 @@ function Search() {
                 </button>
             </div>
             {searchResult && (
-                <div className={styles.profileCard} onClick={handleProfileClick}>
+                <div className={styles.profileCard} onClick={() => handleProfileClick(searchResult.username)}>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 47 47" fill="none">
+                        <path
+                            d="M23.5001 44.5524C11.8872 44.5524 2.448 35.1132 2.448 23.5003C2.448 11.8874 11.8872 2.44824 23.5001 2.44824C35.113 2.44824 44.5522 11.8874 44.5522 23.5003C44.5522 35.1132 35.113 44.5524 23.5001 44.5524ZM23.5001 5.38574C13.5126 5.38574 5.3855 13.5128 5.3855 23.5003C5.3855 33.4878 13.5126 41.6149 23.5001 41.6149C33.4876 41.6149 41.6147 33.4878 41.6147 23.5003C41.6147 13.5128 33.4876 5.38574 23.5001 5.38574Z"
+                            fill="#292D32"
+                        />
+                        <path
+                            d="M31.3334 24.9688H15.6667C14.8638 24.9688 14.198 24.3029 14.198 23.5C14.198 22.6971 14.8638 22.0312 15.6667 22.0312H31.3334C32.1363 22.0312 32.8022 22.6971 32.8022 23.5C32.8022 24.3029 32.1363 24.9688 31.3334 24.9688Z"
+                            fill="#292D32"
+                        />
+                        <path
+                            d="M23.5 32.8024C22.6971 32.8024 22.0312 32.1366 22.0312 31.3337V15.667C22.0312 14.8641 22.6971 14.1982 23.5 14.1982C24.3029 14.1982 24.9688 14.8641 24.9688 15.667V31.3337C24.9688 32.1366 24.3029 32.8024 23.5 32.8024Z"
+                            fill="#292D32"
+                        />
+                    </svg>
                     <img
                         src={searchResult.profileImage || '/images/basicProfile.png'}
                         alt="Profile"
@@ -62,7 +76,9 @@ function Search() {
                     />
                     <h2 className={styles.name}>{searchResult.name}</h2>
                     <p className={styles.username}>ID: {searchResult.username}</p>
-                    <button className={styles.viewProfileButton}>프로필 보러 가기</button>
+                    <div className={styles.follow}>
+                        <button className={styles.viewProfileButton}>프로필 보러 가기</button>
+                    </div>
                 </div>
             )}
             {notFound && (

@@ -16,7 +16,7 @@
 .profileHeader {
     display: flex;
     align-items: center;
-    align-items: flex-end;
+    
     margin-bottom: 20px;
     margin-top: 20px;
 }
@@ -95,34 +95,18 @@
 
 .rightHeader {
     margin-left: 20px;
-}
-
-.socialLinks {
     display: flex;
-    gap: 10px;
-}
-
-.socialLinks a {
-    display: flex;
-    justify-content: center;
+    flex-direction: column;
     align-items: center;
-    border-radius: 11.812px;
-    background: #fff;
-    width: 76px;
-    height: 76px;
-    flex-shrink: 0;
+    gap: 30px;
 }
 
-.socialLinks img {
-    max-width: 100%;
-    max-height: 100%;
-}
 
-.profileEditButton {
-    width: 340px;
-    height: 46px;
+.followButton {
+    width: 240px;
+    height: 70px;
     flex-shrink: 0;
-    background-color: #9b8f8f;
+    background-color: #4053FF;
     color: #fff;
     font-family: Inter;
     font-size: 21px;
@@ -131,7 +115,42 @@
     line-height: normal;
     border: none;
     padding: 10px 20px;
-    border-radius: 10px;
+    border-radius: 20px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+/* 기존 스타일... */
+
+.unfollowButton {
+    background-color: grey;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-family: 'Inter';
+    font-size: 21px;
+    font-weight: 700;
+    line-height: normal;
+    margin-top: 10px;
+}
+
+
+.feedbackButton {
+    width: 240px;
+    height: 70px;
+    flex-shrink: 0;
+    background-color: #F8BD23;
+    color: #fff;
+    font-family: Inter;
+    font-size: 21px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 20px;
     cursor: pointer;
     margin-top: 10px;
 }

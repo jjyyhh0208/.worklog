@@ -1,21 +1,24 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import styles from './MyProfile.module.css';
+import { useNavigate, useParams } from 'react-router-dom';
+import styles from './FriendProfile.module.css';
 import ProfileService from '../../utils/ProfileService';
 import DataService from '../../utils/DataService';
 import keywordIcons from '../../components/KeywordIcons/KeywordIcons';
 
-function MyProfile() {
+function FriendProfile() {
+    const { username } = useParams();
     const [DISCData, setDISCData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [profileData, setProfileData] = useState(null);
+    const [isFollowing, setIsFollowing] = useState(false);
     const navigate = useNavigate();
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const profileData = await ProfileService.fetchUserProfile();
+                const profileData = await ProfileService.fetchFriendProfile(username);
                 setProfileData(profileData);
+                setIsFollowing(profileData.is_following);
 
                 if (profileData.disc_character !== 'None') {
                     const discData = await DataService.fetchDISCData(profileData.disc_character);
@@ -29,64 +32,34 @@ function MyProfile() {
         };
 
         fetchData();
-    }, []);
+    }, [username]);
+
+    const handleFollowClick = async () => {
+        try {
+            if (isFollowing) {
+                await ProfileService.unfollowUser(username);
+                setIsFollowing(false);
+            } else {
+                await ProfileService.followUser(username);
+                setIsFollowing(true);
+            }
+        } catch (error) {
+            console.error('팔로우/팔로우 취소 중 오류가 발생했습니다.', error);
+        }
+    };
+
+    const handleFeedbackClick = () => {
+        navigate(`/feedback/intro/${username}`);
+    };
 
     if (loading) {
         // 여기에 랜더링 후 변경 페이지 쓰기
         return <div className={styles.profileContainer}></div>;
     }
 
-    const handleCopyLink = () => {
-        if (profileData && profileData.id) {
-            const profileLink = ProfileService.getUserProfileLink(profileData.id);
-
-            if (navigator.clipboard && navigator.clipboard.writeText) {
-                navigator.clipboard
-                    .writeText(profileLink)
-                    .then(() => {
-                        alert('프로필 링크가 복사되었습니다.');
-                    })
-                    .catch((error) => {
-                        console.error('링크 복사 중 오류가 발생했습니다.', error);
-                    });
-            } else {
-                // navigator.clipboard가 지원되지 않는 경우
-                const textArea = document.createElement('textarea');
-                textArea.value = profileLink;
-                document.body.appendChild(textArea);
-                textArea.select();
-                try {
-                    document.execCommand('copy');
-                    alert('프로필 링크가 복사되었습니다.');
-                } catch (err) {
-                    console.error('링크 복사 중 오류가 발생했습니다.', err);
-                }
-                document.body.removeChild(textArea);
-            }
-        } else {
-            alert('프로필 데이터를 불러오는 중입니다.');
-        }
-    };
-
-    const handleKakaoShare = () => {
-        alert('카카오톡 공유 기능은 구현 중입니다.');
-    };
-
-    const handleInstagramShare = () => {
-        alert('인스타그램 공유 기능은 구현 중입니다.');
-    };
-
-    const handleSlackShare = () => {
-        alert('Slack 공유 기능은 구현 중입니다.');
-    };
-
-    const handleKeywordEdit = () => {
-        navigate('/signup/3', { state: { isEditing: true, profileData } });
-    };
-
-    const handleProfileEdit = () => {
-        navigate('/signup/2', { state: { isEditing: true, profileData } });
-    };
+    if (!profileData) {
+        return <div className={styles.profileContainer}></div>;
+    }
 
     return (
         <div className={styles.profileContainer}>
@@ -112,39 +85,20 @@ function MyProfile() {
                             </div>
                         </div>
                         <div className={styles.rightHeader}>
-                            <div className={styles.socialLinks}>
-                                <a href="#" onClick={handleCopyLink}>
-                                    <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        width="40"
-                                        height="40"
-                                        viewBox="0 0 40 40"
-                                        fill="none"
-                                    >
-                                        <path
-                                            d="M33.75 25H31.25C30.9185 25 30.6005 25.1317 30.3661 25.3661C30.1317 25.6005 30 25.9185 30 26.25V35H5V10H16.25C16.5815 10 16.8995 9.8683 17.1339 9.63388C17.3683 9.39946 17.5 9.08152 17.5 8.75V6.25C17.5 5.91848 17.3683 5.60054 17.1339 5.36612C16.8995 5.1317 16.5815 5 16.25 5H3.75C2.75544 5 1.80161 5.39509 1.09835 6.09835C0.395088 6.80161 0 7.75544 0 8.75L0 36.25C0 37.2446 0.395088 38.1984 1.09835 38.9016C1.80161 39.6049 2.75544 40 3.75 40H31.25C32.2446 40 33.1984 39.6049 33.9016 38.9016C34.6049 38.1984 35 37.2446 35 36.25V26.25C35 25.9185 34.8683 25.6005 34.6339 25.3661C34.3995 25.1317 34.0815 25 33.75 25ZM38.125 0H28.125C26.4555 0 25.6211 2.02422 26.7969 3.20312L29.5883 5.99453L10.5469 25.0289C10.3721 25.2031 10.2334 25.4101 10.1387 25.638C10.0441 25.8659 9.9954 26.1103 9.9954 26.357C9.9954 26.6038 10.0441 26.8482 10.1387 27.0761C10.2334 27.304 10.3721 27.511 10.5469 27.6852L12.318 29.4531C12.4922 29.6279 12.6991 29.7666 12.9271 29.8613C13.155 29.9559 13.3993 30.0046 13.6461 30.0046C13.8929 30.0046 14.1372 29.9559 14.3651 29.8613C14.593 29.7666 14.8 29.6279 14.9742 29.4531L34.0062 10.4156L36.7969 13.2031C37.9688 14.375 40 13.5547 40 11.875V1.875C40 1.37772 39.8025 0.900805 39.4508 0.549175C39.0992 0.197544 38.6223 0 38.125 0Z"
-                                            fill="black"
-                                        />
-                                    </svg>
-                                </a>
-                                <a href="#" onClick={handleKakaoShare}>
-                                    <img src="/images/kakao.png" alt="Kakao" width="45" height="45" />
-                                </a>
-                                <a href="#" onClick={handleInstagramShare}>
-                                    <img src="/images/instagram.png" alt="Instagram" width="40" height="40" />
-                                </a>
-                                <a href="#" onClick={handleSlackShare}>
-                                    <img src="/images/slack.png" alt="Slack" width="60" height="30" />
-                                </a>
-                            </div>
-                            <button className={styles.profileEditButton} onClick={handleProfileEdit}>
-                                프로필 수정
+                            <button
+                                className={isFollowing ? styles.unfollowButton : styles.followButton}
+                                onClick={handleFollowClick}
+                            >
+                                {isFollowing ? '팔로우 취소' : '팔로우'}
+                            </button>
+                            <button className={styles.feedbackButton} onClick={handleFeedbackClick}>
+                                협업 평가 작성
                             </button>
                         </div>
                     </div>
                     <div className={styles.sectionsContainer}>
                         <div className={styles.section}>
-                            <h2>내가 추구하는 업무 스타일</h2>
+                            <h2>{profileData.name}님이 추구하는 업무 스타일</h2>
                             <hr className={styles.divider} />
                             <div className={styles.stylesContainer}>
                                 {profileData.work_styles.map((style) => (
@@ -189,7 +143,7 @@ function MyProfile() {
                                     <p>피드백을 좀 더 모아볼까요? 최소 3명의 응답이 모이면 응답이 공개됩니다.</p>
                                 </div>
                             )}
-                            <h2>내가 관심 있는 업종/직군 분야는?</h2>
+                            <h2>{profileData.name}님이 관심 있는 업종/직군 분야는?</h2>
                             <hr className={styles.divider} />
                             <div className={styles.stylesContainer}>
                                 {profileData.interests &&
@@ -199,13 +153,10 @@ function MyProfile() {
                                         </span>
                                     ))}
                             </div>
-                            <button className={styles.keywordEditButton} onClick={handleKeywordEdit}>
-                                키워드 수정
-                            </button>
                         </div>
 
                         <div className={styles.section}>
-                            <h2>타인이 평가하는 나</h2>
+                            <h2>타인이 평가하는 {profileData.name}</h2>
                             <hr className={styles.divider} />
                             {profileData.feedback_count >= 3 ? (
                                 <>
@@ -264,7 +215,9 @@ function MyProfile() {
                                             <h2>AI 요약</h2>
                                         </div>
                                         <div className={styles.aiSummary}>
-                                            <p>팀원들은 나의 협업 성향에 대해 다음과 같이 느꼈어요!</p>
+                                            <p>
+                                                팀원들은 {profileData.name}님의 협업 성향에 대해 다음과 같이 느꼈어요!
+                                            </p>
                                             <div className={styles.aiFeedback}>
                                                 <div className={styles.feedbackSummary}>
                                                     <p>{profileData.gpt_summarized_personality}</p>
@@ -304,4 +257,4 @@ function MyProfile() {
     );
 }
 
-export default MyProfile;
+export default FriendProfile;

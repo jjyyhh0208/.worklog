@@ -5,10 +5,10 @@ const FeedbackService = {
         return API.get('/profiles/short-questions/')
             .then((response) => {
                 const apiData = response.data;
-                let transformedQuestions = [];
+                let transformedQuestions = Array.from({ length: 3 }, () => []);
 
                 apiData.forEach((questionData, index) => {
-                    let transformedSet = [];
+                    const pageIndex = Math.floor(index / 3);
                     const question = {
                         question: questionData.question,
                         options: [
@@ -19,8 +19,7 @@ const FeedbackService = {
                         ],
                     };
 
-                    transformedSet.push(question);
-                    transformedQuestions.push(transformedSet);
+                    transformedQuestions[pageIndex].push(question);
                 });
 
                 return transformedQuestions;
@@ -31,7 +30,6 @@ const FeedbackService = {
             });
     },
     submitAnswers: (answers) => {
-        console.log(answers);
         const transformedAnswers = {
             id: answers.id,
             user: answers.user,

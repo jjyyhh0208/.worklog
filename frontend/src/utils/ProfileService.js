@@ -90,20 +90,20 @@ const ProfileService = {
             });
     },
 
-    getUserProfileLink: (userId) => {
-        return `${window.location.origin}/my-profile/${userId}`;
+    getUserProfileLink: (username) => {
+        return `${window.location.origin}/my-profile/${username}`;
     },
 
     fetchFriendProfile: (username) => {
         return API.get(`/profiles/user/view/${username}`)
             .then((response) => {
                 if (response.status === 200) {
-                    console.log('사용자의 정보를 성공적으로 가져왔습니다.');
+                    return response.data;
                 }
-                return response.data;
+                throw new Error('프로필 정보를 불러오는 동안 오류가 발생했습니다.');
             })
             .catch((error) => {
-                console.error('사용자의 정보를 가져오는 동안 오류가 발생했습니다.', error);
+                console.error('프로필 정보를 가져오는 동안 오류가 발생했습니다.', error);
                 throw error;
             });
     },
@@ -145,6 +145,23 @@ const ProfileService = {
             console.error('Error fetching search results:', error);
             throw error;
         }
+    },
+    followUser: (username) => {
+        return API.post(`/profiles/user/follow/`, { username })
+            .then((response) => response.data)
+            .catch((error) => {
+                console.error('팔로우하는 동안 오류가 발생했습니다.', error);
+                throw error;
+            });
+    },
+
+    unfollowUser: (username) => {
+        return API.post(`/profiles/user/unfollow/`, { username })
+            .then((response) => response.data)
+            .catch((error) => {
+                console.error('팔로우 취소하는 동안 오류가 발생했습니다.', error);
+                throw error;
+            });
     },
 };
 
