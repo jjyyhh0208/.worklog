@@ -39,6 +39,10 @@ DEBUG = True
 ALLOWED_HOSTS = [
     "localhost",
     "127.0.0.1",
+    "www.dot-worklog.com",
+    "dot-worklog.com",
+    "api.dot-worklog.com",
+    "43.202.115.16",
     ".ap-northeast-2.compute.amazonaws.com",
 ]
 
@@ -50,7 +54,10 @@ CORS_ALLOW_HEADERS = '*'
 # CSRF
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:3000", 
-    "http://127.0.0.1:3000", 
+    "http://127.0.0.1:3000",
+    "dot-worklog.com",
+    "www.dot-worklog.com",
+    "43.202.115.16", 
     "http://ec2-43-202-115-16.ap-northeast-2.compute.amazonaws.com"
     ]
 
