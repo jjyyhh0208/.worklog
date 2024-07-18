@@ -8,7 +8,7 @@ from rest_framework.validators import UniqueValidator
 class WorkStyleSerializer(serializers.ModelSerializer):
     class Meta:
         model = WorkStyle
-        fields = '__all__'
+        fields = ['id', 'name']
     
     
 class InterestSerializer(serializers.ModelSerializer):
@@ -189,10 +189,11 @@ class FeedbackSerializer(serializers.ModelSerializer):
         
         # Workstyles
         for work_style_data in work_styles_data:
+            name = work_style_data['name']
             try:
-                work_style = WorkStyle.objects.get(name=work_style_data['name'])
+                work_style = WorkStyle.objects.get(name=name)
             except WorkStyle.DoesNotExist:
-                raise serializers.ValidationError(f"WorkStyle with name '{work_style_data['name']}' does not exist.")
+                raise serializers.ValidationError(f"WorkStyle with name '{name}' does not exist.")
             feedback.work_styles.add(work_style)
         
         # Score Data
