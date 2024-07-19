@@ -31,14 +31,17 @@ const Feedback = () => {
         setAnswers((prevAnswers) => {
             const updatedAnswers = { ...prevAnswers };
             if (!updatedAnswers[question]) updatedAnswers[question] = {};
-            updatedAnswers[question][option] = value;
-            return updatedAnswers;
-        });
+            const previousValue = updatedAnswers[question][option] || 0;
+            const newValue = previousValue === value ? 0 : value;
+            updatedAnswers[question][option] = newValue;
 
-        setScores((prevScores) => {
-            const updatedScores = { ...prevScores };
-            updatedScores[option] += value - (answers[question]?.[option] || 0);
-            return updatedScores;
+            setScores((prevScores) => {
+                const updatedScores = { ...prevScores };
+                updatedScores[option] += newValue - previousValue;
+                return updatedScores;
+            });
+
+            return updatedAnswers;
         });
     };
 
@@ -70,20 +73,39 @@ const Feedback = () => {
 
     const currentPageQuestions = questionsTemplate[pageIndex].map((q) => ({
         ...q,
-        question: q.question.replace('OO', profileData.name),
+        question: q.question.replace('OO', profileData.name + '님'),
     }));
 
     const progress = 20 + (pageIndex + 1) * 20; // Progress 계산
+
+    const handleBackClick = () => {
+        navigate(-1);
+    };
 
     return (
         <div className={styles.feedbackContainer}>
             <div className={styles.feedbackPage}>
                 <ProgressBar progress={progress} /> {/* ProgressBar 추가 */}
+                <div className={styles.back}>
+                    <button type="submit" onClick={handleBackClick} className={styles.backBtn}>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="60" height="50" viewBox="0 0 24 24" fill="none">
+                            <path
+                                d="M15.5 19l-7-7 7-7"
+                                stroke="#4053ff"
+                                strokeWidth="2.5"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                            />
+                        </svg>
+                    </button>
+                </div>
                 <div className={styles.pageIndicator}>{parseInt(pageNum) + 1}/5</div>
-                <h3>
-                    각 항목에 대해서 1~4점 중 가장 {profileData.name}님과 가까운 것을 체크해주세요. <br /> **[ 1: 매우
-                    아니다, 2: 아닌 편이다, 3: 그런 편이다, 4: 매우 그렇다 ]
-                </h3>
+                <div className={styles.instructions}>
+                    <div>각 항목에 대해서 1~4점 중 가장 {profileData.name}님과 가까운 것을 체크해주세요.</div>
+                    <div className={styles.fontinstructions}>
+                        * 1: 매우 아니다, 2: 아닌 편이다, 3: 그런 편이다, 4: 매우 그렇다
+                    </div>
+                </div>
                 {currentPageQuestions.map((q, index) => (
                     <div key={index} className={styles.question}>
                         <p>{q.question}</p>
@@ -94,22 +116,15 @@ const Feedback = () => {
                                 </div>
                                 <div className={styles.scores}>
                                     {[1, 2, 3, 4].map((score) => (
-                                        <label key={score}>
-                                            <input
-                                                type="radio"
-                                                name={`${q.question}-${option.value}`}
-                                                value={score}
-                                                checked={answers[q.question]?.[option.value] === score}
-                                                onChange={(e) =>
-                                                    handleAnswerChange(
-                                                        q.question,
-                                                        option.value,
-                                                        parseInt(e.target.value, 10)
-                                                    )
-                                                }
-                                            />
+                                        <button
+                                            key={score}
+                                            className={`${styles.scoreButton} ${
+                                                answers[q.question]?.[option.value] === score ? styles.selected : ''
+                                            }`}
+                                            onClick={() => handleAnswerChange(q.question, option.value, score)}
+                                        >
                                             <span>{score}</span>
-                                        </label>
+                                        </button>
                                     ))}
                                 </div>
                             </div>

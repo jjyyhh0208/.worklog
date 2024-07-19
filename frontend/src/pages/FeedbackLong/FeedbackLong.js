@@ -1,19 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import styles from './FeedbackLong.module.css';
-import axios from 'axios';
 import ProgressBar from '../../components/ProgressBar/ProgressBar'; // ProgressBar import
 import FeedbackService from '../../utils/FeedbackService';
 import ProfileService from '../../utils/ProfileService';
 
-const FeedbackLong = () => {
+const FeedbackLong = ({ isLoggedIn }) => {
     const navigate = useNavigate();
     const { username } = useParams();
     const location = useLocation();
     const [profileData, setProfileData] = useState(location.state?.profileData || null);
+    const [myprofileData, setMyProfileData] = useState();
     const [feedbackData, setFeedbackData] = useState({
-        id: '',
-        feedback_id: '',
         long_questions: {
             question1: '',
             question2: '',
@@ -28,6 +26,14 @@ const FeedbackLong = () => {
                 .catch((error) => console.error('Error fetching profile data:', error));
         }
     }, [username, profileData]);
+
+    useEffect(() => {
+        if (isLoggedIn) {
+            ProfileService.fetchUserProfile()
+                .then((data) => setMyProfileData(data))
+                .catch((error) => console.error('Error fetching profile data:', error));
+        }
+    }, [myprofileData]);
 
     const handleInputChange = (event, question) => {
         const { value } = event.target;
@@ -47,13 +53,20 @@ const FeedbackLong = () => {
             console.error('Profile data is missing');
             return;
         }
+        const workStylesData = (JSON.parse(localStorage.getItem('workStyles')) || { work_styles: [] }).work_styles;
+        const scores = JSON.parse(localStorage.getItem('scores')) || { D: 0, I: 0, S: 0, C: 0 };
 
         const finalFeedbackData = {
             id: profileData.id,
             user: profileData.username,
-            user_by: 'test1', // Modify as necessary
-            work_styles: location.state.work_styles,
-            score: location.state.scores,
+            user_by: myprofileData.username,
+            work_styles: workStylesData,
+            score: {
+                d_score: scores.D,
+                i_score: scores.I,
+                s_score: scores.S,
+                c_score: scores.C,
+            },
             question_answers: [
                 {
                     question: { long_question: '협업 경험에서 좋았던 점은 무엇이었나요?' },
