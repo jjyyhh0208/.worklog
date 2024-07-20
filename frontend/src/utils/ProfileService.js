@@ -169,8 +169,8 @@ const ProfileService = {
             throw error;
         }
     },
-    followUser: (username) => {
-        return API.post(`/profiles/user/follow/`, { username })
+    followUser: (friend_name) => {
+        return API.post(`/profiles/user/follow/`, { friend_name })
             .then((response) => response.data)
             .catch((error) => {
                 console.error('팔로우하는 동안 오류가 발생했습니다.', error);
@@ -178,8 +178,8 @@ const ProfileService = {
             });
     },
 
-    unfollowUser: (username) => {
-        return API.post(`/profiles/user/unfollow/`, { username })
+    unfollowUser: (friend_name) => {
+        return API.post(`/profiles/user/unfollow/`, { friend_name })
             .then((response) => response.data)
             .catch((error) => {
                 console.error('팔로우 취소하는 동안 오류가 발생했습니다.', error);

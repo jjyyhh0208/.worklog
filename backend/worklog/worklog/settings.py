@@ -23,21 +23,22 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 dotenv_path = BASE_DIR.parent / '.env'
-load_dotenv(dotenv_path)
 
-AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
-AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
-AWS_STORAGE_BUCKET_NAME = os.getenv("AWS_STORAGE_BUCKET_NAME")
-AWS_REGION_NAME = os.getenv("AWS_REGION_NAME")
-AWS_SIGNATURE_VERSION = os.getenv("AWS_SIGNATURE_VERSION")
+env = environ.Env()
+environ.Env.read_env(os.path.join(BASE_DIR, ".env"))
+AWS_S3_ACCESS_KEY_ID = env("AWS_S3_ACCESS_KEY_ID")
+AWS_S3_SECRET_ACCESS_KEY = env("AWS_S3_SECRET_ACCESS_KEY")
+AWS_STORAGE_BUCKET_NAME = env("AWS_STORAGE_BUCKET_NAME")
+AWS_S3_REGION_NAME = env("AWS_S3_REGION_NAME")
+AWS_S3_SIGNATURE_VERSION = env("AWS_S3_SIGNATURE_VERSION")
+BUCKET_NAME="next-session14-bucket-jhkim"
 
-AWS_S3_CUSTOM_DOMAIN = f"{AWS_STORAGE_BUCKET_NAME}.s3.{AWS_REGION_NAME}.amazonaws.com"
-AWS_LOCATION = 'media'
-
-
+AWS_S3_CUSTOM_DOMAIN = "%s.s3.%s.amazonaws.com" % (
+    AWS_STORAGE_BUCKET_NAME,
+    AWS_S3_REGION_NAME,
+)
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/{AWS_LOCATION}/"
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
 
 dotenv_path = BASE_DIR / '.env'
 #gpt key를 환경변수로 설정
