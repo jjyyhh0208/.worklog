@@ -6,7 +6,8 @@ from .views import (
     UniqueIdCheck, ShortQuestionViewSet, LongQuestionViewSet,
     FeedbackViewSet, UserLongQuestionView, UserFriendView,
     UserCurrentProfileView, UserSearchView, UserLongQuestionAnswersView,
-    TestAnswers, FollowFriendView, UserDeleteView, DISCDataList, DISCDataDetail
+    TestAnswers, FollowFriendView, UserDeleteView, DISCDataList, 
+    DISCDataDetail, ProfileImageView, get_signed_url_view
     )
 
 
@@ -16,7 +17,6 @@ router.register(r'interests', InterestViewSet, basename='interest')
 router.register(r'short-questions', ShortQuestionViewSet, basename='short-question')
 router.register(r'long-questions', LongQuestionViewSet)
 router.register(r'feedbacks', FeedbackViewSet)
-
 
 urlpatterns = [
     path('', include(router.urls)),
@@ -31,6 +31,11 @@ urlpatterns = [
     path('user/set/work-style/', UserWorkStyleView.as_view(), name='user-work-style-update'),  # 유저의 업무 성향 직종 설정 엔드포인트
     path('user/set/interest/', UserInterestView.as_view(), name='user-work-interest-update'),  # 유저의 관심 직종 설정 엔드포인트
     path('user/set/basic-info/', UserGenderNameAgeView.as_view(), name='user-info-update'),  # 유저의 이름, 성별, 나이 설정 엔드포인트
+    path('user/set/profile-image/', ProfileImageView.as_view(), name='profile-image-upload'), # 유저의 프로필 이미지를 업로드하는 엔드포인트
+
+    # User 그 외
+    path('user/follow/', FollowFriendView.as_view(), name='user-follow'), # 유저 팔로우 엔드포인트
+    path('user/get-signed-url/<path:image_path>/', get_signed_url_view, name='get_signed_url'), # s3 인증값을 받는 엔드포인트
 
     # Auth
     path('auth/', include('dj_rest_auth.urls')),  # 로그인, 로그아웃, 비밀번호 변경, 비밀번호 초기화 등을 위한 엔드포인트 기본 제공 기능
@@ -40,9 +45,7 @@ urlpatterns = [
     
     #GPT용 답변 추출
     path('user/feedback-answers/', UserLongQuestionAnswersView.as_view(), name='user-feedback-answers'), # 유저의 답변을 저장하는 엔드포인트
-    
     path('user/test/', TestAnswers.as_view(), name='test-answers'), # 테스트용 답변을 저장하는 엔드포인트
-    path('user/follow/', FollowFriendView.as_view(), name='user-follow'), # 유저 팔로우 엔드포인트
 
     # DISC
     path('disc-data/', DISCDataList.as_view(), name='discdata-list'),

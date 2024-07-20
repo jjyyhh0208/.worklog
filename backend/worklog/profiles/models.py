@@ -1,7 +1,20 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from collections import Counter
+import os
+from django.utils.deconstruct import deconstructible
 
+# 유저명을 기준으로 프로필 저장
+@deconstructible
+class PathAndRename:
+    def __init__(self, sub_path):
+        self.path = sub_path
+
+    def __call__(self, instance, filename):
+        ext = filename.split('.')[-1]
+        filename = '{}.{}'.format(instance.user.username, ext)
+        return os.path.join(self.path, filename)
+    
 class User(AbstractUser):
     GENDER_CHOICES = [
         ('M', '남성'),
@@ -15,6 +28,7 @@ class User(AbstractUser):
     work_styles = models.ManyToManyField('WorkStyle', blank=False)      # WorkStyle 모델과 다대다 관계 -> 여러 유저가 여러 WorkStyle을 가질 수 있음
     interests = models.ManyToManyField('Interest', blank=False)         # Interest 모델과 다대다 관계 -> 여러 유저가 여러 Interest를 가질 수 있음
     friends = models.ManyToManyField('self', symmetrical=True, blank=True)
+    profile_image = models.OneToOneField('ProfileImage', on_delete=models.SET_NULL, null=True, blank=True, related_name='user_profile')
     disc_character = models.CharField(max_length=50, blank=True)
     gpt_summarized_personality = models.TextField(blank=True, null=True)
     
@@ -130,6 +144,14 @@ class Interest(models.Model):
     
     def __str__(self):
         return self.name
+    
+class ProfileImage(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True, default=None, related_name='profile_image_object')
+    image = models.ImageField(upload_to=PathAndRename('profile-images/'))
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Profile Image {self.id}"
 
 class ShortQuestion(models.Model):
     question = models.CharField(max_length=100, unique=True)

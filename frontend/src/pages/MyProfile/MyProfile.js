@@ -9,6 +9,7 @@ function MyProfile() {
     const [DISCData, setDISCData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [profileData, setProfileData] = useState(null);
+    const [imageUrl, setImageUrl] = useState(null);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -17,12 +18,17 @@ function MyProfile() {
                 const profileData = await ProfileService.fetchUserProfile();
                 setProfileData(profileData);
 
+                if (profileData.profile_image && profileData.profile_image.image) {
+                    const signedUrl = await ProfileService.getSignedImageUrl(profileData.profile_image.image);
+                    setImageUrl(signedUrl);
+                }
+
                 if (profileData.disc_character !== 'None') {
                     const discData = await DataService.fetchDISCData(profileData.disc_character);
                     setDISCData(discData);
                 }
             } catch (error) {
-                console.error('프로필 정보를 불러오는 동안 오류가 발생했습니다.', error);
+                console.error('Error fetching profile data.', error);
             } finally {
                 setLoading(false);
             }
@@ -95,7 +101,7 @@ function MyProfile() {
                     <div className={styles.profileHeader}>
                         <div className={styles.mainProfile}>
                             <img
-                                src={profileData.profileImage || '/images/basicProfile.png'}
+                                src={imageUrl || '/images/basicProfile.png'}
                                 alt="Profile"
                                 className={styles.profileImage}
                             />
