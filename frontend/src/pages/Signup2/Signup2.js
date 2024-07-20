@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import styles from './Signup2.module.css';
 import { useNavigate, useLocation } from 'react-router-dom';
 import ProfileService from '../../utils/ProfileService';
+import AdminService from '../../utils/AdminService';
 
 function Signup2({ signUpInfo, setSignUpInfo }) {
     const navigate = useNavigate();
@@ -26,7 +27,7 @@ function Signup2({ signUpInfo, setSignUpInfo }) {
         e.preventDefault();
         try {
             await ProfileService.setUserBasicInfo({
-                name: signUpInfo.name,
+                name: signUpInfo.name === null ? signUpInfo.username : signUpInfo.name,
                 age: selectedAge,
                 gender: signUpInfo.gender === 'None' ? null : signUpInfo.gender,
             });
@@ -38,6 +39,7 @@ function Signup2({ signUpInfo, setSignUpInfo }) {
         } catch (error) {
             console.error('Failed to update user info:', error);
         }
+        console.log(signUpInfo);
     };
 
     const ageOptions = [];
@@ -61,13 +63,38 @@ function Signup2({ signUpInfo, setSignUpInfo }) {
     const logoHandler = () => {
         navigate('/');
     };
+    const handleBackClick = () => {
+        console.log(signUpInfo);
+        AdminService.userDelete()
+            .then(() => {
+                console.log('회원탈퇴가 성공됨!!');
+                navigate(-1);
+            })
+            .catch((error) => {
+                console.error('회원 탈퇴 중 오류가 발생했습니다.', error);
+            });
+    };
 
     return (
         <div className={styles.container}>
             <h1 className={styles.h1} onClick={logoHandler}>
                 .WORKLOG
             </h1>
+
             <h2 className={styles.h2}>기본프로필 등록</h2>
+            <div className={styles.back}>
+                <button type="submit" onClick={handleBackClick} className={styles.backBtn}>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="60" height="50" viewBox="0 0 24 24" fill="none">
+                        <path
+                            d="M15.5 19l-7-7 7-7"
+                            stroke="#4053ff"
+                            strokeWidth="2.5"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                        />
+                    </svg>
+                </button>
+            </div>
             <form className={styles.signUp}>
                 <div className={styles.idbox}></div>
                 <span className={styles.span}>이름</span>

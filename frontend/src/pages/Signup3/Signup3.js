@@ -51,7 +51,6 @@ function Signup3({ signUpInfo, setSignUpInfo }) {
     };
 
     const handleNextClick = () => {
-        
         const selectedKeywordIds = selectedKeywords.map((keyword) => {
             const foundKeyword = keywords.find((kw) => kw === keyword);
             return foundKeyword ? keywords.indexOf(foundKeyword) + 1 : null;
@@ -66,18 +65,38 @@ function Signup3({ signUpInfo, setSignUpInfo }) {
             .catch((error) => {
                 console.error('Error setting user work styles:', error);
             });
+        console.log(signUpInfo);
     };
 
     const logoHandler = () => {
         navigate('/');
     };
 
+    const handleBackClick = () => {
+        console.log(signUpInfo);
+
+        navigate(-1);
+    };
     return (
         <div className={styles.container}>
             <h1 className={styles.h1} onClick={logoHandler}>
                 .WORKLOG
             </h1>
+
             <h2 className={styles.h2}>기본 프로필 등록</h2>
+            <div className={styles.back}>
+                <button type="submit" onClick={handleBackClick} className={styles.backBtn}>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="60" height="50" viewBox="0 0 24 24" fill="none">
+                        <path
+                            d="M15.5 19l-7-7 7-7"
+                            stroke="#4053ff"
+                            strokeWidth="2.5"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                        />
+                    </svg>
+                </button>
+            </div>
             <p className={styles.instruction}>스스로 생각하기에 본인의 업무 스타일은 어떤 이미지가 돋보이나요?</p>
             <div className={styles.instructionbox}>
                 <svg xmlns="http://www.w3.org/2000/svg" width="25" height="26" viewBox="0 0 25 26" fill="none">

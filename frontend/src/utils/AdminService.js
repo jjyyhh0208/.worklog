@@ -94,6 +94,7 @@ const AdminService = {
                     console.log('성공적으로 회원 탈퇴가 이루어졌습니다.');
                     localStorage.removeItem('authToken'); // Remove the token from local storage
                 }
+
                 return response.data;
             })
             .catch((error) => {
