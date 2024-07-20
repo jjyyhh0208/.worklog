@@ -9,24 +9,37 @@ function Signup3({ signUpInfo, setSignUpInfo }) {
     const location = useLocation();
     const isEditing = location.state?.isEditing || false;
     const profileData = location.state?.profileData || {};
-
-    const initialSelectedKeywords = isEditing
-        ? [profileData.work_styles[0]?.name, profileData.work_styles[1]?.name, profileData.work_styles[2]?.name]
-        : [];
-
-    const [selectedKeywords, setSelectedKeywords] = useState(initialSelectedKeywords);
+    const [selectedKeywords, setSelectedKeywords] = useState([]);
     const [keywords, setKeywords] = useState([]);
 
     useEffect(() => {
-        ProfileService.fetchWorkStyles()
-            .then((data) => {
-                const fetchedKeywords = data.map((item) => item.name);
+        const fetchData = async () => {
+            try {
+                const workStylesData = await ProfileService.fetchWorkStyles();
+                const fetchedKeywords = workStylesData.map((item) => item.name);
                 setKeywords(fetchedKeywords);
-            })
-            .catch((error) => {
-                console.error('Error fetching work styles:', error);
-            });
-    }, []);
+
+                if (isEditing) {
+                    const userProfileData = await ProfileService.fetchUserProfile();
+                    const fetchedKeywords = userProfileData.work_styles.map((item) => item.name) || [];
+                    console.log(fetchedKeywords);
+                    setSelectedKeywords(fetchedKeywords);
+                    setSignUpInfo({
+                        ...signUpInfo,
+                        work_style: {
+                            keyword1: fetchedKeywords[0] || '',
+                            keyword2: fetchedKeywords[1] || '',
+                            keyword3: fetchedKeywords[2] || '',
+                        },
+                    });
+                }
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        };
+
+        fetchData();
+    }, [isEditing]);
 
     const handleKeywordClick = (keyword) => {
         let newKeywords = [...selectedKeywords];
@@ -56,6 +69,11 @@ function Signup3({ signUpInfo, setSignUpInfo }) {
             return foundKeyword ? keywords.indexOf(foundKeyword) + 1 : null;
         });
 
+        if (selectedKeywords.length === 0) {
+            alert('최소 1개의 키워드를 선택해주세요.');
+            return;
+        }
+
         ProfileService.setUserWorkStyles(selectedKeywordIds)
             .then(() => {
                 navigate('/signup/4', {
@@ -65,18 +83,20 @@ function Signup3({ signUpInfo, setSignUpInfo }) {
             .catch((error) => {
                 console.error('Error setting user work styles:', error);
             });
-        console.log(signUpInfo);
     };
 
     const logoHandler = () => {
-        navigate('/');
+        if (!isEditing) {
+            navigate('/');
+        } else {
+            navigate('/my-profile');
+        }
     };
 
     const handleBackClick = () => {
-        console.log(signUpInfo);
-
         navigate(-1);
     };
+
     return (
         <div className={styles.container}>
             <h1 className={styles.h1} onClick={logoHandler}>

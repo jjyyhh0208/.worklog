@@ -2,26 +2,20 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from './MyProfile.module.css';
 import ProfileService from '../../utils/ProfileService';
-import DataService from '../../utils/DataService';
 import keywordIcons from '../../components/KeywordIcons/KeywordIcons';
+import typeData from '../../data/typeData.json';
 
 function MyProfile() {
-    const [DISCData, setDISCData] = useState(null);
     const [isLoading, setisLoading] = useState(true);
     const [profileData, setProfileData] = useState(null);
     const [imageUrl, setImageUrl] = useState(null);
+    const [DISCData, setDISCData] = useState(null);
     const navigate = useNavigate();
 
-    const discTypeColors = {
-        '목표 달성자': '#FF5473',
-        디테일리스트: '#55B807',
-        중재가: '#92604B',
-        '컨트롤 타워': '#00B680',
-        불도저: '#FF4B40',
-        애널리스트: '#7D40FF',
-        커뮤니케이터: '#FFC554',
-        프로세서: '#1E74D9',
-    };
+    const discTypeColors = typeData.reduce((acc, item) => {
+        acc[item.disc_character] = item.color;
+        return acc;
+    }, {});
 
     useEffect(() => {
         const fetchData = async () => {
@@ -31,16 +25,17 @@ function MyProfile() {
                 profileData.gender =
                     profileData.gender === 'F' ? 'Female' : profileData.gender === 'M' ? 'Male' : 'None';
                 setProfileData(profileData);
-                setisLoading(false);
+
+                const discData = typeData.find((item) => item.disc_character === profileData.disc_character);
+                if (discData) {
+                    setDISCData(discData);
+                } else {
+                    console.error('DISC character not found:', profileData.disc_character);
+                }
 
                 if (profileData.profile_image && profileData.profile_image.image) {
                     const signedUrl = await ProfileService.getSignedImageUrl(profileData.profile_image.image);
                     setImageUrl(signedUrl);
-                }
-
-                if (profileData.disc_character !== 'None') {
-                    const discData = await DataService.fetchDISCData(profileData.disc_character);
-                    setDISCData(discData);
                 }
             } catch (error) {
                 console.error('Error fetching profile data.', error);
@@ -53,11 +48,7 @@ function MyProfile() {
     }, []);
 
     if (isLoading) {
-        // 여기에 랜더링 후 변경 페이지 쓰기
         return <div className={styles.profileContainer}>Loading...</div>;
-    }
-    if (!profileData) {
-        return <div className={styles.profileContainer}>Profile data not available.</div>;
     }
 
     const handleCopyLink = () => {
@@ -343,12 +334,16 @@ function MyProfile() {
                                             ))}
                                     </div>
                                     <div className={styles.typeCards}>
-                                        <div
-                                            className={styles.typeCard}
-                                            style={{ backgroundColor: discTypeColors[profileData.disc_character] }}
-                                        >
-                                            {DISCData.disc_character}
-                                        </div>
+                                        {profileData && DISCData ? (
+                                            <div
+                                                className={styles.typeCard}
+                                                style={{ backgroundColor: discTypeColors[profileData.disc_character] }}
+                                            >
+                                                {DISCData.disc_character}
+                                            </div>
+                                        ) : (
+                                            <div className={styles.typeCard}>데이터 로딩 중...</div>
+                                        )}
                                         <div className={styles.typeDescription}>
                                             <p>{DISCData.description}</p>
                                             <div className={styles.typeQuestion}>

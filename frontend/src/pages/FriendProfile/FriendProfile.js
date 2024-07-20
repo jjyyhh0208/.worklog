@@ -2,27 +2,22 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import styles from './FriendProfile.module.css';
 import ProfileService from '../../utils/ProfileService';
-import DataService from '../../utils/DataService';
 import keywordIcons from '../../components/KeywordIcons/KeywordIcons';
+import typeData from '../../data/typeData.json';
 
 function FriendProfile() {
-    const discTypeColors = {
-        '목표 달성자': '#FF5473',
-        디테일리스트: '#55B807',
-        중재가: '#92604B',
-        '컨트롤 타워': '#00B680',
-        불도저: '#FF4B40',
-        애널리스트: '#7D40FF',
-        커뮤니케이터: '#FFC554',
-        프로세서: '#1E74D9',
-    };
-
     const { username } = useParams();
-    const [DISCData, setDISCData] = useState(null);
-    const [loading, setLoading] = useState(true);
+    const [isLoading, setisLoading] = useState(true);
     const [profileData, setProfileData] = useState(null);
     const [isFollowing, setIsFollowing] = useState(false);
+    const [imageUrl, setImageUrl] = useState(null);
+    const [DISCData, setDISCData] = useState(null);
     const navigate = useNavigate();
+
+    const discTypeColors = typeData.reduce((acc, item) => {
+        acc[item.disc_character] = item.color;
+        return acc;
+    }, {});
 
     useEffect(() => {
         const fetchData = async () => {
@@ -34,14 +29,21 @@ function FriendProfile() {
                 setProfileData(profileData);
                 setIsFollowing(profileData.is_following);
 
-                if (profileData.disc_character !== 'None') {
-                    const discData = await DataService.fetchDISCData(profileData.disc_character);
+                const discData = typeData.find((item) => item.disc_character === profileData.disc_character);
+                if (discData) {
                     setDISCData(discData);
+                } else {
+                    console.error('DISC character not found:', profileData.disc_character);
+                }
+
+                if (profileData.profile_image && profileData.profile_image.image) {
+                    const signedUrl = await ProfileService.getSignedImageUrl(profileData.profile_image.image);
+                    setImageUrl(signedUrl);
                 }
             } catch (error) {
                 console.error('프로필 정보를 불러오는 동안 오류가 발생했습니다.', error);
             } finally {
-                setLoading(false);
+                setisLoading(false);
             }
         };
 
@@ -65,15 +67,13 @@ function FriendProfile() {
     };
 
     const handleFeedbackClick = () => {
+        if (localStorage.getItem('workStyles')) {
+            localStorage.removeItem('workStyles');
+        }
         navigate(`/feedback/intro/${username}`);
     };
 
-    if (loading) {
-        // 여기에 랜더링 후 변경 페이지 쓰기
-        return <div className={styles.profileContainer}></div>;
-    }
-
-    if (!profileData) {
+    if (isLoading) {
         return <div className={styles.profileContainer}></div>;
     }
 
@@ -84,7 +84,7 @@ function FriendProfile() {
                     <div className={styles.profileHeader}>
                         <div className={styles.mainProfile}>
                             <img
-                                src={profileData.profileImage || '/images/basicProfile.png'}
+                                src={imageUrl || '/images/basicProfile.png'}
                                 alt="Profile"
                                 className={styles.profileImage}
                             />
@@ -229,12 +229,16 @@ function FriendProfile() {
                                             ))}
                                     </div>
                                     <div className={styles.typeCards}>
-                                        <div
-                                            className={styles.typeCard}
-                                            style={{ backgroundColor: discTypeColors[profileData.disc_character] }}
-                                        >
-                                            {DISCData.disc_character}
-                                        </div>
+                                        {profileData && DISCData ? (
+                                            <div
+                                                className={styles.typeCard}
+                                                style={{ backgroundColor: discTypeColors[profileData.disc_character] }}
+                                            >
+                                                {DISCData.disc_character}
+                                            </div>
+                                        ) : (
+                                            <div className={styles.typeCard}>데이터 로딩 중...</div>
+                                        )}
                                         <div className={styles.typeDescription}>
                                             <p>{DISCData.description}</p>
                                             <div className={styles.typeQuestion}>

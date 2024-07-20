@@ -9,19 +9,28 @@ function Signup2({ signUpInfo, setSignUpInfo }) {
     const location = useLocation();
     const isEditing = location.state?.isEditing || false;
     const profileData = location.state?.profileData || {};
-
-    const [selectedGender, setSelectedGender] = useState(signUpInfo.gender || profileData.gender || '');
-    const [selectedAge, setSelectedAge] = useState(signUpInfo.age || profileData.age || ''); // State to hold selected age
+    const [selectedGender, setSelectedGender] = useState('');
+    const [selectedAge, setSelectedAge] = useState('');
 
     useEffect(() => {
-        if (isEditing) {
-            setSignUpInfo(profileData);
-        }
-    }, [isEditing, profileData, setSignUpInfo]);
+        const fetchData = async () => {
+            try {
+                const userProfileData = await ProfileService.fetchUserProfile();
+                setSignUpInfo({
+                    ...signUpInfo,
+                    name: userProfileData.name,
+                    age: userProfileData.age,
+                    gender: userProfileData.gender,
+                });
+                setSelectedAge(userProfileData.age);
+                setSelectedGender(userProfileData.gender);
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        };
 
-    const signUpChangeHandler = (e) => {
-        setSignUpInfo({ ...signUpInfo, [e.target.name]: e.target.value });
-    };
+        fetchData();
+    }, [isEditing]);
 
     const handleNextClick = async (e) => {
         e.preventDefault();
@@ -39,11 +48,10 @@ function Signup2({ signUpInfo, setSignUpInfo }) {
         } catch (error) {
             console.error('Failed to update user info:', error);
         }
-        console.log(signUpInfo);
     };
 
     const ageOptions = [];
-    for (let year = 1985; year <= 2020; year++) {
+    for (let year = 1960; year <= 2020; year++) {
         ageOptions.push(
             <option key={year} value={year}>
                 {year}
@@ -51,8 +59,13 @@ function Signup2({ signUpInfo, setSignUpInfo }) {
         );
     }
 
+    const handleInputChange = (e) => {
+        setSignUpInfo({ ...signUpInfo, [e.target.name]: e.target.value });
+    };
+
     const handleAgeChange = (e) => {
         setSelectedAge(e.target.value);
+        setSignUpInfo({ ...signUpInfo, age: e.target.value });
     };
 
     const handleGenderClick = (gender) => {
@@ -61,18 +74,24 @@ function Signup2({ signUpInfo, setSignUpInfo }) {
     };
 
     const logoHandler = () => {
+        localStorage.removeItem('authToken');
         navigate('/');
     };
+
     const handleBackClick = () => {
-        console.log(signUpInfo);
-        AdminService.userDelete()
-            .then(() => {
-                console.log('회원탈퇴가 성공됨!!');
-                navigate(-1);
-            })
-            .catch((error) => {
-                console.error('회원 탈퇴 중 오류가 발생했습니다.', error);
-            });
+        if (!isEditing) {
+            AdminService.userDelete()
+                .then(() => {
+                    localStorage.removeItem('authToken');
+                    navigate(-1);
+                })
+                .catch((error) => {
+                    console.error('회원 탈퇴 중 오류가 발생했습니다.', error);
+                });
+        } else {
+            localStorage.removeItem('authToken');
+            navigate(-1);
+        }
     };
 
     return (
@@ -104,7 +123,7 @@ function Signup2({ signUpInfo, setSignUpInfo }) {
                     placeholder="사용할 닉네임을 입력해주세요."
                     name="name"
                     value={signUpInfo.name}
-                    onChange={signUpChangeHandler}
+                    onChange={handleInputChange}
                 />
                 <span className={styles.span}>출생연도</span>
                 <select className={styles.input} value={selectedAge} onChange={handleAgeChange}>
@@ -140,14 +159,6 @@ function Signup2({ signUpInfo, setSignUpInfo }) {
                         <button className={styles.nextBtn} type="button" onClick={handleNextClick}>
                             {isEditing ? '수정 완료' : 'NEXT'} {/* 수정 모드일 때 버튼 텍스트 변경 */}
                         </button>
-                    </div>
-                    <div>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="0 0 50 50" fill="none">
-                            <path
-                                d="M25.0314 27.7727L7.97165 48.5912C6.79252 50.0301 4.88585 50.0301 3.71927 48.5912L0.884345 45.1317C-0.294782 43.6927 -0.294782 41.366 0.884345 39.9424L12.9767 25.1857L0.884345 10.4291C-0.294782 8.99015 -0.294782 6.66338 0.884345 5.23976L3.70672 1.7496C4.88585 0.310679 6.79252 0.310679 7.95911 1.7496L25.0188 22.5681C26.2105 24.007 26.2105 26.3338 25.0314 27.7727ZM49.1157 22.5681L32.0559 1.7496C30.8768 0.310679 28.9701 0.310679 27.8036 1.7496L24.9686 5.20915C23.7895 6.64807 23.7895 8.97485 24.9686 10.3985L37.061 25.1551L24.9686 39.9117C23.7895 41.3507 23.7895 43.6774 24.9686 45.1011L27.8036 48.5606C28.9827 49.9995 30.8894 49.9995 32.0559 48.5606L49.1157 27.7421C50.2948 26.3338 50.2948 24.007 49.1157 22.5681Z"
-                                fill="#4053FF"
-                            />
-                        </svg>
                     </div>
                 </div>
             </form>

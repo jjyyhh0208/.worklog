@@ -19,7 +19,7 @@ const OnBoarding1 = () => {
     };
 
     return (
-        <div className={styles.container} onClick={handleContainerClick}>
+        <div className={styles.container}>
             <h1 className={styles.h1}>.WORKLOG</h1>
             <div className={styles.dotBox}>
                 <div
@@ -52,7 +52,7 @@ const OnBoarding1 = () => {
                 </span>
                 <span className={styles.descriptionBold}> 나의 업무 성향 분석 레포트</span>
             </div>
-            <div className={styles.mainImageContainer}>
+            <div className={styles.mainImageContainer} onClick={handleContainerClick}>
                 <div className={styles.mainImage} />
             </div>
         </div>

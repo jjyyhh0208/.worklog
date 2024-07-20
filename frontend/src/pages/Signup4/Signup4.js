@@ -8,25 +8,47 @@ function Signup4({ signUpInfo, setSignUpInfo }) {
     const location = useLocation();
     const isEditing = location.state?.isEditing || false;
     const profileData = location.state?.profileData || {};
-
-    // Initialize selectedKeywords based on whether it is editing mode and if there are already selected interests
-    const initialSelectedKeywords = isEditing
-        ? profileData.interests?.map((interest) => interest.name).filter(Boolean) || []
-        : [];
-
-    const [selectedKeywords, setSelectedKeywords] = useState(initialSelectedKeywords); // Selected keywords state
-    const [keywords, setKeywords] = useState([]); // All available keywords state
+    const [selectedKeywords, setSelectedKeywords] = useState([]);
+    const [keywords, setKeywords] = useState([]);
 
     useEffect(() => {
-        // Fetch available keywords from the server
         ProfileService.fetchInterests()
             .then((data) => {
-                setKeywords(data.map((item) => item.name)); // Set keywords
+                setKeywords(data.map((item) => item.name));
             })
             .catch((error) => {
                 console.error('Error fetching interests:', error);
             });
     }, []);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const interestsData = await ProfileService.fetchInterests();
+                const fetchedKeywords = interestsData.map((item) => item.name);
+                setKeywords(fetchedKeywords);
+
+                if (isEditing) {
+                    const userProfileData = await ProfileService.fetchUserProfile();
+                    const fetchedKeywords = userProfileData.interests.map((item) => item.name) || [];
+                    console.log(fetchedKeywords);
+                    setSelectedKeywords(fetchedKeywords);
+                    setSignUpInfo({
+                        ...signUpInfo,
+                        interests: {
+                            keyword1: fetchedKeywords[0] || '',
+                            keyword2: fetchedKeywords[1] || '',
+                            keyword3: fetchedKeywords[2] || '',
+                        },
+                    });
+                }
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        };
+
+        fetchData();
+    }, [isEditing]);
 
     // Handle keyword click to toggle selection
     const handleKeywordClick = (keyword) => {
@@ -61,6 +83,11 @@ function Signup4({ signUpInfo, setSignUpInfo }) {
                 return index > -1 ? index + 1 : null;
             })
             .filter((id) => id !== null);
+
+        if (selectedKeywords.length === 0) {
+            alert('최소 1개의 키워드를 선택해주세요.');
+            return;
+        }
 
         // Save selected keywords and navigate accordingly
         ProfileService.setUserInterest(selectedKeywordIds)

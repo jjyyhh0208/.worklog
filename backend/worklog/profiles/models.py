@@ -196,37 +196,3 @@ class Feedback(models.Model):
     def __str__(self):
         return f"Feedback to {self.user} by {self.user_by}"
     
-
-# DISC 설명
-class DISCData(models.Model):
-    disc_character = models.CharField(max_length=100)
-    description = models.TextField()
-    strength = models.ManyToManyField('Strength', blank=False)
-    weakness = models.ManyToManyField('Weakness', blank=False)
-    suitable_type = models.ManyToManyField('SuitableType', blank=False)
-
-    def __str__(self):
-        return self.disc_character
-    
-class Strength(models.Model):
-    name = models.CharField(max_length=50, unique=True)
-
-    def __str__(self):
-        return self.name
-    
-class Weakness(models.Model):
-    name = models.CharField(max_length=50, unique=True)
-    
-    def __str__(self):
-        return self.name
-
-class SuitableType(models.Model):
-    name = models.CharField(max_length=50)
-    with_name = models.CharField(max_length=50, default="Default")
-    description = models.TextField()
-
-    def __str__(self):
-        return f"{self.with_name}: {self.name}"
-    class Meta:
-        # name과 with_name 필드를 같이 묶어 유니크 조건 설정
-        unique_together = ['name', 'with_name']

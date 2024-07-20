@@ -214,9 +214,9 @@ const AboutUs = () => {
                         <div className={styles.typeQuestion}>
                             <strong>커뮤니케이터형과 맞는 협업 유형은?</strong>
                         </div>
-                        <strong>• 강점 강화: 중재자형</strong>
+                        <strong>• 강점 강화: 중재가형</strong>
                         <p>
-                            커뮤니케이터형과 중재자형의 협업은 창의성과 사교성을 극대화할 수 있어요. 중재자형의 사교성과
+                            커뮤니케이터형과 중재가형의 협업은 창의성과 사교성을 극대화할 수 있어요. 중재가형의 사교성과
                             공감 능력이 커뮤니케이터형의 아이디어와 결합되어 서로를 격려하는 분위기에서 팀원들 간의
                             협력이 잘 이루어집니다.
                         </p>
@@ -231,7 +231,7 @@ const AboutUs = () => {
                 </div>
                 <div className={styles.typeCards}>
                     <div className={styles.typeCard} style={{ backgroundColor: '#92604B' }} ref={influenceRef1}>
-                        중재자
+                        중재가
                         <div className={styles.typeDescription}>
                             <p>
                                 사람들과 잘 어울리고, 친구를 사귀는 것을 좋아해요. 협력을 중요시하며, 따뜻한 성격을
@@ -247,7 +247,7 @@ const AboutUs = () => {
                             <strong>• 상대적으로 이 유형은:</strong> 갈등이 발생했을 때 회피하려는 경향이 있을 수도
                             있어요. 또한 자기 주장을 끝까지 주장하고 어필하는 것에 어려움을 겪기도 해요.
                             <div className={styles.typeQuestion}>
-                                <strong>중재자형과 맞는 협업 유형은?</strong>
+                                <strong>중재가형과 맞는 협업 유형은?</strong>
                             </div>
                             <strong>• 강점 강화: 프로세서형</strong>
                             <p>
@@ -258,11 +258,11 @@ const AboutUs = () => {
                             <br />
                             <strong>• 상호 보완이 되는 협업 유형은?: 디테일리스트형</strong>
                             <p>
-                                중재자형은 체계적인 절차를 제공하고 퀄리티를 중시하는 사람들과 함께 일하는 것이 좋아요.
+                                중재가형은 체계적인 절차를 제공하고 퀄리티를 중시하는 사람들과 함께 일하는 것이 좋아요.
                                 또한 압박감이 심한 상황에서는 결단력이 떨어질 수 있기 때문에, 디테일리스트형처럼
-                                주도적인 역할을 맡아줄 사람이 필요해요. 예를 들어, 중재자형이 팀 내 갈등 상황에서
+                                주도적인 역할을 맡아줄 사람이 필요해요. 예를 들어, 중재가형이 팀 내 갈등 상황에서
                                 중립적인 입장을 취할 때, 디테일리스트형은 명확한 지침을 제공해 갈등을 해결해줄 수
-                                있습니다 .
+                                있습니다.
                             </p>
                         </div>
                     </div>
@@ -368,7 +368,8 @@ const AboutUs = () => {
                             <div className={styles.typeQuestion}>
                                 <strong>강점 및 보완할 점은?</strong>
                             </div>
-                            <strong>• 이 유형의 강점은?:</strong> 책임감, 꼼꼼함, 원칙 준수
+                            <strong>• 이 유형의 강점은?:</strong> 높은 책임감을 바탕으로 업무를 차질 없이 완수하는
+                            타입이에요. 특히 다른 사람들이 놓칠 수 있는 원칙들을 꼼꼼히 확인하는 데에 특화되어 있어요.
                             <br />
                             <strong>• 이 유형은 상대적으로:</strong> 지도력은 다소 부족한 편이며, 미래를 보고
                             추진해나가기 보다는 과거 지향적으로 과거를 추적해서 신중하게 결정을 내리려고 합니다. 따라서
