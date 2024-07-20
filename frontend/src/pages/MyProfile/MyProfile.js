@@ -7,8 +7,9 @@ import keywordIcons from '../../components/KeywordIcons/KeywordIcons';
 
 function MyProfile() {
     const [DISCData, setDISCData] = useState(null);
-    const [loading, setLoading] = useState(true);
+    const [isLoading, setisLoading] = useState(true);
     const [profileData, setProfileData] = useState(null);
+
     const navigate = useNavigate();
 
     const discTypeColors = {
@@ -30,6 +31,7 @@ function MyProfile() {
                 profileData.gender =
                     profileData.gender === 'F' ? 'Female' : profileData.gender === 'M' ? 'Male' : 'None';
                 setProfileData(profileData);
+                setisLoading(false);
 
                 if (profileData.disc_character !== 'None') {
                     const discData = await DataService.fetchDISCData(profileData.disc_character);
@@ -38,23 +40,33 @@ function MyProfile() {
             } catch (error) {
                 console.error('프로필 정보를 불러오는 동안 오류가 발생했습니다.', error);
             } finally {
-                setLoading(false);
+                setisLoading(false);
             }
         };
 
         fetchData();
     }, []);
 
-    if (loading) {
+    if (isLoading) {
         // 여기에 랜더링 후 변경 페이지 쓰기
         return <div className={styles.profileContainer}>Loading...</div>;
     }
     if (!profileData) {
         return <div className={styles.profileContainer}>Profile data not available.</div>;
     }
+
     const handleCopyLink = () => {
-        if (profileData && profileData.id) {
-            const profileLink = ProfileService.getUserProfileLink(profileData.id);
+        if (isLoading) {
+            alert('프로필 데이터를 불러오는 중입니다. 잠시만 기다려주세요.');
+            return;
+        }
+        if (!profileData || !profileData.username) {
+            alert('프로필 데이터를 불러오는데 문제가 발생했습니다. 페이지를 새로고침하고 다시 시도해주세요.');
+            return;
+        }
+
+        if (profileData && profileData.username) {
+            const profileLink = ProfileService.getUserProfileLink(profileData.username);
 
             if (navigator.clipboard && navigator.clipboard.writeText) {
                 navigator.clipboard
@@ -64,6 +76,7 @@ function MyProfile() {
                     })
                     .catch((error) => {
                         console.error('링크 복사 중 오류가 발생했습니다.', error);
+                        alert('링크 복사에 실패했습니다. 다시 시도해주세요.');
                     });
             } else {
                 // navigator.clipboard가 지원되지 않는 경우
@@ -89,11 +102,57 @@ function MyProfile() {
     };
 
     const handleInstagramShare = () => {
-        alert('인스타그램 공유 기능은 구현 중입니다.');
+        if (!profileData || !profileData.username) {
+            alert('프로필 데이터를 불러오는데 문제가 발생했습니다. 페이지를 새로고침하고 다시 시도해주세요.');
+            return;
+        }
+
+        const profileLink = ProfileService.getUserProfileLink(profileData.username);
+        const instagramUrl = `instagram://story-camera?text=${encodeURIComponent(profileLink)}`;
+
+        // 인스타그램 앱이 설치되어 있는지 확인
+        setTimeout(() => {
+            window.location.href = instagramUrl;
+        }, 100);
+
+        // 인스타그램 앱이 없는 경우 대체 동작 (desktop에서는 항상 이걸로 실행)
+        setTimeout(() => {
+            if (document.hidden) {
+                return;
+            }
+            // 인스타그램 앱이 없는 경우, 프로필 링크를 클립보드에 복사
+            navigator.clipboard
+                .writeText(profileLink)
+                .then(() => {
+                    alert('인스타그램 앱이 설치되어 있지 않습니다. 프로필 링크가 클립보드에 복사되었습니다.');
+                })
+                .catch((err) => {
+                    console.error('클립보드 복사 실패:', err);
+                    alert('링크 복사에 실패했습니다. 수동으로 복사해주세요: ' + profileLink);
+                });
+        }, 2000);
     };
 
     const handleSlackShare = () => {
-        alert('Slack 공유 기능은 구현 중입니다.');
+        if (!profileData || !profileData.username) {
+            alert('프로필 데이터를 불러오는데 문제가 발생했습니다. 페이지를 새로고침하고 다시 시도해주세요.');
+            return;
+        }
+
+        let profileLink = ProfileService.getUserProfileLink(profileData.username);
+        if (!profileLink.startsWith('http')) {
+            profileLink = 'https://' + profileLink;
+        }
+        const text = `${profileData.name}님의 프로필을 확인해보세요: ${profileLink}`;
+
+        // 더블 인코딩 적용
+        const encodedUrl = encodeURIComponent(encodeURIComponent(profileLink));
+        const encodedText = encodeURIComponent(text);
+
+        const slackShareUrl = `https://slack.com/share/url?url=${encodedUrl}&text=${encodedText}`;
+
+        // 새 창에서 Slack 공유 페이지 열기
+        window.open(slackShareUrl, '_blank', 'noopener,noreferrer');
     };
 
     const handleKeywordEdit = () => {
