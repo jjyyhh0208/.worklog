@@ -4,6 +4,7 @@ import styles from './FeedbackLong.module.css';
 import ProgressBar from '../../components/ProgressBar/ProgressBar'; // ProgressBar import
 import FeedbackService from '../../utils/FeedbackService';
 import ProfileService from '../../utils/ProfileService';
+import Modal from '../../components/Modal/Modal';
 
 const FeedbackLong = ({ isLoggedIn }) => {
     const navigate = useNavigate();
@@ -19,6 +20,7 @@ const FeedbackLong = ({ isLoggedIn }) => {
             question3: '',
         },
     });
+    const [showModal, setShowModal] = useState(false);
 
     useEffect(() => {
         ProfileService.fetchFriendProfile(username)
@@ -90,7 +92,12 @@ const FeedbackLong = ({ isLoggedIn }) => {
         };
 
         FeedbackService.submitAnswers(finalFeedbackData)
-            .then(() => navigate(`/friend-profile/${username}`))
+            .then(() => {
+                setShowModal(true);
+                setTimeout(() => {
+                    navigate(`/friend-profile/${username}`);
+                }, 1500);
+            })
             .catch((error) => console.error('Error submitting feedback:', error));
     };
 
@@ -119,10 +126,7 @@ const FeedbackLong = ({ isLoggedIn }) => {
                 </div>
                 <div className={styles.pageIndicator}>5/5</div> {/* ProgressBar 추가 */}
                 <div className={styles.instructions}>
-                    <div>
-                        마지막으로 {profileData ? `${profileData.name}` : '유저'}님에게 하고 싶은 말을 자유롭게
-                        써주세요.
-                    </div>
+                    <div>마지막으로 {profileData?.name || '익명'}님에게 하고 싶은 말을 자유롭게 써주세요.</div>
                     <div className={styles.fontinstructions}>
                         * 해당 설문 내용은 익명으로 사용자에게 전달되며, 특정될 수 있는 정보 (회사명, 팀명) 등을 쓰지
                         않는 것을 권장드립니다.
@@ -160,6 +164,11 @@ const FeedbackLong = ({ isLoggedIn }) => {
                     </button>
                 </div>
             </div>
+            {showModal && (
+                <Modal>
+                    <div>피드백이 성공적으로 제출되었습니다!</div>
+                </Modal>
+            )}
         </div>
     );
 };
