@@ -77,6 +77,10 @@ function Signup4({ signUpInfo, setSignUpInfo }) {
 
     // Handle 'Complete' button click to save selected keywords
     const handleCompleteClick = () => {
+        if (selectedKeywords.length === 0) {
+            alert('최소 1개의 키워드를 선택해주세요.');
+            return;
+        }
         const selectedKeywordIds = selectedKeywords
             .map((keyword) => {
                 const index = keywords.indexOf(keyword);

@@ -3,6 +3,7 @@ import styles from './Signup2.module.css';
 import { useNavigate, useLocation } from 'react-router-dom';
 import ProfileService from '../../utils/ProfileService';
 import AdminService from '../../utils/AdminService';
+import API from '../../utils/API';
 
 function Signup2({ signUpInfo, setSignUpInfo }) {
     const navigate = useNavigate();
@@ -31,6 +32,34 @@ function Signup2({ signUpInfo, setSignUpInfo }) {
 
         fetchData();
     }, [isEditing]);
+
+    const handleFileChange = (event) => {
+        setFile(event.target.files[0]);
+    };
+
+    const handleImageUpload = async () => {
+        if (!file) {
+            setUploadMessage('Please select a file first');
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('image', file);
+
+        try {
+            await API.post('/profiles/user/set/profile-image/', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
+            setUploadMessage('Image uploaded successfully');
+            await fetchProfileImage();
+        } catch (error) {
+            setUploadMessage(
+                error.response ? `Failed to upload image: ${error.response.data}` : 'Failed to upload image'
+            );
+        }
+    };
 
     const handleNextClick = async (e) => {
         e.preventDefault();
@@ -154,10 +183,21 @@ function Signup2({ signUpInfo, setSignUpInfo }) {
                         None
                     </button>
                 </div>
+                <span className={styles.span}>프로필 이미지</span>
+                <div className={styles.imageUpload}>
+                    <input type="file" className={styles.inputImage} onChange={handleFileChange} />
+                    <div className={styles.imageContainer}>
+                        {imageUrl && <img src={imageUrl} alt="Profile" className={styles.profileImage} />}
+                        <button type="button" onClick={handleImageUpload}>
+                            Upload
+                        </button>
+                        {uploadMessage && <p>{uploadMessage}</p>}
+                    </div>
+                </div>
                 <div className={styles.nextbox}>
                     <div>
                         <button className={styles.nextBtn} type="button" onClick={handleNextClick}>
-                            {isEditing ? '수정 완료' : 'NEXT'} {/* 수정 모드일 때 버튼 텍스트 변경 */}
+                            {isEditing ? '수정 완료' : 'NEXT'}
                         </button>
                     </div>
                 </div>
