@@ -114,23 +114,28 @@ function Signup2({ signUpInfo, setSignUpInfo }) {
 
     const handleNextClick = async (e) => {
         e.preventDefault();
-        if (!file) {
-            setUploadMessage('업로드할 파일을 선택해주세요.');
-            return;
+
+        if (file) {
+            const formData = new FormData();
+            formData.append('image', file);
+
+            try {
+                await API.post('/profiles/user/set/profile-image/', formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                    },
+                });
+                setUploadMessage('Image uploaded successfully');
+                await fetchProfileImage();
+            } catch (error) {
+                setUploadMessage(
+                    error.response ? `Failed to upload image: ${error.response.data}` : 'Failed to upload image'
+                );
+                console.error('Failed to update user info:', error);
+            }
         }
 
-        const formData = new FormData();
-        formData.append('image', file);
-
         try {
-            await API.post('/profiles/user/set/profile-image/', formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                },
-            });
-            setUploadMessage('Image uploaded successfully');
-            await fetchProfileImage();
-
             await ProfileService.setUserBasicInfo({
                 name: signUpInfo.name === null ? signUpInfo.username : signUpInfo.name,
                 age: selectedAge,
@@ -143,9 +148,7 @@ function Signup2({ signUpInfo, setSignUpInfo }) {
                 navigate('/signup/3');
             }
         } catch (error) {
-            setUploadMessage(
-                error.response ? `Failed to upload image: ${error.response.data}` : 'Failed to upload image'
-            );
+            setUploadMessage('Failed to update user info');
             console.error('Failed to update user info:', error);
         }
     };
