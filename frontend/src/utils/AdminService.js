@@ -10,9 +10,11 @@ const AdminService = {
 
         return API.post('/profiles/auth/registration/', requestData)
             .then((response) => {
-                if (response.status === 204) {
+                if (response.status === 201) {
+                    // Typically, registration would return a 201 status code
                     console.log('사용자가 성공적으로 등록되었습니다.');
                 }
+                return response.data; // Return the response data for further use if needed
             })
             .catch((error) => {
                 if (error.response && error.response.data) {
@@ -34,12 +36,16 @@ const AdminService = {
     },
 
     checkUserName: (userName) => {
-        return API.post('/profiles/auth/check-username/', userName)
+        return API.post('/profiles/auth/check-username/', { username: userName }) // Pass the username as an object
             .then((response) => {
-                return response;
+                return response.data; // Return response data for further use
             })
             .catch((error) => {
-                throw new Error('아이디는 3자 이상 30자 이하로 설정해주세요.');
+                if (error.response && error.response.data) {
+                    throw new Error('아이디는 3자 이상 30자 이하로 설정해주세요.');
+                } else {
+                    throw new Error(error.message);
+                }
             });
     },
 
@@ -56,6 +62,7 @@ const AdminService = {
                     const token = response.data.key;
                     localStorage.setItem('authToken', token);
                 }
+                return response.data; // Return response data for further use
             })
             .catch((error) => {
                 console.error('로그인 요청 실패:', error);
@@ -74,13 +81,36 @@ const AdminService = {
         return API.post('/profiles/auth/logout/')
             .then((response) => {
                 if (response.status === 200) {
-                    // 성공코드 200
                     console.log('사용자가 성공적으로 로그아웃하였습니다.');
-                    localStorage.removeItem('authToken'); // Remove the token from local storage
+                    localStorage.removeItem('authToken');
                 }
+                return response.data; // Return response data for further use
             })
             .catch((error) => {
-                throw new Error(error.message);
+                throw new Error('로그아웃 중 오류가 발생했습니다: ' + error.message);
+            });
+    },
+
+    userDelete: () => {
+        return API.delete('/profiles/auth/delete/')
+            .then((response) => {
+                console.log('API 응답:', response);
+
+                if (response.status === 200) {
+                    console.log('성공적으로 회원 탈퇴가 이루어졌습니다.');
+                    localStorage.removeItem('authToken');
+                }
+
+                return response.data;
+            })
+            .catch((error) => {
+                console.error('회원 탈퇴 중 오류가 발생했습니다.', error);
+                if (error.response && error.response.data) {
+                    console.error('오류 응답:', error.response.data);
+                    throw new Error('회원 탈퇴 중 오류가 발생했습니다.');
+                } else {
+                    throw new Error('회원 탈퇴 중 오류가 발생했습니다: ' + error.message);
+                }
             });
     },
 };

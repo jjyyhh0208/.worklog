@@ -3,7 +3,7 @@ from .models import (
     User, ShortQuestion, LongQuestion,
     QuestionAnswer, Score, Feedback,
     Strength, Weakness, SuitableType,
-    DISCData)
+    DISCData, ProfileImage)
 
 # Register your models here.
 admin.site.register(User)
@@ -17,3 +17,7 @@ admin.site.register(Strength)
 admin.site.register(Weakness)
 admin.site.register(SuitableType)
 admin.site.register(DISCData)
+
+@admin.register(ProfileImage)
+class ProfileImageAdmin(admin.ModelAdmin):
+    list_display = ('id', 'image')

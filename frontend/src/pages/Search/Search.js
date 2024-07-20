@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import styles from './Search.module.css';
 import ProfileService from '../../utils/ProfileService';
 
+
+
 function Search() {
     const [searchTerm, setSearchTerm] = useState('');
     const [searchResult, setSearchResult] = useState(null);
@@ -11,8 +13,12 @@ function Search() {
     const [currentUser, setCurrentUser] = useState(null);
     const navigate = useNavigate();
 
+    
+    
+    
     useEffect(() => {
         fetchCurrentUser();
+        window.scrollTo(0, 0);
     }, []);
 
     const fetchCurrentUser = async () => {

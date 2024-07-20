@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import styles from './Signup2.module.css';
 import { useNavigate, useLocation } from 'react-router-dom';
 import ProfileService from '../../utils/ProfileService';
+import AdminService from '../../utils/AdminService';
+import API from '../../utils/API';
 
 function Signup2({ signUpInfo, setSignUpInfo }) {
     const navigate = useNavigate();
@@ -10,23 +12,67 @@ function Signup2({ signUpInfo, setSignUpInfo }) {
     const profileData = location.state?.profileData || {};
 
     const [selectedGender, setSelectedGender] = useState(signUpInfo.gender || profileData.gender || '');
-    const [selectedAge, setSelectedAge] = useState(signUpInfo.age || profileData.age || ''); // State to hold selected age
+    const [selectedAge, setSelectedAge] = useState(signUpInfo.age || profileData.age || '');
+    const [file, setFile] = useState(null);
+    const [imageUrl, setImageUrl] = useState('');
+    const [uploadMessage, setUploadMessage] = useState('');
 
     useEffect(() => {
         if (isEditing) {
             setSignUpInfo(profileData);
         }
+        fetchProfileImage();
     }, [isEditing, profileData, setSignUpInfo]);
+
+    const fetchProfileImage = async () => {
+        try {
+            const profileData = await ProfileService.fetchUserProfile();
+            if (profileData.profile_image && profileData.profile_image.image) {
+                const signedUrl = await ProfileService.getSignedImageUrl(profileData.profile_image.image);
+                setImageUrl(signedUrl);
+            }
+        } catch (error) {
+            console.error('Error fetching profile image:', error);
+        }
+    };
 
     const signUpChangeHandler = (e) => {
         setSignUpInfo({ ...signUpInfo, [e.target.name]: e.target.value });
+    };
+
+    const handleFileChange = (event) => {
+        setFile(event.target.files[0]);
+    };
+
+    const handleImageUpload = async () => {
+        if (!file) {
+            setUploadMessage('Please select a file first');
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('image', file);
+
+        try {
+            await API.post('/profiles/user/set/profile-image/', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
+            setUploadMessage('Image uploaded successfully');
+            await fetchProfileImage();
+        } catch (error) {
+            setUploadMessage(
+                error.response ? `Failed to upload image: ${error.response.data}` : 'Failed to upload image'
+            );
+        }
     };
 
     const handleNextClick = async (e) => {
         e.preventDefault();
         try {
             await ProfileService.setUserBasicInfo({
-                name: signUpInfo.name,
+                name: signUpInfo.name === null ? signUpInfo.username : signUpInfo.name,
                 age: selectedAge,
                 gender: signUpInfo.gender === 'None' ? null : signUpInfo.gender,
             });
@@ -61,13 +107,38 @@ function Signup2({ signUpInfo, setSignUpInfo }) {
     const logoHandler = () => {
         navigate('/');
     };
+    const handleBackClick = () => {
+        console.log(signUpInfo);
+        AdminService.userDelete()
+            .then(() => {
+                console.log('회원탈퇴가 성공됨!!');
+                navigate(-1);
+            })
+            .catch((error) => {
+                console.error('회원 탈퇴 중 오류가 발생했습니다.', error);
+            });
+    };
 
     return (
         <div className={styles.container}>
             <h1 className={styles.h1} onClick={logoHandler}>
                 .WORKLOG
             </h1>
+
             <h2 className={styles.h2}>기본프로필 등록</h2>
+            <div className={styles.back}>
+                <button type="submit" onClick={handleBackClick} className={styles.backBtn}>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="60" height="50" viewBox="0 0 24 24" fill="none">
+                        <path
+                            d="M15.5 19l-7-7 7-7"
+                            stroke="#4053ff"
+                            strokeWidth="2.5"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                        />
+                    </svg>
+                </button>
+            </div>
             <form className={styles.signUp}>
                 <div className={styles.idbox}></div>
                 <span className={styles.span}>이름</span>
@@ -108,10 +179,21 @@ function Signup2({ signUpInfo, setSignUpInfo }) {
                         None
                     </button>
                 </div>
+                <span className={styles.span}>프로필 이미지</span>
+                <div className={styles.imageUpload}>
+                    <input type="file" className={styles.inputImage} onChange={handleFileChange} />
+                    <div className={styles.imageContainer}>
+                        {imageUrl && <img src={imageUrl} alt="Profile" className={styles.profileImage} />}
+                        <button type="button" onClick={handleImageUpload}>
+                            Upload
+                        </button>
+                        {uploadMessage && <p>{uploadMessage}</p>}
+                    </div>
+                </div>
                 <div className={styles.nextbox}>
                     <div>
                         <button className={styles.nextBtn} type="button" onClick={handleNextClick}>
-                            {isEditing ? '수정 완료' : 'NEXT'} {/* 수정 모드일 때 버튼 텍스트 변경 */}
+                            {isEditing ? '수정 완료' : 'NEXT'}
                         </button>
                     </div>
                     <div>

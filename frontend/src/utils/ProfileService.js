@@ -17,8 +17,31 @@ const ProfileService = {
             })
             .catch((error) => {
                 if (error.response && error.response.data) {
-                    console.log(error.response);
+                    console.error('API Error:', error.response.data);
                     throw new Error('기본 정보를 업데이트하는 동안 오류가 발생했습니다.');
+                } else if (error.response) {
+                    throw new Error('서버 오류가 발생했습니다.');
+                } else {
+                    throw new Error(error.message);
+                }
+            });
+    },
+
+    setUserProfileInfo: (userData) => {
+        const formData = new FormData();
+        formData.append('image', userData.profileImage);
+
+        return API.put('/profiles/user/set/profile-image/', formData)
+            .then((response) => {
+                if (response.status === 200) {
+                    console.log('프로필 이미지가 성공적으로 업데이트되었습니다.');
+                }
+                return response.data;
+            })
+            .catch((error) => {
+                if (error.response && error.response.data) {
+                    console.log(error.response);
+                    throw new Error('프로필 이미지를 업데이트하는 동안 오류가 발생했습니다.');
                 } else if (error.response) {
                     throw new Error('서버 오류가 발생했습니다.');
                 } else {
@@ -146,8 +169,8 @@ const ProfileService = {
             throw error;
         }
     },
-    followUser: (username) => {
-        return API.post(`/profiles/user/follow/`, { username })
+    followUser: (friend_name) => {
+        return API.post(`/profiles/user/follow/`, { friend_name })
             .then((response) => response.data)
             .catch((error) => {
                 console.error('팔로우하는 동안 오류가 발생했습니다.', error);
@@ -155,11 +178,25 @@ const ProfileService = {
             });
     },
 
-    unfollowUser: (username) => {
-        return API.post(`/profiles/user/unfollow/`, { username })
+    unfollowUser: (friend_name) => {
+        return API.post(`/profiles/user/unfollow/`, { friend_name })
             .then((response) => response.data)
             .catch((error) => {
                 console.error('팔로우 취소하는 동안 오류가 발생했습니다.', error);
+                throw error;
+            });
+    },
+
+    // s3 접근하는 Service
+    getSignedImageUrl: (imagePath) => {
+        return API.get(`/profiles/user/get-signed-url/${encodeURIComponent(imagePath)}/`)
+            .then((response) => {
+                if (response.status === 200) {
+                    return response.data.signed_url;
+                }
+                throw new Error('Failed to fetch signed URL.');
+            })
+            .catch((error) => {
                 throw error;
             });
     },

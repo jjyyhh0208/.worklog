@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import styles from './Header.module.css';
 import AdminService from '../../utils/AdminService';
 import ProfileService from '../../utils/ProfileService';
 
 function Header({ isLoggedIn }) {
     const [profileData, setProfileData] = useState(null);
+    const location = useLocation();
+
     const [showMenu, setShowMenu] = useState(false);
     useEffect(() => {
         if (isLoggedIn) {
@@ -31,10 +33,23 @@ function Header({ isLoggedIn }) {
 
     const onDeleteAccountClick = () => {
         console.log('회원탈퇴');
+        //회원탈퇴 API 호출
+        AdminService.userDelete()
+            .then(() => {
+                console.log('회원탈퇴가 성공됨!!');
+                window.location.href = '/';
+            })
+            .catch((error) => {
+                console.error('회원 탈퇴 중 오류가 발생했습니다.', error);
+            });
     };
 
-    const onToggleClick = () => {
+    const toggleMenu = () => {
         setShowMenu(!showMenu);
+    };
+
+    const isActive = (path) => {
+        return location.pathname === path ? styles.active : '';
     };
 
     return (
@@ -43,7 +58,7 @@ function Header({ isLoggedIn }) {
                 <span className={styles.logo}>.WORKLOG</span>
             </Link>
             <nav className={styles.nav}>
-                <Link to="/my-profile" className={styles.navItem}>
+                <Link to="/my-profile" className={`${styles.navItem} ${isActive('/my-profile')}`}>
                     내 프로필
                     <svg xmlns="http://www.w3.org/2000/svg" width="30" height="28" viewBox="0 0 30 28" fill="none">
                         <path
@@ -52,7 +67,10 @@ function Header({ isLoggedIn }) {
                         />
                     </svg>
                 </Link>
-                <Link to={`/list/${profileData?.username}`} className={styles.navItem}>
+                <Link
+                    to={`/list/${profileData?.username}`}
+                    className={`${styles.navItem} ${isActive(`/list/${profileData?.username}`)}`}
+                >
                     둘러보기
                     <svg xmlns="http://www.w3.org/2000/svg" width="27" height="23" viewBox=" 0 0 25 23" fill="none">
                         <path
@@ -61,7 +79,7 @@ function Header({ isLoggedIn }) {
                         />
                     </svg>
                 </Link>
-                <Link to="/about-us" className={styles.navItem}>
+                <Link to="/about-us" className={`${styles.navItem} ${isActive('/about-us')}`}>
                     가이드북
                     <svg xmlns="http://www.w3.org/2000/svg" width="30" height="31" viewBox="0 0 30 31" fill="none">
                         <path
@@ -74,26 +92,18 @@ function Header({ isLoggedIn }) {
             <div className={styles.auth}>
                 {isLoggedIn ? (
                     <>
-                        {profileData ? (
-                            <>
-                                <span className={styles.name}>{profileData.name}님</span>
-                            </>
-                        ) : (
-                            <span className={styles.name}></span>
-                        )}
-                        <button onClick={onToggleClick} className={styles.menuButton}>
+                        {profileData && <span className={styles.name}>{profileData.name}님</span>}
+                        <button onClick={toggleMenu} className={styles.menuButton}>
                             Menu
                         </button>
-                        {showMenu ? (
-                            <div className={`${styles.menu} ${styles.show}`}>
-                                <button onClick={onLogoutClick} className={styles.logoutButton}>
-                                    로그아웃
-                                </button>
-                                <button onClick={onDeleteAccountClick} className={styles.logoutButton}>
-                                    회원탈퇴
-                                </button>
-                            </div>
-                        ) : null}
+                        <div className={`${styles.menuDropdown} ${showMenu ? styles.show : ''}`}>
+                            <button onClick={onLogoutClick} className={styles.menuItem}>
+                                로그아웃
+                            </button>
+                            <button onClick={onDeleteAccountClick} className={styles.menuItem}>
+                                회원탈퇴
+                            </button>
+                        </div>
                     </>
                 ) : (
                     <Link to="/signup/1" className={styles.loginButton}>

@@ -1,9 +1,12 @@
 from pyexpat import model
 import openai
-from worklog import settings
+from django.conf import settings
+from django.core.files.storage import default_storage
+import boto3
 import json
 from rest_framework import viewsets, generics, status, permissions
 from rest_framework.response import Response
+from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework.decorators import action
 from rest_framework.views import APIView
@@ -11,8 +14,7 @@ from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from dj_rest_auth.views import LoginView
 from dj_rest_auth.registration.views import RegisterView
-from .models import User, WorkStyle, Interest, ShortQuestion, LongQuestion, QuestionAnswer, Score, Feedback, DISCData
-from .permissions import UnauthenticatedReadOrSafeMethods
+from .models import User, WorkStyle, Interest, ShortQuestion, LongQuestion, QuestionAnswer, Score, Feedback, DISCData, ProfileImage
 from .serializers import (
     UserGenderNameAgeSerializer, UserWorkStyleSerializer,
     UserInterestSerializer, WorkStyleSerializer,
@@ -20,8 +22,17 @@ from .serializers import (
     UserProfileSerializer, UserUniqueIdSerializer,
     ShortQuestionSerializer, LongQuestionSerializer, 
     QuestionAnswerSerializer, ScoreSerializer, FeedbackSerializer,
-    FriendSerializer, UserSearchResultSerializer, DISCDataSerializer
+    FriendSerializer, UserSearchResultSerializer, DISCDataSerializer, ProfileImageSerializer, ProfileImageSerializer
 )
+from django.http import JsonResponse
+from utils.s3_utils import get_signed_url
+
+# s3 접근 인증 받는 함수
+def get_signed_url_view(request, image_path):
+    url = get_signed_url(image_path)
+    if url is None:
+        return JsonResponse({'error': 'Failed to generate signed URL'}, status=500)
+    return JsonResponse({'signed_url': url})
 
 
 #유저의 정보를 불러오는 ViewSet -> retrieve인 경우: UserProfileSerializer를 사용하여 유저의 이름, 성별, 나이를 불러옴
@@ -62,16 +73,41 @@ class UserViewSet(viewsets.ModelViewSet):
 class WorkStyleViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = WorkStyle.objects.all()
     serializer_class = WorkStyleSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = []
     
     
 #관심 직종을 유저에게 제공하는 ViewSet
 class InterestViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Interest.objects.all()
     serializer_class = InterestSerializer
-    permission_classes = [IsAuthenticated]
-    
-    
+    permission_classes = []
+
+class ProfileImageView(APIView):
+    def delete_old_image(self, image_path):
+        # Delete the old image file from storage
+        if default_storage.exists(image_path):
+            default_storage.delete(image_path)
+
+    def post(self, request, *args, **kwargs):
+        user = request.user
+        try:
+            # Check if the user already has a profile image
+            profile_image = ProfileImage.objects.get(user=user)
+            # Delete the old profile image if it exists
+            if profile_image.image:
+                self.delete_old_image(str(profile_image.image))
+            # Update the existing profile image
+            profile_image.image = request.FILES['image']
+            profile_image.save()
+        except ProfileImage.DoesNotExist:
+            # Create a new profile image if one does not exist
+            profile_image = ProfileImage.objects.create(
+                user=user, 
+                image=request.FILES['image']
+            )
+        return Response({"message": "Profile image updated successfully"}, status=status.HTTP_200_OK)
+
+
 #유저 프로필을 불러오는 View
 class UserProfileView(generics.RetrieveAPIView):
     queryset = User.objects.all()
@@ -136,12 +172,12 @@ class UniqueIdCheck(generics.GenericAPIView):
 class ShortQuestionViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = ShortQuestion.objects.all()
     serializer_class = ShortQuestionSerializer
-    permission_classes = [UnauthenticatedReadOrSafeMethods | IsAuthenticatedOrReadOnly]
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
 class LongQuestionViewSet(viewsets.ModelViewSet):
     queryset = LongQuestion.objects.all()
     serializer_class = LongQuestionSerializer
-    permission_classes = [UnauthenticatedReadOrSafeMethods | IsAuthenticatedOrReadOnly]
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
 # GET: user 명에 맞는 서술형 질문 목록을 불러옵니다.
 class UserLongQuestionView(generics.ListAPIView):
@@ -337,6 +373,25 @@ class FollowFriendView(generics.GenericAPIView):
 
         user.friends.add(friend)
         return Response({"detail": f"You are now following {friend.name}"}, status=status.HTTP_200_OK)
+    
+
+class UnfollowFriendView(generics.GenericAPIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        user = request.user
+        friend_name = request.data.get('friend_name')
+
+        if not friend_name:
+            return Response({"detail": "Friend name is required."}, status=status.HTTP_400_BAD_REQUEST)
+        
+        friend = get_object_or_404(User, username=friend_name)
+
+        if friend == user:
+            return Response({"detail": "You cannot unfollow yourself."}, status=status.HTTP_400_BAD_REQUEST)
+
+        user.friends.remove(friend)
+        return Response({"detail": f"You have unfollowed {friend.name}"}, status=status.HTTP_200_OK)
     
     
 class DISCDataList(generics.ListCreateAPIView):

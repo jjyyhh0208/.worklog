@@ -4,14 +4,15 @@ import ProfileService from '../../utils/ProfileService';
 import styles from './List.module.css';
 
 const discTypeColors = {
-    목표달성자: '#FF5473',
+    '목표 달성자': '#FF5473',
     디테일리스트: '#55B807',
     중재가: '#92604B',
-    컨트롤타워: '#00B680',
+    '컨트롤 타워': '#00B680',
     불도저: '#FF4B40',
     애널리스트: '#7D40FF',
     커뮤니케이터: '#FFC554',
     프로세서: '#1E74D9',
+    None: '#a7a7a76f', // 'None'을 위한 회색 추가
 };
 
 function List() {
@@ -75,9 +76,11 @@ function List() {
                         <div key={friend.id} className={styles.friendCard}>
                             <div
                                 className={styles.disc_character}
-                                style={{ backgroundColor: discTypeColors[friend.disc_character] }}
+                                style={{
+                                    backgroundColor: discTypeColors[friend.disc_character] || discTypeColors.None,
+                                }}
                             >
-                                {friend.disc_character}
+                                {friend.disc_character !== 'None' && friend.disc_character}
                             </div>
                             <div className={styles.friendDescription}>
                                 <img

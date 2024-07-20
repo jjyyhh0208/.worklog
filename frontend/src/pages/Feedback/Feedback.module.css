@@ -1,26 +1,24 @@
 /* 기본 스타일 설정 */
 .feedbackContainer {
-    background: #f6f6f6;
     display: flex;
-    justify-content: center;
-    margin: 0;
-    width: 100%;
-    height: 100%;
+    flex-direction: column;
+    align-items: center;
+    background: #f6f6f6;
     overflow-y: auto;
+    min-height: 90%;
+    height: 100vh;
 }
 
 .feedbackPage {
-    padding-top: 30px;
-    padding-bottom: 30px;
-    padding-left: 100px;
-    padding-right: 100px;
-    width: 80%;
+    padding: 2% 6%;
+    width: 60%;
     border-radius: 50px;
     background: #fff;
     flex-shrink: 0;
-    margin-top: 50px;
-    margin-bottom: 50px;
-    justify-content: center;
+    margin: 2% 3%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     position: relative;
     overflow-y: auto;
@@ -41,86 +39,142 @@
     border-radius: 10px;
 }
 
+.back {
+    margin-top: 3%;
+}
+
+.backBtn {
+    all: unset;
+    background: #f6f6f6;
+    cursor: pointer;
+    background: inherit;
+    border: none;
+    box-shadow: none;
+    border-radius: 0;
+    padding: 0;
+    overflow: visible;
+    cursor: pointer;
+}
+
+.backBtn:hover {
+    background: #fff;
+    color: inherit;
+}
+
+/* 페이지 인디케이터 스타일 */
+.pageIndicator {
+    position: absolute;
+    top: 30px;
+    right: 50px;
+    font-size: 24px;
+    font-weight: bold;
+    color: #000000;
+    background-color: #e1e1e1;
+    padding: 10px 15px;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.instructions {
+    font-size: 2rem;
+    font-weight: 700;
+    margin: 2% 8% 0.5%;
+    word-wrap: break-word;
+    line-height: 1.4;
+}
+
+.fontinstructions {
+    font-size: 1.8rem;
+    font-weight: 500;
+    margin-top: 1%;
+}
+
 .question {
     color: #4053ff;
-    font-size: 32px;
+    font-size: 2rem;
     font-style: normal;
     font-weight: 800;
     line-height: normal;
-    margin-bottom: 80px;
+    margin: 1% 10%;
+    width: 90%;
 }
 
 /* 옵션 스타일 */
 .optionGroup {
     display: flex;
     align-items: center;
-    margin-bottom: 20px;
+    margin-bottom: 30px;
+    margin-right: 50px;
     justify-content: space-between;
-    width: 70%;
+    width: 90%;
+    font-weight: 700;
 }
 
 .options {
-    width: 800px;
-    font-size: 24px;
+    width: 80%;
+    font-size: 1.5rem;
     color: #333;
-    margin:0;
-    
-
+    margin: 0.3%;
 }
 
 .optionGroup .scores {
     display: flex;
     align-items: center;
-    justify-content: space-between; /* Adjust alignment */
-    width: 300px;
+    justify-content: space-between;
 }
 
-.scores label {
+.scores button {
     margin-right: 20px;
-    font-size: 24px;
+    font-size: 1.5rem;
+    font-weight: 600;
     color: #333;
     display: flex;
     align-items: center;
+    justify-content: center;
     cursor: pointer;
     position: relative;
+    background: none;
+    border: none;
+    outline: none;
+    padding: 0;
 }
 
-.scores input {
-    display: none;
-}
-
-.scores label span {
+.scores button span {
     width: 50px;
     height: 50px;
     line-height: 50px;
     text-align: center;
     border-radius: 50%;
     background-color: #f0f0f0;
-    margin-right: 5px;
+    transition: background-color 0.1s, color 0.1s;
 }
 
-.scores label:hover span {
-    background-color: #b7b7b7; /* 마우스 오버 시 색상 */
+.scores button:hover span {
+    background-color: #b7b7b7;
     color: #fff;
+    color: inherit;
 }
-.scores input:checked + span {
-    background-color: #ffa500; /* 선택된 항목의 색상 */
+
+.scores button.selected span {
+    background-color: #ffa500;
     color: #fff;
+    color: inherit;
+}
+
+.scores button:hover,
+.scores button:focus {
+    background: none;
+    outline: none;
 }
 
 /* 네비게이션 버튼 스타일 */
 .feedbackNextContainer {
-    top: 90%;
-    left: 90%;
-    position: absolute;
-    transform: translateX(-50%);
-    align-items: start;
-    text-align: center;
-    align-self: center;
-    line-height: 70px;
-    display: flex;
-    justify-content: space-around;
-    width: 20%;
+    color: #4053ff;
+    font-size: 3rem;
+    font-style: normal;
+    font-weight: 800;
+    line-height: normal;
+    margin-left: 95%;
 }
 
 .feedbackNextContainer button {
@@ -137,24 +191,11 @@
     line-height: normal;
     position: absolute;
     transform: translateX(-50%);
+    cursor: pointer;
 }
 
 button:hover {
     background-color: #0056b3;
-}
-
-/* 페이지 인디케이터 스타일 */
-.pageIndicator {
-    position: absolute;
-    top: 30px;
-    right: 50px;
-    font-size: 24px;
-    font-weight: bold;
-    color: #000000;
-    background-color: #e1e1e1;
-    padding: 10px 15px;
-    border-radius: 10px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 /* 반응형 스타일 */

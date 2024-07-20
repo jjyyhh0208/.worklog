@@ -6,12 +6,11 @@ import DataService from '../../utils/DataService';
 import keywordIcons from '../../components/KeywordIcons/KeywordIcons';
 
 function FriendProfile() {
-
     const discTypeColors = {
-        목표달성자: '#FF5473',
+        '목표 달성자': '#FF5473',
         디테일리스트: '#55B807',
         중재가: '#92604B',
-        컨트롤타워: '#00B680',
+        '컨트롤 타워': '#00B680',
         불도저: '#FF4B40',
         애널리스트: '#7D40FF',
         커뮤니케이터: '#FFC554',
@@ -52,9 +51,11 @@ function FriendProfile() {
     const handleFollowClick = async () => {
         try {
             if (isFollowing) {
+                // 언팔하기
                 await ProfileService.unfollowUser(username);
                 setIsFollowing(false);
             } else {
+                // 팔로우하기
                 await ProfileService.followUser(username);
                 setIsFollowing(true);
             }
@@ -104,12 +105,34 @@ function FriendProfile() {
                                     </div>
                                 </div>
                                 <div className={styles.basicDetails}>
-                                    <div
-                                        className={styles.profileDisc}
-                                        style={{ backgroundColor: discTypeColors[profileData.disc_character] }}
-                                    >
-                                        {profileData.disc_character}
-                                    </div>
+                                    {profileData &&
+                                        (profileData.disc_character === 'None' ? (
+                                            <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                width="164"
+                                                height="187"
+                                                viewBox="0 0 164 187"
+                                                fill="none"
+                                                className={styles.defaultDiscSvg}
+                                            >
+                                                <path
+                                                    d="M145.592 81.5315H136.856V55.3249C136.856 24.8234 112.033 0 81.5315 0C51.03 0 26.2066 24.8234 26.2066 55.3249V81.5315H17.471C7.82557 81.5315 0 89.3571 0 99.0025V168.887C0 178.532 7.82557 186.358 17.471 186.358H145.592C155.237 186.358 163.063 178.532 163.063 168.887V99.0025C163.063 89.3571 155.237 81.5315 145.592 81.5315ZM107.738 81.5315H55.3249V55.3249C55.3249 40.8749 67.0815 29.1184 81.5315 29.1184C95.9815 29.1184 107.738 40.8749 107.738 55.3249V81.5315Z"
+                                                    fill="black"
+                                                    fillOpacity="0.25"
+                                                />
+                                            </svg>
+                                        ) : (
+                                            <div
+                                                className={styles.profileDisc}
+                                                style={{
+                                                    backgroundColor:
+                                                        discTypeColors[profileData.disc_character] ||
+                                                        discTypeColors.None,
+                                                }}
+                                            >
+                                                {profileData.disc_character}
+                                            </div>
+                                        ))}
                                 </div>
                             </div>
                         </div>
@@ -215,11 +238,11 @@ function FriendProfile() {
                                         <div className={styles.typeDescription}>
                                             <p>{DISCData.description}</p>
                                             <div className={styles.typeQuestion}>
-                                                <strong>강점 및 약점은?</strong>
+                                                <strong>강점 및 보완할 점은?</strong>
                                             </div>
                                             <strong>• 강점:</strong> {DISCData.strength.join(', ')}
                                             <br />
-                                            <strong>• 약점:</strong> {DISCData.weakness.join(', ')}
+                                            <strong>• 보완할 점:</strong> {DISCData.weakness.join(', ')}
                                             <div className={styles.typeQuestion}>
                                                 <strong>{DISCData.disc_character}와 맞는 협업 유형은?</strong>
                                             </div>
