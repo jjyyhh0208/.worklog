@@ -71,6 +71,7 @@
     flex-wrap: wrap;
     justify-content: start;
     gap: 10px;
+    margin: 100px 0;
     width: 120%;
     max-width: 800px;
     height: 386px;
@@ -117,7 +118,28 @@
     cursor: pointer;
     right: 20%;
 }
+.back {
+    margin-top: 3%;
+    margin-left: -80%;
+}
 
+.backBtn {
+    all: unset;
+    background: #f6f6f6;
+    cursor: pointer;
+    background: inherit;
+    border: none;
+    box-shadow: none;
+    border-radius: 0;
+    padding: 0;
+    overflow: visible;
+    cursor: pointer;
+}
+
+.backBtn:hover {
+    background: #fff;
+    color: inherit;
+}
 /* Media queries for responsiveness */
 @media (max-width: 1024px) {
     .h1 {

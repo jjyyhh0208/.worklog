@@ -74,10 +74,15 @@ function Signup4({ signUpInfo, setSignUpInfo }) {
             .catch((error) => {
                 console.error('Error setting user interests:', error);
             });
+        console.log(signUpInfo);
     };
 
     const logoHandler = () => {
         navigate('/'); // Navigate to home page when logo is clicked
+    };
+    const handleBackClick = () => {
+        console.log(signUpInfo);
+        navigate(-1);
     };
 
     return (
@@ -86,6 +91,19 @@ function Signup4({ signUpInfo, setSignUpInfo }) {
                 .WORKLOG
             </h1>
             <h2 className={styles.h2}>기본 프로필 등록</h2>
+            <div className={styles.back}>
+                <button type="submit" onClick={handleBackClick} className={styles.backBtn}>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="60" height="50" viewBox="0 0 24 24" fill="none">
+                        <path
+                            d="M15.5 19l-7-7 7-7"
+                            stroke="#4053ff"
+                            strokeWidth="2.5"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                        />
+                    </svg>
+                </button>
+            </div>
             <p className={styles.instruction}>관심있는 업종/직군 분야를 골라 주세요.</p>
             <div className={styles.instructionbox}>
                 <svg xmlns="http://www.w3.org/2000/svg" width="25" height="26" viewBox="0 0 25 26" fill="none">

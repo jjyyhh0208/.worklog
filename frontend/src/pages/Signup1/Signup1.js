@@ -57,6 +57,7 @@ function Signup1({ signUpInfo, setSignUpInfo }) {
             });
 
             navigate('/signup/2');
+            console.log(signUpInfo);
         } catch (error) {
             const apiErrorMessage = error.message || '회원가입 도중 오류가 발생했습니다. 다시 시도해주세요.';
             setError(apiErrorMessage);
@@ -67,12 +68,28 @@ function Signup1({ signUpInfo, setSignUpInfo }) {
     const logoHandler = () => {
         navigate('/');
     };
+    const handleBackClick = () => {
+        navigate('/');
+    };
 
     return (
         <div className={styles.container}>
             <h1 className={styles.h1} onClick={logoHandler}>
                 .WORKLOG
             </h1>
+            <div className={styles.back}>
+                <button type="submit" onClick={handleBackClick} className={styles.backBtn}>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="60" height="50" viewBox="0 0 24 24" fill="none">
+                        <path
+                            d="M15.5 19l-7-7 7-7"
+                            stroke="#4053ff"
+                            strokeWidth="2.5"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                        />
+                    </svg>
+                </button>
+            </div>
             <h2 className={styles.h2}>SIGN UP</h2>
             <form className={styles.signUp} onSubmit={signUpHandler}>
                 <div className={styles.idbox}>
