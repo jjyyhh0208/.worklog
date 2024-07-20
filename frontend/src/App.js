@@ -69,6 +69,7 @@ function App() {
     };
 
     const renderHeader = () => {
+        //Header 넣는 페이지
         const pathsWithHeader = [
             '/my-profile',
             '/friend-profile',
@@ -103,10 +104,10 @@ function App() {
                 <Route path="/on-boarding/3" element={<OnBoarding3 />} />
                 <Route path="/friend-profile/:username" element={<FriendProfile />} />
                 <Route path="/test" element={<UploadImage />} />
+                <Route path="/list/:username" element={<List />} />
 
                 {/* 보호된 라우트 */}
                 <Route path="/my-profile" element={<ProtectedRoute element={MyProfile} />} />
-                <Route path="/list/:username" element={<ProtectedRoute element={List} />} />
 
                 {/* Error 페이지 - 모든 라우트의 맨 마지막에 위치 */}
                 <Route path="*" element={<Error />} />

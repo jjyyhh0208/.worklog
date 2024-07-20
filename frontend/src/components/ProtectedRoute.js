@@ -21,7 +21,7 @@ const ProtectedRoute = ({ element: Component, ...rest }) => {
         if (!isAuthenticated && showWarning) {
             alert('로그인이 필요한 페이지입니다.');
             setShowWarning(false);
-            setRedirect(true);
+            // setRedirect(true);
         }
     }, [isAuthenticated, showWarning]);
 

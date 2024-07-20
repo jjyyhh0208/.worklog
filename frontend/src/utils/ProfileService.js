@@ -114,7 +114,7 @@ const ProfileService = {
     },
 
     getUserProfileLink: (username) => {
-        return `${window.location.origin}/my-profile/${username}`;
+        return `${window.location.origin}/friend-profile/${username}`;
     },
 
     fetchFriendProfile: (username) => {

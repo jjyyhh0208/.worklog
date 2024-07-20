@@ -13,12 +13,22 @@ function FriendProfile() {
     const [imageUrl, setImageUrl] = useState(null);
     const [DISCData, setDISCData] = useState(null);
     const navigate = useNavigate();
+    const [showWarning, setShowWarning] = useState(false);
+    const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem('authToken'));
+    useEffect(() => {
+        const checkAuth = () => {
+            const authToken = localStorage.getItem('authToken');
+            setIsAuthenticated(!!authToken);
+            setShowWarning(!authToken);
+        };
 
-    const discTypeColors = typeData.reduce((acc, item) => {
-        acc[item.disc_character] = item.color;
-        return acc;
-    }, {});
+        const discTypeColors = typeData.reduce((acc, item) => {
+            acc[item.disc_character] = item.color;
+            return acc;
+        }, {});
 
+        checkAuth();
+    }, []);
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -63,6 +73,11 @@ function FriendProfile() {
             }
         } catch (error) {
             console.error('팔로우/팔로우 취소 중 오류가 발생했습니다.', error);
+            if (!isAuthenticated && showWarning) {
+                alert('로그인이 필요한 페이지입니다.');
+                setShowWarning(false);
+                // setRedirect(true);
+            }
         }
     };
 

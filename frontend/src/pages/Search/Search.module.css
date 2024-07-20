@@ -34,12 +34,18 @@
     background: none;
     border: none;
     cursor: pointer;
-
 }
-.searchBar button:hover{
+.searchBar button:hover {
     background: #cccccc00;
-} 
+}
 
+.searchResults {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 30px; /* 카드 사이의 간격 */
+    max-width: 70%;
+}
 .profileCard {
     background: #fff;
     border: 1px solid #ccc;
@@ -53,6 +59,7 @@
     width: 250px;
     height: 270px;
     box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+    flex-basis: calc(25% - 15px);
     position: relative;
 }
 
