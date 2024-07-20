@@ -51,6 +51,7 @@ function Signup3({ signUpInfo, setSignUpInfo }) {
     };
 
     const handleNextClick = () => {
+        
         const selectedKeywordIds = selectedKeywords.map((keyword) => {
             const foundKeyword = keywords.find((kw) => kw === keyword);
             return foundKeyword ? keywords.indexOf(foundKeyword) + 1 : null;
