@@ -8,25 +8,47 @@ function Signup4({ signUpInfo, setSignUpInfo }) {
     const location = useLocation();
     const isEditing = location.state?.isEditing || false;
     const profileData = location.state?.profileData || {};
-
-    // Initialize selectedKeywords based on whether it is editing mode and if there are already selected interests
-    const initialSelectedKeywords = isEditing
-        ? profileData.interests?.map((interest) => interest.name).filter(Boolean) || []
-        : [];
-
-    const [selectedKeywords, setSelectedKeywords] = useState(initialSelectedKeywords); // Selected keywords state
-    const [keywords, setKeywords] = useState([]); // All available keywords state
+    const [selectedKeywords, setSelectedKeywords] = useState([]);
+    const [keywords, setKeywords] = useState([]);
 
     useEffect(() => {
-        // Fetch available keywords from the server
         ProfileService.fetchInterests()
             .then((data) => {
-                setKeywords(data.map((item) => item.name)); // Set keywords
+                setKeywords(data.map((item) => item.name));
             })
             .catch((error) => {
                 console.error('Error fetching interests:', error);
             });
     }, []);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const interestsData = await ProfileService.fetchInterests();
+                const fetchedKeywords = interestsData.map((item) => item.name);
+                setKeywords(fetchedKeywords);
+
+                if (isEditing) {
+                    const userProfileData = await ProfileService.fetchUserProfile();
+                    const fetchedKeywords = userProfileData.interests.map((item) => item.name) || [];
+                    console.log(fetchedKeywords);
+                    setSelectedKeywords(fetchedKeywords);
+                    setSignUpInfo({
+                        ...signUpInfo,
+                        interests: {
+                            keyword1: fetchedKeywords[0] || '',
+                            keyword2: fetchedKeywords[1] || '',
+                            keyword3: fetchedKeywords[2] || '',
+                        },
+                    });
+                }
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        };
+
+        fetchData();
+    }, [isEditing]);
 
     // Handle keyword click to toggle selection
     const handleKeywordClick = (keyword) => {
@@ -37,7 +59,7 @@ function Signup4({ signUpInfo, setSignUpInfo }) {
             if (newKeywords.length < 3) {
                 newKeywords.push(keyword);
             } else {
-                alert('You can select up to 3 keywords only.');
+                alert('최대 3개의 키워드만 선택 가능합니다.');
             }
         }
         setSelectedKeywords(newKeywords);
@@ -55,12 +77,21 @@ function Signup4({ signUpInfo, setSignUpInfo }) {
 
     // Handle 'Complete' button click to save selected keywords
     const handleCompleteClick = () => {
+        if (selectedKeywords.length === 0) {
+            alert('최소 1개의 키워드를 선택해주세요.');
+            return;
+        }
         const selectedKeywordIds = selectedKeywords
             .map((keyword) => {
                 const index = keywords.indexOf(keyword);
                 return index > -1 ? index + 1 : null;
             })
             .filter((id) => id !== null);
+
+        if (selectedKeywords.length === 0) {
+            alert('최소 1개의 키워드를 선택해주세요.');
+            return;
+        }
 
         // Save selected keywords and navigate accordingly
         ProfileService.setUserInterest(selectedKeywordIds)
@@ -74,10 +105,15 @@ function Signup4({ signUpInfo, setSignUpInfo }) {
             .catch((error) => {
                 console.error('Error setting user interests:', error);
             });
+        console.log(signUpInfo);
     };
 
     const logoHandler = () => {
         navigate('/'); // Navigate to home page when logo is clicked
+    };
+    const handleBackClick = () => {
+        console.log(signUpInfo);
+        navigate(-1);
     };
 
     return (
@@ -86,6 +122,19 @@ function Signup4({ signUpInfo, setSignUpInfo }) {
                 .WORKLOG
             </h1>
             <h2 className={styles.h2}>기본 프로필 등록</h2>
+            <div className={styles.back}>
+                <button type="submit" onClick={handleBackClick} className={styles.backBtn}>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="60" height="50" viewBox="0 0 24 24" fill="none">
+                        <path
+                            d="M15.5 19l-7-7 7-7"
+                            stroke="#4053ff"
+                            strokeWidth="2.5"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                        />
+                    </svg>
+                </button>
+            </div>
             <p className={styles.instruction}>관심있는 업종/직군 분야를 골라 주세요.</p>
             <div className={styles.instructionbox}>
                 <svg xmlns="http://www.w3.org/2000/svg" width="25" height="26" viewBox="0 0 25 26" fill="none">

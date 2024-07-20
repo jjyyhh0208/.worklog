@@ -30,7 +30,7 @@ function Login() {
             });
             navigate('/my-profile');
         } catch (error) {
-            setError('아이디 또는 비밀번호가 일치하지 않습니다.');
+            setError(error.message);
         }
     };
 
@@ -44,8 +44,6 @@ function Login() {
                 .WORKLOG
             </h1>
             <h2 className={styles.h2}>LOGIN</h2>
-
-            {/* 에러 메시지 표시 */}
             {error && <div className={styles.errorMessage}>{error}</div>}
 
             <form className={styles.login} onSubmit={loginHandler}>

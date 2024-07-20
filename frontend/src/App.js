@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
+import { Route, Routes, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import './styles/global.css';
 
@@ -22,6 +22,7 @@ import Header from './components/Header/Header';
 import Feedback from './pages/Feedback/Feedback';
 import List from './pages/List/List';
 import FriendProfile from './pages/FriendProfile/FriendProfile';
+import Error from './components/Error/Error';
 
 // Redirect Pages
 import AuthRedirect from './components/AuthRedirect';
@@ -68,6 +69,7 @@ function App() {
     };
 
     const renderHeader = () => {
+        //Header 넣는 페이지
         const pathsWithHeader = [
             '/my-profile',
             '/friend-profile',
@@ -102,10 +104,13 @@ function App() {
                 <Route path="/on-boarding/3" element={<OnBoarding3 />} />
                 <Route path="/friend-profile/:username" element={<FriendProfile />} />
                 <Route path="/test" element={<UploadImage />} />
+                <Route path="/list/:username" element={<List />} />
 
                 {/* 보호된 라우트 */}
                 <Route path="/my-profile" element={<ProtectedRoute element={MyProfile} />} />
-                <Route path="/list/:username" element={<ProtectedRoute element={List} />} />
+
+                {/* Error 페이지 - 모든 라우트의 맨 마지막에 위치 */}
+                <Route path="*" element={<Error />} />
             </Routes>
         </>
     );

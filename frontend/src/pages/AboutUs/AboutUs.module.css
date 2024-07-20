@@ -28,6 +28,7 @@
     font-weight: 800;
     margin-bottom: 10px;
 }
+
 .grayLine {
     width: 100%;
     height: 1px;
@@ -46,19 +47,10 @@
     margin-bottom: 10px;
 }
 
-.answer_1 {
+.answer {
     font-size: 24px;
     color: #000;
     margin-left: 30px;
-}
-
-.answer_2 {
-    font-size: 24px;
-    color: #000;
-    display: flex;
-    align-items: center;
-    justify-content: space-around;
-    margin-bottom: 40px;
 }
 
 .worklog {
@@ -70,31 +62,30 @@
     margin-bottom: 10px;
 }
 
-.leftAnswer {
-    width: 100%;
+.typeContainer {
+    margin-bottom: 40px;
 }
 
-.rightAnswer {
+.answerbox {
+    display: flex;
+    align-items: center;
+}
+.typeButtons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 20px;
+    justify-content: start;
+    width: 50%;
+}
+.diagram {
     width: 450px;
     height: 450px;
     flex-shrink: 0;
     background: url('/public/images/discImage.png') no-repeat center center;
     background-size: cover;
     background-color: #ffffff;
-}
-
-.types_1 {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 20px;
-    cursor: pointer;
-}
-
-.types_2 {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 70px;
-    cursor: pointer;
+    margin-left: 10%;
 }
 
 .type {
@@ -111,13 +102,18 @@
     font-weight: 700;
     line-height: 38px;
     text-align: center;
+    cursor: pointer;
 }
 
-.typeCards {
-    display: flex;
-    flex-wrap: wrap;
+.discDescription {
+    font-size: 24px;
+    color: #000;
+    margin-left: 30px;
+}
+
+.groupSection {
     margin-top: 50px;
-    justify-content: space-around;
+    scroll-margin-top: 50px;
 }
 
 .subtitle {
@@ -125,6 +121,24 @@
     font-weight: bold;
     color: #000;
     margin-bottom: 10px;
+}
+
+.groupDescription {
+    font-size: 24px;
+    color: #000;
+    margin-left: 30px;
+    margin-bottom: 30px;
+}
+
+.typeSection {
+    margin-top: 30px;
+}
+
+.typeCards {
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 20px;
+    justify-content: space-around;
 }
 
 .typeCard {
@@ -139,7 +153,6 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    scroll-margin-top: 50px;
 }
 
 .typeDescription {
@@ -162,15 +175,8 @@
         font-size: 48px;
     }
 
-    .answer_1,
-    .answer_2 {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-
-    .rightAnswer {
+    .typeDescription {
         width: 100%;
-        height: auto;
     }
 }
 
@@ -189,8 +195,9 @@
         font-size: 24px;
     }
 
-    .answer_1,
-    .answer_2 {
+    .answer,
+    .discDescription,
+    .groupDescription {
         font-size: 20px;
     }
 
@@ -236,8 +243,9 @@
         font-size: 20px;
     }
 
-    .answer_1,
-    .answer_2 {
+    .answer,
+    .discDescription,
+    .groupDescription {
         font-size: 18px;
     }
 

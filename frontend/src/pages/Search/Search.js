@@ -1,32 +1,61 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from './Search.module.css';
 import ProfileService from '../../utils/ProfileService';
 
+
+
 function Search() {
     const [searchTerm, setSearchTerm] = useState('');
-    const [searchResult, setSearchResult] = useState(null);
+    const [searchResults, setSearchResults] = useState([]);
     const [notFound, setNotFound] = useState(false);
+    const [isOwnProfile, setIsOwnProfile] = useState(false);
+    const [currentUser, setCurrentUser] = useState(null);
     const navigate = useNavigate();
+
+    
+    
+    
+    useEffect(() => {
+        fetchCurrentUser();
+        window.scrollTo(0, 0);
+    }, []);
+
+    const fetchCurrentUser = async () => {
+        try {
+            const userProfile = await ProfileService.fetchUserProfile();
+            setCurrentUser(userProfile);
+        } catch (error) {
+            console.error('Error fetching current user profile:', error);
+        }
+    };
 
     const handleInputChange = (e) => {
         setSearchTerm(e.target.value);
         setNotFound(false);
+        setIsOwnProfile(false);
     };
 
     const handleSearch = async () => {
         try {
+            if (currentUser && searchTerm === currentUser.username) {
+                setIsOwnProfile(true);
+                setSearchResults([]);
+                setNotFound(false);
+                return;
+            }
+
             const results = await ProfileService.fetchSearchResults(searchTerm);
             if (results.length > 0) {
-                setSearchResult(results[0]);
+                setSearchResults(results);
                 setNotFound(false);
             } else {
-                setSearchResult(null);
+                setSearchResults([]);
                 setNotFound(true);
             }
         } catch (error) {
             console.error('Search error:', error);
-            setSearchResult(null);
+            setSearchResults([]);
             setNotFound(true);
         }
     };
@@ -42,7 +71,7 @@ function Search() {
                     type="text"
                     value={searchTerm}
                     onChange={handleInputChange}
-                    placeholder="알고 싶은 동료의 ID를 입력하세요"
+                    placeholder="알고 싶은 동료의 ID 또는 닉네임을 입력하세요"
                 />
                 <button onClick={handleSearch}>
                     <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 50 50" fill="none">
@@ -53,37 +82,56 @@ function Search() {
                     </svg>
                 </button>
             </div>
-            {searchResult && (
-                <div className={styles.profileCard} onClick={() => handleProfileClick(searchResult.username)}>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 47 47" fill="none">
-                        <path
-                            d="M23.5001 44.5524C11.8872 44.5524 2.448 35.1132 2.448 23.5003C2.448 11.8874 11.8872 2.44824 23.5001 2.44824C35.113 2.44824 44.5522 11.8874 44.5522 23.5003C44.5522 35.1132 35.113 44.5524 23.5001 44.5524ZM23.5001 5.38574C13.5126 5.38574 5.3855 13.5128 5.3855 23.5003C5.3855 33.4878 13.5126 41.6149 23.5001 41.6149C33.4876 41.6149 41.6147 33.4878 41.6147 23.5003C41.6147 13.5128 33.4876 5.38574 23.5001 5.38574Z"
-                            fill="#292D32"
-                        />
-                        <path
-                            d="M31.3334 24.9688H15.6667C14.8638 24.9688 14.198 24.3029 14.198 23.5C14.198 22.6971 14.8638 22.0312 15.6667 22.0312H31.3334C32.1363 22.0312 32.8022 22.6971 32.8022 23.5C32.8022 24.3029 32.1363 24.9688 31.3334 24.9688Z"
-                            fill="#292D32"
-                        />
-                        <path
-                            d="M23.5 32.8024C22.6971 32.8024 22.0312 32.1366 22.0312 31.3337V15.667C22.0312 14.8641 22.6971 14.1982 23.5 14.1982C24.3029 14.1982 24.9688 14.8641 24.9688 15.667V31.3337C24.9688 32.1366 24.3029 32.8024 23.5 32.8024Z"
-                            fill="#292D32"
-                        />
-                    </svg>
-                    <img
-                        src={searchResult.profileImage || '/images/basicProfile.png'}
-                        alt="Profile"
-                        className={styles.profileImage}
-                    />
-                    <h2 className={styles.name}>{searchResult.name}</h2>
-                    <p className={styles.username}>ID: {searchResult.username}</p>
-                    <div className={styles.follow}>
-                        <button className={styles.viewProfileButton}>프로필 보러 가기</button>
-                    </div>
+            {isOwnProfile && (
+                <div className={styles.notFoundMessage}>
+                    <h3>자기 자신과 더 친해지는 건 언제나 환영이에요.</h3>
                 </div>
             )}
-            {notFound && (
+            {searchResults.length > 0 && !isOwnProfile && (
+                <div className={styles.searchResults}>
+                    {searchResults.map((result) => (
+                        <div
+                            key={result.username}
+                            className={styles.profileCard}
+                            onClick={() => handleProfileClick(result.username)}
+                        >
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="30"
+                                height="30"
+                                viewBox="0 0 47 47"
+                                fill="none"
+                            >
+                                <path
+                                    d="M23.5001 44.5524C11.8872 44.5524 2.448 35.1132 2.448 23.5003C2.448 11.8874 11.8872 2.44824 23.5001 2.44824C35.113 2.44824 44.5522 11.8874 44.5522 23.5003C44.5522 35.1132 35.113 44.5524 23.5001 44.5524ZM23.5001 5.38574C13.5126 5.38574 5.3855 13.5128 5.3855 23.5003C5.3855 33.4878 13.5126 41.6149 23.5001 41.6149C33.4876 41.6149 41.6147 33.4878 41.6147 23.5003C41.6147 13.5128 33.4876 5.38574 23.5001 5.38574Z"
+                                    fill="#292D32"
+                                />
+                                <path
+                                    d="M31.3334 24.9688H15.6667C14.8638 24.9688 14.198 24.3029 14.198 23.5C14.198 22.6971 14.8638 22.0312 15.6667 22.0312H31.3334C32.1363 22.0312 32.8022 22.6971 32.8022 23.5C32.8022 24.3029 32.1363 24.9688 31.3334 24.9688Z"
+                                    fill="#292D32"
+                                />
+                                <path
+                                    d="M23.5 32.8024C22.6971 32.8024 22.0312 32.1366 22.0312 31.3337V15.667C22.0312 14.8641 22.6971 14.1982 23.5 14.1982C24.3029 14.1982 24.9688 14.8641 24.9688 15.667V31.3337C24.9688 32.1366 24.3029 32.8024 23.5 32.8024Z"
+                                    fill="#292D32"
+                                />
+                            </svg>
+                            <img
+                                src={result.profileImage || '/images/basicProfile.png'}
+                                alt="Profile"
+                                className={styles.profileImage}
+                            />
+                            <h2 className={styles.name}>{result.name}</h2>
+                            <p className={styles.username}>ID: {result.username}</p>
+                            <div className={styles.follow}>
+                                <button className={styles.viewProfileButton}>프로필 보러 가기</button>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            )}
+            {notFound && !isOwnProfile && (
                 <div className={styles.notFoundMessage}>
-                    <h3>‘{searchTerm}’를 찾을 수 없습니다.</h3>
+                    <h3>'{searchTerm}'를 찾을 수 없습니다.</h3>
                     <p>입력하신 아이디로 등록한 회원이 없습니다.</p>
                     <p>링크를 통해 친구 프로필을 찾거나, 다시 한 번 아이디를 확인해 주세요.</p>
                 </div>

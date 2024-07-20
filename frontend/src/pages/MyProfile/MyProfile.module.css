@@ -32,6 +32,7 @@
     height: 180px;
     flex-shrink: 0;
     padding-bottom: 50px;
+    padding-right: 8%;
     margin-right: 50px;
     position: relative;
 }
@@ -41,7 +42,6 @@
     height: 130px;
     border-radius: 50%;
     object-fit: cover;
-    border: 1px solid #000;
     margin: 20px;
 }
 
@@ -91,7 +91,6 @@
     align-items: center; /* Center vertically */
     margin: 0 auto; /* Center horizontally within parent */
 }
-
 
 .rightHeader {
     margin-left: 20px;
@@ -173,6 +172,19 @@
     font-style: normal;
     font-weight: 800;
     line-height: normal;
+}
+
+.feedbackCount {
+    position: absolute;
+    top: 30px;
+    right: 50px;
+    font-size: 21px;
+    font-style: normal;
+    font-weight: 700;
+    color: #000000;
+    background-color: #e1e1e1;
+    padding: 10px 15px;
+    border-radius: 10px;
 }
 
 .divider {
@@ -268,6 +280,14 @@
     font-style: normal;
     font-weight: 700;
     line-height: normal;
+}
+
+.defaultDiscSvg {
+    width: 150px;
+    height: 40px;
+    border-radius: 10px;
+    padding: 10%;
+    background-color: #a7a7a76f;
 }
 
 .progressBar {
@@ -387,7 +407,6 @@
 }
 .blurWrapper {
     position: relative;
-    
 }
 
 .blurred {
@@ -405,18 +424,44 @@
 }
 .feedbackMessage {
     text-align: center;
-    
-    
+
     border-radius: 50px;
-    
+
     margin-bottom: 30px;
-    
+
     padding: 40px 60px;
     position: relative;
 }
 
 .feedbackMessage p {
     font-size: 20px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+}
+
+.basicDetails {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.detailsContainer {
+    display: flex;
+    align-items: center;
+    margin: 4px 0;
+}
+
+.detailLabel {
+    width: 100px;
+    font-size: 21px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+}
+
+.detailValue {
+    font-size: 21px;
     font-style: normal;
     font-weight: 700;
     line-height: normal;

@@ -2,32 +2,58 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import styles from './FriendProfile.module.css';
 import ProfileService from '../../utils/ProfileService';
-import DataService from '../../utils/DataService';
 import keywordIcons from '../../components/KeywordIcons/KeywordIcons';
+import typeData from '../../data/typeData.json';
 
 function FriendProfile() {
     const { username } = useParams();
-    const [DISCData, setDISCData] = useState(null);
-    const [loading, setLoading] = useState(true);
+    const [isLoading, setisLoading] = useState(true);
     const [profileData, setProfileData] = useState(null);
     const [isFollowing, setIsFollowing] = useState(false);
+    const [imageUrl, setImageUrl] = useState(null);
+    const [DISCData, setDISCData] = useState(null);
     const navigate = useNavigate();
+    const [showWarning, setShowWarning] = useState(false);
+    const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem('authToken'));
+
+    useEffect(() => {
+        const checkAuth = () => {
+            const authToken = localStorage.getItem('authToken');
+            setIsAuthenticated(!!authToken);
+            setShowWarning(!authToken);
+        };
+    }, {});
+
+    const discTypeColors = typeData.reduce((acc, item) => {
+        acc[item.disc_character] = item.color;
+        return acc;
+    });
 
     useEffect(() => {
         const fetchData = async () => {
             try {
                 const profileData = await ProfileService.fetchFriendProfile(username);
+                profileData.old = 2025 - profileData.age; // 나이 계산
+                profileData.gender =
+                    profileData.gender === 'F' ? 'Female' : profileData.gender === 'M' ? 'Male' : 'None';
                 setProfileData(profileData);
                 setIsFollowing(profileData.is_following);
 
-                if (profileData.disc_character !== 'None') {
-                    const discData = await DataService.fetchDISCData(profileData.disc_character);
+                const discData = typeData.find((item) => item.disc_character === profileData.disc_character);
+                if (discData) {
                     setDISCData(discData);
+                } else {
+                    console.error('DISC character not found:', profileData.disc_character);
+                }
+
+                if (profileData.profile_image && profileData.profile_image.image) {
+                    const signedUrl = await ProfileService.getSignedImageUrl(profileData.profile_image.image);
+                    setImageUrl(signedUrl);
                 }
             } catch (error) {
                 console.error('프로필 정보를 불러오는 동안 오류가 발생했습니다.', error);
             } finally {
-                setLoading(false);
+                setisLoading(false);
             }
         };
 
@@ -47,19 +73,22 @@ function FriendProfile() {
             }
         } catch (error) {
             console.error('팔로우/팔로우 취소 중 오류가 발생했습니다.', error);
+            if (!isAuthenticated && showWarning) {
+                alert('로그인이 필요한 페이지입니다.');
+                setShowWarning(false);
+                // setRedirect(true);
+            }
         }
     };
 
     const handleFeedbackClick = () => {
+        if (localStorage.getItem('workStyles')) {
+            localStorage.removeItem('workStyles');
+        }
         navigate(`/feedback/intro/${username}`);
     };
 
-    if (loading) {
-        // 여기에 랜더링 후 변경 페이지 쓰기
-        return <div className={styles.profileContainer}></div>;
-    }
-
-    if (!profileData) {
+    if (isLoading) {
         return <div className={styles.profileContainer}></div>;
     }
 
@@ -70,19 +99,55 @@ function FriendProfile() {
                     <div className={styles.profileHeader}>
                         <div className={styles.mainProfile}>
                             <img
-                                src={profileData.profileImage || '/images/basicProfile.png'}
+                                src={imageUrl || '/images/basicProfile.png'}
                                 alt="Profile"
                                 className={styles.profileImage}
                             />
                             <div className={styles.profileDetails}>
                                 <div className={styles.basicDetails}>
                                     <h1>{profileData.name}</h1>
-                                    <p>나이: {profileData.age}</p>
-                                    <p>성별: {profileData.gender}</p>
-                                    <p>ID: {profileData.username}</p>
+                                    <div className={styles.detailsContainer}>
+                                        <div className={styles.detailLabel}>나이</div>
+                                        <div className={styles.detailValue}>{profileData.old}</div>
+                                    </div>
+                                    <div className={styles.detailsContainer}>
+                                        <div className={styles.detailLabel}>성별</div>
+                                        <div className={styles.detailValue}>{profileData.gender}</div>
+                                    </div>
+                                    <div className={styles.detailsContainer}>
+                                        <div className={styles.detailLabel}>ID</div>
+                                        <div className={styles.detailValue}>{profileData.username}</div>
+                                    </div>
                                 </div>
                                 <div className={styles.basicDetails}>
-                                    <div className={styles.profileDisc}>{profileData.disc_character}</div>
+                                    {profileData &&
+                                        (profileData.disc_character === 'None' ? (
+                                            <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                width="164"
+                                                height="187"
+                                                viewBox="0 0 164 187"
+                                                fill="none"
+                                                className={styles.defaultDiscSvg}
+                                            >
+                                                <path
+                                                    d="M145.592 81.5315H136.856V55.3249C136.856 24.8234 112.033 0 81.5315 0C51.03 0 26.2066 24.8234 26.2066 55.3249V81.5315H17.471C7.82557 81.5315 0 89.3571 0 99.0025V168.887C0 178.532 7.82557 186.358 17.471 186.358H145.592C155.237 186.358 163.063 178.532 163.063 168.887V99.0025C163.063 89.3571 155.237 81.5315 145.592 81.5315ZM107.738 81.5315H55.3249V55.3249C55.3249 40.8749 67.0815 29.1184 81.5315 29.1184C95.9815 29.1184 107.738 40.8749 107.738 55.3249V81.5315Z"
+                                                    fill="black"
+                                                    fillOpacity="0.25"
+                                                />
+                                            </svg>
+                                        ) : (
+                                            <div
+                                                className={styles.profileDisc}
+                                                style={{
+                                                    backgroundColor:
+                                                        discTypeColors[profileData.disc_character] ||
+                                                        discTypeColors.None,
+                                                }}
+                                            >
+                                                {profileData.disc_character}
+                                            </div>
+                                        ))}
                                 </div>
                             </div>
                         </div>
@@ -159,6 +224,7 @@ function FriendProfile() {
 
                         <div className={styles.section}>
                             <h2>타인이 평가하는 {profileData.name}</h2>
+                            <div className={styles.feedbackCount}>답변수: {profileData.feedback_count}</div>
                             <hr className={styles.divider} />
                             {profileData.feedback_count >= 3 ? (
                                 <>
@@ -178,17 +244,24 @@ function FriendProfile() {
                                             ))}
                                     </div>
                                     <div className={styles.typeCards}>
-                                        <div className={styles.typeCard} style={{ backgroundColor: '#1E74D9' }}>
-                                            {DISCData.disc_character}
-                                        </div>
+                                        {profileData && DISCData ? (
+                                            <div
+                                                className={styles.typeCard}
+                                                style={{ backgroundColor: discTypeColors[profileData.disc_character] }}
+                                            >
+                                                {DISCData.disc_character}
+                                            </div>
+                                        ) : (
+                                            <div className={styles.typeCard}>데이터 로딩 중...</div>
+                                        )}
                                         <div className={styles.typeDescription}>
                                             <p>{DISCData.description}</p>
                                             <div className={styles.typeQuestion}>
-                                                <strong>강점 및 약점은?</strong>
+                                                <strong>강점 및 보완할 점은?</strong>
                                             </div>
                                             <strong>• 강점:</strong> {DISCData.strength.join(', ')}
                                             <br />
-                                            <strong>• 약점:</strong> {DISCData.weakness.join(', ')}
+                                            <strong>• 보완할 점:</strong> {DISCData.weakness.join(', ')}
                                             <div className={styles.typeQuestion}>
                                                 <strong>{DISCData.disc_character}와 맞는 협업 유형은?</strong>
                                             </div>

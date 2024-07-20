@@ -52,21 +52,22 @@ const AdminService = {
         return API.post('/profiles/auth/login/', requestData)
             .then((response) => {
                 if (response.status === 200) {
-                    console.log('사용자가 성공적으로 로그인하였습니다.');
                     const token = response.data.key;
                     localStorage.setItem('authToken', token);
                 }
             })
             .catch((error) => {
-                console.error('로그인 요청 실패:', error);
-
+                let errorMessage = '로그인 처리 중 오류가 발생했습니다.';
                 if (error.response && error.response.data) {
-                    throw new Error('아이디 또는 비밀번호가 올바르지 않습니다.');
+                    if (error.response.data.message) {
+                        errorMessage = error.response.data.message;
+                    } else {
+                        errorMessage = error.response.data.errors.non_field_errors[0];
+                    }
                 } else if (error.response) {
-                    throw new Error('서버 오류가 발생했습니다.');
-                } else {
-                    throw new Error(error.message);
+                    errorMessage = '서버 오류가 발생했습니다.';
                 }
+                throw new Error(errorMessage);
             });
     },
 
@@ -81,6 +82,22 @@ const AdminService = {
             })
             .catch((error) => {
                 throw new Error(error.message);
+            });
+    },
+
+    userDelete: () => {
+        return API.delete('/profiles/auth/delete/')
+            .then((response) => {
+                if (response.status === 200) {
+                    console.log('성공적으로 회원 탈퇴가 이루어졌습니다.');
+                }
+
+                return response.data;
+            })
+            .catch((error) => {
+                console.error('회원 탈퇴 중 오류가 발생했습니다.', error);
+                console.error('오류 응답:', error.response);
+                console.error('오류 메시지:', error.message);
             });
     },
 };
