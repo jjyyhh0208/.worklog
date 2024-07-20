@@ -27,6 +27,7 @@ import FriendProfile from './pages/FriendProfile/FriendProfile';
 import AuthRedirect from './components/AuthRedirect';
 import ProtectedRoute from './components/ProtectedRoute';
 import ProfileService from './utils/ProfileService';
+import UploadImage from './pages/UploadImage';
 
 axios.defaults.xsrfCookieName = 'csrftoken';
 axios.defaults.xsrfHeaderName = 'X-CSRFToken';
@@ -100,6 +101,7 @@ function App() {
                 <Route path="/on-boarding/2" element={<OnBoarding2 />} />
                 <Route path="/on-boarding/3" element={<OnBoarding3 />} />
                 <Route path="/friend-profile/:username" element={<FriendProfile />} />
+                <Route path="/test" element={<UploadImage />} />
 
                 {/* 보호된 라우트 */}
                 <Route path="/my-profile" element={<ProtectedRoute element={MyProfile} />} />

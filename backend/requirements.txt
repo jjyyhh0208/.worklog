@@ -39,3 +39,6 @@ tqdm==4.66.4
 typing_extensions==4.12.2
 urllib3==2.2.2
 yarl==1.9.4
+environ==1.0
+django-environ==0.11.2
+Pillow==10.4.0
