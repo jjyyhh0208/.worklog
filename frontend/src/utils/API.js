@@ -1,6 +1,7 @@
 import axios from 'axios';
 
-const baseURL = process.env.REACT_APP_BASE_URL;
+// const baseURL = process.env.REACT_APP_BASE_URL;
+const baseURL = 'https://api.dot-worklog.com/';
 
 // CSRF 토큰을 가져오는 함수
 function getCsrfToken() {
