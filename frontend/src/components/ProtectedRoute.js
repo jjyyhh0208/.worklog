@@ -19,14 +19,14 @@ const ProtectedRoute = ({ element: Component, ...rest }) => {
 
     useEffect(() => {
         if (!isAuthenticated && showWarning) {
-            alert('로그인 이후 접속 가능합니다.');
+            alert('로그인이 필요한 페이지입니다.');
             setShowWarning(false);
             setRedirect(true);
         }
     }, [isAuthenticated, showWarning]);
 
     if (redirect) {
-        return <Navigate to="/login" />;
+        return <Navigate to="/" />;
     }
 
     return <Component {...rest} />;

@@ -62,14 +62,14 @@ class UserViewSet(viewsets.ModelViewSet):
 class WorkStyleViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = WorkStyle.objects.all()
     serializer_class = WorkStyleSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = []
     
     
 #관심 직종을 유저에게 제공하는 ViewSet
 class InterestViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Interest.objects.all()
     serializer_class = InterestSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = []
     
     
 #유저 프로필을 불러오는 View
