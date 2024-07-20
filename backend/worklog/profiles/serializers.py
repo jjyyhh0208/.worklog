@@ -171,7 +171,7 @@ class ShortQuestionSerializer(serializers.ModelSerializer):
 class FeedbackSerializer(serializers.ModelSerializer):
     user = serializers.SlugRelatedField(slug_field='username', queryset=User.objects.all(), allow_null=True)
     user_by = serializers.SlugRelatedField(slug_field='username', queryset=User.objects.all(), allow_null=True)
-    work_styles = WorkStyleSerializer(many=True)
+    work_styles = serializers.ListField(write_only=True, child=serializers.DictField())
     score = ScoreSerializer(allow_null=True)
     question_answers = QuestionAnswerSerializer(many=True)  # Removed source keyword
 
@@ -184,11 +184,13 @@ class FeedbackSerializer(serializers.ModelSerializer):
         score_data = validated_data.pop('score', None)
         question_answers_data = validated_data.pop('question_answers')
         
+        # User 관련 데이터는 이미 validated_data에 포함되어 있음
         feedback = Feedback.objects.create(**validated_data)
         
-        # Workstyle
+        # Workstyles
         for work_style_data in work_styles_data:
-            work_style, created = WorkStyle.objects.get_or_create(**work_style_data)
+            name = work_style_data['name']
+            work_style, created = WorkStyle.objects.get_or_create(name=name)
             feedback.work_styles.add(work_style)
         
         # Score Data
@@ -216,9 +218,11 @@ class FeedbackSerializer(serializers.ModelSerializer):
         instance.save()
 
         # Workstyle
-        instance.work_styles.clear()
         for work_style_data in work_styles_data:
-            work_style, created = WorkStyle.objects.get_or_create(**work_style_data)
+            try:
+                work_style = WorkStyle.objects.get(name=work_style_data['name'])
+            except WorkStyle.DoesNotExist:
+                raise serializers.ValidationError(f"WorkStyle with name '{work_style_data['name']}' does not exist.")
             instance.work_styles.add(work_style)
         
         # Score

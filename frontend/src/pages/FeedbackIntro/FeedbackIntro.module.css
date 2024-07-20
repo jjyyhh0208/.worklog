@@ -6,53 +6,85 @@
     background: #f6f6f6;
     overflow-y: auto;
     min-height: 90%;
+    height: 100vh;
 }
 
 .feedbackPage {
-    padding-top: 30px;
-    padding-bottom: 30px;
-    padding-left: 100px;
-    padding-right: 100px;
-    width: 80%;
+    padding: 2% 6%;
+    width: 60%;
     border-radius: 50px;
     background: #fff;
     flex-shrink: 0;
-    margin-top: 50px;
-    margin-bottom: 50px;
-    justify-content: center;
+    margin: 2% 3%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     position: relative;
     overflow-y: auto;
 }
-/* instructionbox 스타일 */
-.instructionbox {
+/* 페이지 인디케이터 스타일 */
+.pageIndicator {
     position: absolute;
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    max-width: 700px;
-    height: 26px;
-    flex-shrink: 0;
+    top: 30px;
+    right: 50px;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #000000;
+    background-color: #e1e1e1;
+    padding: 10px 15px;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-/* span 스타일 */
-.span {
-    color: #9b8f8f;
-    font-size: 18px;
-    font-weight: 500;
-    line-height: normal;
-    position: absolute;
-    justify-self: start;
-    margin-top: 5px;
-    margin-left: 30px;
+.back {
+    margin-top: 3%;
+    margin-left: -80%;
+}
+
+.backBtn {
+    all: unset;
+    background: #f6f6f6;
+    cursor: pointer;
+    background: inherit;
+    border: none;
+    box-shadow: none;
+    border-radius: 0;
+    padding: 0;
+    overflow: visible;
+    cursor: pointer;
+}
+
+.backBtn:hover {
+    background: #fff;
+    color: inherit;
 }
 
 /* instruction 스타일 */
 .instruction {
     color: #4053ff;
-    font-size: 40px;
-    font-weight: 600;
+    font-size: 3.5rem;
+    font-weight: 800;
     line-height: normal;
+    margin-bottom: 2%;
+    margin-top: 1%;
+}
+
+/* instructionbox 스타일 */
+.instructionbox {
+    display: flex;
+    width: 70%;
+    margin-top: 2%;
+}
+
+/* span 스타일 */
+.span {
+    color: #9b8f8f;
+    font-size: 1.5rem;
+    font-weight: 500;
+    line-height: normal;
+    margin-bottom: 2%;
+    margin-left: 1%;
 }
 
 /* keywordsContainer 스타일 */
@@ -62,10 +94,10 @@
     flex-wrap: wrap;
     justify-content: center;
     gap: 10px;
-    margin: 100px 200px;
-    width: 120%;
-    max-width: 1100px;
-    height: 550px;
+    margin: 3% 10% 5%;
+    width: 100%;
+    max-width: 1200px;
+    height: 20vh;
 }
 
 /* keywordButton 스타일 */
@@ -98,18 +130,17 @@
 .completeButton:hover {
     background-color: #2c3b9d;
 }
+
 /* nextbox 스타일 */
 .nextbox {
-    top: 80%;
-    left: 90%;
-    position: absolute;
-    transform: translateX(-50%);
-    align-items: start;
-    text-align: center;
-    align-self: center;
+    text-align: right;
+    align-self: flex-end;
     line-height: 70px;
     display: flex;
-    justify-content: space-around;
+    justify-content: flex-end;
+    margin-right: 20px;
+    margin-bottom: 2%;
+    cursor: pointer;
 }
 
 /* button 스타일 */
@@ -125,24 +156,10 @@
     font-style: normal;
     font-weight: 700;
     line-height: normal;
-    position: absolute;
-    transform: translateX(-50%);
-    margin-right: 100px;
+    margin-right: 10px;
+    cursor: pointer;
 }
 
-/* 페이지 인디케이터 스타일 */
-.pageIndicator {
-    position: absolute;
-    top: 30px;
-    right: 50px;
-    font-size: 24px;
-    font-weight: bold;
-    color: #000000;
-    background-color: #e1e1e1;
-    padding: 10px 15px;
-    border-radius: 10px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
 /* Media queries for responsiveness */
 @media (max-width: 1024px) {
     .h1 {
