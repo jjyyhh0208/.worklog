@@ -16,7 +16,7 @@
 .profileHeader {
     display: flex;
     align-items: center;
-    
+
     margin-bottom: 20px;
     margin-top: 20px;
 }
@@ -33,6 +33,7 @@
     flex-shrink: 0;
     padding-bottom: 50px;
     margin-right: 50px;
+    padding-right: 8%;
     position: relative;
 }
 
@@ -92,7 +93,6 @@
     margin: 0 auto; /* Center horizontally within parent */
 }
 
-
 .rightHeader {
     margin-left: 20px;
     display: flex;
@@ -101,12 +101,11 @@
     gap: 30px;
 }
 
-
 .followButton {
     width: 240px;
     height: 70px;
     flex-shrink: 0;
-    background-color: #4053FF;
+    background-color: #4053ff;
     color: #fff;
     font-family: Inter;
     font-size: 21px;
@@ -136,12 +135,11 @@
     margin-top: 10px;
 }
 
-
 .feedbackButton {
     width: 240px;
     height: 70px;
     flex-shrink: 0;
-    background-color: #F8BD23;
+    background-color: #f8bd23;
     color: #fff;
     font-family: Inter;
     font-size: 21px;
@@ -270,6 +268,25 @@
 
 .discContainer {
     width: 1200px;
+}
+.defaultDiscSvg {
+    width: 150px;
+    height: 40px;
+    border-radius: 10px;
+    padding: 10%;
+    background-color: #a7a7a76f;
+}
+.feedbackCount {
+    position: absolute;
+    top: 30px;
+    right: 50px;
+    font-size: 21px;
+    font-style: normal;
+    font-weight: 700;
+    color: #000000;
+    background-color: #e1e1e1;
+    padding: 10px 15px;
+    border-radius: 10px;
 }
 
 .discBar {
@@ -406,7 +423,6 @@
 }
 .blurWrapper {
     position: relative;
-    
 }
 
 .blurred {
@@ -424,18 +440,44 @@
 }
 .feedbackMessage {
     text-align: center;
-    
-    
+
     border-radius: 50px;
-    
+
     margin-bottom: 30px;
-    
+
     padding: 40px 60px;
     position: relative;
 }
 
 .feedbackMessage p {
     font-size: 20px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+}
+
+.basicDetails {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.detailsContainer {
+    display: flex;
+    align-items: center;
+    margin: 4px 0;
+}
+
+.detailLabel {
+    width: 100px;
+    font-size: 21px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+}
+
+.detailValue {
+    font-size: 21px;
     font-style: normal;
     font-weight: 700;
     line-height: normal;

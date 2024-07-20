@@ -66,17 +66,53 @@ a {
     font-weight: bold;
 }
 
-.menuButton,
-.logoutButton,
-.loginButton {
-    color: rgb(255, 255, 255);
-    border: none;
-    padding: 5px 10px;
-    border-radius: 15px;
-    cursor: pointer;
-    text-decoration: none;
-    font-weight: bolder;
+.auth {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.menuButton {
     background-color: #4053ff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.menuDropdown {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    display: none;
+    flex-direction: column;
+    overflow: hidden;
+    z-index: 1000;
+}
+
+.menuDropdown.show {
+    display: flex;
+}
+
+.menuItem {
+    background-color: white;
+    color: #4053ff;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    text-align: left;
+    font-weight: bold;
+    transition: background-color 0.3s;
+}
+
+.menuItem:hover {
+    background-color: #f0f0f0;
 }
 
 /* Media Queries for Responsiveness */
@@ -132,4 +168,11 @@ a {
         font-size: 12px;
         padding: 6px;
     }
+}
+.navItem.active {
+    color: #f8bd23;
+}
+
+.navItem.active svg path {
+    fill: #f8bd23;
 }

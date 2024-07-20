@@ -7,16 +7,31 @@ import keywordIcons from '../../components/KeywordIcons/KeywordIcons';
 
 function MyProfile() {
     const [DISCData, setDISCData] = useState(null);
-    const [loading, setLoading] = useState(true);
+    const [isLoading, setisLoading] = useState(true);
     const [profileData, setProfileData] = useState(null);
     const [imageUrl, setImageUrl] = useState(null);
     const navigate = useNavigate();
+
+    const discTypeColors = {
+        '목표 달성자': '#FF5473',
+        디테일리스트: '#55B807',
+        중재가: '#92604B',
+        '컨트롤 타워': '#00B680',
+        불도저: '#FF4B40',
+        애널리스트: '#7D40FF',
+        커뮤니케이터: '#FFC554',
+        프로세서: '#1E74D9',
+    };
 
     useEffect(() => {
         const fetchData = async () => {
             try {
                 const profileData = await ProfileService.fetchUserProfile();
+                profileData.old = 2025 - profileData.age; // 나이 계산
+                profileData.gender =
+                    profileData.gender === 'F' ? 'Female' : profileData.gender === 'M' ? 'Male' : 'None';
                 setProfileData(profileData);
+                setisLoading(false);
 
                 if (profileData.profile_image && profileData.profile_image.image) {
                     const signedUrl = await ProfileService.getSignedImageUrl(profileData.profile_image.image);
@@ -30,21 +45,33 @@ function MyProfile() {
             } catch (error) {
                 console.error('Error fetching profile data.', error);
             } finally {
-                setLoading(false);
+                setisLoading(false);
             }
         };
 
         fetchData();
     }, []);
 
-    if (loading) {
+    if (isLoading) {
         // 여기에 랜더링 후 변경 페이지 쓰기
-        return <div className={styles.profileContainer}></div>;
+        return <div className={styles.profileContainer}>Loading...</div>;
+    }
+    if (!profileData) {
+        return <div className={styles.profileContainer}>Profile data not available.</div>;
     }
 
     const handleCopyLink = () => {
-        if (profileData && profileData.id) {
-            const profileLink = ProfileService.getUserProfileLink(profileData.id);
+        if (isLoading) {
+            alert('프로필 데이터를 불러오는 중입니다. 잠시만 기다려주세요.');
+            return;
+        }
+        if (!profileData || !profileData.username) {
+            alert('프로필 데이터를 불러오는데 문제가 발생했습니다. 페이지를 새로고침하고 다시 시도해주세요.');
+            return;
+        }
+
+        if (profileData && profileData.username) {
+            const profileLink = ProfileService.getUserProfileLink(profileData.username);
 
             if (navigator.clipboard && navigator.clipboard.writeText) {
                 navigator.clipboard
@@ -54,6 +81,7 @@ function MyProfile() {
                     })
                     .catch((error) => {
                         console.error('링크 복사 중 오류가 발생했습니다.', error);
+                        alert('링크 복사에 실패했습니다. 다시 시도해주세요.');
                     });
             } else {
                 // navigator.clipboard가 지원되지 않는 경우
@@ -79,11 +107,57 @@ function MyProfile() {
     };
 
     const handleInstagramShare = () => {
-        alert('인스타그램 공유 기능은 구현 중입니다.');
+        if (!profileData || !profileData.username) {
+            alert('프로필 데이터를 불러오는데 문제가 발생했습니다. 페이지를 새로고침하고 다시 시도해주세요.');
+            return;
+        }
+
+        const profileLink = ProfileService.getUserProfileLink(profileData.username);
+        const instagramUrl = `instagram://story-camera?text=${encodeURIComponent(profileLink)}`;
+
+        // 인스타그램 앱이 설치되어 있는지 확인
+        setTimeout(() => {
+            window.location.href = instagramUrl;
+        }, 100);
+
+        // 인스타그램 앱이 없는 경우 대체 동작 (desktop에서는 항상 이걸로 실행)
+        setTimeout(() => {
+            if (document.hidden) {
+                return;
+            }
+            // 인스타그램 앱이 없는 경우, 프로필 링크를 클립보드에 복사
+            navigator.clipboard
+                .writeText(profileLink)
+                .then(() => {
+                    alert('인스타그램 앱이 설치되어 있지 않습니다. 프로필 링크가 클립보드에 복사되었습니다.');
+                })
+                .catch((err) => {
+                    console.error('클립보드 복사 실패:', err);
+                    alert('링크 복사에 실패했습니다. 수동으로 복사해주세요: ' + profileLink);
+                });
+        }, 2000);
     };
 
     const handleSlackShare = () => {
-        alert('Slack 공유 기능은 구현 중입니다.');
+        if (!profileData || !profileData.username) {
+            alert('프로필 데이터를 불러오는데 문제가 발생했습니다. 페이지를 새로고침하고 다시 시도해주세요.');
+            return;
+        }
+
+        let profileLink = ProfileService.getUserProfileLink(profileData.username);
+        if (!profileLink.startsWith('http')) {
+            profileLink = 'https://' + profileLink;
+        }
+        const text = `${profileData.name}님의 프로필을 확인해보세요: ${profileLink}`;
+
+        // 더블 인코딩 적용
+        const encodedUrl = encodeURIComponent(encodeURIComponent(profileLink));
+        const encodedText = encodeURIComponent(text);
+
+        const slackShareUrl = `https://slack.com/share/url?url=${encodedUrl}&text=${encodedText}`;
+
+        // 새 창에서 Slack 공유 페이지 열기
+        window.open(slackShareUrl, '_blank', 'noopener,noreferrer');
     };
 
     const handleKeywordEdit = () => {
@@ -108,12 +182,49 @@ function MyProfile() {
                             <div className={styles.profileDetails}>
                                 <div className={styles.basicDetails}>
                                     <h1>{profileData.name}</h1>
-                                    <p>나이: {profileData.age}</p>
-                                    <p>성별: {profileData.gender}</p>
-                                    <p>ID: {profileData.username}</p>
+                                    <div className={styles.detailsContainer}>
+                                        <div className={styles.detailLabel}>나이</div>
+                                        <div className={styles.detailValue}>{profileData.old}</div>
+                                    </div>
+                                    <div className={styles.detailsContainer}>
+                                        <div className={styles.detailLabel}>성별</div>
+                                        <div className={styles.detailValue}>{profileData.gender}</div>
+                                    </div>
+                                    <div className={styles.detailsContainer}>
+                                        <div className={styles.detailLabel}>ID</div>
+                                        <div className={styles.detailValue}>{profileData.username}</div>
+                                    </div>
                                 </div>
+
                                 <div className={styles.basicDetails}>
-                                    <div className={styles.profileDisc}>{profileData.disc_character}</div>
+                                    {profileData &&
+                                        (profileData.disc_character === 'None' ? (
+                                            <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                width="164"
+                                                height="187"
+                                                viewBox="0 0 164 187"
+                                                fill="none"
+                                                className={styles.defaultDiscSvg}
+                                            >
+                                                <path
+                                                    d="M145.592 81.5315H136.856V55.3249C136.856 24.8234 112.033 0 81.5315 0C51.03 0 26.2066 24.8234 26.2066 55.3249V81.5315H17.471C7.82557 81.5315 0 89.3571 0 99.0025V168.887C0 178.532 7.82557 186.358 17.471 186.358H145.592C155.237 186.358 163.063 178.532 163.063 168.887V99.0025C163.063 89.3571 155.237 81.5315 145.592 81.5315ZM107.738 81.5315H55.3249V55.3249C55.3249 40.8749 67.0815 29.1184 81.5315 29.1184C95.9815 29.1184 107.738 40.8749 107.738 55.3249V81.5315Z"
+                                                    fill="black"
+                                                    fillOpacity="0.25"
+                                                />
+                                            </svg>
+                                        ) : (
+                                            <div
+                                                className={styles.profileDisc}
+                                                style={{
+                                                    backgroundColor:
+                                                        discTypeColors[profileData.disc_character] ||
+                                                        discTypeColors.None,
+                                                }}
+                                            >
+                                                {profileData.disc_character}
+                                            </div>
+                                        ))}
                                 </div>
                             </div>
                         </div>
@@ -212,6 +323,7 @@ function MyProfile() {
 
                         <div className={styles.section}>
                             <h2>타인이 평가하는 나</h2>
+                            <div className={styles.feedbackCount}>답변수: {profileData.feedback_count}</div>
                             <hr className={styles.divider} />
                             {profileData.feedback_count >= 3 ? (
                                 <>
@@ -231,17 +343,20 @@ function MyProfile() {
                                             ))}
                                     </div>
                                     <div className={styles.typeCards}>
-                                        <div className={styles.typeCard} style={{ backgroundColor: '#1E74D9' }}>
+                                        <div
+                                            className={styles.typeCard}
+                                            style={{ backgroundColor: discTypeColors[profileData.disc_character] }}
+                                        >
                                             {DISCData.disc_character}
                                         </div>
                                         <div className={styles.typeDescription}>
                                             <p>{DISCData.description}</p>
                                             <div className={styles.typeQuestion}>
-                                                <strong>강점 및 약점은?</strong>
+                                                <strong>강점 및 보완할 점은?</strong>
                                             </div>
                                             <strong>• 강점:</strong> {DISCData.strength.join(', ')}
                                             <br />
-                                            <strong>• 약점:</strong> {DISCData.weakness.join(', ')}
+                                            <strong>• 보완할 점:</strong> {DISCData.weakness.join(', ')}
                                             <div className={styles.typeQuestion}>
                                                 <strong>{DISCData.disc_character}와 맞는 협업 유형은?</strong>
                                             </div>
