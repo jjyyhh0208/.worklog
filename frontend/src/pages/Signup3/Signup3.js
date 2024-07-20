@@ -51,6 +51,10 @@ function Signup3({ signUpInfo, setSignUpInfo }) {
     };
 
     const handleNextClick = () => {
+        if (selectedKeywords.length === 0) {
+            alert('최소 1개의 키워드를 선택해주세요.');
+            return;
+        }
         const selectedKeywordIds = selectedKeywords.map((keyword) => {
             const foundKeyword = keywords.find((kw) => kw === keyword);
             return foundKeyword ? keywords.indexOf(foundKeyword) + 1 : null;

@@ -1,3 +1,4 @@
+/* Container and general styles */
 .container {
     display: flex;
     flex-direction: column;
@@ -5,7 +6,7 @@
     align-items: center;
 }
 
-/* h1 스타일 */
+/* h1 styles */
 .h1 {
     position: absolute;
     top: 27px;
@@ -18,7 +19,7 @@
     cursor: pointer;
 }
 
-/* h2 스타일 */
+/* h2 styles */
 .h2 {
     color: #000;
     font-size: 30px;
@@ -27,14 +28,14 @@
     margin-bottom: 100px;
 }
 
-/* instructionbox 스타일 */
+/* Instruction box styles */
 .instructionbox {
     position: absolute;
     justify-self: start;
     margin-top: 100px;
 }
 
-/* span 스타일 */
+/* span styles */
 .span {
     color: #000;
     font-size: 25px;
@@ -44,31 +45,50 @@
     align-self: start;
 }
 
-/* input 스타일 */
+/* Input styles */
 .input {
     display: flex;
-    max-width: 440px;
-    min-width: 440px;
+    
+    width: 440px;
     height: 90px;
     padding-left: 10px;
     justify-content: center;
     align-items: center;
-    gap: 10px;
+    
     flex-shrink: 0;
     border-radius: 10px;
     border: 2px solid #4053ff;
     background: #fff;
     margin-bottom: 20px;
     font-size: 21px;
+    
 }
 
-/* genderButtons 스타일 */
+.inputImage {
+    display: flex;
+    width: 440px;
+    
+
+    padding: 10px;
+    justify-content: center;
+    align-items: center;
+    flex-shrink: 0;
+    border-radius: 10px;
+    border: 2px solid #4053ff;
+    background: #fff;
+    margin-bottom: 20px;
+    font-size: 21px;
+    
+}
+
+/* Gender buttons container styles */
 .genderButtons {
     display: flex;
     gap: 10px;
+    margin-bottom: 20px;
 }
 
-/* genderButton 스타일 */
+/* Gender button styles */
 .genderButton {
     padding: 10px 20px;
     width: 138px;
@@ -91,7 +111,7 @@
     background: #4053ff;
 }
 
-/* signUp form 스타일 */
+/* Form styles */
 .signUp {
     position: relative;
     display: flex;
@@ -100,7 +120,7 @@
     gap: 10px;
 }
 
-/* nextbox 스타일 */
+/* Next button container styles */
 .nextbox {
     position: absolute;
     top: 550px;
@@ -115,7 +135,7 @@
     justify-content: space-around;
 }
 
-/* button 스타일 */
+/* Next button styles */
 .nextBtn {
     width: 148px;
     height: 49.109px;
@@ -133,11 +153,14 @@
     transform: translateX(-50%);
     cursor: pointer;
 }
+
+/* Back button container styles */
 .back {
     margin-top: 3%;
     margin-left: -80%;
 }
 
+/* Back button styles */
 .backBtn {
     all: unset;
     background: #f6f6f6;
@@ -154,6 +177,49 @@
 .backBtn:hover {
     background: #fff;
     color: inherit;
+}
+
+/* Image upload container styles */
+.imageUpload {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 20px;
+    gap: 10px;
+    
+}
+
+/* Profile image styles */
+.profileImage {
+    max-height: 150px;
+    max-width: 150px;
+    border: 2px solid #4053ff;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+.imageContainer{
+    display: flex;
+    align-items: center;
+    justify-content:left;
+    
+    gap: 20px;
+}
+
+.imageUpload button {
+    padding: 10px 20px;
+    background-color: #4053ff;
+    color: white;
+    font-size: 18px;
+    font-weight: 600;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+
+}
+
+.imageUpload button:hover {
+    background-color: #3044cc;
 }
 /* Media queries for responsiveness */
 @media (max-width: 1024px) {

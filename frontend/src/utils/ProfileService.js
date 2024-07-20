@@ -17,7 +17,7 @@ const ProfileService = {
             })
             .catch((error) => {
                 if (error.response && error.response.data) {
-                    console.log(error.response);
+                    console.error('API Error:', error.response.data);
                     throw new Error('기본 정보를 업데이트하는 동안 오류가 발생했습니다.');
                 } else if (error.response) {
                     throw new Error('서버 오류가 발생했습니다.');
