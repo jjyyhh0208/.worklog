@@ -62,14 +62,14 @@ class UserViewSet(viewsets.ModelViewSet):
 class WorkStyleViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = WorkStyle.objects.all()
     serializer_class = WorkStyleSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = []
     
     
 #관심 직종을 유저에게 제공하는 ViewSet
 class InterestViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Interest.objects.all()
     serializer_class = InterestSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = []
     
     
 #유저 프로필을 불러오는 View
@@ -204,7 +204,7 @@ class FeedbackByUserView(generics.ListAPIView):
 class UserFriendView(generics.GenericAPIView):
     queryset = User.objects.all()
     serializer_class = FriendSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = []
 
     def get(self, request, username):
         try:
@@ -337,6 +337,25 @@ class FollowFriendView(generics.GenericAPIView):
 
         user.friends.add(friend)
         return Response({"detail": f"You are now following {friend.name}"}, status=status.HTTP_200_OK)
+    
+
+class UnfollowFriendView(generics.GenericAPIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        user = request.user
+        friend_name = request.data.get('friend_name')
+
+        if not friend_name:
+            return Response({"detail": "Friend name is required."}, status=status.HTTP_400_BAD_REQUEST)
+        
+        friend = get_object_or_404(User, username=friend_name)
+
+        if friend == user:
+            return Response({"detail": "You cannot unfollow yourself."}, status=status.HTTP_400_BAD_REQUEST)
+
+        user.friends.remove(friend)
+        return Response({"detail": f"You have unfollowed {friend.name}"}, status=status.HTTP_200_OK)
     
     
 class DISCDataList(generics.ListCreateAPIView):

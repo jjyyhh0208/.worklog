@@ -13,11 +13,28 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 from datetime import timedelta
 from pathlib import Path
 import os
+import environ
 from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 #Base directory == worklog/backend/worklog
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+# env = environ.Env()
+# environ.Env.read_env(os.path.join(BASE_DIR, ".env"))
+# AWS_S3_ACCESS_KEY_ID = env("AWS_S3_ACCESS_KEY_ID")
+# AWS_S3_SECRET_ACCESS_KEY = env("AWS_S3_SECRET_ACCESS_KEY")
+# AWS_STORAGE_BUCKET_NAME = env("AWS_STORAGE_BUCKET_NAME")
+# AWS_S3_REGION_NAME = env("AWS_S3_REGION_NAME")
+# AWS_S3_SIGNATURE_VERSION = env("AWS_S3_SIGNATURE_VERSION")
+# BUCKET_NAME="next-session14-bucket-jhkim"
+
+# AWS_S3_CUSTOM_DOMAIN = "%s.s3.%s.amazonaws.com" % (
+#     AWS_STORAGE_BUCKET_NAME,
+#     AWS_S3_REGION_NAME,
+# )
+# DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+
 
 #.env 파일을 읽어서 환경변수를 설정
 dotenv_path = BASE_DIR / '.env'
@@ -78,6 +95,8 @@ INSTALLED_APPS = [
     "rest_framework",
     "corsheaders",
     "profiles",
+    # s3 저장
+    'storages',
 ]
 
 MIDDLEWARE = [
@@ -193,7 +212,6 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
 STATIC_URL = "static/"
-
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 

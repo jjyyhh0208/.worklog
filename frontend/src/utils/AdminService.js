@@ -51,8 +51,6 @@ const AdminService = {
 
         return API.post('/profiles/auth/login/', requestData)
             .then((response) => {
-                console.log('로그인 요청 성공:', response.data);
-
                 if (response.status === 200) {
                     console.log('사용자가 성공적으로 로그인하였습니다.');
                     const token = response.data.key;

@@ -66,6 +66,7 @@ a {
     font-weight: bold;
 }
 
+.menuButton,
 .logoutButton,
 .loginButton {
     color: rgb(255, 255, 255);

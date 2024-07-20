@@ -33,7 +33,7 @@ function MyProfile() {
 
     if (loading) {
         // 여기에 랜더링 후 변경 페이지 쓰기
-        return <div>Loading...</div>;
+        return <div className={styles.profileContainer}></div>;
     }
 
     const handleCopyLink = () => {
@@ -266,6 +266,9 @@ function MyProfile() {
                                         <div className={styles.aiSummary}>
                                             <p>팀원들은 나의 협업 성향에 대해 다음과 같이 느꼈어요!</p>
                                             <div className={styles.aiFeedback}>
+                                                <div className={styles.feedbackSummary}>
+                                                    <p>{profileData.gpt_summarized_personality}</p>
+                                                </div>
                                                 <div className={styles.feedbackSummary}>
                                                     <p>{profileData.gpt_summarized_personality}</p>
                                                 </div>

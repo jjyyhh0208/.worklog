@@ -39,7 +39,9 @@
             "last 1 safari version"
         ]
     },
+    "proxy": "https://api.dot-worklog.com",
     "devDependencies": {
+        "@babel/plugin-proposal-private-property-in-object": "^7.14.5",
         "dotenv-webpack": "^8.1.0"
     }
 }

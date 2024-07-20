@@ -1,7 +1,7 @@
 import React from 'react';
 import styles from './Login.module.css';
 import AdminService from '../../utils/AdminService';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 function Login() {
@@ -14,6 +14,13 @@ function Login() {
         setLoginInfo({ ...loginInfo, [e.target.name]: e.target.value });
     };
 
+    useEffect(() => {
+        const authToken = localStorage.getItem('authToken');
+        if (authToken) {
+            localStorage.removeItem('authToken');
+        }
+    }, []);
+
     const loginHandler = async (e) => {
         e.preventDefault();
         try {
@@ -23,7 +30,6 @@ function Login() {
             });
             navigate('/my-profile');
         } catch (error) {
-            console.error(error);
             setError('아이디 또는 비밀번호가 일치하지 않습니다.');
         }
     };

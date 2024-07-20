@@ -21,6 +21,7 @@ import AboutUs from './pages/AboutUs/AboutUs';
 import Header from './components/Header/Header';
 import Feedback from './pages/Feedback/Feedback';
 import List from './pages/List/List';
+import FriendProfile from './pages/FriendProfile/FriendProfile';
 
 // Redirect Pages
 import AuthRedirect from './components/AuthRedirect';
@@ -68,6 +69,7 @@ function App() {
     const renderHeader = () => {
         const pathsWithHeader = [
             '/my-profile',
+            '/friend-profile',
             '/about-us',
             '/search',
             '/list',
@@ -91,17 +93,17 @@ function App() {
                 <Route path="/login" element={<Login />} />
                 <Route path="/about-us" element={<AboutUs />} />
                 <Route path="/search" element={<Search />} />
-                <Route path="/feedback/intro" element={<FeedbackIntro />} />
-                <Route path="/feedback/:pageNum" element={<Feedback />} />
-                <Route path="/feedback/long" element={<FeedbackLong />} />
+                <Route path="/feedback/intro/:username" element={<FeedbackIntro />} />
+                <Route path="/feedback/:pageNum/:username" element={<Feedback />} />
+                <Route path="/feedback/long/:username" element={<FeedbackLong isLoggedIn={isLoggedIn} />} />
                 <Route path="/on-boarding/1" element={<OnBoarding1 />} />
                 <Route path="/on-boarding/2" element={<OnBoarding2 />} />
                 <Route path="/on-boarding/3" element={<OnBoarding3 />} />
+                <Route path="/friend-profile/:username" element={<FriendProfile />} />
 
                 {/* 보호된 라우트 */}
-                <Route path="/my-profile" element={<MyProfile />} />
-                <Route path="/list/:id" element={<List />} />
-                {/* <Route path="/my-profile" element={<ProtectedRoute element={MyProfile} />} /> */}
+                <Route path="/my-profile" element={<ProtectedRoute element={MyProfile} />} />
+                <Route path="/list/:username" element={<ProtectedRoute element={List} />} />
             </Routes>
         </>
     );
