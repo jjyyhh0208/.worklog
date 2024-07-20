@@ -132,7 +132,7 @@ const FeedbackLong = ({ isLoggedIn }) => {
                     <div className={styles.questions}>협업 경험에서 좋았던 점은 무엇이었나요?</div>
                     <div className={styles.answers}>
                         <textarea
-                            placeholder="자유롭게 답변해주세요"
+                            placeholder="회의 때의 모습, 준비성, 아이스브레이킹, 역량, 커뮤니케이션 방법 등 다방면에서 자유롭게 답변해주세요"
                             value={feedbackData.long_questions.question1}
                             onChange={(event) => handleInputChange(event, 'question1')}
                         />
@@ -140,7 +140,7 @@ const FeedbackLong = ({ isLoggedIn }) => {
                     <div className={styles.questions}>협업 경험에서 아쉬웠던 점은 무엇이었나요?</div>
                     <div className={styles.answers}>
                         <textarea
-                            placeholder="자유롭게 답변해주세요"
+                            placeholder="회의 때의 모습, 준비성, 아이스브레이킹, 역량, 커뮤니케이션 방법 등 다방면에서 자유롭게 답변해주세요"
                             value={feedbackData.long_questions.question2}
                             onChange={(event) => handleInputChange(event, 'question2')}
                         />
@@ -148,7 +148,7 @@ const FeedbackLong = ({ isLoggedIn }) => {
                     <div className={styles.questions}>마지막으로 하고 싶은 말을 적어주세요!</div>
                     <div className={styles.answers}>
                         <textarea
-                            placeholder="자유롭게 하고 싶은 말을 적어주세요!"
+                            placeholder="자유롭게 하고 싶은 말을 적어주세요! 없을 시 '없음'을 기재해주세요."
                             value={feedbackData.long_questions.question3}
                             onChange={(event) => handleInputChange(event, 'question3')}
                         />
