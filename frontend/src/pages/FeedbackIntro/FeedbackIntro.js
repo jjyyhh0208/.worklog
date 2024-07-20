@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import styles from './FeedbackIntro.module.css';
 import ProfileService from '../../utils/ProfileService';
 import keywordIcons from '../../components/KeywordIcons/KeywordIcons';
@@ -11,6 +11,8 @@ function FeedbackIntro() {
     const [selectedKeywords, setSelectedKeywords] = useState([]);
     const [keywords, setKeywords] = useState([]);
     const [profileData, setProfileData] = useState(null);
+    const location = useLocation();
+    const { answers, scores } = location.state || {};
 
     useEffect(() => {
         ProfileService.fetchWorkStyles()
@@ -68,8 +70,9 @@ function FeedbackIntro() {
         const workStyles = { work_styles: selectedWorkStyles };
 
         localStorage.setItem('workStyles', JSON.stringify(workStyles));
-        localStorage.removeItem('scores');
-        navigate(`/feedback/1/${username}`);
+        navigate(`/feedback/1/${username}`, {
+            state: { ...location.state, answers, scores },
+        });
     };
 
     const handleBackClick = () => {

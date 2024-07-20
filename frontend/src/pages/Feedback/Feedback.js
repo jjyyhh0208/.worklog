@@ -5,8 +5,6 @@ import FeedbackService from '../../utils/FeedbackService';
 import styles from './Feedback.module.css';
 import ProgressBar from '../../components/ProgressBar/ProgressBar';
 
-const requiredAnswersCount = [3, 3, 3]; // Number of required answers per page
-
 const Feedback = () => {
     const { pageNum, username } = useParams();
     const location = useLocation();
@@ -14,8 +12,8 @@ const Feedback = () => {
     const pageIndex = parseInt(pageNum, 10) - 1;
     const [profileData, setProfileData] = useState(null);
     const [questionsTemplate, setQuestionsTemplate] = useState([]);
-    const [answers, setAnswers] = useState({});
-    const [scores, setScores] = useState({ D: 0, I: 0, S: 0, C: 0 });
+    const [answers, setAnswers] = useState(location.state?.answers || {});
+    const [scores, setScores] = useState(location.state?.scores || { D: 0, I: 0, S: 0, C: 0 });
 
     useEffect(() => {
         ProfileService.fetchFriendProfile(username)
@@ -40,27 +38,28 @@ const Feedback = () => {
                 updatedScores[option] += newValue - previousValue;
                 return updatedScores;
             });
-
             return updatedAnswers;
         });
     };
 
     const handleNextPage = () => {
-        const currentAnswersCount = Object.keys(answers).reduce((sum, question) => {
-            return sum + Object.keys(answers[question]).length;
+        const currentPageAnswers = currentPageQuestions.reduce((count, question) => {
+            const questionAnswers = answers[question.question] || {};
+            return count + Object.keys(questionAnswers).filter((key) => questionAnswers[key] !== 0).length;
         }, 0);
 
-        if (currentAnswersCount < requiredAnswersCount[pageIndex]) {
+        if (currentPageAnswers < 12) {
             alert('모든 문항에 답해주세요.');
             return;
         }
+
+        localStorage.setItem('scores', JSON.stringify(scores));
 
         if (pageIndex < questionsTemplate.length - 1) {
             navigate(`/feedback/${pageIndex + 2}/${username}`, {
                 state: { ...location.state, answers, scores },
             });
         } else {
-            localStorage.setItem('scores', JSON.stringify(scores));
             navigate(`/feedback/long/${username}`, {
                 state: { ...location.state, answers, scores },
             });
@@ -79,13 +78,21 @@ const Feedback = () => {
     const progress = 20 + (pageIndex + 1) * 20; // Progress 계산
 
     const handleBackClick = () => {
-        navigate(-1);
+        if (pageIndex !== 0) {
+            navigate(`/feedback/${pageIndex}/${username}`, {
+                state: { ...location.state, answers, scores },
+            });
+        } else {
+            navigate(`/feedback/intro/${username}`, {
+                state: { ...location.state, answers, scores },
+            });
+        }
     };
 
     return (
         <div className={styles.feedbackContainer}>
             <div className={styles.feedbackPage}>
-                <ProgressBar progress={progress} /> {/* ProgressBar 추가 */}
+                <ProgressBar progress={progress} />
                 <div className={styles.back}>
                     <button type="submit" onClick={handleBackClick} className={styles.backBtn}>
                         <svg xmlns="http://www.w3.org/2000/svg" width="60" height="50" viewBox="0 0 24 24" fill="none">
@@ -101,7 +108,7 @@ const Feedback = () => {
                 </div>
                 <div className={styles.pageIndicator}>{parseInt(pageNum) + 1}/5</div>
                 <div className={styles.instructions}>
-                    <div>각 항목에 대해서 1~4점 중 가장 {profileData.name}님과 가까운 것을 체크해주세요.</div>
+                    <div>각 항목에 대해서 1~4점으로 {profileData.name}님에 해당되는 점수를 체크해주세요.</div>
                     <div className={styles.fontinstructions}>
                         * 1: 매우 아니다, 2: 아닌 편이다, 3: 그런 편이다, 4: 매우 그렇다
                     </div>

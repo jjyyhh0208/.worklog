@@ -9,7 +9,8 @@ const FeedbackLong = ({ isLoggedIn }) => {
     const navigate = useNavigate();
     const { username } = useParams();
     const location = useLocation();
-    const [profileData, setProfileData] = useState(location.state?.profileData || null);
+    const { answers, scores } = location.state || {};
+    const [profileData, setProfileData] = useState(null);
     const [myprofileData, setMyProfileData] = useState();
     const [feedbackData, setFeedbackData] = useState({
         long_questions: {
@@ -20,12 +21,10 @@ const FeedbackLong = ({ isLoggedIn }) => {
     });
 
     useEffect(() => {
-        if (!profileData) {
-            ProfileService.fetchFriendProfile(username)
-                .then((data) => setProfileData(data))
-                .catch((error) => console.error('Error fetching profile data:', error));
-        }
-    }, [username, profileData]);
+        ProfileService.fetchFriendProfile(username)
+            .then((data) => setProfileData(data))
+            .catch((error) => console.error('Error fetching profile data:', error));
+    }, [username]);
 
     useEffect(() => {
         if (isLoggedIn) {
@@ -49,8 +48,15 @@ const FeedbackLong = ({ isLoggedIn }) => {
     const handleFormSubmit = (event) => {
         event.preventDefault();
 
+        const { question1, question2, question3 } = feedbackData.long_questions;
+
+        if (!question1 || !question2 || !question3) {
+            alert('모든 문항에 답해주세요.');
+            return;
+        }
+
         if (!profileData) {
-            console.error('Profile data is missing');
+            console.error('프로필을 불러오는 데에 실패했습니다.');
             return;
         }
         const workStylesData = (JSON.parse(localStorage.getItem('workStyles')) || { work_styles: [] }).work_styles;
@@ -88,17 +94,38 @@ const FeedbackLong = ({ isLoggedIn }) => {
             .catch((error) => console.error('Error submitting feedback:', error));
     };
 
+    const handleBackClick = () => {
+        navigate(`/feedback/3/${username}`, {
+            state: { ...location.state, answers, scores },
+        });
+    };
+
     return (
         <div className={styles.feedbackLongcontainer}>
             <div className={styles.content}>
                 <ProgressBar progress={100} />
+                <div className={styles.back}>
+                    <button type="submit" onClick={handleBackClick} className={styles.backBtn}>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="60" height="50" viewBox="0 0 24 24" fill="none">
+                            <path
+                                d="M15.5 19l-7-7 7-7"
+                                stroke="#4053ff"
+                                strokeWidth="2.5"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                            />
+                        </svg>
+                    </button>
+                </div>
                 <div className={styles.pageIndicator}>5/5</div> {/* ProgressBar 추가 */}
-                <div className={styles.top}>
-                    <div className={styles.textbox}>
-                        <h3 className={styles.text}>
-                            ※해당 설문 내용은 익명으로 사용자에게 전달되며, 특정될 수 있는 정보 (회사명, 팀명) 등을 쓰지
-                            않는 것을 권장드립니다.
-                        </h3>
+                <div className={styles.instructions}>
+                    <div>
+                        마지막으로 {profileData ? `${profileData.name}` : '유저'}님에게 하고 싶은 말을 자유롭게
+                        써주세요.
+                    </div>
+                    <div className={styles.fontinstructions}>
+                        * 해당 설문 내용은 익명으로 사용자에게 전달되며, 특정될 수 있는 정보 (회사명, 팀명) 등을 쓰지
+                        않는 것을 권장드립니다.
                     </div>
                 </div>
                 <div className={styles.qnabox}>
@@ -127,9 +154,11 @@ const FeedbackLong = ({ isLoggedIn }) => {
                         />
                     </div>
                 </div>
-                <button className={styles.submitButton} onClick={handleFormSubmit}>
-                    완료
-                </button>
+                <div className={styles.submitButtonContainer}>
+                    <button className={styles.submitButton} onClick={handleFormSubmit}>
+                        완료
+                    </button>
+                </div>
             </div>
         </div>
     );
