@@ -10,11 +10,9 @@ const AdminService = {
 
         return API.post('/profiles/auth/registration/', requestData)
             .then((response) => {
-                if (response.status === 201) {
-                    // Typically, registration would return a 201 status code
+                if (response.status === 204) {
                     console.log('사용자가 성공적으로 등록되었습니다.');
                 }
-                return response.data; // Return the response data for further use if needed
             })
             .catch((error) => {
                 if (error.response && error.response.data) {
@@ -36,16 +34,12 @@ const AdminService = {
     },
 
     checkUserName: (userName) => {
-        return API.post('/profiles/auth/check-username/', { username: userName }) // Pass the username as an object
+        return API.post('/profiles/auth/check-username/', userName)
             .then((response) => {
-                return response.data; // Return response data for further use
+                return response;
             })
             .catch((error) => {
-                if (error.response && error.response.data) {
-                    throw new Error('아이디는 3자 이상 30자 이하로 설정해주세요.');
-                } else {
-                    throw new Error(error.message);
-                }
+                throw new Error('아이디는 3자 이상 30자 이하로 설정해주세요.');
             });
     },
 
@@ -61,17 +55,14 @@ const AdminService = {
                     const token = response.data.key;
                     localStorage.setItem('authToken', token);
                 }
-                return response.data; // Return response data for further use
             })
             .catch((error) => {
                 let errorMessage = '로그인 처리 중 오류가 발생했습니다.';
                 if (error.response && error.response.data) {
                     if (error.response.data.message) {
                         errorMessage = error.response.data.message;
-                    } else if (error.response.data.errors && error.response.data.errors.non_field_errors) {
-                        errorMessage = error.response.data.errors.non_field_errors[0];
                     } else {
-                        errorMessage = '로그인에 실패했습니다. 입력 정보를 확인해주세요.';
+                        errorMessage = error.response.data.errors.non_field_errors[0];
                     }
                 } else if (error.response) {
                     errorMessage = '서버 오류가 발생했습니다.';
@@ -84,13 +75,13 @@ const AdminService = {
         return API.post('/profiles/auth/logout/')
             .then((response) => {
                 if (response.status === 200) {
+                    // 성공코드 200
                     console.log('사용자가 성공적으로 로그아웃하였습니다.');
-                    localStorage.removeItem('authToken');
+                    localStorage.removeItem('authToken'); // Remove the token from local storage
                 }
-                return response.data; // Return response data for further use
             })
             .catch((error) => {
-                throw new Error('로그아웃 중 오류가 발생했습니다: ' + error.message);
+                throw new Error(error.message);
             });
     },
 
@@ -99,19 +90,14 @@ const AdminService = {
             .then((response) => {
                 if (response.status === 200) {
                     console.log('성공적으로 회원 탈퇴가 이루어졌습니다.');
-                    localStorage.removeItem('authToken');
                 }
 
                 return response.data;
             })
             .catch((error) => {
                 console.error('회원 탈퇴 중 오류가 발생했습니다.', error);
-                if (error.response && error.response.data) {
-                    console.error('오류 응답:', error.response.data);
-                    throw new Error('회원 탈퇴 중 오류가 발생했습니다.');
-                } else {
-                    throw new Error('회원 탈퇴 중 오류가 발생했습니다: ' + error.message);
-                }
+                console.error('오류 응답:', error.response);
+                console.error('오류 메시지:', error.message);
             });
     },
 };

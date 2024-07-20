@@ -59,7 +59,7 @@ function Signup4({ signUpInfo, setSignUpInfo }) {
             if (newKeywords.length < 3) {
                 newKeywords.push(keyword);
             } else {
-                alert('You can select up to 3 keywords only.');
+                alert('최대 3개의 키워드만 선택 가능합니다.');
             }
         }
         setSelectedKeywords(newKeywords);
