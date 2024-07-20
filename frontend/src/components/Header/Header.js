@@ -36,6 +36,7 @@ function Header({ isLoggedIn }) {
         //회원탈퇴 API 호출
         AdminService.userDelete()
             .then(() => {
+                console.log('회원탈퇴가 성공됨!!');
                 window.location.href = '/';
             })
             .catch((error) => {

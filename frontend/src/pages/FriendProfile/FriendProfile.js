@@ -7,10 +7,10 @@ import keywordIcons from '../../components/KeywordIcons/KeywordIcons';
 
 function FriendProfile() {
     const discTypeColors = {
-        목표달성자: '#FF5473',
+        '목표 달성자': '#FF5473',
         디테일리스트: '#55B807',
         중재가: '#92604B',
-        컨트롤타워: '#00B680',
+        '컨트롤 타워': '#00B680',
         불도저: '#FF4B40',
         애널리스트: '#7D40FF',
         커뮤니케이터: '#FFC554',
@@ -87,17 +87,20 @@ function FriendProfile() {
                                 className={styles.profileImage}
                             />
                             <div className={styles.profileDetails}>
-                                <div className={styles.detailsContainer}>
-                                    <div className={styles.detailLabel}>나이</div>
-                                    <div className={styles.detailValue}>{profileData.old}</div>
-                                </div>
-                                <div className={styles.detailsContainer}>
-                                    <div className={styles.detailLabel}>성별</div>
-                                    <div className={styles.detailValue}>{profileData.gender}</div>
-                                </div>
-                                <div className={styles.detailsContainer}>
-                                    <div className={styles.detailLabel}>ID</div>
-                                    <div className={styles.detailValue}>{profileData.username}</div>
+                                <div className={styles.basicDetails}>
+                                    <h1>{profileData.name}</h1>
+                                    <div className={styles.detailsContainer}>
+                                        <div className={styles.detailLabel}>나이</div>
+                                        <div className={styles.detailValue}>{profileData.old}</div>
+                                    </div>
+                                    <div className={styles.detailsContainer}>
+                                        <div className={styles.detailLabel}>성별</div>
+                                        <div className={styles.detailValue}>{profileData.gender}</div>
+                                    </div>
+                                    <div className={styles.detailsContainer}>
+                                        <div className={styles.detailLabel}>ID</div>
+                                        <div className={styles.detailValue}>{profileData.username}</div>
+                                    </div>
                                 </div>
                                 <div className={styles.basicDetails}>
                                     {profileData &&
@@ -117,8 +120,17 @@ function FriendProfile() {
                                                 />
                                             </svg>
                                         ) : (
-                                            <div className={styles.profileDisc}>{profileData.disc_character}</div>
-                                        ))}{' '}
+                                            <div
+                                                className={styles.profileDisc}
+                                                style={{
+                                                    backgroundColor:
+                                                        discTypeColors[profileData.disc_character] ||
+                                                        discTypeColors.None,
+                                                }}
+                                            >
+                                                {profileData.disc_character}
+                                            </div>
+                                        ))}
                                 </div>
                             </div>
                         </div>

@@ -50,7 +50,7 @@
     align-items: center;
 }
 
-.discType {
+.disc_character {
     position: absolute;
     top: 0;
     left: 0;
@@ -102,7 +102,7 @@
 .evaluationButton:hover {
     background: #e5b800;
 }
-.noFriendsMessage{
+.noFriendsMessage {
     color: #000;
     font-family: Inter;
     font-size: 20px;

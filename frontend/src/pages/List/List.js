@@ -4,10 +4,10 @@ import ProfileService from '../../utils/ProfileService';
 import styles from './List.module.css';
 
 const discTypeColors = {
-    목표달성자: '#FF5473',
+    '목표 달성자': '#FF5473',
     디테일리스트: '#55B807',
     중재가: '#92604B',
-    컨트롤타워: '#00B680',
+    '컨트롤 타워': '#00B680',
     불도저: '#FF4B40',
     애널리스트: '#7D40FF',
     커뮤니케이터: '#FFC554',

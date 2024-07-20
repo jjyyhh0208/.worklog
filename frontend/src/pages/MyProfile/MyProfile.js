@@ -12,10 +12,10 @@ function MyProfile() {
     const navigate = useNavigate();
 
     const discTypeColors = {
-        목표달성자: '#FF5473',
+        '목표 달성자': '#FF5473',
         디테일리스트: '#55B807',
         중재가: '#92604B',
-        컨트롤타워: '#00B680',
+        '컨트롤 타워': '#00B680',
         불도저: '#FF4B40',
         애널리스트: '#7D40FF',
         커뮤니케이터: '#FFC554',
@@ -47,9 +47,11 @@ function MyProfile() {
 
     if (loading) {
         // 여기에 랜더링 후 변경 페이지 쓰기
-        return <div className={styles.profileContainer}></div>;
+        return <div className={styles.profileContainer}>Loading...</div>;
     }
-
+    if (!profileData) {
+        return <div className={styles.profileContainer}>Profile data not available.</div>;
+    }
     const handleCopyLink = () => {
         if (profileData && profileData.id) {
             const profileLink = ProfileService.getUserProfileLink(profileData.id);
@@ -148,7 +150,16 @@ function MyProfile() {
                                                 />
                                             </svg>
                                         ) : (
-                                            <div className={styles.profileDisc}>{profileData.disc_character}</div>
+                                            <div
+                                                className={styles.profileDisc}
+                                                style={{
+                                                    backgroundColor:
+                                                        discTypeColors[profileData.disc_character] ||
+                                                        discTypeColors.None,
+                                                }}
+                                            >
+                                                {profileData.disc_character}
+                                            </div>
                                         ))}
                                 </div>
                             </div>

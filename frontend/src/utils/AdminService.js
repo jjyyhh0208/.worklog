@@ -87,6 +87,8 @@ const AdminService = {
     userDelete: () => {
         return API.delete('/profiles/auth/delete/')
             .then((response) => {
+                console.log('API 응답:', response);
+
                 if (response.status === 200) {
                     // 성공코드 200
                     console.log('성공적으로 회원 탈퇴가 이루어졌습니다.');
@@ -95,8 +97,9 @@ const AdminService = {
                 return response.data;
             })
             .catch((error) => {
-                console.error('Error details:', error.response?.data); // 더 자세한 에러 로깅
-                throw error;
+                console.error('회원 탈퇴 중 오류가 발생했습니다.', error);
+                console.error('오류 응답:', error.response);
+                console.error('오류 메시지:', error.message);
             });
     },
 };
