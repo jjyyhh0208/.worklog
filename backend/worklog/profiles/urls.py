@@ -8,6 +8,7 @@ from .views import (
     UserCurrentProfileView, UserSearchView, UserLongQuestionAnswersView,
     TestAnswers, FollowFriendView, UserDeleteView, DISCDataList, 
     DISCDataDetail, ProfileImageView, get_signed_url_view
+    TestAnswers, FollowFriendView, UserDeleteView, DISCDataList, DISCDataDetail, UnfollowFriendView
     )
 
 
@@ -46,6 +47,8 @@ urlpatterns = [
     #GPT용 답변 추출
     path('user/feedback-answers/', UserLongQuestionAnswersView.as_view(), name='user-feedback-answers'), # 유저의 답변을 저장하는 엔드포인트
     path('user/test/', TestAnswers.as_view(), name='test-answers'), # 테스트용 답변을 저장하는 엔드포인트
+    path('user/follow/', FollowFriendView.as_view(), name='user-follow'), # 유저 팔로우 엔드포인트
+    path('user/unfollow/', UnfollowFriendView.as_view(), name='user-unfollow'), # 유저 언팔로우 엔드포인트
 
     # DISC
     path('disc-data/', DISCDataList.as_view(), name='discdata-list'),

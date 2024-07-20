@@ -37,9 +37,11 @@ function FriendProfile() {
     const handleFollowClick = async () => {
         try {
             if (isFollowing) {
+                // 언팔하기
                 await ProfileService.unfollowUser(username);
                 setIsFollowing(false);
             } else {
+                // 팔로우하기
                 await ProfileService.followUser(username);
                 setIsFollowing(true);
             }
