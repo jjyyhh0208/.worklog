@@ -7,7 +7,7 @@ from .views import (
     FeedbackViewSet, UserLongQuestionView, UserFriendView,
     UserCurrentProfileView, UserSearchView, UserLongQuestionAnswersView,
     TestAnswers, FollowFriendView, UserDeleteView, DISCDataList, 
-    DISCDataDetail, ProfileImageView, get_signed_url_view
+    DISCDataDetail, ProfileImageView, get_signed_url_view,
     TestAnswers, FollowFriendView, UserDeleteView, DISCDataList, DISCDataDetail, UnfollowFriendView
     )
 
