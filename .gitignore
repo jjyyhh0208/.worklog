@@ -9,6 +9,7 @@
 /frontend/coverage
 
 # env
+/venv
 .env
 /backend/.env
 /backend/worklog/.env
