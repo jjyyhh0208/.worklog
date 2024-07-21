@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 
 function Login() {
     const [loginInfo, setLoginInfo] = useState({ username: '', password: '' });
+
     const [error, setError] = useState('');
 
     const navigate = useNavigate();
@@ -44,6 +45,8 @@ function Login() {
                 .WORKLOG
             </h1>
             <h2 className={styles.h2}>LOGIN</h2>
+
+            {/* 에러 메시지 표시 */}
             {error && <div className={styles.errorMessage}>{error}</div>}
 
             <form className={styles.login} onSubmit={loginHandler}>

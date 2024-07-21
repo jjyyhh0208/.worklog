@@ -53,15 +53,7 @@ SECRET_KEY = "django-insecure-@5j2w%83edi$)wedcsd-&8)t)8zdd6acfi&d+*a*g&d&#4z!5n
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = [
-    "localhost",
-    "127.0.0.1",
-    "www.dot-worklog.com",
-    "dot-worklog.com",
-    "api.dot-worklog.com",
-    "43.202.115.16",
-    ".ap-northeast-2.compute.amazonaws.com",
-]
+ALLOWED_HOSTS = ["*"]
 
 # CORS
 CORS_ALLOW_ALL_ORIGINS = True
@@ -72,9 +64,8 @@ CORS_ALLOW_HEADERS = '*'
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:3000", 
     "http://127.0.0.1:3000",
-    "dot-worklog.com",
-    "www.dot-worklog.com",
-    "43.202.115.16", 
+    "https://dot-worklog.com",
+    "https://www.dot-worklog.com",
     "http://ec2-43-202-115-16.ap-northeast-2.compute.amazonaws.com"
     ]
 
