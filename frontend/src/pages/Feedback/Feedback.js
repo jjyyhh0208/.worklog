@@ -72,7 +72,7 @@ const Feedback = () => {
 
     const currentPageQuestions = questionsTemplate[pageIndex].map((q) => ({
         ...q,
-        question: q.question.replace('OO', `${profileData.name || '익명'}님`),
+        question: q.question.replace('OO', profileData.name + '님'),
     }));
 
     const progress = 20 + (pageIndex + 1) * 20; // Progress 계산

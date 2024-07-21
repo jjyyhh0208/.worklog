@@ -99,7 +99,7 @@ function FeedbackIntro() {
                 </div>
                 <div className={styles.instruction}>
                     {profileData
-                        ? `${profileData.name || '익명'}님의 업무 스타일은 어떤 이미지가 돋보이나요?`
+                        ? `${profileData.name}님의 업무 스타일은 어떤 이미지가 돋보이나요?`
                         : '스스로 생각하기에 본인의 업무 스타일은 어떤 이미지가 돋보이나요?'}
                     <div className={styles.instructionbox}>
                         <svg xmlns="http://www.w3.org/2000/svg" width="25" height="26" viewBox="0 0 25 26" fill="none">
