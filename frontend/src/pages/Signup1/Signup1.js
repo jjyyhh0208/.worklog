@@ -66,6 +66,7 @@ function Signup1({ signUpInfo, setSignUpInfo }) {
         navigate('/');
     };
     const handleBackClick = () => {
+        localStorage.removeItem('authToken');
         navigate('/');
     };
 
