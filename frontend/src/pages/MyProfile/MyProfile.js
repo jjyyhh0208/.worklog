@@ -4,6 +4,7 @@ import styles from './MyProfile.module.css';
 import ProfileService from '../../utils/ProfileService';
 import keywordIcons from '../../components/KeywordIcons/KeywordIcons';
 import typeData from '../../data/typeData.json';
+import KakaoShareButton from '../../components/KakaoShareButton/KakaoShareButton';
 
 function MyProfile() {
     const [isLoading, setisLoading] = useState(true);
@@ -93,10 +94,6 @@ function MyProfile() {
         }
     };
 
-    const handleKakaoShare = () => {
-        alert('카카오톡 공유 기능은 구현 중입니다.');
-    };
-
     const handleInstagramShare = () => {
         if (!profileData || !profileData.username) {
             alert('프로필 데이터를 불러오는데 문제가 발생했습니다. 페이지를 새로고침하고 다시 시도해주세요.');
@@ -172,18 +169,18 @@ function MyProfile() {
                             />
                             <div className={styles.profileDetails}>
                                 <div className={styles.basicDetails}>
-                                    <h1>{profileData.name}</h1>
+                                    <h1>{profileData?.username}</h1>
                                     <div className={styles.detailsContainer}>
                                         <div className={styles.detailLabel}>나이</div>
-                                        <div className={styles.detailValue}>{profileData.old}</div>
+                                        <div className={styles.detailValue}>{profileData?.old}</div>
                                     </div>
                                     <div className={styles.detailsContainer}>
                                         <div className={styles.detailLabel}>성별</div>
-                                        <div className={styles.detailValue}>{profileData.gender}</div>
+                                        <div className={styles.detailValue}>{profileData?.gender}</div>
                                     </div>
                                     <div className={styles.detailsContainer}>
                                         <div className={styles.detailLabel}>ID</div>
-                                        <div className={styles.detailValue}>{profileData.username}</div>
+                                        <div className={styles.detailValue}>{profileData?.username}</div>
                                     </div>
                                 </div>
 
@@ -235,9 +232,7 @@ function MyProfile() {
                                         />
                                     </svg>
                                 </a>
-                                <a href="#" onClick={handleKakaoShare}>
-                                    <img src="/images/kakao.png" alt="Kakao" width="45" height="45" />
-                                </a>
+                                <KakaoShareButton />
                                 <a href="#" onClick={handleInstagramShare}>
                                     <img src="/images/instagram.png" alt="Instagram" width="40" height="40" />
                                 </a>
@@ -255,7 +250,7 @@ function MyProfile() {
                             <h2>내가 추구하는 업무 스타일</h2>
                             <hr className={styles.divider} />
                             <div className={styles.stylesContainer}>
-                                {profileData.work_styles.map((style) => (
+                                {profileData?.work_styles.map((style) => (
                                     <span key={style.id} className={styles.styleTagMe}>
                                         {keywordIcons[style.name]}
                                         {style.name}
@@ -265,7 +260,7 @@ function MyProfile() {
 
                             <h2>타인이 바라보는 업무 스타일</h2>
                             <hr className={styles.divider} />
-                            {profileData.feedback_count >= 3 ? (
+                            {profileData?.feedback_count >= 3 ? (
                                 <>
                                     <div className={styles.stylesContainer}>
                                         {profileData.feedback_workstyles &&
@@ -300,7 +295,7 @@ function MyProfile() {
                             <h2>내가 관심 있는 업종/직군 분야는?</h2>
                             <hr className={styles.divider} />
                             <div className={styles.stylesContainer}>
-                                {profileData.interests &&
+                                {profileData?.interests &&
                                     profileData.interests.map((interest) => (
                                         <span key={interest.id} className={styles.interestTag}>
                                             {interest.name}
@@ -314,9 +309,9 @@ function MyProfile() {
 
                         <div className={styles.section}>
                             <h2>타인이 평가하는 나</h2>
-                            <div className={styles.feedbackCount}>답변수: {profileData.feedback_count}</div>
+                            <div className={styles.feedbackCount}>답변수: {profileData?.feedback_count}</div>
                             <hr className={styles.divider} />
-                            {profileData.feedback_count >= 3 ? (
+                            {profileData?.feedback_count >= 3 ? (
                                 <>
                                     <div className={styles.discContainer}>
                                         {profileData.disc_scores &&

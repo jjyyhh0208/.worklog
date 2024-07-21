@@ -105,14 +105,12 @@ function Signup4({ signUpInfo, setSignUpInfo }) {
             .catch((error) => {
                 console.error('Error setting user interests:', error);
             });
-        console.log(signUpInfo);
     };
 
     const logoHandler = () => {
         navigate('/'); // Navigate to home page when logo is clicked
     };
     const handleBackClick = () => {
-        console.log(signUpInfo);
         navigate(-1);
     };
 

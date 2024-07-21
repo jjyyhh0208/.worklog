@@ -17,11 +17,9 @@ function Signup1({ signUpInfo, setSignUpInfo }) {
         e.preventDefault();
 
         try {
-            const response = await AdminService.checkUserName({
-                username: signUpInfo.username,
-            });
+            const response = await AdminService.checkUserName(signUpInfo.username);
 
-            if (response.data.isUnique) {
+            if (response.isUnique) {
                 setIsIdAvailable(true);
                 setAvailabilityMessage('사용 가능한 아이디입니다.');
             } else {
@@ -57,7 +55,6 @@ function Signup1({ signUpInfo, setSignUpInfo }) {
             });
 
             navigate('/signup/2');
-            console.log(signUpInfo);
         } catch (error) {
             const apiErrorMessage = error.message || '회원가입 도중 오류가 발생했습니다. 다시 시도해주세요.';
             setError(apiErrorMessage);
