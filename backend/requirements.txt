@@ -44,3 +44,4 @@ yarl==1.9.4
 environ==1.0
 django-environ==0.11.2
 Pillow==10.4.0
+django-csp==3.8

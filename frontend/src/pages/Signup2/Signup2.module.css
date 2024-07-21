@@ -48,37 +48,73 @@
 /* Input styles */
 .input {
     display: flex;
-    
+
     width: 440px;
     height: 90px;
     padding-left: 10px;
     justify-content: center;
     align-items: center;
-    
+
     flex-shrink: 0;
     border-radius: 10px;
     border: 2px solid #4053ff;
     background: #fff;
     margin-bottom: 20px;
     font-size: 21px;
-    
 }
 
-.inputImage {
-    display: flex;
-    width: 440px;
-    
+.icon {
+    width: 100px;
+    height: 100px;
+    pointer-events: none;
+}
 
-    padding: 10px;
-    justify-content: center;
-    align-items: center;
-    flex-shrink: 0;
-    border-radius: 10px;
-    border: 2px solid #4053ff;
+.file {
+    display: none;
+}
+
+.file::file-selector-button {
+    font-size: 14px;
     background: #fff;
-    margin-bottom: 20px;
-    font-size: 21px;
-    
+    border: 1px solid #111;
+    border-radius: 12px;
+    padding: 4px 32px;
+    cursor: pointer;
+}
+
+.preview {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 20px auto;
+    gap: 10px;
+    width: 100%;
+    padding: 70px;
+    border: 3px dashed #eee;
+    border-radius: 5px;
+    background-color: #fff;
+    cursor: pointer;
+}
+
+.preview:hover {
+    border-color: #111;
+}
+
+.preview.active {
+    background-color: #efeef3;
+    border-color: #111;
+}
+
+.preview_msg {
+    font-weight: 500;
+    font-size: 18px;
+    margin: 20px 0 10px;
+}
+
+.preview_desc {
+    margin: 0;
+    font-size: 14px;
 }
 
 /* Gender buttons container styles */
@@ -179,31 +215,28 @@
     color: inherit;
 }
 
-/* Image upload container styles */
-.imageUpload {
+/* Profile image styles */
+.imagePreview {
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-top: 20px;
-    gap: 10px;
-    
 }
-
-/* Profile image styles */
 .profileImage {
-    max-height: 150px;
-    max-width: 150px;
-    border: 2px solid #4053ff;
-    border-radius: 10px;
-    margin-bottom: 20px;
+    max-height: 200px;
+    max-width: 200px;
 }
 
-.imageContainer{
+.imageContainer {
     display: flex;
     align-items: center;
-    justify-content:left;
-    
+    justify-content: left;
+
     gap: 20px;
+}
+
+.imagetext {
+    margin-top: 5%;
+    font-size: 1.4rem;
 }
 
 .imageUpload button {
@@ -215,7 +248,6 @@
     border: none;
     border-radius: 10px;
     cursor: pointer;
-
 }
 
 .imageUpload button:hover {

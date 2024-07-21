@@ -22,13 +22,14 @@ function FriendProfile() {
             setShowWarning(!authToken);
         };
 
-        const discTypeColors = typeData.reduce((acc, item) => {
-            acc[item.disc_character] = item.color;
-            return acc;
-        }, {});
-
         checkAuth();
     }, []);
+
+    const discTypeColors = typeData.reduce((acc, item) => {
+        acc[item.disc_character] = item.color;
+        return acc;
+    }, {});
+
     useEffect(() => {
         const fetchData = async () => {
             try {
