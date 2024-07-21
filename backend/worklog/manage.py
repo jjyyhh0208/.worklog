@@ -2,7 +2,6 @@
 """Django's command-line utility for administrative tasks."""
 import os
 import sys
-from django.utils.regex_helper import _lazy_re_compile
 
 def main():
     """Run administrative tasks."""
