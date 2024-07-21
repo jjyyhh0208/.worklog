@@ -10,8 +10,8 @@ function Signup2({ signUpInfo, setSignUpInfo }) {
     const location = useLocation();
     const isEditing = location.state?.isEditing || false;
     const profileData = location.state?.profileData || {};
-    const [selectedGender, setSelectedGender] = useState('');
-    const [selectedAge, setSelectedAge] = useState('');
+    const [selectedGender, setSelectedGender] = useState(location.state?.gender || '');
+    const [selectedAge, setSelectedAge] = useState(location.state?.age || '');
 
     useEffect(() => {
         const fetchData = async () => {
@@ -19,12 +19,12 @@ function Signup2({ signUpInfo, setSignUpInfo }) {
                 const userProfileData = await ProfileService.fetchUserProfile();
                 setSignUpInfo({
                     ...signUpInfo,
-                    name: userProfileData.name,
-                    age: userProfileData.age,
-                    gender: userProfileData.gender,
+                    name: userProfileData.name || location.state?.name || '',
+                    age: userProfileData.age || location.state?.age || '',
+                    gender: userProfileData.gender || location.state?.gender || '',
                 });
-                setSelectedAge(userProfileData.age);
-                setSelectedGender(userProfileData.gender);
+                setSelectedAge(userProfileData.age || location.state?.age || '');
+                setSelectedGender(userProfileData.gender || location.state?.gender || '');
             } catch (error) {
                 console.error('Error fetching data:', error);
             }
@@ -93,7 +93,13 @@ function Signup2({ signUpInfo, setSignUpInfo }) {
             if (isEditing) {
                 navigate('/my-profile');
             } else {
-                navigate('/signup/3');
+                navigate('/signup/3', {
+                    state: {
+                        name: signUpInfo.name,
+                        age: selectedAge,
+                        gender: signUpInfo.gender,
+                    },
+                });
             }
         } catch (error) {
             setUploadMessage('Failed to update user info');
@@ -140,8 +146,13 @@ function Signup2({ signUpInfo, setSignUpInfo }) {
                     console.error('회원 탈퇴 중 오류가 발생했습니다.', error);
                 });
         } else {
-            localStorage.removeItem('authToken');
-            navigate(-1);
+            navigate(-1, {
+                state: {
+                    name: signUpInfo.name,
+                    age: selectedAge,
+                    gender: signUpInfo.gender,
+                },
+            });
         }
     };
 

@@ -9,7 +9,7 @@ function Signup3({ signUpInfo, setSignUpInfo }) {
     const location = useLocation();
     const isEditing = location.state?.isEditing || false;
     const profileData = location.state?.profileData || {};
-    const [selectedKeywords, setSelectedKeywords] = useState([]);
+    const [selectedKeywords, setSelectedKeywords] = useState(location.state?.selectedKeywords || []);
     const [keywords, setKeywords] = useState([]);
 
     useEffect(() => {
@@ -19,9 +19,10 @@ function Signup3({ signUpInfo, setSignUpInfo }) {
                 const fetchedKeywords = workStylesData.map((item) => item.name);
                 setKeywords(fetchedKeywords);
 
-                if (isEditing) {
+                if (isEditing || location.state?.selectedKeywords) {
                     const userProfileData = await ProfileService.fetchUserProfile();
-                    const fetchedKeywords = userProfileData.work_styles.map((item) => item.name) || [];
+                    const fetchedKeywords =
+                        location.state?.selectedKeywords || userProfileData.work_styles.map((item) => item.name) || [];
                     console.log(fetchedKeywords);
                     setSelectedKeywords(fetchedKeywords);
                     setSignUpInfo({
@@ -81,7 +82,11 @@ function Signup3({ signUpInfo, setSignUpInfo }) {
         ProfileService.setUserWorkStyles(selectedKeywordIds)
             .then(() => {
                 navigate('/signup/4', {
-                    state: { isEditing, profileData: { ...signUpInfo, work_styles: selectedKeywords } },
+                    state: {
+                        isEditing,
+                        profileData: { ...signUpInfo, work_styles: selectedKeywords },
+                        selectedKeywords,
+                    },
                 });
             })
             .catch((error) => {
@@ -98,7 +103,7 @@ function Signup3({ signUpInfo, setSignUpInfo }) {
     };
 
     const handleBackClick = () => {
-        navigate(-1);
+        navigate(-1, { state: { selectedKeywords } });
     };
 
     return (
