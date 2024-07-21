@@ -70,6 +70,11 @@ function Signup1({ signUpInfo, setSignUpInfo }) {
         navigate('/');
     };
     const handleBackClick = () => {
+        localStorage.removeItem('authToken');
+        signUpInfo.username = '';
+        signUpInfo.password1 = '';
+        signUpInfo.password2 = '';
+
         navigate('/');
     };
 

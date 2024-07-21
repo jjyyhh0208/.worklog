@@ -36,8 +36,8 @@ function Header({ isLoggedIn }) {
         //회원탈퇴 API 호출
         AdminService.userDelete()
             .then(() => {
-                console.log('회원탈퇴가 성공됨!!');
                 window.location.href = '/';
+                localStorage.removeItem('authToken');
             })
             .catch((error) => {
                 console.error('회원 탈퇴 중 오류가 발생했습니다.', error);
