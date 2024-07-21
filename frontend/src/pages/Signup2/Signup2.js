@@ -172,25 +172,16 @@ function Signup2({ signUpInfo, setSignUpInfo }) {
         navigate('/');
     };
 
-    const handleBackClick = async () => {
-        if (!isEditing) {
-            localStorage.removeItem('authToken');
-            navigate(-1);
-            try {
-                const response = await AdminService.userDelete();
-            } catch (error) {
-                console.error('회원 탈퇴 중 오류가 발생했습니다.', error);
+    const handleBackClick = () => {
+        console.log('회원탈퇴');
+        AdminService.userDelete()
+            .then(() => {
+                navigate(-1);
                 localStorage.removeItem('authToken');
-            }
-        } else {
-            navigate(-1, {
-                state: {
-                    name: signUpInfo.name,
-                    age: selectedAge,
-                    gender: signUpInfo.gender,
-                },
+            })
+            .catch((error) => {
+                console.error('회원 탈퇴 중 오류가 발생했습니다.', error);
             });
-        }
     };
 
     return (

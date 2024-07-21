@@ -8,39 +8,34 @@ function Signup4({ signUpInfo, setSignUpInfo }) {
     const location = useLocation();
     const isEditing = location.state?.isEditing || false;
     const profileData = location.state?.profileData || {};
-    const [selectedKeywords, setSelectedKeywords] = useState([]);
-    const [keywords, setKeywords] = useState([]);
-
-    useEffect(() => {
-        ProfileService.fetchInterests()
-            .then((data) => {
-                setKeywords(data.map((item) => item.name));
-            })
-            .catch((error) => {
-                console.error('Error fetching interests:', error);
-            });
-    }, []);
+    const [selectedInterests, setSelectedInterests] = useState(location.state?.selectedInterests || []);
+    const [interestKeywords, setInterestKeywords] = useState([]);
 
     useEffect(() => {
         const fetchData = async () => {
             try {
                 const interestsData = await ProfileService.fetchInterests();
-                const fetchedKeywords = interestsData.map((item) => item.name);
-                setKeywords(fetchedKeywords);
+                const fetchedInterests = interestsData.map((item) => item.name);
+                setInterestKeywords(fetchedInterests);
 
                 if (isEditing) {
                     const userProfileData = await ProfileService.fetchUserProfile();
-                    const fetchedKeywords = userProfileData.interests.map((item) => item.name) || [];
-                    console.log(fetchedKeywords);
-                    setSelectedKeywords(fetchedKeywords);
-                    setSignUpInfo({
-                        ...signUpInfo,
-                        interests: {
-                            keyword1: fetchedKeywords[0] || '',
-                            keyword2: fetchedKeywords[1] || '',
-                            keyword3: fetchedKeywords[2] || '',
-                        },
-                    });
+                    const fetchedInterests = userProfileData.interests.map((item) => item.name) || [];
+                    setSelectedInterests(fetchedInterests);
+                    updateSignUpInfo(fetchedInterests);
+                } else {
+                    setSignUpInfo((prevState) => ({
+                        ...prevState,
+                        name: location.state?.name || prevState.name,
+                        age: location.state?.age || prevState.age,
+                        gender: location.state?.gender || prevState.gender,
+                        work_style: location.state?.selectedKeywords || prevState.work_style,
+                    }));
+
+                    if (location.state?.selectedInterests) {
+                        setSelectedInterests(location.state.selectedInterests);
+                        updateSignUpInfo(location.state.selectedInterests);
+                    }
                 }
             } catch (error) {
                 console.error('Error fetching data:', error);
@@ -48,58 +43,72 @@ function Signup4({ signUpInfo, setSignUpInfo }) {
         };
 
         fetchData();
-    }, [isEditing]);
+    }, [isEditing, location.state, setSignUpInfo]);
 
-    // Handle keyword click to toggle selection
-    const handleKeywordClick = (keyword) => {
-        let newKeywords = [...selectedKeywords];
-        if (newKeywords.includes(keyword)) {
-            newKeywords = newKeywords.filter((kw) => kw !== keyword);
-        } else {
-            if (newKeywords.length < 3) {
-                newKeywords.push(keyword);
-            } else {
-                alert('You can select up to 3 keywords only.');
-            }
-        }
-        setSelectedKeywords(newKeywords);
-
-        // Update selected keywords in signUpInfo
-        setSignUpInfo((prevSignUpInfo) => ({
-            ...prevSignUpInfo,
+    const updateSignUpInfo = (interests) => {
+        setSignUpInfo({
+            ...signUpInfo,
             interests: {
-                keyword1: newKeywords[0] || '',
-                keyword2: newKeywords[1] || '',
-                keyword3: newKeywords[2] || '',
+                keyword1: interests[0] || '',
+                keyword2: interests[1] || '',
+                keyword3: interests[2] || '',
             },
-        }));
+        });
     };
 
-    // Handle 'Complete' button click to save selected keywords
+    const handleKeywordClick = (keyword) => {
+        let newInterests = [...selectedInterests];
+        if (newInterests.includes(keyword)) {
+            newInterests = newInterests.filter((kw) => kw !== keyword);
+        } else {
+            if (newInterests.length < 3) {
+                newInterests.push(keyword);
+            } else {
+                alert('최대 3개의 키워드만 선택 가능합니다.');
+                return;
+            }
+        }
+        setSelectedInterests(newInterests);
+        updateSignUpInfo(newInterests);
+    };
+
     const handleCompleteClick = () => {
-        if (selectedKeywords.length === 0) {
+        if (selectedInterests.length === 0) {
             alert('최소 1개의 키워드를 선택해주세요.');
             return;
         }
-        const selectedKeywordIds = selectedKeywords
-            .map((keyword) => {
-                const index = keywords.indexOf(keyword);
-                return index > -1 ? index + 1 : null;
+        const selectedInterestIds = selectedInterests
+            .map((interest) => {
+                const foundInterest = interestKeywords.find((kw) => kw === interest);
+                return foundInterest ? interestKeywords.indexOf(foundInterest) + 1 : null;
             })
             .filter((id) => id !== null);
 
-        if (selectedKeywords.length === 0) {
-            alert('최소 1개의 키워드를 선택해주세요.');
-            return;
-        }
-
-        // Save selected keywords and navigate accordingly
-        ProfileService.setUserInterest(selectedKeywordIds)
+        ProfileService.setUserInterest(selectedInterestIds)
             .then(() => {
                 if (isEditing) {
-                    navigate('/my-profile'); // Navigate to profile page if editing
+                    navigate('/my-profile', {
+                        state: {
+                            isEditing,
+                            profileData: { ...signUpInfo, interests: selectedInterests },
+                            selectedInterests,
+                            selectedKeywords: location.state?.selectedKeywords || [],
+                            name: signUpInfo.name,
+                            age: signUpInfo.age,
+                            gender: signUpInfo.gender,
+                        },
+                    });
                 } else {
-                    navigate('/on-boarding/1'); // Navigate to onboarding page if signing up
+                    navigate('/on-boarding/1', {
+                        state: {
+                            profileData: { ...signUpInfo, interests: selectedInterests },
+                            selectedInterests,
+                            selectedKeywords: location.state?.selectedKeywords || [],
+                            name: signUpInfo.name,
+                            age: signUpInfo.age,
+                            gender: signUpInfo.gender,
+                        },
+                    });
                 }
             })
             .catch((error) => {
@@ -108,10 +117,23 @@ function Signup4({ signUpInfo, setSignUpInfo }) {
     };
 
     const logoHandler = () => {
-        navigate('/'); // Navigate to home page when logo is clicked
+        if (!isEditing) {
+            navigate('/', { state: { selectedInterests } });
+        } else {
+            navigate('/my-profile', { state: { selectedInterests } });
+        }
     };
+
     const handleBackClick = () => {
-        navigate(-1);
+        navigate(-1, {
+            state: {
+                name: signUpInfo.name,
+                age: signUpInfo.age,
+                gender: signUpInfo.gender,
+                selectedKeywords: location.state?.selectedKeywords || [],
+                selectedInterests: selectedInterests,
+            },
+        });
     };
 
     return (
@@ -153,11 +175,11 @@ function Signup4({ signUpInfo, setSignUpInfo }) {
                 </span>
             </div>
             <div className={styles.keywordsContainer}>
-                {keywords.map((keyword) => (
+                {interestKeywords.map((keyword) => (
                     <button
                         key={keyword}
                         className={`${styles.keywordButton} ${
-                            selectedKeywords.includes(keyword) ? styles.selected : ''
+                            selectedInterests.includes(keyword) ? styles.selected : ''
                         }`}
                         onClick={() => handleKeywordClick(keyword)}
                     >
@@ -167,7 +189,7 @@ function Signup4({ signUpInfo, setSignUpInfo }) {
             </div>
             <div className={styles.nextbox}>
                 <button className={styles.completeBtn} type="submit" onClick={handleCompleteClick}>
-                    {isEditing ? '수정 완료' : '가입 완료'} {/* Change button text based on editing mode */}
+                    {isEditing ? '수정 완료' : '가입 완료'}
                 </button>
             </div>
         </div>

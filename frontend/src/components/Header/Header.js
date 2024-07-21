@@ -37,6 +37,7 @@ function Header({ isLoggedIn }) {
         AdminService.userDelete()
             .then(() => {
                 window.location.href = '/';
+                localStorage.removeItem('authToken');
             })
             .catch((error) => {
                 console.error('회원 탈퇴 중 오류가 발생했습니다.', error);
