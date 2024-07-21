@@ -1,8 +1,8 @@
 import axios from 'axios';
 
 // const baseURL = 'http://127.0.0.1:8000/';
-// const baseURL = process.env.REACT_APP_BASE_URL;
-const baseURL = process.env.REACT_APP_BASE_URL_HTTPS;
+const baseURL = process.env.REACT_APP_BASE_URL;
+// const baseURL = process.env.REACT_APP_BASE_URL_HTTPS;
 
 // CSRF 토큰을 가져오는 함수
 
@@ -17,6 +17,7 @@ function getCsrfToken() {
     }
     return '';
 }
+
 // Axios 인스턴스 생성
 
 const API = axios.create({

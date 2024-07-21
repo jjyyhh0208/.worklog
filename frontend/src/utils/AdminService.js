@@ -41,6 +41,7 @@ const AdminService = {
                 return response.data; // Return response data for further use
             })
             .catch((error) => {
+                console.log(error);
                 if (error.response && error.response.data) {
                     throw new Error('아이디는 3자 이상 30자 이하로 설정해주세요.');
                 } else {
@@ -94,25 +95,28 @@ const AdminService = {
             });
     },
 
-    userDelete: () => {
-        return API.delete('/profiles/auth/delete/')
-            .then((response) => {
-                if (response.status === 200) {
-                    console.log('성공적으로 회원 탈퇴가 이루어졌습니다.');
-                    localStorage.removeItem('authToken');
-                }
+    userDelete: async () => {
+        try {
+            const response = await API.delete('/profiles/auth/delete/');
 
-                return response.data;
-            })
-            .catch((error) => {
-                console.error('회원 탈퇴 중 오류가 발생했습니다.', error);
-                if (error.response && error.response.data) {
-                    console.error('오류 응답:', error.response.data);
-                    throw new Error('회원 탈퇴 중 오류가 발생했습니다.');
-                } else {
-                    throw new Error('회원 탈퇴 중 오류가 발생했습니다: ' + error.message);
-                }
-            });
+            console.log('API 응답:', response); // 전체 응답 로깅
+
+            if (response.status === 204) {
+                console.log('성공적으로 회원 탈퇴가 이루어졌습니다.');
+                return true; // 유저 탈퇴 성공 시 true 반환
+            } else {
+                console.log('예상치 못한 응답 상태:', response.status);
+                throw new Error('예상치 못한 응답 상태: ' + response.status);
+            }
+        } catch (error) {
+            console.error('회원 탈퇴 중 오류가 발생했습니다.', error);
+            if (error.response) {
+                console.error('오류 응답:', error.response);
+                console.error('오류 상태:', error.response.status);
+                console.error('오류 데이터:', error.response.data);
+            }
+            throw new Error('회원 탈퇴 중 오류가 발생했습니다: ' + error.message);
+        }
     },
 };
 

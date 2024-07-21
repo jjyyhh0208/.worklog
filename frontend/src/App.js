@@ -57,6 +57,10 @@ function App() {
     const [profileData, setProfileData] = useState(null);
 
     useEffect(() => {
+        if (!window.Kakao.isInitialized()) {
+            window.Kakao.init(process.env.REACT_APP_KAKAO_APP_KEY);
+        }
+
         if (isLoggedIn()) {
             ProfileService.fetchUserProfile()
                 .then((data) => setProfileData(data))

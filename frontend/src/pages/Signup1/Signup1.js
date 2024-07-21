@@ -17,11 +17,9 @@ function Signup1({ signUpInfo, setSignUpInfo }) {
         e.preventDefault();
 
         try {
-            const response = await AdminService.checkUserName({
-                username: signUpInfo.username,
-            });
+            const response = await AdminService.checkUserName(signUpInfo.username);
 
-            if (response.data.isUnique) {
+            if (response.isUnique) {
                 setIsIdAvailable(true);
                 setAvailabilityMessage('사용 가능한 아이디입니다.');
             } else {
