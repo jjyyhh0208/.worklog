@@ -130,7 +130,7 @@ class CustomLoginView(LoginView):
             
             # 그 외의 경우는 기본 에러 처리를 사용
             return Response({
-                'message': '비밀번호가 일치하지 않습니다.',
+                'message': '로그인에 실패했습니다. 입력 정보를 확인해주세요.',
                 'errors': self.serializer.errors
             }, status=status.HTTP_400_BAD_REQUEST)
 

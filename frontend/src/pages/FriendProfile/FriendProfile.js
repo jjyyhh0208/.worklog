@@ -15,20 +15,20 @@ function FriendProfile() {
     const navigate = useNavigate();
     const [showWarning, setShowWarning] = useState(false);
     const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem('authToken'));
-
     useEffect(() => {
         const checkAuth = () => {
             const authToken = localStorage.getItem('authToken');
             setIsAuthenticated(!!authToken);
             setShowWarning(!authToken);
         };
-    }, {});
 
-    const discTypeColors = typeData.reduce((acc, item) => {
-        acc[item.disc_character] = item.color;
-        return acc;
-    });
+        const discTypeColors = typeData.reduce((acc, item) => {
+            acc[item.disc_character] = item.color;
+            return acc;
+        }, {});
 
+        checkAuth();
+    }, []);
     useEffect(() => {
         const fetchData = async () => {
             try {

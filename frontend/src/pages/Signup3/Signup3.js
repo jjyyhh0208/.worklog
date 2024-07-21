@@ -73,6 +73,11 @@ function Signup3({ signUpInfo, setSignUpInfo }) {
             return foundKeyword ? keywords.indexOf(foundKeyword) + 1 : null;
         });
 
+        if (selectedKeywords.length === 0) {
+            alert('최소 1개의 키워드를 선택해주세요.');
+            return;
+        }
+
         ProfileService.setUserWorkStyles(selectedKeywordIds)
             .then(() => {
                 navigate('/signup/4', {
