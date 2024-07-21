@@ -1,4 +1,3 @@
-//signup4
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import styles from './Signup4.module.css';
@@ -29,11 +28,9 @@ function Signup4({ signUpInfo, setSignUpInfo }) {
                 const fetchedKeywords = interestsData.map((item) => item.name);
                 setKeywords(fetchedKeywords);
 
-                if (isEditing || location.state?.selectedKeywords) {
+                if (isEditing) {
                     const userProfileData = await ProfileService.fetchUserProfile();
-                    const fetchedKeywords =
-                        location.state?.selectedKeywords || userProfileData.interests.map((item) => item.name) || [];
-
+                    const fetchedKeywords = userProfileData.interests.map((item) => item.name) || [];
                     console.log(fetchedKeywords);
                     setSelectedKeywords(fetchedKeywords);
                     setSignUpInfo({
@@ -84,10 +81,12 @@ function Signup4({ signUpInfo, setSignUpInfo }) {
             alert('최소 1개의 키워드를 선택해주세요.');
             return;
         }
-        const selectedKeywordIds = selectedKeywords.map((keyword) => {
-            const foundKeyword = keywords.find((kw) => kw === keyword);
-            return foundKeyword ? keywords.indexOf(foundKeyword) + 1 : null;
-        });
+        const selectedKeywordIds = selectedKeywords
+            .map((keyword) => {
+                const index = keywords.indexOf(keyword);
+                return index > -1 ? index + 1 : null;
+            })
+            .filter((id) => id !== null);
 
         if (selectedKeywords.length === 0) {
             alert('최소 1개의 키워드를 선택해주세요.');
@@ -98,13 +97,7 @@ function Signup4({ signUpInfo, setSignUpInfo }) {
         ProfileService.setUserInterest(selectedKeywordIds)
             .then(() => {
                 if (isEditing) {
-                    navigate('/my-profile', {
-                        state: {
-                            isEditing,
-                            profileData: { ...signUpInfo, interests: selectedKeywords },
-                            selectedKeywords,
-                        },
-                    }); // Navigate to profile page if editing
+                    navigate('/my-profile'); // Navigate to profile page if editing
                 } else {
                     navigate('/on-boarding/1'); // Navigate to onboarding page if signing up
                 }
@@ -118,10 +111,9 @@ function Signup4({ signUpInfo, setSignUpInfo }) {
     const logoHandler = () => {
         navigate('/'); // Navigate to home page when logo is clicked
     };
-
     const handleBackClick = () => {
         console.log(signUpInfo);
-        navigate(-1, { state: { selectedKeywords } });
+        navigate(-1);
     };
 
     return (

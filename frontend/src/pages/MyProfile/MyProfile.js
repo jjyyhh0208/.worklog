@@ -21,7 +21,7 @@ function MyProfile() {
         const fetchData = async () => {
             try {
                 const profileData = await ProfileService.fetchUserProfile();
-                profileData.old = 2025 - profileData.age; // 나이 계산
+                profileData.old = 2025 - profileData.age;
                 profileData.gender =
                     profileData.gender === 'F' ? 'Female' : profileData.gender === 'M' ? 'Male' : 'None';
                 setProfileData(profileData);
@@ -33,10 +33,7 @@ function MyProfile() {
                     console.error('DISC character not found:', profileData.disc_character);
                 }
 
-                if (profileData.profile_image && profileData.profile_image.image) {
-                    const signedUrl = await ProfileService.getSignedImageUrl(profileData.profile_image.image);
-                    setImageUrl(signedUrl);
-                }
+                setImageUrl(profileData.image || '/images/basicProfile.png');
             } catch (error) {
                 console.error('Error fetching profile data.', error);
             } finally {

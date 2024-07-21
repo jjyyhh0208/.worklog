@@ -117,32 +117,16 @@ function Signup2({ signUpInfo, setSignUpInfo }) {
     const handleNextClick = async (e) => {
         e.preventDefault();
 
+        const formData = new FormData();
+        formData.append('name', signUpInfo.name === null ? signUpInfo.username : signUpInfo.name);
+        formData.append('age', selectedAge);
+        formData.append('gender', signUpInfo.gender === 'None' ? '' : signUpInfo.gender);
         if (file) {
-            const formData = new FormData();
             formData.append('image', file);
-
-            try {
-                await API.post('/profiles/user/set/profile-image/', formData, {
-                    headers: {
-                        'Content-Type': 'multipart/form-data',
-                    },
-                });
-                setUploadMessage('Image uploaded successfully');
-                await fetchProfileImage();
-            } catch (error) {
-                setUploadMessage(
-                    error.response ? `Failed to upload image: ${error.response.data}` : 'Failed to upload image'
-                );
-                console.error('Failed to update user info:', error);
-            }
         }
 
         try {
-            await ProfileService.setUserBasicInfo({
-                name: signUpInfo.name === null ? signUpInfo.username : signUpInfo.name,
-                age: selectedAge,
-                gender: signUpInfo.gender === 'None' ? null : signUpInfo.gender,
-            });
+            await ProfileService.setUserBasicInfo(formData);
 
             if (isEditing) {
                 navigate('/my-profile');
