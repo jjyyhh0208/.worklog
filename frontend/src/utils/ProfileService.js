@@ -50,6 +50,15 @@ const ProfileService = {
             });
     },
 
+    submitLongAnswers: (questionAnswers) => {
+        return API.post('/profiles/user/feedback-answers/', { question_answers: questionAnswers })
+            .then((response) => response.data)
+            .catch((error) => {
+                console.error('Error submitting answers:', error);
+                throw error;
+            });
+    },
+
     fetchWorkStyles: () => {
         return API.get(`/profiles/workstyles/`)
             .then((response) => response.data)

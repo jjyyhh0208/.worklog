@@ -156,6 +156,12 @@ function MyProfile() {
         navigate('/signup/2', { state: { isEditing: true, profileData } });
     };
 
+    // JSON 파싱하여 summarized와 advice 값을 추출
+    const parsedPersonality =
+        profileData && profileData.gpt_summarized_personality ? JSON.parse(profileData.gpt_summarized_personality) : {};
+    const summarized = parsedPersonality.summarized || '';
+    const advice = parsedPersonality.advice || '';
+
     return (
         <div className={styles.profileContainer}>
             <React.Fragment>
@@ -378,10 +384,12 @@ function MyProfile() {
                                             <p>팀원들은 나의 협업 성향에 대해 다음과 같이 느꼈어요!</p>
                                             <div className={styles.aiFeedback}>
                                                 <div className={styles.feedbackSummary}>
-                                                    <p>{profileData.gpt_summarized_personality}</p>
+                                                    <h3>SUMMARY</h3>
+                                                    <p>{summarized}</p>
                                                 </div>
                                                 <div className={styles.feedbackSummary}>
-                                                    <p>{profileData.gpt_summarized_personality}</p>
+                                                    <h3>ADVICE</h3>
+                                                    <p>{advice}</p>
                                                 </div>
                                             </div>
                                         </div>

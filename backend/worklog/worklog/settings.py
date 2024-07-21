@@ -13,7 +13,6 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 from datetime import timedelta
 from pathlib import Path
 import os
-import environ
 from dotenv import load_dotenv
 
 
@@ -22,7 +21,7 @@ from dotenv import load_dotenv
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-dotenv_path = BASE_DIR.parent / '.env'
+dotenv_path = BASE_DIR / '.env'
 load_dotenv(dotenv_path)
 
 AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
@@ -34,14 +33,15 @@ AWS_SIGNATURE_VERSION = os.getenv("AWS_SIGNATURE_VERSION")
 AWS_S3_CUSTOM_DOMAIN = f"{AWS_STORAGE_BUCKET_NAME}.s3.{AWS_REGION_NAME}.amazonaws.com"
 AWS_LOCATION = 'media'
 
+#gpt key를 환경변수로 설정
+OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
+
 
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/{AWS_LOCATION}/"
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-dotenv_path = BASE_DIR / '.env'
-#gpt key를 환경변수로 설정
-OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
+
 
 
 # Quick-start development settings - unsuitable for production
@@ -214,6 +214,9 @@ USE_I18N = True
 
 USE_TZ = True
 
+DEBUG = True
+
+
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
@@ -223,3 +226,33 @@ STATIC_URL = "/static/"
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,  # 기존 로거 비활성화 여부
+    'formatters': {  # 로그 메시지 형식 정의
+        'verbose': {
+            'format': '{levelname} {asctime} {module} {message}',
+            'style': '{',
+        },
+        'simple': {
+            'format': '{levelname} {message}',
+            'style': '{',
+        },
+    },
+    'handlers': {  # 로그 메시지 처리 방법 정의
+        'console': {
+            'level': 'ERROR',
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple',  # 사용할 포맷터
+        },
+    },
+    'loggers': {  # 특정 로거 설정
+        'django': {
+            'handlers': ['console'],
+            'level': 'ERROR',
+            'propagate': True,
+        },
+    },
+}

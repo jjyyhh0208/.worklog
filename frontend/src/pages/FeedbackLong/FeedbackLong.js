@@ -59,37 +59,48 @@ const FeedbackLong = ({ isLoggedIn }) => {
             console.error('프로필을 불러오는 데에 실패했습니다.');
             return;
         }
+
         const workStylesData = (JSON.parse(localStorage.getItem('workStyles')) || { work_styles: [] }).work_styles;
         const scores = JSON.parse(localStorage.getItem('scores')) || { D: 0, I: 0, S: 0, C: 0 };
 
-        const finalFeedbackData = {
-            id: profileData.id,
-            user: profileData.username,
-            user_by: myprofileData.username,
-            work_styles: workStylesData,
-            score: {
-                d_score: scores.D,
-                i_score: scores.I,
-                s_score: scores.S,
-                c_score: scores.C,
-            },
+        const questionAnswers = {
+            user_to: profileData.username,
             question_answers: [
                 {
-                    question: { long_question: '협업 경험에서 좋았던 점은 무엇이었나요?' },
+                    question: '협업 경험에서 좋았던 점은 무엇이었나요?',
                     answer: feedbackData.long_questions.question1,
                 },
                 {
-                    question: { long_question: '협업 경험에서 아쉬웠던 점은 무엇이었나요?' },
+                    question: '협업 경험에서 아쉬웠던 점은 무엇이었나요?',
                     answer: feedbackData.long_questions.question2,
                 },
                 {
-                    question: { long_question: '마지막으로 하고 싶은 말을 적어주세요!' },
+                    question: '마지막으로 하고 싶은 말을 적어주세요!',
                     answer: feedbackData.long_questions.question3,
                 },
             ],
         };
 
-        FeedbackService.submitAnswers(finalFeedbackData)
+        // 1. questionAnswers를 별도의 엔드포인트로 전송
+        FeedbackService.submitQuestionAnswers(questionAnswers)
+            .then(() => {
+                // questionAnswers 전송이 성공하면 기존 데이터를 전송
+                const finalFeedbackData = {
+                    id: profileData.id,
+                    user: profileData.username,
+                    user_by: myprofileData.username,
+                    work_styles: workStylesData,
+                    score: {
+                        d_score: scores.D,
+                        i_score: scores.I,
+                        s_score: scores.S,
+                        c_score: scores.C,
+                    },
+                    question_answers: questionAnswers.question_answers, // 그대로 유지
+                };
+
+                return FeedbackService.submitAnswers(finalFeedbackData);
+            })
             .then(() => navigate(`/friend-profile/${username}`))
             .catch((error) => console.error('Error submitting feedback:', error));
     };

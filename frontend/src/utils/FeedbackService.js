@@ -46,6 +46,15 @@ const FeedbackService = {
                 throw error;
             });
     },
+
+    submitQuestionAnswers: (questionAnswers) => {
+        return API.post('/profiles/user/feedback-answers/', questionAnswers)
+            .then((response) => response.data)
+            .catch((error) => {
+                console.error('질문과 답변을 제출하는 동안 오류가 발생했습니다.', error);
+                throw error;
+            });
+    },
 };
 
 export default FeedbackService;
