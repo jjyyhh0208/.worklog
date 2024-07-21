@@ -65,7 +65,7 @@ const FeedbackLong = ({ isLoggedIn }) => {
         const finalFeedbackData = {
             id: profileData.id,
             user: profileData.username,
-            user_by: myprofileData.username,
+            user_by: myprofileData?.username || '',
             work_styles: workStylesData,
             score: {
                 d_score: scores.D,

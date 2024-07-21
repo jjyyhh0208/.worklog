@@ -10,7 +10,7 @@ from django.contrib.auth import get_user_model
 from rest_framework import viewsets, generics, status, permissions
 from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser, FormParser
-from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
+from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly, AllowAny
 from rest_framework.decorators import action
 from rest_framework.views import APIView
 from django.db.models import Q
@@ -238,6 +238,8 @@ class ScoreViewSet(viewsets.ModelViewSet):
 class FeedbackViewSet(viewsets.ModelViewSet):
     queryset = Feedback.objects.all()
     serializer_class = FeedbackSerializer
+    permission_classes = [AllowAny]
+    
 
     # Create
     def create(self, request, *args, **kwargs):
