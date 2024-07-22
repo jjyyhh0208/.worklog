@@ -2,19 +2,22 @@ from pyexpat import model
 import openai
 from django.conf import settings
 from django.core.files.storage import default_storage
+from django.contrib.auth import authenticate
+from dj_rest_auth.serializers import LoginSerializer
 import boto3
 import json
+from django.contrib.auth import get_user_model
 from rest_framework import viewsets, generics, status, permissions
 from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser, FormParser
-from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
+from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly, AllowAny
 from rest_framework.decorators import action
 from rest_framework.views import APIView
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from dj_rest_auth.views import LoginView
 from dj_rest_auth.registration.views import RegisterView
-from .models import User, WorkStyle, Interest, ShortQuestion, LongQuestion, QuestionAnswer, Score, Feedback, DISCData, ProfileImage
+from .models import User, WorkStyle, Interest, ShortQuestion, LongQuestion, QuestionAnswer, Score, Feedback, ProfileImage
 from .serializers import (
     UserGenderNameAgeSerializer, UserWorkStyleSerializer,
     UserInterestSerializer, WorkStyleSerializer,
@@ -22,10 +25,13 @@ from .serializers import (
     UserProfileSerializer, UserUniqueIdSerializer,
     ShortQuestionSerializer, LongQuestionSerializer, 
     QuestionAnswerSerializer, ScoreSerializer, FeedbackSerializer,
-    FriendSerializer, UserSearchResultSerializer, DISCDataSerializer, ProfileImageSerializer, ProfileImageSerializer
+    FriendSerializer, UserSearchResultSerializer, ProfileImageSerializer, ProfileImageSerializer
 )
 from django.http import JsonResponse
 from utils.s3_utils import get_signed_url
+import logging
+
+logger = logging.getLogger(__name__)
 
 # s3 접근 인증 받는 함수
 def get_signed_url_view(request, image_path):
@@ -108,6 +114,38 @@ class ProfileImageView(APIView):
         return Response({"message": "Profile image updated successfully"}, status=status.HTTP_200_OK)
 
 
+class CustomLoginView(LoginView):
+    def post(self, request, *args, **kwargs):
+        self.request = request
+        self.serializer = self.get_serializer(data=self.request.data)
+        
+        if not self.serializer.is_valid():
+            # 사용자가 존재하지 않는 경우를 확인
+            username = self.request.data.get('username')
+            User = get_user_model()
+            if not User.objects.filter(username=username).exists():
+                return Response({
+                    'message': '회원이 존재하지 않습니다. 아이디를 확인해주세요.'
+                }, status=status.HTTP_400_BAD_REQUEST)
+            
+            # 그 외의 경우는 기본 에러 처리를 사용
+            return Response({
+                'message': '로그인에 실패했습니다. 입력 정보를 확인해주세요.',
+                'errors': self.serializer.errors
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        self.login()
+        return self.get_response()
+
+    def get_response(self):
+        # 기존의 응답 데이터를 가져옵니다.
+        original_response = super().get_response()
+        
+        # success와 message 필드를 추가합니다.
+        original_response.data['message'] = '로그인 성공'
+        
+        return original_response
+    
 #유저 프로필을 불러오는 View
 class UserProfileView(generics.RetrieveAPIView):
     queryset = User.objects.all()
@@ -200,6 +238,8 @@ class ScoreViewSet(viewsets.ModelViewSet):
 class FeedbackViewSet(viewsets.ModelViewSet):
     queryset = Feedback.objects.all()
     serializer_class = FeedbackSerializer
+    permission_classes = [AllowAny]
+    
 
     # Create
     def create(self, request, *args, **kwargs):
@@ -393,18 +433,3 @@ class UnfollowFriendView(generics.GenericAPIView):
         user.friends.remove(friend)
         return Response({"detail": f"You have unfollowed {friend.name}"}, status=status.HTTP_200_OK)
     
-    
-class DISCDataList(generics.ListCreateAPIView):
-    queryset = DISCData.objects.all()
-    serializer_class = DISCDataSerializer
-
-class DISCDataDetail(generics.RetrieveUpdateDestroyAPIView):
-    queryset = DISCData.objects.all()
-    serializer_class = DISCDataSerializer
-
-    def get_object(self):
-        disc_character = self.kwargs['disc_character']
-        try:
-            return DISCData.objects.get(disc_character=disc_character)
-        except DISCData.DoesNotExist:
-            raise Response({"detail": "DISC data is not found for the given type."}, status=400)

@@ -26,7 +26,7 @@ const ProtectedRoute = ({ element: Component, ...rest }) => {
     }, [isAuthenticated, showWarning]);
 
     if (redirect) {
-        return <Navigate to="/" />;
+        return <Navigate to="/search" />;
     }
 
     return <Component {...rest} />;

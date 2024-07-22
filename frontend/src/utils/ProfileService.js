@@ -1,14 +1,12 @@
 import API from './API';
 
 const ProfileService = {
-    setUserBasicInfo: (userData) => {
-        const requestData = {
-            name: userData.name,
-            age: userData.age,
-            gender: userData.gender === 'None' ? null : userData.gender,
-        };
-
-        return API.put('/profiles/user/set/basic-info/', requestData)
+    setUserBasicInfo: (formData) => {
+        return API.put('/profiles/user/set/basic-info/', formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        })
             .then((response) => {
                 if (response.status === 200) {
                     console.log('사용자 기본 정보가 성공적으로 업데이트되었습니다.');
@@ -26,7 +24,6 @@ const ProfileService = {
                 }
             });
     },
-
     setUserProfileInfo: (userData) => {
         const formData = new FormData();
         formData.append('image', userData.profileImage);
@@ -114,7 +111,7 @@ const ProfileService = {
     },
 
     getUserProfileLink: (username) => {
-        return `${window.location.origin}/my-profile/${username}`;
+        return `${window.location.origin}/friend-profile/${username}`;
     },
 
     fetchFriendProfile: (username) => {

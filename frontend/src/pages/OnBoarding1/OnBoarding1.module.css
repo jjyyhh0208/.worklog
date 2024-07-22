@@ -15,7 +15,6 @@
     font-style: normal;
     font-weight: 800;
     line-height: normal;
-    cursor: pointer;
 }
 
 .dotBox {
@@ -73,6 +72,7 @@
     justify-content: flex-start;
     align-items: flex-start;
     gap: 10px;
+    cursor: pointer;
 }
 
 .mainImage {

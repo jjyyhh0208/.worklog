@@ -22,6 +22,7 @@
     justify-content: center;
     gap: 20px;
     margin-bottom: 50px;
+    cursor: pointer;
 }
 
 .dotBlue,
@@ -99,6 +100,7 @@
     font-style: normal;
     font-weight: 700;
     margin-right: 10px;
+    cursor: pointer;
 }
 
 .profileButton svg {

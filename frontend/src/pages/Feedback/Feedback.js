@@ -90,11 +90,14 @@ const Feedback = () => {
     };
 
     return (
-        <div className={styles.feedbackContainer}>
-            <div className={styles.feedbackPage}>
-                <ProgressBar progress={progress} />
-                <div className={styles.back}>
-                    <button type="submit" onClick={handleBackClick} className={styles.backBtn}>
+        <div className="flex flex-col items-center bg-gray-100 overflow-y-auto min-h-[90%] h-screen ">
+            <div className="p-9 md:w-3/5 w-11/12 rounded-2xl bg-white flex-shrink-0 my-9 flex flex-col items-center shadow-lg relative ">
+                <ProgressBar progress={progress} /> {/* ProgressBar 추가 */}
+                <div className="absolute top-8 right-12 text-2xl font-bold text-black bg-gray-300 p-3 rounded-lg shadow-md">
+                    {parseInt(pageNum) + 1}/5
+                </div>
+                <div className="absolute top-12 left-8">
+                    <button type="submit" onClick={handleBackClick} className=" cursor-pointer hover:bg-white">
                         <svg xmlns="http://www.w3.org/2000/svg" width="60" height="50" viewBox="0 0 24 24" fill="none">
                             <path
                                 d="M15.5 19l-7-7 7-7"
@@ -106,31 +109,35 @@ const Feedback = () => {
                         </svg>
                     </button>
                 </div>
-                <div className={styles.pageIndicator}>{parseInt(pageNum) + 1}/5</div>
-                <div className={styles.instructions}>
+                <div className="text-[#000000] text-3xl font-extrabold leading-normal mt-8 my-2">
                     <div>각 항목에 대해서 1~4점으로 {profileData.name}님에 해당되는 점수를 체크해주세요.</div>
-                    <div className={styles.fontinstructions}>
+                    <div className="text-[#9b8f8f] text-xl leading-normal my-2">
                         * 1: 매우 아니다, 2: 아닌 편이다, 3: 그런 편이다, 4: 매우 그렇다
                     </div>
                 </div>
                 {currentPageQuestions.map((q, index) => (
-                    <div key={index} className={styles.question}>
+                    <div
+                        key={index}
+                        className="text-[#4053ff] text-3xl font-extrabold leading-normal mt-8 my-2 text-left w-full px-12"
+                    >
                         <p>{q.question}</p>
                         {q.options.map((option, idx) => (
-                            <div key={idx} className={styles.optionGroup}>
-                                <div className={styles.options}>
+                            <div key={idx} className="flex items-center my-4">
+                                <div className="flex-1 text-2xl text-gray-800">
                                     {String.fromCharCode(65 + idx)}. {option.label}
                                 </div>
-                                <div className={styles.scores}>
+                                <div className="flex items-center space-x-4">
                                     {[1, 2, 3, 4].map((score) => (
                                         <button
                                             key={score}
-                                            className={`${styles.scoreButton} ${
-                                                answers[q.question]?.[option.value] === score ? styles.selected : ''
+                                            className={`w-10 h-10 rounded-full border-2 flex items-center justify-center ${
+                                                answers[q.question]?.[option.value] === score
+                                                    ? 'bg-[#ffa500] text-white'
+                                                    : 'bg-gray-200 text-black'
                                             }`}
                                             onClick={() => handleAnswerChange(q.question, option.value, score)}
                                         >
-                                            <span>{score}</span>
+                                            {score}
                                         </button>
                                     ))}
                                 </div>
@@ -138,18 +145,14 @@ const Feedback = () => {
                         ))}
                     </div>
                 ))}
-                <div className={styles.feedbackNextContainer}>
-                    <div className={styles.feedbackNextButton}>
-                        <button onClick={handleNextPage}>Next</button>
-                    </div>
-                    <div className={styles.feedbackNextSvg}>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="50" height="49" viewBox="0 0 50 49" fill="none">
-                            <path
-                                d="M25.0314 27.1023L7.97165 47.9208C6.79252 49.3597 4.88585 49.3597 3.71927 47.9208L0.884345 44.4613C-0.294782 43.0223 -0.294782 40.6956 0.884345 39.2719L12.9767 24.5153L0.884345 9.75867C-0.294782 8.31974 -0.294782 5.99297 0.884345 4.56935L3.70672 1.07919C4.88585 -0.359731 6.79252 -0.359731 7.95911 1.07919L25.0188 21.8977C26.2105 23.3366 26.2105 25.6634 25.0314 27.1023ZM49.1157 21.8977L32.0559 1.07919C30.8768 -0.359731 28.9701 -0.359731 27.8036 1.07919L24.9686 4.53874C23.7895 5.97766 23.7895 8.30444 24.9686 9.72805L37.061 24.4847L24.9686 39.2413C23.7895 40.6803 23.7895 43.007 24.9686 44.4306L27.8036 47.8902C28.9827 49.3291 30.8894 49.3291 32.0559 47.8902L49.1157 27.0717C50.2948 25.6634 50.2948 23.3366 49.1157 21.8977Z"
-                                fill="#4053FF"
-                            />
-                        </svg>
-                    </div>
+                <div className="flex justify-end items-center mt-16 mb-4 w-full">
+                    <button
+                        className="w-36 h-12 rounded-lg bg-[#4053ff] border-none text-white text-lg font-bold cursor-pointer"
+                        type="submit"
+                        onClick={handleNextPage}
+                    >
+                        NEXT
+                    </button>
                 </div>
             </div>
         </div>

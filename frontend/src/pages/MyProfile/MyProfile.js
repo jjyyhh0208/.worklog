@@ -2,46 +2,39 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from './MyProfile.module.css';
 import ProfileService from '../../utils/ProfileService';
-import DataService from '../../utils/DataService';
 import keywordIcons from '../../components/KeywordIcons/KeywordIcons';
+import typeData from '../../data/typeData.json';
+import KakaoShareButton from '../../components/KakaoShareButton/KakaoShareButton';
 
 function MyProfile() {
-    const [DISCData, setDISCData] = useState(null);
     const [isLoading, setisLoading] = useState(true);
     const [profileData, setProfileData] = useState(null);
     const [imageUrl, setImageUrl] = useState(null);
+    const [DISCData, setDISCData] = useState(null);
     const navigate = useNavigate();
 
-    const discTypeColors = {
-        '목표 달성자': '#FF5473',
-        디테일리스트: '#55B807',
-        중재가: '#92604B',
-        '컨트롤 타워': '#00B680',
-        불도저: '#FF4B40',
-        애널리스트: '#7D40FF',
-        커뮤니케이터: '#FFC554',
-        프로세서: '#1E74D9',
-    };
+    const discTypeColors = typeData.reduce((acc, item) => {
+        acc[item.disc_character] = item.color;
+        return acc;
+    }, {});
 
     useEffect(() => {
         const fetchData = async () => {
             try {
                 const profileData = await ProfileService.fetchUserProfile();
-                profileData.old = 2025 - profileData.age; // 나이 계산
+                profileData.old = 2025 - profileData.age;
                 profileData.gender =
                     profileData.gender === 'F' ? 'Female' : profileData.gender === 'M' ? 'Male' : 'None';
                 setProfileData(profileData);
-                setisLoading(false);
 
-                if (profileData.profile_image && profileData.profile_image.image) {
-                    const signedUrl = await ProfileService.getSignedImageUrl(profileData.profile_image.image);
-                    setImageUrl(signedUrl);
-                }
-
-                if (profileData.disc_character !== 'None') {
-                    const discData = await DataService.fetchDISCData(profileData.disc_character);
+                const discData = typeData.find((item) => item.disc_character === profileData.disc_character);
+                if (discData) {
                     setDISCData(discData);
+                } else {
+                    console.error('DISC character not found:', profileData.disc_character);
                 }
+
+                setImageUrl(profileData.image || '/images/basicProfile.png');
             } catch (error) {
                 console.error('Error fetching profile data.', error);
             } finally {
@@ -53,11 +46,7 @@ function MyProfile() {
     }, []);
 
     if (isLoading) {
-        // 여기에 랜더링 후 변경 페이지 쓰기
         return <div className={styles.profileContainer}>Loading...</div>;
-    }
-    if (!profileData) {
-        return <div className={styles.profileContainer}>Profile data not available.</div>;
     }
 
     const handleCopyLink = () => {
@@ -100,10 +89,6 @@ function MyProfile() {
         } else {
             alert('프로필 데이터를 불러오는 중입니다.');
         }
-    };
-
-    const handleKakaoShare = () => {
-        alert('카카오톡 공유 기능은 구현 중입니다.');
     };
 
     const handleInstagramShare = () => {
@@ -181,18 +166,18 @@ function MyProfile() {
                             />
                             <div className={styles.profileDetails}>
                                 <div className={styles.basicDetails}>
-                                    <h1>{profileData.name}</h1>
+                                    <h1>{profileData?.username}</h1>
                                     <div className={styles.detailsContainer}>
                                         <div className={styles.detailLabel}>나이</div>
-                                        <div className={styles.detailValue}>{profileData.old}</div>
+                                        <div className={styles.detailValue}>{profileData?.old}</div>
                                     </div>
                                     <div className={styles.detailsContainer}>
                                         <div className={styles.detailLabel}>성별</div>
-                                        <div className={styles.detailValue}>{profileData.gender}</div>
+                                        <div className={styles.detailValue}>{profileData?.gender}</div>
                                     </div>
                                     <div className={styles.detailsContainer}>
                                         <div className={styles.detailLabel}>ID</div>
-                                        <div className={styles.detailValue}>{profileData.username}</div>
+                                        <div className={styles.detailValue}>{profileData?.username}</div>
                                     </div>
                                 </div>
 
@@ -244,9 +229,7 @@ function MyProfile() {
                                         />
                                     </svg>
                                 </a>
-                                <a href="#" onClick={handleKakaoShare}>
-                                    <img src="/images/kakao.png" alt="Kakao" width="45" height="45" />
-                                </a>
+                                <KakaoShareButton />
                                 <a href="#" onClick={handleInstagramShare}>
                                     <img src="/images/instagram.png" alt="Instagram" width="40" height="40" />
                                 </a>
@@ -264,7 +247,7 @@ function MyProfile() {
                             <h2>내가 추구하는 업무 스타일</h2>
                             <hr className={styles.divider} />
                             <div className={styles.stylesContainer}>
-                                {profileData.work_styles.map((style) => (
+                                {profileData?.work_styles.map((style) => (
                                     <span key={style.id} className={styles.styleTagMe}>
                                         {keywordIcons[style.name]}
                                         {style.name}
@@ -274,7 +257,7 @@ function MyProfile() {
 
                             <h2>타인이 바라보는 업무 스타일</h2>
                             <hr className={styles.divider} />
-                            {profileData.feedback_count >= 3 ? (
+                            {profileData?.feedback_count >= 3 ? (
                                 <>
                                     <div className={styles.stylesContainer}>
                                         {profileData.feedback_workstyles &&
@@ -309,7 +292,7 @@ function MyProfile() {
                             <h2>내가 관심 있는 업종/직군 분야는?</h2>
                             <hr className={styles.divider} />
                             <div className={styles.stylesContainer}>
-                                {profileData.interests &&
+                                {profileData?.interests &&
                                     profileData.interests.map((interest) => (
                                         <span key={interest.id} className={styles.interestTag}>
                                             {interest.name}
@@ -323,9 +306,9 @@ function MyProfile() {
 
                         <div className={styles.section}>
                             <h2>타인이 평가하는 나</h2>
-                            <div className={styles.feedbackCount}>답변수: {profileData.feedback_count}</div>
+                            <div className={styles.feedbackCount}>답변수: {profileData?.feedback_count}</div>
                             <hr className={styles.divider} />
-                            {profileData.feedback_count >= 3 ? (
+                            {profileData?.feedback_count >= 3 ? (
                                 <>
                                     <div className={styles.discContainer}>
                                         {profileData.disc_scores &&
@@ -343,12 +326,16 @@ function MyProfile() {
                                             ))}
                                     </div>
                                     <div className={styles.typeCards}>
-                                        <div
-                                            className={styles.typeCard}
-                                            style={{ backgroundColor: discTypeColors[profileData.disc_character] }}
-                                        >
-                                            {DISCData.disc_character}
-                                        </div>
+                                        {profileData && DISCData ? (
+                                            <div
+                                                className={styles.typeCard}
+                                                style={{ backgroundColor: discTypeColors[profileData.disc_character] }}
+                                            >
+                                                {DISCData.disc_character}
+                                            </div>
+                                        ) : (
+                                            <div className={styles.typeCard}>데이터 로딩 중...</div>
+                                        )}
                                         <div className={styles.typeDescription}>
                                             <p>{DISCData.description}</p>
                                             <div className={styles.typeQuestion}>

@@ -28,7 +28,6 @@ import Error from './components/Error/Error';
 import AuthRedirect from './components/AuthRedirect';
 import ProtectedRoute from './components/ProtectedRoute';
 import ProfileService from './utils/ProfileService';
-import UploadImage from './pages/UploadImage';
 
 axios.defaults.xsrfCookieName = 'csrftoken';
 axios.defaults.xsrfHeaderName = 'X-CSRFToken';
@@ -57,6 +56,10 @@ function App() {
     const [profileData, setProfileData] = useState(null);
 
     useEffect(() => {
+        if (!window.Kakao.isInitialized()) {
+            window.Kakao.init(process.env.REACT_APP_KAKAO_APP_KEY);
+        }
+
         if (isLoggedIn()) {
             ProfileService.fetchUserProfile()
                 .then((data) => setProfileData(data))
@@ -69,6 +72,7 @@ function App() {
     };
 
     const renderHeader = () => {
+        //Header 넣는 페이지
         const pathsWithHeader = [
             '/my-profile',
             '/friend-profile',
@@ -102,11 +106,10 @@ function App() {
                 <Route path="/on-boarding/2" element={<OnBoarding2 />} />
                 <Route path="/on-boarding/3" element={<OnBoarding3 />} />
                 <Route path="/friend-profile/:username" element={<FriendProfile />} />
-                <Route path="/test" element={<UploadImage />} />
+                <Route path="/list/:username" element={<List />} />
 
                 {/* 보호된 라우트 */}
                 <Route path="/my-profile" element={<ProtectedRoute element={MyProfile} />} />
-                <Route path="/list/:username" element={<ProtectedRoute element={List} />} />
 
                 {/* Error 페이지 - 모든 라우트의 맨 마지막에 위치 */}
                 <Route path="*" element={<Error />} />

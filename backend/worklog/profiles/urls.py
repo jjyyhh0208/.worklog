@@ -6,9 +6,9 @@ from .views import (
     UniqueIdCheck, ShortQuestionViewSet, LongQuestionViewSet,
     FeedbackViewSet, UserLongQuestionView, UserFriendView,
     UserCurrentProfileView, UserSearchView, UserLongQuestionAnswersView,
-    TestAnswers, FollowFriendView, UserDeleteView, DISCDataList, 
-    DISCDataDetail, ProfileImageView, get_signed_url_view,
-    TestAnswers, FollowFriendView, UserDeleteView, DISCDataList, DISCDataDetail, UnfollowFriendView
+    TestAnswers, FollowFriendView, UserDeleteView, CustomLoginView,
+    ProfileImageView, get_signed_url_view, TestAnswers, 
+    FollowFriendView, UserDeleteView, UnfollowFriendView
     )
 
 
@@ -39,6 +39,7 @@ urlpatterns = [
     path('user/get-signed-url/<path:image_path>/', get_signed_url_view, name='get_signed_url'), # s3 인증값을 받는 엔드포인트
 
     # Auth
+     path('auth/login/', CustomLoginView.as_view(), name='custom_login'), # 로그인 오류메시지 추가한 Custom ViewSet 사용
     path('auth/', include('dj_rest_auth.urls')),  # 로그인, 로그아웃, 비밀번호 변경, 비밀번호 초기화 등을 위한 엔드포인트 기본 제공 기능
     path('auth/registration/', include('dj_rest_auth.registration.urls')),  # 회원가입을 위한 엔드포인트 기본 제공 기능
     path('auth/check-username/', UniqueIdCheck.as_view(), name='check-username'), # 유저 이름 중복 검사
@@ -50,8 +51,4 @@ urlpatterns = [
     
     path('user/follow/', FollowFriendView.as_view(), name='user-follow'), # 유저 팔로우 엔드포인트
     path('user/unfollow/', UnfollowFriendView.as_view(), name='user-unfollow'), # 유저 언팔로우 엔드포인트
-
-    # DISC
-    path('disc-data/', DISCDataList.as_view(), name='discdata-list'),
-    path('disc-data/<str:disc_character>/', DISCDataDetail.as_view(), name='discdata-detail'),
 ]
