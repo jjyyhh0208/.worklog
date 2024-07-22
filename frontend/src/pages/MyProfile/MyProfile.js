@@ -175,7 +175,7 @@ function MyProfile() {
                                         </svg>
                                     ) : (
                                         <div
-                                            className="w-[120px] h-[40px] rounded-[20px] flex items-center justify-center text-white text-2xl font-semibold"
+                                            className="w-[120px] h-[40px] rounded-[10px] mr-8 flex items-center justify-center text-white text-2xl font-semibold"
                                             style={{
                                                 backgroundColor:
                                                     discTypeColors[profileData.disc_character] || discTypeColors.None,
@@ -198,7 +198,9 @@ function MyProfile() {
                                 }}
                             >
                                 <svg
+                                
                                     xmlns="http://www.w3.org/2000/svg"
+                                    className='ml-3'
                                     width="40"
                                     height="40"
                                     viewBox="0 0 40 40"
@@ -223,7 +225,7 @@ function MyProfile() {
                             </a>
                         </div>
                         <button
-                            className="w-80 h-[50px] bg-[#9b8f8f] text-white text-xl font-bold rounded-[10px]"
+                            className="w-60 h-[50px] bg-[#9b8f8f] text-white text-xl font-bold rounded-[10px]"
                             onClick={handleProfileEdit}
                         >
                             프로필 수정
