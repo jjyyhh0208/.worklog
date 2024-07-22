@@ -1,14 +1,12 @@
 import API from './API';
 
 const ProfileService = {
-    setUserBasicInfo: (userData) => {
-        const requestData = {
-            name: userData.name,
-            age: userData.age,
-            gender: userData.gender === 'None' ? null : userData.gender,
-        };
-
-        return API.put('/profiles/user/set/basic-info/', requestData)
+    setUserBasicInfo: (formData) => {
+        return API.put('/profiles/user/set/basic-info/', formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        })
             .then((response) => {
                 if (response.status === 200) {
                     console.log('사용자 기본 정보가 성공적으로 업데이트되었습니다.');
@@ -26,7 +24,6 @@ const ProfileService = {
                 }
             });
     },
-
     setUserProfileInfo: (userData) => {
         const formData = new FormData();
         formData.append('image', userData.profileImage);
@@ -47,6 +44,15 @@ const ProfileService = {
                 } else {
                     throw new Error(error.message);
                 }
+            });
+    },
+
+    submitLongAnswers: (questionAnswers) => {
+        return API.post('/profiles/user/feedback-answers/', { question_answers: questionAnswers })
+            .then((response) => response.data)
+            .catch((error) => {
+                console.error('Error submitting answers:', error);
+                throw error;
             });
     },
 
@@ -121,12 +127,22 @@ const ProfileService = {
         return API.get(`/profiles/user/view/${username}`)
             .then((response) => {
                 if (response.status === 200) {
+                    console.log('Fetched profile data:', response.data);
                     return response.data;
                 }
                 throw new Error('프로필 정보를 불러오는 동안 오류가 발생했습니다.');
             })
             .catch((error) => {
                 console.error('프로필 정보를 가져오는 동안 오류가 발생했습니다.', error);
+                throw error;
+            });
+    },
+
+    getFriendsList: () => {
+        return API.get(`/profiles/user/friends/`)
+            .then((response) => response.data)
+            .catch((error) => {
+                console.error('친구 목록을 가져오는 동안 오류가 발생했습니다.', error);
                 throw error;
             });
     },
@@ -170,6 +186,7 @@ const ProfileService = {
         }
     },
     followUser: (friend_name) => {
+        // 서버에 팔로우 요청을 보냄
         return API.post(`/profiles/user/follow/`, { friend_name })
             .then((response) => response.data)
             .catch((error) => {
@@ -179,6 +196,7 @@ const ProfileService = {
     },
 
     unfollowUser: (friend_name) => {
+        // 서버에 언팔로우 요청을 보냄
         return API.post(`/profiles/user/unfollow/`, { friend_name })
             .then((response) => response.data)
             .catch((error) => {

@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
-import styles from './FeedbackIntro.module.css';
 import ProfileService from '../../utils/ProfileService';
 import keywordIcons from '../../components/KeywordIcons/KeywordIcons';
 import ProgressBar from '../../components/ProgressBar/ProgressBar'; // ProgressBar import
@@ -76,16 +75,18 @@ function FeedbackIntro() {
     };
 
     const handleBackClick = () => {
-        navigate(-1);
+        navigate(`/friend-profile/${username}`);
     };
 
     return (
-        <div className={styles.container}>
-            <div className={styles.feedbackPage}>
+        <div className="w-[100%] flex flex-col items-center bg-gray-100 overflow-y-auto min-h-[90%] h-screen  mt-16">
+            <div className="p-9 md:w-3/5 w-11/12 rounded-2xl bg-white flex-shrink-0 my-9 flex flex-col items-center shadow-lg relative overflow-y-auto">
                 <ProgressBar progress={20} /> {/* ProgressBar 추가 */}
-                <div className={styles.pageIndicator}>1/5</div>
-                <div className={styles.back}>
-                    <button type="submit" onClick={handleBackClick} className={styles.backBtn}>
+                <div className="absolute top-8 right-12 text-2xl font-bold text-black bg-gray-300 p-3 rounded-lg shadow-md">
+                    1/5
+                </div>
+                <div className="absolute top-12 left-8">
+                    <button type="submit" onClick={handleBackClick} className=" cursor-pointer hover:bg-white">
                         <svg xmlns="http://www.w3.org/2000/svg" width="60" height="50" viewBox="0 0 24 24" fill="none">
                             <path
                                 d="M15.5 19l-7-7 7-7"
@@ -97,11 +98,11 @@ function FeedbackIntro() {
                         </svg>
                     </button>
                 </div>
-                <div className={styles.instruction}>
+                <div className="text-[#4053ff] text-4xl font-extrabold leading-normal mt-8 my-2">
                     {profileData
                         ? `${profileData.name}님의 업무 스타일은 어떤 이미지가 돋보이나요?`
                         : '스스로 생각하기에 본인의 업무 스타일은 어떤 이미지가 돋보이나요?'}
-                    <div className={styles.instructionbox}>
+                    <div className="flex w-4/5 my-4">
                         <svg xmlns="http://www.w3.org/2000/svg" width="25" height="26" viewBox="0 0 25 26" fill="none">
                             <g clipPath="url(#clip0_231_547)">
                                 <path
@@ -115,33 +116,34 @@ function FeedbackIntro() {
                                 </clipPath>
                             </defs>
                         </svg>
-                        <span className={styles.span}>키워드는 최대 3개까지 선택해주세요.</span>
+                        <span className="text-[#9b8f8f] text-xl font-medium leading-normal ml-2">
+                            키워드는 최대 3개까지 선택해주세요.
+                        </span>
                     </div>
                 </div>
-                <div className={styles.keywordsContainer}>
+                <div className="flex flex-wrap justify-center gap-3 my-6 w-full max-w-5xl h-[20vh]">
                     {keywords.map((keyword) => (
                         <button
                             key={keyword}
-                            className={`${styles.keywordButton} ${
-                                selectedKeywords.includes(keyword) ? styles.selected : ''
+                            className={`px-4 py-2 border border-gray-300 cursor-pointer transition-all duration-300 rounded-full text-lg font-semibold ${
+                                selectedKeywords.includes(keyword)
+                                    ? 'bg-[#4053ff] text-white'
+                                    : 'bg-gray-300 text-[#4053ff] hover:bg-[#ccd1ff] hover:text-white'
                             }`}
                             onClick={() => handleKeywordClick(keyword)}
                         >
                             {keywordIcons[keyword]}
-                            {keyword}
                         </button>
                     ))}
                 </div>
-                <div className={styles.nextbox}>
-                    <button className={styles.nextBtn} type="submit" onClick={handleNextClick}>
+                <div className="flex justify-end items-center mt-48 mb-4 w-full">
+                    <button
+                        className="w-36 h-12 rounded-lg bg-[#4053ff] border-none text-white text-lg font-bold cursor-pointer"
+                        type="submit"
+                        onClick={handleNextClick}
+                    >
                         NEXT
                     </button>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="0 0 50 50" fill="none">
-                        <path
-                            d="M25.0314 27.7727L7.97165 48.5912C6.79252 50.0301 4.88585 50.0301 3.71927 48.5912L0.884345 45.1317C-0.294782 43.6927 -0.294782 41.366 0.884345 39.9424L12.9767 25.1857L0.884345 10.4291C-0.294782 8.99015 -0.294782 6.66338 0.884345 5.23976L3.70672 1.7496C4.88585 0.310679 6.79252 0.310679 7.95911 1.7496L25.0188 22.5681C26.2105 24.007 26.2105 26.3338 25.0314 27.7727ZM49.1157 22.5681L32.0559 1.7496C30.8768 0.310679 28.9701 0.310679 27.8036 1.7496L24.9686 5.20915C23.7895 6.64807 23.7895 8.97485 24.9686 10.3985L37.061 25.1551L24.9686 39.9117C23.7895 41.3507 23.7895 43.6774 24.9686 45.1011L27.8036 48.5606C28.9827 49.9995 30.8894 49.9995 32.0559 48.5606L49.1157 27.7421C50.2948 26.3338 50.2948 24.007 49.1157 22.5681Z"
-                            fill="#4053FF"
-                        />
-                    </svg>
                 </div>
             </div>
         </div>

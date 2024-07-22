@@ -1,11 +1,12 @@
-// components/ProgressBar/ProgressBar.js
 import React from 'react';
-import styles from './ProgressBar.module.css';
 
 const ProgressBar = ({ progress }) => {
     return (
-        <div className={styles.progressBarContainer}>
-            <div className={styles.progressBar} style={{ width: `${progress}%` }}></div>
+        <div className="w-4/5 bg-gray-300 rounded-full overflow-hidden mx-auto">
+            <div
+                className="h-4 bg-[#4053FF] transition-width duration-300 ease-in-out"
+                style={{ width: `${progress}%` }}
+            ></div>
         </div>
     );
 };

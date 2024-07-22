@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Route, Routes, useLocation } from 'react-router-dom';
 import axios from 'axios';
-import './styles/global.css';
+import './App.css';
 
 // Pages
 import Main from './pages/Main/Main';
@@ -23,12 +23,12 @@ import Feedback from './pages/Feedback/Feedback';
 import List from './pages/List/List';
 import FriendProfile from './pages/FriendProfile/FriendProfile';
 import Error from './components/Error/Error';
+import KakaoCallback from './components/KakaoLogin/KakaoCallback';
 
 // Redirect Pages
 import AuthRedirect from './components/AuthRedirect';
 import ProtectedRoute from './components/ProtectedRoute';
 import ProfileService from './utils/ProfileService';
-import UploadImage from './pages/UploadImage';
 
 axios.defaults.xsrfCookieName = 'csrftoken';
 axios.defaults.xsrfHeaderName = 'X-CSRFToken';
@@ -57,6 +57,10 @@ function App() {
     const [profileData, setProfileData] = useState(null);
 
     useEffect(() => {
+        if (!window.Kakao.isInitialized()) {
+            window.Kakao.init(process.env.REACT_APP_KAKAO_APP_KEY);
+        }
+
         if (isLoggedIn()) {
             ProfileService.fetchUserProfile()
                 .then((data) => setProfileData(data))
@@ -89,6 +93,7 @@ function App() {
             <Routes>
                 {/* 공개 라우트 */}
                 <Route path="/" element={<Main />} />
+                <Route path="/profiles/auth/kakao/callback" element={<KakaoCallback />} />
                 <Route path="/signup/1" element={<Signup1 signUpInfo={signUpInfo} setSignUpInfo={setSignUpInfo} />} />
                 <Route path="/signup/2" element={<Signup2 signUpInfo={signUpInfo} setSignUpInfo={setSignUpInfo} />} />
                 <Route path="/signup/3" element={<Signup3 signUpInfo={signUpInfo} setSignUpInfo={setSignUpInfo} />} />
@@ -103,7 +108,6 @@ function App() {
                 <Route path="/on-boarding/2" element={<OnBoarding2 />} />
                 <Route path="/on-boarding/3" element={<OnBoarding3 />} />
                 <Route path="/friend-profile/:username" element={<FriendProfile />} />
-                <Route path="/test" element={<UploadImage />} />
                 <Route path="/list/:username" element={<List />} />
 
                 {/* 보호된 라우트 */}

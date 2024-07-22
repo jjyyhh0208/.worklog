@@ -1,25 +1,31 @@
 import React, { useRef } from 'react';
-import styles from './AboutUs.module.css';
 
 const AboutUs = () => {
-    const dominanceRef = useRef(null);
-    const influenceRef = useRef(null);
-    const steadinessRef = useRef(null);
-    const conscientiousnessRef = useRef(null);
-
-    const scrollToSection = (ref) => {
-        ref.current.scrollIntoView({ behavior: 'smooth' });
+    const targetRefs = {
+        '목표 달성자': useRef(null),
+        불도저: useRef(null),
+        커뮤니케이터: useRef(null),
+        중재가: useRef(null),
+        프로세서: useRef(null),
+        애널리스트: useRef(null),
+        디테일리스트: useRef(null),
+        '컨트롤 타워': useRef(null),
     };
 
-    // 그룹 데이터
+    const scrollToSection = (ref) => {
+        const offset = 50;
+        const top = ref.current.getBoundingClientRect().top + window.pageYOffset - offset;
+        window.scrollTo({ top, behavior: 'smooth' });
+    };
+
     const groups = [
         {
-            ref: dominanceRef,
             title: '주도형(Dominance)',
             description:
                 '주도형(Dominance)은 외향적이고 업무 중심적인 성향이 결합된 행동 유형으로, 강한 자아와 목표지향적인 특성을 지니고 있으며, 도전과 추진력으로 동기부여를 받아요. 매사에 자신감이 넘치고 감정에 솔직하며, 빠른 의사결정과 현실주의적 사고가 장점이에요. 또한 결정을 내리기 전에 이미 일의 방향과 해결책을 직관으로 알고 있다는 게 특징이에요.',
             types: [
                 {
+                    ref: targetRefs['목표 달성자'],
                     color: '#FF5473',
                     title: '목표 달성자',
                     description:
@@ -36,6 +42,7 @@ const AboutUs = () => {
                         '목표 달성자형은 미묘한 의사소통 기술이나 타인의 감정을 직관적으로 포착하는 능력이 부족해요. 프로세서형과 목표 달성자형, 이 둘의 협업은 목표 달성자가 때로는 놓칠 수 있는 팀원의 감정과 협력의 중요성을 프로세서형이 보완해줍니다.',
                 },
                 {
+                    ref: targetRefs['불도저'],
                     color: '#FF4B40',
                     title: '불도저',
                     description:
@@ -54,12 +61,12 @@ const AboutUs = () => {
             ],
         },
         {
-            ref: influenceRef,
             title: '사교형(Influence)',
             description:
                 '사교형(Influence)은 외향적이며 사람 중심의 성향을 가진 유형으로, 긍정적이고 유머 감각이 뛰어난 사람들이 많아요. 또한 멀티태스킹을 선호하여, 여러 가지 일을 동시에 처리할 수 있는 편이에요. 그러나 지나치게 체계적인 환경은 이들의 창의성과 동기를 억누를 수 있으니 이를 유의해야 해요.',
             types: [
                 {
+                    ref: targetRefs['커뮤니케이터'],
                     color: '#FFC554',
                     title: '커뮤니케이터',
                     description:
@@ -76,6 +83,7 @@ const AboutUs = () => {
                         '커뮤니케이터형은 큰 그림만 그리는 경우가 많아 세부 사항을 간과할 수 있어요. 이때, 디테일리스트형은 체계적이고 신중한 접근으로 커뮤니케이터형의 창의적 아이디어를 실현 가능하게 만들어 주는 조력자가 되어 줄 수 있어요.',
                 },
                 {
+                    ref: targetRefs['중재가'],
                     color: '#92604B',
                     title: '중재가',
                     description:
@@ -89,17 +97,17 @@ const AboutUs = () => {
                         '프로세서형과 협업하면 두 유형 모두 협력을 중요시하기 때문에 구성원 중심의 안정적인 조직을 만들 수 있어요. 긍정적인 에너지와 서로를 격려하는 분위기 속에서 이상적인 협력이 이루어져요.',
                     complement: '디테일리스트형',
                     complementDescription:
-                        '중재가형은 체계적인 절차를 제공하고 퀄리티를 중시하는 사람들과 함께 일하는 것이 좋아요. 또한 압박감이 심한 상황에서는 결단력이 떨어질 수 있기 때문에, 디테일리스트형처럼 주도적인 역할을 맡아줄 사람이 필요해요. 예를 들어, 중재가형이 팀 내 갈등 상황에서 중립적인 입장을 취할 때, 디테일리스트형은 명확한 지침을 제공해 갈등을 해결해줄 수 있습니다 .',
+                        '중재가형은 체계적인 절차를 제공하고 퀄리티를 중시하는 사람들과 함께 일하는 것이 좋아요. 또한 압박감이 심한 상황에서는 결단력이 떨어질 수 있기 때문에, 디테일리스트형처럼 주도적인 역할을 맡아줄 사람이 필요해요. 예를 들어, 중재가형이 팀 내 갈등 상황에서 중립적인 입장을 취할 때, 디테일리스트형은 명확한 지침을 제공해 갈등을 해결해줄 수 있습니다.',
                 },
             ],
         },
         {
-            ref: steadinessRef,
             title: '안정형(Steadiness)',
             description:
                 '안정형(Steadiness)은 내향적이며 사람 중심적인 성향으로, 조직과 규율에 충실한 사람들이 많아요. 변화에 적응하는 시간이 필요하며 다른 방식대로 일하자고 하면 힘들어하기도 해요. 사람들 간의 조화를 추구하며, 진심으로 서로를 격려하는 업무 환경에서 진가를 발휘한답니다.',
             types: [
                 {
+                    ref: targetRefs['프로세서'],
                     color: '#1E74D9',
                     title: '프로세서',
                     description:
@@ -115,6 +123,7 @@ const AboutUs = () => {
                         '프로세서형은 안정적인 환경을 선호하고 남을 먼저 생각하기에 일의 진행 속도가 느린 편이에요. 그러므로 효율적이고 분석적인 목표 달성자형과 협업함으로써 더 체계적이고 빠르게 일을 처리하여 업무 효율을 높여줘요.',
                 },
                 {
+                    ref: targetRefs['애널리스트'],
                     color: '#7D40FF',
                     title: '애널리스트',
                     description:
@@ -133,12 +142,12 @@ const AboutUs = () => {
             ],
         },
         {
-            ref: conscientiousnessRef,
             title: '신중형(Conscientiousness)',
             description:
                 '신중형(Conscientiousness)은 내향적이며 업무 중심의 성향을 지닌 사람들로, 과묵하고 이성적인 편이에요. 완벽주의 성향이 강해 자신이 수행하는 작업에 대한 비판을 두려워하며, 자기 자신과 타인에 대한 기대가 높은 편입니다. 혼자 일하는 것을 선호하며, 논리성에 기초하기에 결정을 천천히 내리는 것을 선호해요.',
             types: [
                 {
+                    ref: targetRefs['디테일리스트'],
                     color: '#55B807',
                     title: '디테일리스트',
                     description:
@@ -154,6 +163,7 @@ const AboutUs = () => {
                         '디테일리스트형은 세부사항에 얽매이지 않고 큰 그림을 볼 수 있는 커뮤니케이터형의 도움을 받으면 시너지가 있어요. 과제의 수행에 초점을 맞추는 성향이 긍정적인 에너지를 불어넣고 격려와 피드백을 제공하는 커뮤니케이터형과 만난다면 만족스러운 결과를 도출해낼 수 있을 거에요.',
                 },
                 {
+                    ref: targetRefs['컨트롤 타워'],
                     color: '#00B680',
                     title: '컨트롤 타워',
                     description:
@@ -161,7 +171,7 @@ const AboutUs = () => {
                     strengths:
                         '완벽주의 기질이 있기 때문에 뛰어난 계획성과 분석력을 가지고 논리적인 업무 진행을 착착 이어 나가요. 성실성도 갖췄기 때문에 꼼꼼하게 업무 진행을 이어나가는 것에 뛰어난 편이에요.',
                     weaknesses:
-                        '무뚝뚝하거나 지나치게 비판적인 시각에서 협업 상황을 바라볼 수도 있어요. 조금 더 인간미를 챙기는 것이 필요할 거 같은 유형이에요.',
+                        '무뚝뚝하거나 지나치게 비판적인 시각에서 협업 상황을 바라볼 수도 있어요. 조금 더 인간미를 챙기는 것이 필요합니다.',
                     bestMatch: '디테일리스트형',
                     bestMatchDescription:
                         '세부사항과 정확성에 몰두한다는 점에서 유사한 유형인 디테일리스트형과 협업하면 컨트롤 타워형의 분석력이 더욱 강화 돼요. 디테일리스트형의 꼼꼼함이 컨트롤 타워형의 전략적 접근에 기여하여 완벽한 결과물을 만들어 낼 수 있어요.',
@@ -174,16 +184,16 @@ const AboutUs = () => {
     ];
 
     return (
-        <div className={styles.aboutUsBody}>
-            <div className={styles.aboutContainer}>
-                <h1 className={styles.title}>FAQ</h1>
-                <div className={styles.grayLine}></div>
+        <div className="bg-gray-100 flex justify-center m-0 w-full h-full overflow-y-auto  mt-16">
+            <div className="p-10 w-full lg:w-4/5 rounded-3xl bg-white flex-shrink-0 mt-12 mb-12 overflow-y-auto">
+                <h1 className="text-black text-6xl font-extrabold mb-4">FAQ</h1>
+                <div className="w-full h-px bg-gray-400 mb-8"></div>
 
                 {/* Q1 */}
-                <div className={styles.question}>
-                    <p className={styles.questionTitle}>Q. .WORKLOG는 어떤 서비스인가요?</p>
-                    <p className={styles.answer}>
-                        <span className={styles.worklog}>.WORKLOG</span>
+                <div className="mb-10">
+                    <p className="text-2xl font-bold text-black mb-2">Q. .WORKLOG는 어떤 서비스인가요?</p>
+                    <p className="text-xl text-black ml-8">
+                        <span className="text-blue-600 text-3xl font-extrabold">.WORKLOG</span>
                         <br />
                         <br />
                         함께 일했던 사람들의 피드백을 모아, 자기 자신의 업무 상황 속 페르소나를 한층 더 이해해 보는 건
@@ -194,79 +204,84 @@ const AboutUs = () => {
                 </div>
 
                 {/* Q2 */}
-                <div className={styles.question}>
-                    <p className={styles.questionTitle}>Q. 8가지 협업 유형은 어떻게 나뉘나요?</p>
-                    <div className={styles.typeContainer}>
-                        <div className={styles.answerbox}>
-                            <div className={styles.typeButtons}>
-                                {groups
-                                    .flatMap((group) => group.types)
-                                    .map((type, index) => (
-                                        <span
-                                            key={index}
-                                            className={styles.type}
-                                            style={{ backgroundColor: type.color }}
-                                            onClick={() =>
-                                                scrollToSection(groups.find((g) => g.types.includes(type)).ref)
-                                            }
-                                        >
-                                            {type.title}
-                                        </span>
-                                    ))}
-                            </div>
-                            <div className={styles.diagram}></div>
+                <div className="mb-10  mt-16">
+                    <p className="text-2xl font-bold text-black mb-2">Q. 8가지 협업 유형은 어떻게 나뉘나요?</p>
+                    <div className="mb-10 flex flex-wrap items-center">
+                        <div className="flex flex-wrap gap-4 mb-5 justify-start w-full lg:w-1/2 ml-9">
+                            {groups
+                                .flatMap((group) => group.types)
+                                .map((type, index) => (
+                                    <span
+                                        key={index}
+                                        className="px-4 py-2 rounded-lg w-32 h-10 text-center cursor-pointer text-white font-bold duration-300   transform hover:scale-105"
+                                        style={{ backgroundColor: type.color }}
+                                        onClick={() => scrollToSection(targetRefs[type.title])}
+                                    >
+                                        {type.title}
+                                    </span>
+                                ))}
                         </div>
-
-                        <p className={styles.discDescription}>
-                            모든 유저는 8가지의 유형으로 구분돼요. 공신력 있는 행동 유형 검사인 DISC 검사 속 설문
-                            과정에서 착안된 질문들로 구성한 설문 결과 점수에 근거해요. 주도(D),사교(I),안정(C),신중(S)
-                            네 가지 성향을 기준으로, 유저는 다음과 같은 8가지 세부 유형으로 구분됩니다.
-                        </p>
+                        <div
+                            className="w-96 h-96 bg-center bg-no-repeat bg-cover ml-12"
+                            style={{ backgroundImage: "url('/images/discImage.png')" }}
+                        ></div>
                     </div>
 
-                    {/* 그룹별 설명 */}
-                    {groups.map((group, groupIndex) => (
-                        <div key={groupIndex} className={styles.groupSection} ref={group.ref}>
-                            <h2 className={styles.subtitle}>{group.title}</h2>
-                            <p className={styles.groupDescription}>{group.description}</p>
+                    <p className="text-xl text-black ml-8">
+                        모든 유저는 8가지의 유형으로 구분돼요. 공신력 있는 행동 유형 검사인 DISC 검사 속 설문 과정에서
+                        착안된 질문들로 구성한 설문 결과 점수에 근거해요. 주도(D),사교(I),안정(C),신중(S) 네 가지 성향을
+                        기준으로, 유저는 다음과 같은 8가지 세부 유형으로 구분됩니다.
+                    </p>
+                </div>
 
-                            {/* 유형별 설명 */}
-                            {group.types.map((type, typeIndex) => (
-                                <div key={typeIndex} className={styles.typeSection}>
-                                    <div className={styles.typeCards}>
-                                        <div className={styles.typeCard} style={{ backgroundColor: type.color }}>
-                                            {type.title}
+                {/* 그룹별 설명 */}
+                {groups.map((group, groupIndex) => (
+                    <div key={groupIndex} className="mt-12 scroll-mt-12">
+                        <h2 className="text-3xl font-bold text-black mb-2">{group.title}</h2>
+                        <p className="text-xl mt-5 text-black ml-8 mb-8">{group.description}</p>
+
+                        {/* 유형별 설명 */}
+                        {group.types.map((type, typeIndex) => (
+                            <div key={typeIndex} className="mt-10" ref={type.ref}>
+                                <div className="flex flex-wrap mt-5 justify-around">
+                                    <div
+                                        className="text-xl w-60 h-16 mb-10 rounded-lg px-5 py-2 text-center flex items-center justify-center text-white font-bold"
+                                        style={{ backgroundColor: type.color }}
+                                    >
+                                        {type.title}
+                                    </div>
+                                    <div className="w-full lg:w-3/4 text-black text-xl leading-relaxed">
+                                        <p className="mb-6">{type.description}</p>
+
+                                        <p className="mb-4 font-bold  text-[#4053FF]">
+                                            <strong>강점 및 보완할 점은?</strong>
+                                        </p>
+                                        <p className="mb-6">
+                                            <strong>이 유형의 강점은:</strong> {type.strengths}
+                                        </p>
+                                        <p className="mb-6">
+                                            <strong>상대적으로 이 유형은:</strong> {type.weaknesses}
+                                        </p>
+                                        <div className="mt-8 mb-2 font-bold text-[#4053FF]">
+                                            {type.title}형과 맞는 협업 유형은?
                                         </div>
-                                        <div className={styles.typeDescription}>
-                                            <p>{type.description}</p>
-                                            <div className={styles.typeQuestion}>
-                                                <strong>강점 및 보완할 점은?</strong>
-                                            </div>
-                                            <p>
-                                                <strong>• 이 유형의 강점은:</strong> {type.strengths}
-                                            </p>
-                                            <p>
-                                                <strong>• 상대적으로 이 유형은:</strong> {type.weaknesses}
-                                            </p>
-                                            <div className={styles.typeQuestion}>
-                                                <strong>{type.title}형과 맞는 협업 유형은?</strong>
-                                            </div>
-                                            <p>
-                                                <strong>• 강점 강화: {type.bestMatch}</strong>
-                                            </p>
-                                            <p>{type.bestMatchDescription}</p>
-                                            <br />
-                                            <p>
-                                                <strong>• 상호 보완이 되는 협업 유형은?: {type.complement}</strong>
-                                            </p>
-                                            <p>{type.complementDescription}</p>
+                                        <div className="block mb-2">
+                                            <strong>{type.bestMatch}</strong>
+                                            <div className="text-[#6B7280]"> 강점을 더 강화 시켜 주는 협업 유형</div>
                                         </div>
+                                        <div>{type.bestMatchDescription}</div>
+                                        <br />
+                                        <div>
+                                            <strong className="block mb-2">{type.complement}</strong>
+                                            <div className="text-[#6B7280]"> 상호 보완이 되는 협업 유형</div>
+                                        </div>
+                                        <div>{type.complementDescription}</div>
                                     </div>
                                 </div>
-                            ))}
-                        </div>
-                    ))}
-                </div>
+                            </div>
+                        ))}
+                    </div>
+                ))}
             </div>
         </div>
     );
