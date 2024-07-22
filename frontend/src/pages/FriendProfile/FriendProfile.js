@@ -39,7 +39,7 @@ function FriendProfile() {
                 profileData.gender =
                     profileData.gender === 'F' ? 'Female' : profileData.gender === 'M' ? 'Male' : 'None';
                 setProfileData(profileData);
-                setIsFollowing(profileData.is_following);
+                setIsFollowing(profileData.is_following); // 상태 설정
 
                 const discData = typeData.find((item) => item.disc_character === profileData.disc_character);
                 if (discData) {
@@ -69,13 +69,15 @@ function FriendProfile() {
         }
 
         try {
+            let updatedFollowingStatus;
             if (isFollowing) {
                 await ProfileService.unfollowUser(username);
-                setIsFollowing(false);
+                updatedFollowingStatus = false;
             } else {
                 await ProfileService.followUser(username);
-                setIsFollowing(true);
+                updatedFollowingStatus = true;
             }
+            setIsFollowing(updatedFollowingStatus);
         } catch (error) {
             console.error('팔로우/팔로우 취소 중 오류가 발생했습니다.', error);
         }
@@ -86,6 +88,26 @@ function FriendProfile() {
             localStorage.removeItem('workStyles');
         }
         navigate(`/feedback/intro/${username}`);
+    };
+
+    const parsedPersonality =
+        profileData && profileData.gpt_summarized_personality ? JSON.parse(profileData.gpt_summarized_personality) : {};
+    const summarized = parsedPersonality.summarized || [];
+    const advice = parsedPersonality.advice || [];
+
+    const formatListWithIndex = (list) => {
+        if (!Array.isArray(list)) {
+            return null;
+        }
+        return list.map((item, index) => (
+            <div key={index}>
+                <strong>팀원 {index + 1}:</strong>
+                <br />
+                {item}
+                <br />
+                <br />
+            </div>
+        ));
     };
 
     if (isLoading) {
@@ -313,10 +335,10 @@ function FriendProfile() {
                                         </p>
                                         <div className="flex flex-col md:flex-row justify-around mt-5">
                                             <div className="flex-1 bg-[rgba(204,209,255,0.2)] rounded-[20px] p-12 m-5 md:m-12 text-xl">
-                                                <p>{profileData.gpt_summarized_personality}</p>
+                                                {formatListWithIndex(summarized)}
                                             </div>
                                             <div className="flex-1 bg-[rgba(204,209,255,0.2)] rounded-[20px] p-12 m-5 md:m-12 text-xl">
-                                                <p>{profileData.gpt_summarized_personality}</p>
+                                                {formatListWithIndex(advice)}
                                             </div>
                                         </div>
                                     </div>

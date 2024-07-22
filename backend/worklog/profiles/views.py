@@ -35,10 +35,12 @@ from .serializers import (
 from django.http import JsonResponse
 from utils.s3_utils import get_signed_url
 import os
+import logging
 import requests
 from rest_framework.authtoken.models import Token
 
 site_url = os.getenv('SITE_HTTP')
+logger = logging.getLogger(__name__)
 
 # s3 접근 인증 받는 함수
 def get_signed_url_view(request, image_path):
@@ -440,23 +442,28 @@ class UserLongQuestionAnswersView(generics.GenericAPIView):
                 logger.error(f"Failed to decode OpenAI response: {e}")
                 return Response({"error": "Failed to decode OpenAI response"}, status=500)
 
-            existing_summary = json.loads(evaluated_user.gpt_summarized_personality) if evaluated_user.gpt_summarized_personality else {}
-            updated_summary = existing_summary.get('summarized', '') + "\n" + "\n" + openai_response_dict['summarized']
-            updated_advice = existing_summary.get('advice', '') + "\n" + "\n" + openai_response_dict['advice']
+            # 기존 요약과 조언을 리스트로 처리하도록 수정
+            existing_personality = json.loads(evaluated_user.gpt_summarized_personality) if evaluated_user.gpt_summarized_personality else {}
+            summarized_list = existing_personality.get('summarized', [])
+            advice_list = existing_personality.get('advice', [])
+
+            summarized_list.append(openai_response_dict['summarized'])
+            advice_list.append(openai_response_dict['advice'])
 
             evaluated_user.gpt_summarized_personality = json.dumps({
-                'summarized': updated_summary,
-                'advice': updated_advice
+                'summarized': summarized_list,
+                'advice': advice_list
             }, ensure_ascii=False)
             evaluated_user.save()
 
             return Response({
-                "summarized": updated_summary,
-                "advice": updated_advice
+                "summarized": summarized_list,
+                "advice": advice_list
             })
         except Exception as e:
             logger.error(f"Error in UserLongQuestionAnswersView: {e}")
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
     
 #db 테스트용 뷰
