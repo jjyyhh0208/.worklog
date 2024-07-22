@@ -28,13 +28,13 @@ const KakaoShareButton = () => {
     return (
         <a
             href="#"
-            className="flex justify-center items-center rounded-lg bg-white w-16 h-16 cursor-pointer"
+            className="w-full h-full flex items-center justify-center"
             onClick={(e) => {
                 e.preventDefault();
                 shareToKakao();
             }}
         >
-            <img src="/images/kakao.png" alt="Kakao" className="max-w-full max-h-full" />
+            <img src="/images/kakao.png" alt="Kakao" className="w-6 h-6" />
         </a>
     );
 };

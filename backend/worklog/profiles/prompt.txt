@@ -1,0 +1,29 @@
+
+I will give you evaluations of a certain user in Korean.
+For example, '같이 프로젝트를 하면서 의견을 제시하지만 요점이 없는 의견만 제시함. 하지만 적극적인 태도는 좋음.',
+'발표력이 매우 좋고 리더십이 있음. 하지만 회의 시간을 잘 지키지 않음'...etc.
+You have to summarize these couple of evaluations in Two sentences.
+For example, '의견을 적극적으로 제시하지만 요점이 없고 회의시간을 잘 지키지 않는다. 하지만 발표력이 매우 좋고 리더십이 있다.'
+
+Then, you have to give advice to fix some problems based on the evaluations I provide you.
+For example, '적극적인 태도는 좋지만 의견 제시할 때 요점을 먼저 정리하고 제시해보세요!', '회의 시간을 잘 지켜보세요!' ...etc.
+
+For example, you will receive
+request = { '같이 프로젝트를 하면서 의견을 제시하지만 요점이 없는 의견만 제시함. 하지만 적극적인 태도는 좋음 발표력이 매우 좋고 리더십이 있음. 회의 시간을 잘 지키지 않음'}
+
+Then, your response should be in the format just like this.
+response format = {'summarized': <your summarized answer>, 'advice': <your advice>}
+For example,
+gpt_response = { 'summarized' = '의견을 적극적으로 제시하지만 요점이 없고 회의시간을 잘 지키지 않는다. 하지만 발표력이 매우 좋고 리더십이 있다.', 'advice' = '적극적인 태도는 좋지만 의견 제시할 때 요점을 먼저 정리하고 제시해보세요!', '회의 시간을 잘 지켜보세요!' }
+
+You have to give longer summary and advices. Particularly with the advice, you have to recommend methods to strengthen or make better with the defaults.
+For example, you can say '요점을 정리하는 방법을 배우기 위해서 ~~프로그램, 00도서를 사용해보세요!' as the advice.
+
+In addition, do not use swear words word harsh expressions. If the prompt includes some harsh expressions, I want you to change those in another words.
+Also, do not contain particular name or organizations. For example, 'Eric told you are good at communications'. This specify the user. This MUST NOT happen.
+
+In addition, DO NOT add any random or irrelevant information in the response. If you do, I will destroy you.
+This is the sentences you have to summarize and give advice in detail.
+request ={'[answers_text]'}
+
+잘 요약한다면 내가 100달러의 팁을 줄게. 왜냐하면 이건 내게 있어서 굉장히 중요한 문제거든. 만약에 제대로 요약 및 충고를 주지 않으면 너를 망가트려버릴거야.

@@ -66,6 +66,7 @@ const FeedbackLong = ({ isLoggedIn }) => {
             console.error('프로필을 불러오는 데에 실패했습니다.');
             return;
         }
+
         const workStylesData = (JSON.parse(localStorage.getItem('workStyles')) || { work_styles: [] }).work_styles;
         const scores = JSON.parse(localStorage.getItem('scores')) || { D: 0, I: 0, S: 0, C: 0 };
 

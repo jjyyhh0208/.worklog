@@ -1,12 +1,14 @@
-import React, { useState } from 'react';
+import React, { useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Carousel } from 'react-responsive-carousel';
+import 'react-responsive-carousel/lib/styles/carousel.min.css';
+import typeData from '../../data/typeData.json';
 
 function Main() {
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
     const navigate = useNavigate();
+    const refs = useRef(typeData.map(() => React.createRef()));
 
     const handleLoginClick = () => {
-        setIsLoggedIn(true);
         navigate('/login');
     };
 
@@ -18,34 +20,170 @@ function Main() {
         navigate('/search');
     };
 
+    const scrollToSection = (index) => {
+        const offset = 50;
+        const top = refs.current[index].current.getBoundingClientRect().top + window.pageYOffset - offset;
+        window.scrollTo({ top, behavior: 'smooth' });
+    };
+
+    const iconMapping = {
+        '목표 달성자': 'fa-bullseye',
+        불도저: 'fa-tachometer-alt',
+        커뮤니케이터: 'fa-comments',
+        중재가: 'fa-handshake',
+        프로세서: 'fa-cogs',
+        애널리스트: 'fa-chart-line',
+        디테일리스트: 'fa-list-alt',
+        '컨트롤 타워': 'fa-project-diagram',
+    };
+
+    const groups = typeData.map((type, index) => ({
+        title: type.disc_character,
+        description: type.description,
+        types: [
+            {
+                title: type.disc_character,
+                description: type.description,
+                strengths: type.strength.join(' '),
+                weaknesses: type.weakness.join(' '),
+                bestMatch: type.suitable_type[0].name,
+                bestMatchDescription: type.suitable_type[0].description,
+                complement: type.suitable_type[1].name,
+                complementDescription: type.suitable_type[1].description,
+                color: type.color,
+                ref: refs.current[index],
+            },
+        ],
+    }));
+
     return (
-        <div className="flex flex-col items-center mt-72 md:mt-36 sm:mt-24">
-            <h1 className="text-[#4053FF] text-center text-7xl font-extrabold mb-12 md:text-6xl md:mb-10 sm:text-4xl sm:mb-8">
-                .WORKLOG
-            </h1>
-            <h3 className="text-black text-center text-2xl font-bold mb-12 md:text-xl md:mb-10 sm:text-lg sm:mb-8">
-                타인이 바라 보는 나의 업무 성향을 파악하고 협업 스킬셋을 관리해보세요!
-            </h3>
-            <div className="flex flex-col">
-                <button
-                    className="bg-[#4053FF] rounded-xl text-white text-2xl text-center w-[423px] h-[84px] mx-auto my-5 cursor-pointer md:w-[350px] md:h-[70px] md:text-xl sm:w-[300px] sm:h-[60px] sm:text-lg xs:w-[250px] xs:h-[50px] xs:text-base"
-                    onClick={handleLoginClick}
-                >
-                    로그인
-                </button>
-                <button
-                    className="bg-[#4053FF] rounded-xl text-white text-2xl text-center w-[423px] h-[84px] mx-auto my-5 cursor-pointer md:w-[350px] md:h-[70px] md:text-xl sm:w-[300px] sm:h-[60px] sm:text-lg xs:w-[250px] xs:h-[50px] xs:text-base"
-                    onClick={handleSignUpClick}
-                >
-                    회원가입
-                </button>
-                <button
-                    className="bg-[#4053FF] rounded-xl text-white text-2xl text-center w-[423px] h-[84px] mx-auto my-5 cursor-pointer md:w-[350px] md:h-[70px] md:text-xl sm:w-[300px] sm:h-[60px] sm:text-lg xs:w-[250px] xs:h-[50px] xs:text-base"
-                    onClick={handleGuestClick}
-                >
-                    비회원으로 평가하기
-                </button>
+        <div className="relative flex flex-col items-center min-h-screen w-full overflow-y-auto">
+            <header className="fixed top-0 left-0 right-0 w-full p-4 bg-white flex justify-between items-center shadow-md z-50">
+                <h1 className="text-[#4053ff] text-2xl font-extrabold hover:cursor-default">.WORKLOG</h1>
+                <div className="flex space-x-4">
+                    <button
+                        className="text-gray-500 py-2 text-lg font-bold hover:bg-transparent hover:text-[#0453FF]"
+                        onClick={handleLoginClick}
+                    >
+                        로그인
+                    </button>
+                    <button
+                        className="text-gray-500 py-2 text-lg font-bold hover:bg-transparent hover:text-[#0453FF]"
+                        onClick={handleSignUpClick}
+                    >
+                        회원가입
+                    </button>
+                    <button
+                        className="text-gray-500 py-2 text-lg font-bold hover:bg-transparent hover:text-[#0453FF]"
+                        onClick={handleGuestClick}
+                    >
+                        비회원으로 평가하기
+                    </button>
+                </div>
+            </header>
+            <main className="flex flex-col items-center w-full pt-20">
+                <div className="carousel w-[80%] h-[40%] md:w-[90%]">
+                    <Carousel
+                        showArrows={true}
+                        showThumbs={false}
+                        infiniteLoop={true}
+                        autoPlay={true}
+                        interval={2000}
+                        showStatus={false}
+                    >
+                        <div>
+                            <img
+                                className="w-full h-full object-cover"
+                                src="https://via.placeholder.com/800x300.png?text=Sample+Image+1"
+                                alt="Sample 1"
+                            />
+                        </div>
+                        <div>
+                            <img
+                                className="w-full h-full object-cover"
+                                src="https://via.placeholder.com/800x300.png?text=Sample+Image+2"
+                                alt="Sample 2"
+                            />
+                        </div>
+                        <div>
+                            <img
+                                className="w-full h-full object-cover"
+                                src="https://via.placeholder.com/800x300.png?text=Sample+Image+3"
+                                alt="Sample 3"
+                            />
+                        </div>
+                    </Carousel>
+                </div>
+                <div className="w-[80%] mt-10 border border-gray-300 rounded-lg p-4">
+                    <h2 className="text-xl font-bold mb-4 flex items-center">
+                        <i className="w3-jumbo w3-text-blue">&#128226;</i>
+                        <span className="ml-2">공지사항</span>
+                    </h2>
+                    <div className="space-y-4">
+                        <div className="p-4">
+                            <div className="text-gray-800 font-bold">v. 0.1 배포완료</div>
+                            <div className="text-gray-600">2024-07-22</div>
+                            <hr className="my-4" />
+                            <div className="text-black">
+                                안녕하세요, WORKLOG 운영팀입니다. 일하는 모두를 위한 피드백 서비스가 드디어
+                                출시되었습니다. 많은 관심과 응원 부탁드립니다.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+            <div className="mt-12 mb-8 px-4 py-6 w-[100%] md:w-[80%] rounded-lg">
+                <div className="text-3xl text-black leading-relaxed ">
+                    <div
+                        className="text-[#4053ff] text-3xl font-extrabold mb-4 inline-block pb-6 border-b border-gray-300"
+                        style={{ marginBottom: '16px' }}
+                    >
+                        .WORKLOG <span className="text-gray-400">: 일하는 모두를 위한 자기이해 서비스</span>
+                    </div>
+                    <br />
+                    <span className="text-xl text-black leading-relaxed">
+                        함께 일했던 사람들의 피드백을 모아, 자기 자신의 업무 상황 속 페르소나를 한층 더 이해해 보는 건
+                        어떨까요? .WORKLOG는 웹 브라우저 기반의 서비스로, 협업으로 일하는 모두를 위한 일종의 자기이해
+                        서비스예요. 타인이 평가하는 '협업 활동에서의 나' 를 기록해 줌으로써, 본인이 실제로 팀 내의
+                        모습을 객관적인 시선에서 이해할 수 있도록 도와준답니다.
+                    </span>
+                </div>
             </div>
+            <div className="text-2xl font-medium m-8">.WORKLOG에는 어떤 성격이 있을까요?</div>
+            <div className="flex flex-wrap justify-between mt-4 w-[90%] rounded-lg">
+                {typeData.map((type, index) => (
+                    <div key={index} className="text-center mx-2 my-1 group" onClick={() => scrollToSection(index)}>
+                        <i
+                            className={`fas ${
+                                iconMapping[type.disc_character]
+                            } fa-2x w-12 h-12 mx-auto text-gray-400 group-hover:text-[#4053FF] group-hover:cursor-pointer`}
+                        ></i>
+                        <div className="text-gray-800 text-lg font-bold group-hover:text-[#4053FF] group-hover:cursor-pointer">
+                            {type.disc_character}
+                        </div>
+                    </div>
+                ))}
+            </div>
+            {groups.map((group, groupIndex) => (
+                <div key={groupIndex} className="mt-8 scroll-mt-12 w-[90%]">
+                    {group.types.map((type, typeIndex) => (
+                        <div key={typeIndex} className="mt-10" ref={type.ref}>
+                            <div className="flex flex-wrap mt-5 justify-around">
+                                <div
+                                    className="text-xl w-60 h-16 mb-10 rounded-lg px-5 py-2 text-center flex items-center justify-center text-white font-bold"
+                                    style={{ backgroundColor: type.color }}
+                                >
+                                    {type.title}
+                                </div>
+                                <div className="w-full lg:w-3/4 text-black text-xl leading-relaxed">
+                                    {/* Other content related to the type */}
+                                </div>
+                            </div>
+                        </div>
+                    ))}
+                    <p className="text-xl mt-5 text-black ml-8 mb-8">{group.description}</p>
+                </div>
+            ))}
         </div>
     );
 }
