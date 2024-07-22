@@ -26,6 +26,20 @@ function MyProfile() {
                     profileData.gender === 'F' ? 'Female' : profileData.gender === 'M' ? 'Male' : 'None';
                 setProfileData(profileData);
 
+                // profile_image는 'image' 랑 'uploaded_at'으로 구성되어 있습니다.
+                // 따라서 profile_image의 image를 추가로 불렀습니다.
+                // image의 주소는 s3 주소를 backend의 .env에 저장했기 때문에 해당 내용이 없이 세부 URL만 있는 상태입니다.
+                // 따라서 검증된 s3 주소를 API에서 (= profileService.getSignedImageUrl) 불러와야 합니다.
+                // GPT 아님!
+
+                ProfileService.getSignedImageUrl(profileData.profile_image.image)
+                    .then((imageUrl) => {
+                        setImageUrl(imageUrl);
+                    })
+                    .catch((error) => {
+                        console.error('Error fetching signed URL:', error);
+                    });
+
                 const discData = typeData.find((item) => item.disc_character === profileData.disc_character);
                 if (discData) {
                     setDISCData(discData);
@@ -33,7 +47,7 @@ function MyProfile() {
                     console.error('DISC character not found:', profileData.disc_character);
                 }
 
-                setImageUrl(profileData.image || '/images/basicProfile.png');
+                setImageUrl(profileData.profile_image.image || '/images/basicProfile.png');
             } catch (error) {
                 console.error('Error fetching profile data.', error);
             } finally {
@@ -130,8 +144,28 @@ function MyProfile() {
         navigate('/signup/2', { state: { isEditing: true, profileData } });
     };
 
+    const parsedPersonality =
+        profileData && profileData.gpt_summarized_personality ? JSON.parse(profileData.gpt_summarized_personality) : {};
+    const summarized = parsedPersonality.summarized || [];
+    const advice = parsedPersonality.advice || [];
+
+    const formatListWithIndex = (list) => {
+        if (!Array.isArray(list)) {
+            return null;
+        }
+        return list.map((item, index) => (
+            <div key={index}>
+                <strong>팀원 {index + 1}</strong>
+                <br />
+                {item}
+                <br />
+                <br />
+            </div>
+        ));
+    };
+
     return (
-        <div className="w-[100%] bg-[#f6f6f6] p-5 flex flex-col items-center">
+        <div className="w-[100%] bg-[#f6f6f6] p-5 flex flex-col items-center mt-16">
             <div className="flex flex-col items-center w-full max-w-[1150px]">
                 <div className="flex flex-col md:flex-row items-center mb-5 mt-5 w-full">
                     <div className="bg-white rounded-[50px] shadow-md p-4 w-full md:w-auto h-auto md:h-[180px] flex-shrink-0 mb-5 md:mb-0 md:mr-12 relative flex items-center">
@@ -143,18 +177,18 @@ function MyProfile() {
                                     className="w-28 h-28 rounded-full object-cover m-5 border border-black"
                                 />
                                 <div className="ml-5">
-                                    <h1 className="text-3xl font-bold">{profileData.name}</h1>
+                                    <h1 className="text-3xl font-bold">{profileData?.name}</h1>
                                     <div className="flex items-center mt-2">
                                         <span className="w-24 text-xl font-bold">나이</span>
-                                        <span className="text-xl font-bold">{profileData.old}</span>
+                                        <span className="text-xl font-bold">{profileData?.old}</span>
                                     </div>
                                     <div className="flex items-center mt-2">
                                         <span className="w-24 text-xl font-bold">성별</span>
-                                        <span className="text-xl font-bold">{profileData.gender}</span>
+                                        <span className="text-xl font-bold">{profileData?.gender}</span>
                                     </div>
                                     <div className="flex items-center mt-2">
                                         <span className="w-24 text-xl font-bold">ID</span>
-                                        <span className="text-xl font-bold">{profileData.username}</span>
+                                        <span className="text-xl font-bold">{profileData?.username}</span>
                                     </div>
                                 </div>
                             </div>
@@ -175,7 +209,7 @@ function MyProfile() {
                                         </svg>
                                     ) : (
                                         <div
-                                            className="w-[120px] h-[40px] rounded-[20px] flex items-center justify-center text-white text-2xl font-semibold"
+                                            className="w-[120px] h-[40px] rounded-[10px] mr-8 flex items-center justify-center text-white text-2xl font-semibold"
                                             style={{
                                                 backgroundColor:
                                                     discTypeColors[profileData.disc_character] || discTypeColors.None,
@@ -199,6 +233,7 @@ function MyProfile() {
                             >
                                 <svg
                                     xmlns="http://www.w3.org/2000/svg"
+                                    className="ml-3"
                                     width="40"
                                     height="40"
                                     viewBox="0 0 40 40"
@@ -223,7 +258,7 @@ function MyProfile() {
                             </a>
                         </div>
                         <button
-                            className="w-80 h-[50px] bg-[#9b8f8f] text-white text-xl font-bold rounded-[10px]"
+                            className="w-60 h-[50px] bg-[#9b8f8f] text-white text-xl font-bold rounded-[10px]"
                             onClick={handleProfileEdit}
                         >
                             프로필 수정
@@ -377,10 +412,10 @@ function MyProfile() {
                                         </p>
                                         <div className="flex flex-col md:flex-row justify-around mt-5">
                                             <div className="flex-1 bg-[rgba(204,209,255,0.2)] rounded-[20px] p-12 m-5 md:m-12 text-xl">
-                                                <p>{profileData.gpt_summarized_personality}</p>
+                                                {formatListWithIndex(summarized)}
                                             </div>
                                             <div className="flex-1 bg-[rgba(204,209,255,0.2)] rounded-[20px] p-12 m-5 md:m-12 text-xl">
-                                                <p>{profileData.gpt_summarized_personality}</p>
+                                                {formatListWithIndex(advice)}
                                             </div>
                                         </div>
                                     </div>
