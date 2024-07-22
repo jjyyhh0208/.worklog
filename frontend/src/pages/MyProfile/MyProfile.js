@@ -190,7 +190,7 @@ function MyProfile() {
                         <div className="mt-4 md:mt-0 self-center md:self-start">
                             {profileData && (
                                 <div
-                                    className="w-[120px] h-[40px] rounded-[10px] flex items-center justify-center text-white text-2xl font-semibold "
+                                    className="w-[200px] h-[50px] rounded-[10px] flex items-center justify-center text-white text-2xl font-semibold "
                                     style={{
                                         backgroundColor: discTypeColors[profileData.disc_character],
                                     }}
@@ -210,7 +210,7 @@ function MyProfile() {
                                         </svg>
                                     ) : (
                                         <div
-                                            className="w-[120px] h-[40px] rounded-[10px] mr-8 flex items-center justify-center text-white text-2xl font-semibold"
+                                            className="w-[200px] h-[50px] rounded-[10px] mr-8 flex items-center justify-center text-white text-2xl font-semibold"
                                             style={{
                                                 backgroundColor:
                                                     discTypeColors[profileData.disc_character] || discTypeColors.None,
