@@ -3,7 +3,7 @@ import React, { useEffect } from 'react';
 const Modal = ({ show, handleClose, children }) => {
     useEffect(() => {
         if (show) {
-            const timer = setTimeout(handleClose, 1500);
+            const timer = setTimeout(handleClose, 200);
             return () => clearTimeout(timer);
         }
     }, [show, handleClose]);

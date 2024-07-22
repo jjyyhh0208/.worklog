@@ -213,7 +213,7 @@ const AboutUs = () => {
                                 .map((type, index) => (
                                     <span
                                         key={index}
-                                        className="px-4 py-2 rounded-lg w-32 h-10 text-center cursor-pointer text-white font-bold "
+                                        className="px-4 py-2 rounded-lg w-32 h-10 text-center cursor-pointer text-white font-bold duration-300   transform hover:scale-105"
                                         style={{ backgroundColor: type.color }}
                                         onClick={() => scrollToSection(targetRefs[type.title])}
                                     >

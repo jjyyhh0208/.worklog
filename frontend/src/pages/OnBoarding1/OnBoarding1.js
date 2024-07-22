@@ -5,11 +5,7 @@ const OnBoarding1 = () => {
     const navigate = useNavigate();
     const location = useLocation();
 
-    const handleDotClick = (page) => {
-        navigate(`/on-boarding/${page}`);
-    };
-
-    const handleContainerClick = () => {
+    const handleNextPage = () => {
         navigate('/on-boarding/2');
     };
 
@@ -18,30 +14,12 @@ const OnBoarding1 = () => {
     };
 
     return (
-        <div className="w-[100%] flex flex-col items-center mt-36" onClick={handleContainerClick}>
+        <div className="w-[100%] flex flex-col items-center mt-28" onClick={handleNextPage}>
             <h1 className="absolute top-7 left-9 text-[#4053ff] text-center text-4xl font-extrabold">.WORKLOG</h1>
-            <div className="flex justify-center gap-5 mb-12">
-                <div
-                    className={`${getDotClassName(1)} w-6 h-6 rounded-full cursor-pointer`}
-                    onClick={(e) => {
-                        e.stopPropagation();
-                        handleDotClick(1);
-                    }}
-                ></div>
-                <div
-                    className={`${getDotClassName(2)} w-6 h-6 rounded-full cursor-pointer`}
-                    onClick={(e) => {
-                        e.stopPropagation();
-                        handleDotClick(2);
-                    }}
-                ></div>
-                <div
-                    className={`${getDotClassName(3)} w-6 h-6 rounded-full cursor-pointer`}
-                    onClick={(e) => {
-                        e.stopPropagation();
-                        handleDotClick(3);
-                    }}
-                ></div>
+            <div className="flex justify-center gap-5 mb-4">
+                <div className={`${getDotClassName(1)} w-6 h-6 rounded-full`}></div>
+                <div className={`${getDotClassName(2)} w-6 h-6 rounded-full`}></div>
+                <div className={`${getDotClassName(3)} w-6 h-6 rounded-full`}></div>
             </div>
             <div className="text-center">
                 <span className="text-black text-2xl font-medium">
@@ -51,14 +29,13 @@ const OnBoarding1 = () => {
                 </span>
                 <span className="text-black text-2xl font-bold"> 나의 업무 성향 분석 레포트</span>
             </div>
-            <div
-                className="relative w-full max-w-screen-lg h-[700px] p-10 cursor-pointer"
-                onClick={handleContainerClick}
-            >
-                <div
-                    className="w-full h-full bg-center bg-cover"
-                    style={{ backgroundImage: "url('/images/onboarding1.png')" }}
-                />
+            <div className="relative w-full max-w-screen-lg h-[700px] p-10">
+                <div className="absolute inset-0 flex justify-center items-center">
+                    <div
+                        className="w-[110%] h-[90%] bg-center bg-cover"
+                        style={{ backgroundImage: "url('/images/onboarding1.png')" }}
+                    />
+                </div>
             </div>
         </div>
     );
