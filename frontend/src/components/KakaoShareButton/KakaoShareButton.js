@@ -25,7 +25,7 @@ const KakaoShareButton = ({ username }) => {
             content: {
                 title: '.WORKLOG - 익명 팀원 피드백 서비스',
                 description: `${profileData.name}님이 더 발전할 수 있도록, 협업 피드백을 남겨주세요. 팀원의 솔직한 피드백은 서로를 성장 시킵니다.`,
-                imageUrl: 'https://dot-worklog.com/images/logo.png',
+                imageUrl: 'https://dot-worklog.com/images/logo.png?v=1',
                 link: {
                     mobileWebUrl: `https://dot-worklog.com/friend-profile/${username}`,
                     webUrl: `https://dot-worklog.com/friend-profile/${username}`,

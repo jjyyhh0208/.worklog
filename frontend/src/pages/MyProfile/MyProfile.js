@@ -222,7 +222,7 @@ function MyProfile() {
                                 </svg>
                             </button>
                             <div className="w-10 h-10 bg-white shadow-md rounded-full hover:bg-gray-200 transition duration-300 flex items-center justify-center">
-                                <KakaoShareButton />
+                                <KakaoShareButton username={profileData.username} />
                             </div>
                             <button
                                 onClick={handleInstagramShare}

@@ -13,10 +13,26 @@ function FriendProfile() {
     const [DISCData, setDISCData] = useState(null);
     const navigate = useNavigate();
     const location = useLocation();
-
     const [showWarning, setShowWarning] = useState(false);
     const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem('authToken'));
-
+    const parsedPersonality =
+        profileData && profileData.gpt_summarized_personality ? JSON.parse(profileData.gpt_summarized_personality) : {};
+    const summarized = parsedPersonality.summarized || [];
+    const advice = parsedPersonality.advice || [];
+    const formatListWithIndex = (list) => {
+        if (!Array.isArray(list)) {
+            return null;
+        }
+        return list.map((item, index) => (
+            <div key={index}>
+                <strong>팀원 {index + 1}:</strong>
+                <br />
+                {item}
+                <br />
+                <br />
+            </div>
+        ));
+    };
     useEffect(() => {
         const checkAuth = () => {
             const authToken = localStorage.getItem('authToken');
