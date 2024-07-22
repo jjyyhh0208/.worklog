@@ -26,8 +26,23 @@ function List() {
                 setProfileData(data);
                 return ProfileService.fetchFriends(data.username);
             })
-            .then((friendsData) => {
-                setFriends(friendsData);
+            .then(async (friendsData) => {
+                const friendsWithImages = await Promise.all(
+                    friendsData.map(async (friend) => {
+                        if (friend.profile_image) {
+                            try {
+                                const imageUrl = await ProfileService.getSignedImageUrl(friend.profile_image.image);
+                                return { ...friend, profileImage: imageUrl };
+                            } catch (error) {
+                                console.error('Error fetching signed URL:', error);
+                                return friend;
+                            }
+                        } else {
+                            return friend;
+                        }
+                    })
+                );
+                setFriends(friendsWithImages);
             })
             .catch((error) => {
                 console.error('오류가 발생했습니다.', error);
@@ -95,7 +110,7 @@ function List() {
                                         <img
                                             src={friend.profileImage || '/images/basicProfile.png'}
                                             alt={`${friend.name}'s profile`}
-                                            className="rounded-full h-28 w-28 mb-1 border border-black"
+                                            className="rounded-full h-28 w-28 mb-1 border border-grey-300"
                                         />
                                         <h2 className="text-lg font-bold mb-2">{friend.name}</h2>
                                         <button
