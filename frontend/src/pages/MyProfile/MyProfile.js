@@ -221,16 +221,6 @@ function MyProfile() {
                             >
                                 <img src="/images/instagram.png" alt="Instagram" className="max-w-full max-h-full" />
                             </a>
-                            <a
-                                href="#"
-                                className="flex justify-center items-center rounded-lg bg-white w-16 h-16 cursor-pointer"
-                                onClick={(e) => {
-                                    e.preventDefault();
-                                    handleSlackShare();
-                                }}
-                            >
-                                <img src="/images/slack.png" alt="Slack" className="max-w-full max-h-full" />
-                            </a>
                         </div>
                         <button
                             className="w-80 h-[50px] bg-[#9b8f8f] text-white text-xl font-bold rounded-[10px]"
