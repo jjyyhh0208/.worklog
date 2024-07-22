@@ -50,16 +50,13 @@ const OnBoarding2 = () => {
                 </span>
                 <span className="text-black text-2xl font-bold">직관적이고 답하기 쉬운 설문지 구성</span>
             </div>
-            <div
-                className="relative w-full max-w-screen-lg h-[700px] p-10 "
-               
-            >
+            <div className="relative w-full max-w-screen-lg h-[700px] p-10 ">
                 <div className="absolute inset-0 flex justify-center items-center">
                     <div
                         className="w-[110%] h-[90%] bg-center bg-cover"
-                    style={{ backgroundImage: "url('/images/onboarding2.png')" }}
-                />
-            </div>
+                        style={{ backgroundImage: "url('/images/onboarding2.png')" }}
+                    />
+                </div>
             </div>
         </div>
     );
