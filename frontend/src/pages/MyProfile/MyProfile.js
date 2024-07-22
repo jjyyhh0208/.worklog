@@ -10,6 +10,7 @@ function MyProfile() {
     const [profileData, setProfileData] = useState(null);
     const [imageUrl, setImageUrl] = useState(null);
     const [DISCData, setDISCData] = useState(null);
+    const [gptSummary, setGptSummary] = useState({ summarized: [], advice: [] });
     const navigate = useNavigate();
 
     const discTypeColors = typeData.reduce((acc, item) => {
@@ -26,6 +27,14 @@ function MyProfile() {
                     profileData.gender === 'F' ? 'Female' : profileData.gender === 'M' ? 'Male' : 'None';
                 setProfileData(profileData);
 
+                ProfileService.getSignedImageUrl(profileData.profile_image.image)
+                    .then((imageUrl) => {
+                        setImageUrl(imageUrl);
+                    })
+                    .catch((error) => {
+                        console.error('Error fetching signed URL:', error);
+                    });
+
                 const discData = typeData.find((item) => item.disc_character === profileData.disc_character);
                 if (discData) {
                     setDISCData(discData);
@@ -33,7 +42,21 @@ function MyProfile() {
                     console.error('DISC character not found:', profileData.disc_character);
                 }
 
-                setImageUrl(profileData.image || '/images/basicProfile.png');
+                setImageUrl(profileData.profile_image.image || '/images/basicProfile.png');
+
+                // GPT summary 처리
+                if (profileData.gpt_summarized_personality) {
+                    try {
+                        const parsedGptSummary = JSON.parse(profileData.gpt_summarized_personality);
+                        setGptSummary({
+                            summarized: Array.isArray(parsedGptSummary.summarized) ? parsedGptSummary.summarized : [],
+                            advice: Array.isArray(parsedGptSummary.advice) ? parsedGptSummary.advice : [],
+                        });
+                    } catch (error) {
+                        console.error('Error parsing GPT summary:', error);
+                        setGptSummary({ summarized: [], advice: [] });
+                    }
+                }
             } catch (error) {
                 console.error('Error fetching profile data.', error);
             } finally {
@@ -45,7 +68,11 @@ function MyProfile() {
     }, []);
 
     if (isLoading) {
-        return <div className="bg-[#f6f6f6] w-[100%] h-[1000px] "></div>;
+        return (
+            <div className="[w-100%] bg-[#f6f6f6] h-[1000px] min-h-screen flex items-center justify-center">
+                {/* Add loading spinner or message here */}
+            </div>
+        );
     }
 
     const handleCopyLink = () => {
@@ -130,46 +157,52 @@ function MyProfile() {
         navigate('/signup/2', { state: { isEditing: true, profileData } });
     };
 
-    // JSON 파싱하여 summarized와 advice 값을 추출
-    const parsedPersonality =
-        profileData && profileData.gpt_summarized_personality ? JSON.parse(profileData.gpt_summarized_personality) : {};
-    const summarized = parsedPersonality.summarized || '';
-    const advice = parsedPersonality.advice || '';
+    const formatListWithIndex = (list) => {
+        if (!Array.isArray(list) || list.length === 0) {
+            return <p>데이터가 없습니다.</p>;
+        }
+        return list.map((item, index) => (
+            <div key={index}>
+                <strong>팀원 {index + 1}</strong>
+                <br />
+                {item}
+                <br />
+                <br />
+            </div>
+        ));
+    };
 
     return (
-        <div className="w-[100%] bg-[#f6f6f6] p-5 flex flex-col items-center">
-            <div className="flex flex-col items-center w-full max-w-[1150px]">
-                <div className="flex flex-col md:flex-row items-center mb-5 mt-5 w-full">
-                    <div className="bg-white rounded-[50px] shadow-md p-4 w-full md:w-auto h-auto md:h-[180px] flex-shrink-0 mb-5 md:mb-0 md:mr-12 relative flex items-center">
-                        <div className="flex flex-col md:flex-row items-center justify-between w-full">
-                            <div className="flex items-center">
-                                <img
-                                    src={imageUrl || '/images/basicProfile.png'}
-                                    alt="Profile"
-                                    className="w-28 h-28 rounded-full object-cover m-5 border border-black"
-                                />
-                                <div className="ml-5">
-                                    <h1 className="text-3xl font-bold">{profileData.name}</h1>
-                                    <div className="flex items-center mt-2">
-                                        <span className="w-24 text-xl font-bold">나이</span>
-                                        <span className="text-xl font-bold">{profileData.old}</span>
-                                    </div>
-                                    <div className="flex items-center mt-2">
-                                        <span className="w-24 text-xl font-bold">성별</span>
-                                        <span className="text-xl font-bold">{profileData.gender}</span>
-                                    </div>
-                                    <div className="flex items-center mt-2">
-                                        <span className="w-24 text-xl font-bold">ID</span>
-                                        <span className="text-xl font-bold">{profileData.username}</span>
-                                    </div>
-                                </div>
+        <div className="w-[100%] bg-[#f6f6f6] min-h-screen py-8 px-4 sm:px-6 lg:px-8 mt-16">
+            <div className="max-w-5xl mx-auto">
+                {/* 프로필 헤더 */}
+                <div className="bg-white flex justify-between rounded-[50px] shadow-md p-6 sm:p-8 mb-8 w-[70%]">
+                    <div className="flex flex-col sm:flex-row items-center sm:items-start space-y-4 sm:space-y-0 sm:space-x-6">
+                        <img
+                            src={imageUrl || '/images/basicProfile.png'}
+                            alt="Profile"
+                            className="w-28 h-28 rounded-full object-cover border border-gray-200"
+                        />
+                        <div className="text-center sm:text-left">
+                            <h1 className="text-3xl font-bold">{profileData.name}</h1>
+                            <p className="text-xl text-gray-600 mt-1">@{profileData.username}</p>
+                            <div className="mt-2 flex flex-wrap justify-center sm:justify-start gap-2">
+                                <span className="bg-gray-100 px-3 py-1 rounded-full text-sm">{profileData.old} 세</span>
+                                <span className="bg-gray-100 px-3 py-1 rounded-full text-sm">{profileData.gender}</span>
                             </div>
-                            <div className="mt-5 md:mt-0 ml-4 self-end">
-                                {profileData &&
-                                    (profileData.disc_character === 'None' ? (
+                        </div>
+                        <div className="mt-5 md:mt-0 ml-4 self-end">
+                            {profileData && (
+                                <div
+                                    className="w-[120px] h-[40px] rounded-[10px] mr-8 flex items-center justify-center text-white text-2xl font-semibold "
+                                    style={{
+                                        backgroundColor: discTypeColors[profileData.disc_character],
+                                    }}
+                                >
+                                    {profileData && profileData.disc_character === 'None' ? (
                                         <svg
                                             xmlns="http://www.w3.org/2000/svg"
-                                            className="w-[120px] h-[40px] rounded-[10px] p-[5%] bg-[#a7a7a76f]"
+                                            className="w-7 h-8 mt-5 mx-auto mb-5 opacity-50"
                                             viewBox="0 0 164 187"
                                             fill="none"
                                         >
@@ -181,7 +214,7 @@ function MyProfile() {
                                         </svg>
                                     ) : (
                                         <div
-                                            className="w-[120px] h-[40px] rounded-[10px] mr-8 flex items-center justify-center text-white text-2xl font-semibold"
+                                            className="w-[120px] h-[40px] rounded-[10px] flex items-center justify-center text-white text-xl font-semibold"
                                             style={{
                                                 backgroundColor:
                                                     discTypeColors[profileData.disc_character] || discTypeColors.None,
@@ -189,58 +222,55 @@ function MyProfile() {
                                         >
                                             {profileData.disc_character}
                                         </div>
-                                    ))}
-                            </div>
+                                    )}
+                                </div>
+                            )}
                         </div>
                     </div>
-                    <div className="flex flex-col items-center gap-6">
-                        <div className="flex space-x-4 socialLinks">
-                            <a
-                                href="#"
-                                className="flex justify-center items-center rounded-lg bg-white w-16 h-16 cursor-pointer"
-                                onClick={(e) => {
-                                    e.preventDefault();
-                                    handleCopyLink();
-                                }}
+                    <div className="flex-col flex ">
+                        <div className="mt-4 ml-4  mb-4 flex flex-wrap gap-3">
+                            <button
+                                onClick={handleCopyLink}
+                                className="w-10 h-10 bg-white shadow-md rounded-full hover:bg-gray-200 transition duration-300 flex items-center justify-center"
                             >
                                 <svg
-                                
                                     xmlns="http://www.w3.org/2000/svg"
-                                    className='ml-3'
-                                    width="40"
-                                    height="40"
-                                    viewBox="0 0 40 40"
+                                    width="20"
+                                    height="20"
+                                    viewBox="0 0 24 24"
                                     fill="none"
+                                    stroke="currentColor"
+                                    strokeWidth="2"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
                                 >
-                                    <path
-                                        d="M33.75 25H31.25C30.9185 25 30.6005 25.1317 30.3661 25.3661C30.1317 25.6005 30 25.9185 30 26.25V35H5V10H16.25C16.5815 10 16.8995 9.8683 17.1339 9.63388C17.3683 9.39946 17.5 9.08152 17.5 8.75V6.25C17.5 5.91848 17.3683 5.60054 17.1339 5.36612C16.8995 5.1317 16.5815 5 16.25 5H3.75C2.75544 5 1.80161 5.39509 1.09835 6.09835C0.395088 6.80161 0 7.75544 0 8.75L0 36.25C0 37.2446 0.395088 38.1984 1.09835 38.9016C1.80161 39.6049 2.75544 40 3.75 40H31.25C32.2446 40 33.1984 39.6049 33.9016 38.9016C34.6049 38.1984 35 37.2446 35 36.25V26.25C35 25.9185 34.8683 25.6005 34.6339 25.3661C34.3995 25.1317 34.0815 25 33.75 25ZM38.125 0H28.125C26.4555 0 25.6211 2.02422 26.7969 3.20312L29.5883 5.99453L10.5469 25.0289C10.3721 25.2031 10.2334 25.4101 10.1387 25.638C10.0441 25.8659 9.9954 26.1103 9.9954 26.357C9.9954 26.6038 10.0441 26.8482 10.1387 27.0761C10.2334 27.304 10.3721 27.511 10.5469 27.6852L12.318 29.4531C12.4922 29.6279 12.6991 29.7666 12.9271 29.8613C13.155 29.9559 13.3993 30.0046 13.6461 30.0046C13.8929 30.0046 14.1372 29.9559 14.3651 29.8613C14.593 29.7666 14.8 29.6279 14.9742 29.4531L34.0062 10.4156L36.7969 13.2031C37.9688 14.375 40 13.5547 40 11.875V1.875C40 1.37772 39.8025 0.900805 39.4508 0.549175C39.0992 0.197544 38.6223 0 38.125 0Z"
-                                        fill="black"
-                                    />
+                                    <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                                    <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
                                 </svg>
-                            </a>
-                            <KakaoShareButton />
-                            <a
-                                href="#"
-                                className="flex justify-center items-center rounded-lg bg-white w-16 h-16 cursor-pointer"
-                                onClick={(e) => {
-                                    e.preventDefault();
-                                    handleInstagramShare();
-                                }}
+                            </button>
+                            <div className="w-10 h-10 bg-white shadow-md rounded-full hover:bg-gray-200 transition duration-300 flex items-center justify-center">
+                                <KakaoShareButton />
+                            </div>
+                            <button
+                                onClick={handleInstagramShare}
+                                className="w-10 h-10 bg-white shadow-md rounded-full hover:bg-gray-200 transition duration-300 flex items-center justify-center"
                             >
-                                <img src="/images/instagram.png" alt="Instagram" className="max-w-full max-h-full" />
-                            </a>
+                                <img src="/images/instagram.png" alt="Instagram" className="w-6 h-6" />
+                            </button>
                         </div>
                         <button
-                            className="w-60 h-[50px] bg-[#9b8f8f] text-white text-xl font-bold rounded-[10px]"
                             onClick={handleProfileEdit}
+                            className="mr-5 px-6 py-2 h-12 w-44 bg-[#9b8f8f] text-white text-lg font-bold rounded-[10px] hover:bg-opacity-90 transition duration-300"
                         >
                             프로필 수정
                         </button>
                     </div>
                 </div>
-                <div className="w-full max-w-[1150px]">
+
+                {/* 메인 컨텐츠 */}
+                <div className="w-[100%] max-w-[1150px]">
                     <div className="bg-white rounded-[50px] shadow-md mb-5 p-8 md:p-16 relative">
-                        <h2 className="text-3xl md:text-4xl font-extrabold mb-4">내가 추구하는 업무 스타일</h2>
+                        <h2 className="text-3xl md:text-4l font-extrabold mb-4">내가 추구하는 업무 스타일</h2>
                         <hr className="border-t border-gray-300 my-3" />
                         <div className="flex flex-wrap gap-3 mt-3 mb-8">
                             {profileData?.work_styles.map((style) => (
@@ -253,7 +283,7 @@ function MyProfile() {
                             ))}
                         </div>
 
-                        <h2 className="text-3xl md:text-4xl font-extrabold mb-4">타인이 바라보는 업무 스타일</h2>
+                        <h2 className="text-3xl md:text-4l font-extrabold mb-4 mt-30">타인이 바라보는 업무 스타일</h2>
                         <hr className="border-t border-gray-300 my-3" />
                         {profileData?.feedback_count >= 3 ? (
                             <>
@@ -288,7 +318,7 @@ function MyProfile() {
                                 </p>
                             </div>
                         )}
-                        <h2 className="text-3xl md:text-4xl font-extrabold mb-4">내가 관심 있는 업종/직군 분야는?</h2>
+                        <h2 className="text-3xl md:text-4l font-extrabold mb-4">내가 관심 있는 업종/직군 분야는?</h2>
                         <hr className="border-t border-gray-300 my-3" />
                         <div className="flex flex-wrap gap-3 mt-3 mb-20">
                             {profileData?.interests &&
@@ -310,9 +340,9 @@ function MyProfile() {
                     </div>
 
                     <div className="bg-white rounded-[50px] shadow-md mb-5 p-8 md:p-16 relative">
-                        <h2 className="text-3xl md:text-4xl font-extrabold mb-4">타인이 평가하는 나</h2>
+                        <h2 className="text-3xl md:text-4l font-extrabold mb-4">타인이 평가하는 나</h2>
                         <div className="absolute top-8 right-12 bg-[#e1e1e1] px-4 py-2 rounded-[10px] text-xl font-bold">
-                            답변수: {profileData?.feedback_count}
+                            {profileData?.feedback_count}개의 피드백이 쌓였어요
                         </div>
                         <hr className="border-t border-gray-300 my-3" />
                         {profileData?.feedback_count >= 3 ? (
@@ -348,17 +378,23 @@ function MyProfile() {
                                     <div className="w-full md:w-[70%] text-xl mt-5">
                                         <p>{DISCData.description}</p>
                                         <div className="font-semibold mt-8 mb-3">
-                                            <strong>강점 및 보완할 점은?</strong>
+                                            <strong className="mt-8 mb-2 font-bold text-[#4053FF]">
+                                                강점 및 보완할 점은?
+                                            </strong>
                                         </div>
-                                        <strong>• 강점:</strong> {DISCData.strength.join(', ')}
+                                        <strong>이 유형의 강점은:</strong> {DISCData.strength.join(', ')}
                                         <br />
-                                        <strong>• 보완할 점:</strong> {DISCData.weakness.join(', ')}
+                                        <strong>상대적으로 이 유형은:</strong> {DISCData.weakness.join(', ')}
                                         <div className="font-semibold mt-8 mb-3">
-                                            <strong>{DISCData.disc_character}와 맞는 협업 유형은?</strong>
+                                            <strong className="mt-8 mb-2 font-bold text-[#4053FF]">
+                                                {DISCData.disc_character}와 맞는 협업 유형은?
+                                            </strong>
                                         </div>
                                         {DISCData.suitable_type.map((type, index) => (
                                             <div key={index}>
-                                                <strong>• {type.name}:</strong>
+                                                <strong className="mt-8 mb-2 font-semibold text-[#4053FF]">
+                                                    {type.name}
+                                                </strong>
                                                 <p>{type.description}</p>
                                             </div>
                                         ))}
@@ -383,15 +419,23 @@ function MyProfile() {
                                         <p className="text-2xl font-semibold text-center mb-12">
                                             팀원들은 나의 협업 성향에 대해 다음과 같이 느꼈어요!
                                         </p>
-                                        <div className="flex flex-col md:flex-row justify-around mt-5">
-                                            <div className="flex-1 bg-[rgba(204,209,255,0.2)] rounded-[20px] p-12 m-5 md:m-12 text-xl">
-                                                <p>{profileData.gpt_summarized_personality}</p>
-                                            </div>
-                                            <div className="flex-1 bg-[rgba(204,209,255,0.2)] rounded-[20px] p-12 m-5 md:m-12 text-xl">
-                                                <p>{profileData.gpt_summarized_personality}</p>
+                                        <div className="bg-white rounded-[20px] p-5 mt-5">
+                                            <p className="text-2xl font-semibold text-center mb-12">
+                                                팀원들은 나의 협업 성향에 대해 다음과 같이 느꼈어요!
+                                            </p>
+                                            <div className="flex flex-col justify-around mt-5">
+                                                <h3 className="text-3xl font-bold text-[#4053ff]">Summary</h3>
+                                                <div className="flex-1 bg-[rgba(204,209,255,0.2)] rounded-[20px] p-12 m-5 md:m-12 text-xl">
+                                                    {formatListWithIndex(gptSummary.summarized)}
+                                                </div>
+                                                <h3 className="text-3xl font-bold text-[#4053ff]">Advice</h3>
+                                                <div className="flex-1 bg-[rgba(204,209,255,0.2)] rounded-[20px] p-12 m-5 md:m-12 text-xl">
+                                                    {formatListWithIndex(gptSummary.advice)}
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
+                                    
                                 </div>
                             </>
                         ) : (
