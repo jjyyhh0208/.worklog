@@ -12,6 +12,25 @@
 
             gtag('config', 'G-E8G1WQ5EHG');
         </script>
+        <script type="text/javascript">
+            (function () {
+                var t = document.createElement('script');
+                t.type = 'text/javascript';
+                t.async = !0;
+                t.src = 'https://api.catchtalk.co.kr/survey.js';
+                var e = document.getElementsByTagName('script')[0];
+                e.parentNode.insertBefore(t, e);
+
+                t.onload = function () {
+                    setTimeout(function () {
+                        window.CatchTalk.init({
+                            environmentId: '669e0cbd61be231735a4a668',
+                            apiHost: 'https://api.catchtalk.co.kr',
+                        });
+                    }, 500);
+                };
+            })();
+        </script>
         <meta charset="utf-8" />
         <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
         <title>.WORKLOG</title>
