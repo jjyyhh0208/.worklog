@@ -36,6 +36,8 @@ import os
 import requests
 from rest_framework.authtoken.models import Token
 
+site_url = os.getenv('SITE_HTTP')
+
 # s3 접근 인증 받는 함수
 def get_signed_url_view(request, image_path):
     url = get_signed_url(image_path)
@@ -152,7 +154,7 @@ class CustomLoginView(LoginView):
 class KakaoView(View):
     def get(self, request):
         kakao_api = "http://kauth.kakao.com/oauth/authorize?response_type=code"
-        redirect_url = "http://127.0.0.1:8000/profiles/auth/kakao/callback"
+        redirect_url = f"{site_url}profiles/auth/kakao/callback"
         client_id = os.getenv('SOCIAL_AUTH_KAKAO_CLIENT_ID')
 
         if not client_id:
@@ -167,7 +169,7 @@ class KakaoCallBackView(View):
         data = {
             "grant_type": "authorization_code",
             "client_id": os.getenv('SOCIAL_AUTH_KAKAO_CLIENT_ID'),
-            "redirect_uri": "http://127.0.0.1:8000/profiles/auth/kakao/callback",
+            "redirect_uri": f"{site_url}profiles/auth/kakao/callback",
             "code": code
         }
 
