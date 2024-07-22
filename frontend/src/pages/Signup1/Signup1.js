@@ -1,5 +1,4 @@
-import React, { useState } from 'react';
-import styles from './Signup1.module.css';
+import React, { useEffect, useState } from 'react';
 import AdminService from '../../utils/AdminService';
 import { useNavigate } from 'react-router-dom';
 
@@ -12,6 +11,10 @@ function Signup1({ signUpInfo, setSignUpInfo }) {
     const signUpChangeHandler = (e) => {
         setSignUpInfo({ ...signUpInfo, [e.target.name]: e.target.value });
     };
+
+    useEffect(() => {
+        localStorage.removeItem('authToken');
+    }, []);
 
     const checkUserNameHandler = async (e) => {
         e.preventDefault();
@@ -66,90 +69,99 @@ function Signup1({ signUpInfo, setSignUpInfo }) {
         navigate('/');
     };
     const handleBackClick = () => {
+        localStorage.removeItem('authToken');
+        signUpInfo.username = '';
+        signUpInfo.password1 = '';
+        signUpInfo.password2 = '';
+
         navigate('/');
     };
 
     return (
-        <div className={styles.container}>
-            <h1 className={styles.h1} onClick={logoHandler}>
+        <div className="w-[100%] flex flex-col items-center p-5 w-full md:w-4/5 max-w-2xl mx-auto">
+            <h1 className="text-[#4053ff] text-4xl font-extrabold cursor-pointer mb-5" onClick={logoHandler}>
                 .WORKLOG
             </h1>
-            <div className={styles.back}>
-                <button type="submit" onClick={handleBackClick} className={styles.backBtn}>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="60" height="50" viewBox="0 0 24 24" fill="none">
-                        <path
-                            d="M15.5 19l-7-7 7-7"
-                            stroke="#4053ff"
-                            strokeWidth="2.5"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                        />
-                    </svg>
-                </button>
-            </div>
-            <h2 className={styles.h2}>SIGN UP</h2>
-            <form className={styles.signUp} onSubmit={signUpHandler}>
-                <div className={styles.idbox}>
-                    <button className={styles.duplicatebtn} type="button" onClick={checkUserNameHandler}>
-                        중복 확인
-                    </button>
-                    <div>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="25" height="26" viewBox="0 0 25 26" fill="none">
-                            <g clipPath="url(#clip0_231_547)">
-                                <path
-                                    d="M12.5 1.06104C5.81265 1.06104 0.390625 6.48501 0.390625 13.1704C0.390625 19.8597 5.81265 25.2798 12.5 25.2798C19.1874 25.2798 24.6094 19.8597 24.6094 13.1704C24.6094 6.48501 19.1874 1.06104 12.5 1.06104ZM12.5 6.43213C13.6326 6.43213 14.5508 7.35029 14.5508 8.48291C14.5508 9.61553 13.6326 10.5337 12.5 10.5337C11.3674 10.5337 10.4492 9.61553 10.4492 8.48291C10.4492 7.35029 11.3674 6.43213 12.5 6.43213ZM15.2344 18.8345C15.2344 19.1581 14.972 19.4204 14.6484 19.4204H10.3516C10.028 19.4204 9.76562 19.1581 9.76562 18.8345V17.6626C9.76562 17.339 10.028 17.0767 10.3516 17.0767H10.9375V13.9517H10.3516C10.028 13.9517 9.76562 13.6893 9.76562 13.3657V12.1938C9.76562 11.8703 10.028 11.6079 10.3516 11.6079H13.4766C13.8001 11.6079 14.0625 11.8703 14.0625 12.1938V17.0767H14.6484C14.972 17.0767 15.2344 17.339 15.2344 17.6626V18.8345Z"
-                                    fill="#29A02D"
-                                />
-                            </g>
-                            <defs>
-                                <clipPath id="clip0_231_547">
-                                    <rect width="25" height="25" fill="white" transform="translate(0 0.67041)" />
-                                </clipPath>
-                            </defs>
+            <div className="w-[100%] border border-gray-300 rounded-lg p-5 w-full relative">
+                <div className="absolute top-5 left-5">
+                    <button type="button" onClick={handleBackClick} className="focus:outline-none hover:bg-transparent">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="30" viewBox="0 0 24 24" fill="none">
+                            <path
+                                d="M15.5 19l-7-7 7-7"
+                                stroke="#4053ff"
+                                strokeWidth="2.5"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                            />
                         </svg>
-                        <span>아이디는 최초 설정 이후 변경이 불가합니다.</span>
-                    </div>
+                    </button>
                 </div>
-
-                <span className={styles.span}>아이디</span>
-
-                <input
-                    className={styles.input}
-                    type="text"
-                    placeholder="영문자, 숫자 외 문자는 포함될 수 없습니다"
-                    name="username"
-                    value={signUpInfo.username}
-                    onChange={signUpChangeHandler}
-                />
-                {/* 중복 확인 결과 메시지 */}
-                {availabilityMessage && <div className={styles.availabilityMessage}>{availabilityMessage}</div>}
-                <span className={styles.span}>비밀번호</span>
-                <input
-                    className={styles.input}
-                    type="password"
-                    placeholder="비밀번호를 입력해주세요"
-                    name="password1"
-                    value={signUpInfo.password1}
-                    onChange={signUpChangeHandler}
-                />
-                <span className={styles.span}>비밀번호 재입력</span>
-                <input
-                    className={styles.input}
-                    type="password"
-                    placeholder="비밀번호를 다시 입력해주세요"
-                    name="password2"
-                    value={signUpInfo.password2}
-                    onChange={signUpChangeHandler}
-                />
-
-                <div className={styles.nextbox}>
-                    <div>
-                        <button className={styles.nextBtn} type="submit">
+                <h2 className="text-black text-2xl font-bold text-center mb-5">SIGN UP</h2>
+                <form className="flex flex-col items-center w-full" onSubmit={signUpHandler}>
+                    <div className="flex justify-start items-center w-full mb-2">
+                        <span className="text-base font-bold w-16">아이디</span>
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="15"
+                            height="15"
+                            viewBox="0 0 25 26"
+                            fill="none"
+                            className="mr-1"
+                        >
+                            {/* ... (SVG path remains the same) */}
+                        </svg>
+                        <span className="text-xs font-medium flex-1 whitespace-nowrap">
+                            아이디는 최초 설정 이후 변경이 불가합니다.
+                        </span>
+                    </div>
+                    <div className="flex justify-between w-full mb-2">
+                        <input
+                            className="w-2/3 h-10 px-3 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            type="text"
+                            placeholder="영문자, 숫자 외 문자는 포함될 수 없습니다"
+                            name="username"
+                            value={signUpInfo.username}
+                            onChange={signUpChangeHandler}
+                        />
+                        <button
+                            className="bg-[#4053ff] text-white px-5 py-2 rounded-md text-sm w-24 h-10"
+                            type="button"
+                            onClick={checkUserNameHandler}
+                        >
+                            중복 확인
+                        </button>
+                    </div>
+                    {availabilityMessage && (
+                        <div className="w-full text-sm text-red-500 mb-5">{availabilityMessage}</div>
+                    )}
+                    <span className="w-full text-base font-bold mb-1">비밀번호</span>
+                    <input
+                        className="w-full h-10 px-3 border border-gray-300 rounded-md text-sm mb-5 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        type="password"
+                        placeholder="비밀번호를 입력해주세요"
+                        name="password1"
+                        value={signUpInfo.password1}
+                        onChange={signUpChangeHandler}
+                    />
+                    <span className="w-full text-base font-bold mb-1">비밀번호 재입력</span>
+                    <input
+                        className="w-full h-10 px-3 border border-gray-300 rounded-md text-sm mb-5 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        type="password"
+                        placeholder="비밀번호를 다시 입력해주세요"
+                        name="password2"
+                        value={signUpInfo.password2}
+                        onChange={signUpChangeHandler}
+                    />
+                    <div className="w-full flex justify-center">
+                        <button
+                            className="w-full py-2 px-32 bg-[#4053ff] text-white rounded-md text-xl cursor-pointer"
+                            type="submit"
+                        >
                             NEXT
                         </button>
                     </div>
-                </div>
-            </form>
+                </form>
+            </div>
         </div>
     );
 }

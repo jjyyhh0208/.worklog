@@ -95,13 +95,16 @@ INSTALLED_APPS = [
     "allauth",
     "allauth.account",
     "allauth.socialaccount",
+    "allauth.socialaccount.providers.kakao",
+    "allauth.socialaccount.providers.google",
     "dj_rest_auth",
     "dj_rest_auth.registration",
     "rest_framework.authtoken",
-    
+        
     "rest_framework",
     "corsheaders",
     "profiles",
+    
     # s3 저장
     'storages',
 ]
@@ -164,10 +167,14 @@ AUTHENTICATION_BACKENDS = (
 
 SITE_ID = 1
 
+# account
+
 ACCOUNT_EMAIL_VERIFICATION = 'none'
 ACCOUNT_AUTHENTICATION_METHOD = 'username'
 ACCOUNT_EMAIL_REQUIRED = False
 ACCOUNT_USERNAME_REQUIRED = True
+ACCOUNT_EMAIL_VERIFICATION = 'none'
+
 
 
 REST_FRAMEWORK = {

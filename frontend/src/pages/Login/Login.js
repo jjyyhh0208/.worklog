@@ -1,14 +1,10 @@
-import React from 'react';
-import styles from './Login.module.css';
+import React, { useState, useEffect } from 'react';
 import AdminService from '../../utils/AdminService';
-import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 function Login() {
     const [loginInfo, setLoginInfo] = useState({ username: '', password: '' });
-
     const [error, setError] = useState('');
-
     const navigate = useNavigate();
 
     const loginChangeHandler = (e) => {
@@ -40,38 +36,42 @@ function Login() {
     };
 
     return (
-        <div className={styles.container}>
-            <h1 className={styles.h1} onClick={logoHandler}>
+        <div className="flex flex-col items-center p-5 w-full md:w-4/5 max-w-2xl mx-auto">
+            <h1 className="text-[#4053ff] text-4xl font-extrabold cursor-pointer mb-5" onClick={logoHandler}>
                 .WORKLOG
             </h1>
-            <h2 className={styles.h2}>LOGIN</h2>
-
-            {/* 에러 메시지 표시 */}
-            {error && <div className={styles.errorMessage}>{error}</div>}
-
-            <form className={styles.login} onSubmit={loginHandler}>
-                <span className={styles.span}>아이디</span>
-                <input
-                    className={styles.input}
-                    type="text"
-                    placeholder="아이디를 입력하세요"
-                    name="username"
-                    value={loginInfo.username}
-                    onChange={loginChangeHandler}
-                />
-                <span className={styles.span}>비밀번호</span>
-                <input
-                    className={styles.input}
-                    type="password"
-                    placeholder="비밀번호를 입력하세요"
-                    name="password"
-                    value={loginInfo.password}
-                    onChange={loginChangeHandler}
-                />
-                <button className={styles.button} type="submit">
-                    로그인
-                </button>
-            </form>
+            <div className="w-full border border-gray-300 rounded-lg p-5 relative">
+                <h2 className="text-black text-2xl font-bold text-center mb-5">LOGIN</h2>
+                {error && <div className="w-full text-sm text-red-500 mb-5">{error}</div>}
+                <form className="flex flex-col items-center w-full" onSubmit={loginHandler}>
+                    <span className="w-full text-base font-bold mb-1">아이디</span>
+                    <input
+                        className="w-full h-10 px-3 border border-gray-300 rounded-md text-sm mb-5 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        type="text"
+                        placeholder="아이디를 입력해주세요"
+                        name="username"
+                        value={loginInfo.username}
+                        onChange={loginChangeHandler}
+                    />
+                    <span className="w-full text-base font-bold mb-1">비밀번호</span>
+                    <input
+                        className="w-full h-10 px-3 border border-gray-300 rounded-md text-sm mb-5 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        type="password"
+                        placeholder="비밀번호를 입력해주세요"
+                        name="password"
+                        value={loginInfo.password}
+                        onChange={loginChangeHandler}
+                    />
+                    <div className="w-full flex justify-center mt-4">
+                        <button
+                            className="w-full py-2 px-4 bg-[#4053ff] text-white rounded-md text-xl font-bold cursor-pointer hover:bg-[#3442cc] transition-colors duration-200"
+                            type="submit"
+                        >
+                            로그인
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
     );
 }
