@@ -1,6 +1,4 @@
-// Modal.js
 import React, { useEffect } from 'react';
-import styles from './Modal.module.css';
 
 const Modal = ({ show, handleClose, children }) => {
     useEffect(() => {
@@ -12,8 +10,10 @@ const Modal = ({ show, handleClose, children }) => {
 
     return (
         show && (
-            <div className={styles.modalBackdrop}>
-                <div className={styles.modalContent}>{children}</div>
+            <div className="fixed inset-0 flex items-center justify-center z-50">
+                <div className="bg-[#4053ff] text-white p-8 md:p-12 rounded-lg text-center font-semibold text-lg md:text-xl">
+                    {children}
+                </div>
             </div>
         )
     );

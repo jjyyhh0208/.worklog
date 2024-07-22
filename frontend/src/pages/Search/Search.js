@@ -3,8 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import styles from './Search.module.css';
 import ProfileService from '../../utils/ProfileService';
 
-
-
 function Search() {
     const [searchTerm, setSearchTerm] = useState('');
     const [searchResults, setSearchResults] = useState([]);
@@ -13,9 +11,6 @@ function Search() {
     const [currentUser, setCurrentUser] = useState(null);
     const navigate = useNavigate();
 
-    
-    
-    
     useEffect(() => {
         fetchCurrentUser();
         window.scrollTo(0, 0);
@@ -64,6 +59,13 @@ function Search() {
         navigate(`/friend-profile/${username}`);
     };
 
+        const handleKeyPress = (e) => {
+            if (e.key === 'Enter') {
+                handleSearch();
+            }
+        };
+
+
     return (
         <div className={styles.searchContainer}>
             <div className={styles.searchBar}>
@@ -71,6 +73,7 @@ function Search() {
                     type="text"
                     value={searchTerm}
                     onChange={handleInputChange}
+                    onKeyPress={handleKeyPress}
                     placeholder="알고 싶은 동료의 ID 또는 닉네임을 입력하세요"
                 />
                 <button onClick={handleSearch}>
