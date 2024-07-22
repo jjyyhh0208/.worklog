@@ -35,11 +35,13 @@ function FriendProfile() {
         const fetchData = async () => {
             try {
                 const profileData = await ProfileService.fetchFriendProfile(username);
+                setProfileData(profileData);
+                setIsFollowing(profileData.is_following);
+                console.log('Initial following state:', profileData.is_following);
+
                 profileData.old = 2025 - profileData.age;
                 profileData.gender =
                     profileData.gender === 'F' ? 'Female' : profileData.gender === 'M' ? 'Male' : 'None';
-                setProfileData(profileData);
-                setIsFollowing(profileData.is_following); // 상태 설정
 
                 const discData = typeData.find((item) => item.disc_character === profileData.disc_character);
                 if (discData) {
@@ -78,6 +80,7 @@ function FriendProfile() {
                 updatedFollowingStatus = true;
             }
             setIsFollowing(updatedFollowingStatus);
+            console.log('Updated following state:', updatedFollowingStatus);
         } catch (error) {
             console.error('팔로우/팔로우 취소 중 오류가 발생했습니다.', error);
         }
@@ -111,7 +114,7 @@ function FriendProfile() {
     };
 
     if (isLoading) {
-        return <div className="bg-[#f6f6f6] p-5 flex flex-col items-center"></div>;
+        return <div className="bg-[#f6f6f6] p-5 flex flex-col items-center">Loading...</div>;
     }
 
     return (

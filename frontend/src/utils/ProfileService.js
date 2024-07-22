@@ -127,12 +127,22 @@ const ProfileService = {
         return API.get(`/profiles/user/view/${username}`)
             .then((response) => {
                 if (response.status === 200) {
+                    console.log('Fetched profile data:', response.data);
                     return response.data;
                 }
                 throw new Error('프로필 정보를 불러오는 동안 오류가 발생했습니다.');
             })
             .catch((error) => {
                 console.error('프로필 정보를 가져오는 동안 오류가 발생했습니다.', error);
+                throw error;
+            });
+    },
+
+    getFriendsList: () => {
+        return API.get(`/profiles/user/friends/`)
+            .then((response) => response.data)
+            .catch((error) => {
+                console.error('친구 목록을 가져오는 동안 오류가 발생했습니다.', error);
                 throw error;
             });
     },
@@ -176,6 +186,7 @@ const ProfileService = {
         }
     },
     followUser: (friend_name) => {
+        // 서버에 팔로우 요청을 보냄
         return API.post(`/profiles/user/follow/`, { friend_name })
             .then((response) => response.data)
             .catch((error) => {
@@ -185,6 +196,7 @@ const ProfileService = {
     },
 
     unfollowUser: (friend_name) => {
+        // 서버에 언팔로우 요청을 보냄
         return API.post(`/profiles/user/unfollow/`, { friend_name })
             .then((response) => response.data)
             .catch((error) => {

@@ -214,6 +214,18 @@ class UserProfileView(generics.RetrieveAPIView):
     permission_classes = []
     lookup_field = 'username'
 
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
+        data = serializer.data
+        
+        if request.user.is_authenticated:
+            data['is_following'] = request.user.friends.filter(username=instance.username).exists()
+        else:
+            data['is_following'] = False
+        
+        return Response(data)
+
 # 현재 내 프로필을 불러오는 View
 class UserCurrentProfileView(generics.RetrieveAPIView):
     queryset = User.objects.all()
@@ -498,12 +510,14 @@ class FollowFriendView(generics.GenericAPIView):
     def post(self, request, *args, **kwargs):
         user = request.user
         friend_name = request.data.get('friend_name')
-
+        
+        # 유저 팔로우 요청에 필요한 검증
         if not friend_name:
             return Response({"detail": "Friend name is required."}, status=status.HTTP_400_BAD_REQUEST)
         
         friend = get_object_or_404(User, username=friend_name)
-
+        
+        # 자기 자신을 팔로우하는 것을 방지
         if friend == user:
             return Response({"detail": "You cannot follow yourself."}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -517,15 +531,18 @@ class UnfollowFriendView(generics.GenericAPIView):
     def post(self, request, *args, **kwargs):
         user = request.user
         friend_name = request.data.get('friend_name')
-
+        
+        # 유저 언팔로우 요청에 필요한 검증
         if not friend_name:
             return Response({"detail": "Friend name is required."}, status=status.HTTP_400_BAD_REQUEST)
         
         friend = get_object_or_404(User, username=friend_name)
-
+        
+        # 자기 자신을 언팔로우하는 것을 방지
         if friend == user:
             return Response({"detail": "You cannot unfollow yourself."}, status=status.HTTP_400_BAD_REQUEST)
 
         user.friends.remove(friend)
         return Response({"detail": f"You have unfollowed {friend.name}"}, status=status.HTTP_200_OK)
+
     
