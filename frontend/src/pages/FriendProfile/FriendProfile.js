@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import styles from './FriendProfile.module.css';
 import ProfileService from '../../utils/ProfileService';
 import keywordIcons from '../../components/KeywordIcons/KeywordIcons';
@@ -7,6 +7,9 @@ import typeData from '../../data/typeData.json';
 
 function FriendProfile() {
     const { username } = useParams();
+    const location = useLocation();
+    const queryParams = new URLSearchParams(location.search);
+    const searchTerm = queryParams.get('q');
     const [isLoading, setIsLoading] = useState(true);
     const [profileData, setProfileData] = useState(null);
     const [isFollowing, setIsFollowing] = useState(false);
@@ -117,8 +120,29 @@ function FriendProfile() {
         return <div className="bg-[#f6f6f6] w-[100%] h-[1000px] "></div>;
     }
 
+    const handleBackClick = () => {
+        if (searchTerm) {
+            // 검색을 하는 경우
+            navigate(`/search?q=${searchTerm}`);
+        } else {
+            // 검색이 아닌 경우 친구목록으로 전송
+            navigate(`/list/${username}`);
+        }
+    };
+
     return (
         <div className="w-[100%] bg-[#f6f6f6] min-h-screen py-8 px-4 sm:px-6 lg:px-8 mt-16">
+            <button type="button" onClick={handleBackClick} className="focus:outline-none hover:bg-transparent">
+                <svg xmlns="http://www.w3.org/2000/svg" width="40" height="30" viewBox="0 0 24 24" fill="none">
+                    <path
+                        d="M15.5 19l-7-7 7-7"
+                        stroke="#4053ff"
+                        strokeWidth="2.5"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                    />
+                </svg>
+            </button>
             <div className="max-w-5xl mx-auto">
                 {/* 프로필 헤더 */}
                 <div className="bg-white flex justify-between rounded-[50px] shadow-md p-6 sm:p-8 mb-8 w-[70%]">

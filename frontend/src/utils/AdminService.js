@@ -136,7 +136,9 @@ const AdminService = {
 
     sendKakaoTokenToDjango: async (kakaoData) => {
         try {
-            const response = await axios.post('profiles/api/kakao-login/', kakaoData);
+            const response = await axios.post('/profiles/auth/kakao/callback', {
+                access_token: kakaoData.access_token,
+            });
             return response.data;
         } catch (error) {
             console.error('Error sending Kakao token to Django:', error);

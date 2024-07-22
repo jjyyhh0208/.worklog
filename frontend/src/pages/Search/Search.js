@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import ProfileService from '../../utils/ProfileService';
 
 function Search() {
@@ -8,9 +8,17 @@ function Search() {
     const [notFound, setNotFound] = useState(false);
     const [isOwnProfile, setIsOwnProfile] = useState(false);
     const [currentUser, setCurrentUser] = useState(null);
+    const [resultsWithImages, setResultsWithImages] = useState([]);
     const navigate = useNavigate();
+    const location = useLocation();
 
     useEffect(() => {
+        const params = new URLSearchParams(location.search);
+        const query = params.get('q');
+        if (query) {
+            setSearchTerm(query);
+            handleSearch(query);
+        }
         fetchCurrentUser();
         window.scrollTo(0, 0);
     }, []);
@@ -25,43 +33,70 @@ function Search() {
     };
 
     const handleInputChange = (e) => {
-        setSearchTerm(e.target.value);
+        const value = e.target.value;
+        setSearchTerm(value);
         setNotFound(false);
         setIsOwnProfile(false);
+        navigate(`?q=${value}`);
     };
 
-    const handleSearch = async () => {
+    const handleSearch = async (query) => {
         try {
-            if (currentUser && searchTerm === currentUser.username) {
+            if (currentUser && query === currentUser.username) {
                 setIsOwnProfile(true);
                 setSearchResults([]);
                 setNotFound(false);
                 return;
             }
 
-            const results = await ProfileService.fetchSearchResults(searchTerm);
+            const results = await ProfileService.fetchSearchResults(query);
+            console.log(results);
+
+            const resultsWithImages = await Promise.all(
+                results.map(async (result) => {
+                    if (result.profile_image) {
+                        try {
+                            const imageUrl = await ProfileService.getSignedImageUrl(result.profile_image.image);
+                            return { ...result, profileImage: imageUrl };
+                        } catch (error) {
+                            console.error('Error fetching signed URL:', error);
+                            return result;
+                        }
+                    } else {
+                        return result;
+                    }
+                })
+            );
+
             if (results.length > 0) {
-                setSearchResults(results);
+                setResultsWithImages(resultsWithImages);
                 setNotFound(false);
             } else {
-                setSearchResults([]);
+                setResultsWithImages([]);
                 setNotFound(true);
             }
         } catch (error) {
             console.error('Search error:', error);
-            setSearchResults([]);
+            setResultsWithImages([]);
             setNotFound(true);
         }
     };
+
+    useEffect(() => {
+        const delayDebounceFn = setTimeout(() => {
+            handleSearch(searchTerm);
+        }, 300);
+
+        return () => clearTimeout(delayDebounceFn);
+    }, [searchTerm]);
 
     const handleProfileClick = (username) => {
         if (currentUser && username === currentUser.username) {
             navigate('/my-profile');
         } else {
-            navigate(`/friend-profile/${username}`);
+            navigate(`/friend-profile/${username}?q=${searchTerm}`); // search term도 같이 전송 (뒤로 가기를 구현하기 위함)
         }
     };
-
     const handleFollowClick = async (username, isFollowing) => {
         try {
             if (isFollowing) {
@@ -78,12 +113,12 @@ function Search() {
 
     const handleKeyPress = (e) => {
         if (e.key === 'Enter') {
-            handleSearch();
+            handleSearch(searchTerm);
         }
     };
 
     return (
-        <div className="w-[100%] flex flex-col items-center bg-[#F6F6F6] w-full min-h-screen pt-8  mt-16">
+        <div className="flex flex-col items-center bg-[#F6F6F6] w-full min-h-screen pt-8  mt-16">
             <div className="flex items-center gap-2 mb-8">
                 <input
                     type="text"
@@ -111,9 +146,9 @@ function Search() {
                     <h3 className="text-xl font-medium">자기 자신과 더 친해지는 건 언제나 환영이에요.</h3>
                 </div>
             )}
-            {searchResults.length > 0 && !isOwnProfile && (
+            {resultsWithImages.length > 0 && !isOwnProfile && (
                 <div className="flex flex-wrap justify-center gap-8 mb-8 max-w-4xl">
-                    {searchResults.map((result) => (
+                    {resultsWithImages.map((result) => (
                         <div
                             key={result.username}
                             className="bg-white border border-gray-300 rounded-3xl p-5 flex flex-col items-center cursor-pointer duration-300 transform hover:scale-105 shadow-md w-60 h-72 relative"
@@ -159,7 +194,8 @@ function Search() {
                             <img
                                 src={result.profileImage || '/images/basicProfile.png'}
                                 alt="Profile"
-                                className="rounded-full h-28 w-28 mb-2 mt-5 border border-black"
+                                className="rounded-full h-28 w-28 mb-2 mt-5 border border-grey-300"
+                                onError={(e) => (e.currentTarget.src = '/images/basicProfile.png')}
                             />
                             <h2 className="text-lg font-bold mb-1">{result.name}</h2>
                             <p className="text-sm text-gray-600 mb-3">ID: {result.username}</p>
@@ -170,15 +206,6 @@ function Search() {
                             </div>
                         </div>
                     ))}
-                </div>
-            )}
-            {notFound && !isOwnProfile && (
-                <div className="text-center mt-5">
-                    <h3 className="text-2xl font-medium mb-2">'{searchTerm}'를 찾을 수 없습니다.</h3>
-                    <p className="text-gray-500 text-lg">입력하신 아이디로 등록한 회원이 없습니다.</p>
-                    <p className="text-gray-500 text-lg">
-                        링크를 통해 친구 프로필을 찾거나, 다시 한 번 아이디를 확인해 주세요.
-                    </p>
                 </div>
             )}
         </div>

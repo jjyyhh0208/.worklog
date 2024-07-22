@@ -7,6 +7,7 @@ function Login() {
     const [loginInfo, setLoginInfo] = useState({ username: '', password: '' });
     const [error, setError] = useState('');
     const navigate = useNavigate();
+    const [availabilityMessage, setAvailabilityMessage] = useState('');
 
     const loginChangeHandler = (e) => {
         setLoginInfo({ ...loginInfo, [e.target.name]: e.target.value });
@@ -45,7 +46,12 @@ function Login() {
                 >
                     .WORKLOG
                 </h1>
-                {error && <div className="w-full text-sm text-red-500 mb-5">{error}</div>}
+                {error && (
+                    <div className="w-full text-sm text-red-500 mb-5">
+                        <span>&#x2716; {availabilityMessage}</span>
+                        {error}
+                    </div>
+                )}
                 <form className="flex flex-col items-center w-full" onSubmit={loginHandler}>
                     <span className="w-full text-base font-bold mb-1">아이디</span>
                     <input
