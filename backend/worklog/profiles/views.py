@@ -33,7 +33,7 @@ from .serializers import (
     UserProfileSerializer, UserUniqueIdSerializer,
     ShortQuestionSerializer, LongQuestionSerializer, 
     QuestionAnswerSerializer, ScoreSerializer, FeedbackSerializer,
-    FriendSerializer, UserSearchResultSerializer, ProfileImageSerializer
+    FriendSerializer, UserSearchResultSerializer,
 )
 from django.http import JsonResponse
 from utils.s3_utils import get_signed_url
