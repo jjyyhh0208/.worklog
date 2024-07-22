@@ -93,50 +93,48 @@ function FriendProfile() {
     }
 
     return (
-        <div className="w-[100%] bg-[#f6f6f6] p-5 flex flex-col items-center width">
-            <div className="  mb-5 p-8 md:p-16 relative">
-                <div className="flex flex-col md:flex-row items-center mb-5 mt-5 w-full ">
-                    <div className="bg-white flex justify-between rounded-[50px] shadow-md p-6 sm:p-8 mb-8 w-[80%]">
-                        <div className="flex flex-col md:flex-row items-center justify-between w-full">
-                            <div className="flex items-center">
-                                <img
-                                    src={imageUrl || '/images/basicProfile.png'}
-                                    alt="Profile"
-                                    className="w-28 h-28 rounded-full object-cover m-5 border border-black"
-                                />
-                                <div className="text-center sm:text-left">
-                                    <h1 className="text-3xl font-bold">{profileData.name}</h1>
-                                    <p className="text-xl text-gray-600 mt-1">@{profileData.username}</p>
-                                    <div className="mt-2 flex flex-wrap justify-center sm:justify-start gap-2">
-                                        <span className="bg-gray-100 px-3 py-1 rounded-full text-sm">
-                                            {profileData.old} 세
-                                        </span>
-                                        <span className="bg-gray-100 px-3 py-1 rounded-full text-sm">
-                                            {profileData.gender}
-                                        </span>
-                                    </div>
-                                </div>
+        <div className="w-[100%] bg-[#f6f6f6] min-h-screen py-8 px-4 sm:px-6 lg:px-8">
+            <div className="max-w-5xl mx-auto">
+                {/* 프로필 헤더 */}
+                <div className="bg-white flex justify-between rounded-[50px] shadow-md p-6 sm:p-8 mb-8 w-[70%]">
+                    <div className="flex flex-col sm:flex-row items-center sm:items-start space-y-4 sm:space-y-0 sm:space-x-6">
+                        <img
+                            src={imageUrl || '/images/basicProfile.png'}
+                            alt="Profile"
+                            className="w-28 h-28 rounded-full object-cover border border-gray-200"
+                        />
+                        <div className="text-center sm:text-left">
+                            <h1 className="text-3xl font-bold">{profileData.name}</h1>
+                            <p className="text-xl text-gray-600 mt-1">@{profileData.username}</p>
+                            <div className="mt-2 flex flex-wrap justify-center sm:justify-start gap-2">
+                                <span className="bg-gray-100 px-3 py-1 rounded-full text-sm">{profileData.old} 세</span>
+                                <span className="bg-gray-100 px-3 py-1 rounded-full text-sm">{profileData.gender}</span>
                             </div>
-                            <div className="mt-5 md:mt-0 ml-44 self-end">
-                                {profileData &&
-                                    (profileData.disc_character === 'None' ? (
-                                        <div className="mr-8 flex items-center justify-center">
-                                            <svg
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                className="w-[120px] h-[40px] rounded-[10px] p-[5%] bg-[#a7a7a76f]"
-                                                viewBox="0 0 164 187"
-                                                fill="none"
-                                            >
-                                                <path
-                                                    d="M145.592 81.5315H136.856V55.3249C136.856 24.8234 112.033 0 81.5315 0C51.03 0 26.2066 24.8234 26.2066 55.3249V81.5315H17.471C7.82557 81.5315 0 89.3571 0 99.0025V168.887C0 178.532 7.82557 186.358 17.471 186.358H145.592C155.237 186.358 163.063 178.532 163.063 168.887V99.0025C163.063 89.3571 155.237 81.5315 145.592 81.5315ZM107.738 81.5315H55.3249V55.3249C55.3249 40.8749 67.0815 29.1184 81.5315 29.1184C95.9815 29.1184 107.738 40.8749 107.738 55.3249V81.5315Z"
-                                                    fill="black"
-                                                    fillOpacity="0.25"
-                                                />
-                                            </svg>
-                                        </div>
+                        </div>
+                        <div className="mt-5 md:mt-0 ml-4 self-end">
+                            {profileData && (
+                                <div
+                                    className="w-[120px] h-[40px] rounded-[10px] mr-8 flex items-center justify-center text-white text-2xl font-semibold "
+                                    style={{
+                                        backgroundColor: discTypeColors[profileData.disc_character],
+                                    }}
+                                >
+                                    {profileData && profileData.disc_character === 'None' ? (
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            className="w-7 h-8 mt-5 mx-auto mb-5 opacity-50"
+                                            viewBox="0 0 164 187"
+                                            fill="none"
+                                        >
+                                            <path
+                                                d="M145.592 81.5315H136.856V55.3249C136.856 24.8234 112.033 0 81.5315 0C51.03 0 26.2066 24.8234 26.2066 55.3249V81.5315H17.471C7.82557 81.5315 0 89.3571 0 99.0025V168.887C0 178.532 7.82557 186.358 17.471 186.358H145.592C155.237 186.358 163.063 178.532 163.063 168.887V99.0025C163.063 89.3571 155.237 81.5315 145.592 81.5315ZM107.738 81.5315H55.3249V55.3249C55.3249 40.8749 67.0815 29.1184 81.5315 29.1184C95.9815 29.1184 107.738 40.8749 107.738 55.3249V81.5315Z"
+                                                fill="black"
+                                                fillOpacity="0.25"
+                                            />
+                                        </svg>
                                     ) : (
                                         <div
-                                            className="w-[120px] h-[40px] rounded-[10px] mr-8 flex items-center justify-center text-white text-2xl font-semibold "
+                                            className="w-[120px] h-[40px] rounded-[10px] mr-8 flex items-center justify-center text-white text-2xl font-semibold"
                                             style={{
                                                 backgroundColor:
                                                     discTypeColors[profileData.disc_character] || discTypeColors.None,
@@ -144,25 +142,26 @@ function FriendProfile() {
                                         >
                                             {profileData.disc_character}
                                         </div>
-                                    ))}
-                            </div>
+                                    )}
+                                </div>
+                            )}
                         </div>
-                        <div className="flex flex-col items-center gap-8">
-                            <button
-                                className={`w-40 h-[60px] text-xl font-bold rounded-[20px] ${
-                                    isFollowing ? 'bg-gray-500' : 'bg-[#4053ff]'
-                                } text-white`}
-                                onClick={handleFollowClick}
-                            >
-                                {isFollowing ? '팔로우 취소' : '팔로우'}
-                            </button>
-                            <button
-                                className="w-40 h-[60px] bg-[#f8bd23] text-white text-xl font-bold rounded-[20px]"
-                                onClick={handleFeedbackClick}
-                            >
-                                협업 평가 작성
-                            </button>
-                        </div>
+                    </div>
+                    <div className="flex-col flex gap-2">
+                        <button
+                            className={`mr-5 px-6 py-2 h-12 w-44 text-xl font-bold rounded-[20px] ${
+                                isFollowing ? 'bg-gray-500' : 'bg-[#4053ff]'
+                            } text-white`}
+                            onClick={handleFollowClick}
+                        >
+                            {isFollowing ? '팔로우 취소' : '팔로우'}
+                        </button>
+                        <button
+                            className="mr-5 px-6 py-2 h-12 w-44 bg-[#f8bd23] text-white text-lg font-bold rounded-[20px] hover:bg-opacity-90 transition duration-300"
+                            onClick={handleFeedbackClick}
+                        >
+                            협업 평가 작성
+                        </button>
                     </div>
                 </div>
                 {/* 메인 컨텐츠 */}

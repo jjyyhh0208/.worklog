@@ -144,7 +144,7 @@ function MyProfile() {
         <div className="w-[100%] bg-[#f6f6f6] min-h-screen py-8 px-4 sm:px-6 lg:px-8">
             <div className="max-w-5xl mx-auto">
                 {/* 프로필 헤더 */}
-                <div className="bg-white flex justify-between rounded-[50px] shadow-md p-6 sm:p-8 mb-8 w-[100%]">
+                <div className="bg-white flex justify-between rounded-[50px] shadow-md p-6 sm:p-8 mb-8 w-[70%]">
                     <div className="flex flex-col sm:flex-row items-center sm:items-start space-y-4 sm:space-y-0 sm:space-x-6">
                         <img
                             src={imageUrl || '/images/basicProfile.png'}
@@ -160,31 +160,16 @@ function MyProfile() {
                             </div>
                         </div>
                         <div className="mt-5 md:mt-0 ml-4 self-end">
-                            {profileData &&
-                                (profileData.disc_character === 'None' ? (
-                                    <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        className="w-[120px] h-[40px] rounded-[10px]  p-[5%] bg-[#a7a7a76f]"
-                                        viewBox="0 0 164 187"
-                                        fill="none"
-                                    >
-                                        <path
-                                            d="M145.592 81.5315H136.856V55.3249C136.856 24.8234 112.033 0 81.5315 0C51.03 0 26.2066 24.8234 26.2066 55.3249V81.5315H17.471C7.82557 81.5315 0 89.3571 0 99.0025V168.887C0 178.532 7.82557 186.358 17.471 186.358H145.592C155.237 186.358 163.063 178.532 163.063 168.887V99.0025C163.063 89.3571 155.237 81.5315 145.592 81.5315ZM107.738 81.5315H55.3249V55.3249C55.3249 40.8749 67.0815 29.1184 81.5315 29.1184C95.9815 29.1184 107.738 40.8749 107.738 55.3249V81.5315Z"
-                                            fill="black"
-                                            fillOpacity="0.25"
-                                        />
-                                    </svg>
-                                ) : (
-                                    <div
-                                        className="w-[120px] h-[40px] rounded-[10px] mr-8 flex items-center justify-center text-white text-2xl font-semibold "
-                                        style={{
-                                            backgroundColor:
-                                                discTypeColors[profileData.disc_character] || discTypeColors.None,
-                                        }}
-                                    >
-                                        {profileData.disc_character}
-                                    </div>
-                                ))}
+                            {profileData && (
+                                <div
+                                    className="w-[120px] h-[40px] rounded-[10px] mr-8 flex items-center justify-center text-white text-2xl font-semibold "
+                                    style={{
+                                        backgroundColor: discTypeColors[profileData.disc_character],
+                                    }}
+                                >
+                                    {profileData.disc_character}
+                                </div>
+                            )}
                         </div>
                     </div>
                     <div className="flex-col flex ">

@@ -92,25 +92,13 @@ function Main() {
                         showStatus={false}
                     >
                         <div>
-                            <img
-                                className="w-full h-full object-cover"
-                                src="https://via.placeholder.com/800x300.png?text=Sample+Image+1"
-                                alt="Sample 1"
-                            />
+                            <img className="w-full h-full object-cover" src="/images/onboarding1.png" alt="Sample 1" />
                         </div>
                         <div>
-                            <img
-                                className="w-full h-full object-cover"
-                                src="https://via.placeholder.com/800x300.png?text=Sample+Image+2"
-                                alt="Sample 2"
-                            />
+                            <img className="w-full h-full object-cover" src="/images/onboarding2.png" alt="Sample 2" />
                         </div>
                         <div>
-                            <img
-                                className="w-full h-full object-cover"
-                                src="https://via.placeholder.com/800x300.png?text=Sample+Image+3"
-                                alt="Sample 3"
-                            />
+                            <img className="w-full h-full object-cover" src="/images/onboarding3.png" alt="Sample 3" />
                         </div>
                     </Carousel>
                 </div>
