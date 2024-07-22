@@ -10,6 +10,7 @@ function MyProfile() {
     const [profileData, setProfileData] = useState(null);
     const [imageUrl, setImageUrl] = useState(null);
     const [DISCData, setDISCData] = useState(null);
+    const [gptSummary, setGptSummary] = useState({ summarized: [], advice: [] });
     const navigate = useNavigate();
 
     const discTypeColors = typeData.reduce((acc, item) => {
@@ -25,12 +26,6 @@ function MyProfile() {
                 profileData.gender =
                     profileData.gender === 'F' ? 'Female' : profileData.gender === 'M' ? 'Male' : 'None';
                 setProfileData(profileData);
-
-                // profile_image는 'image' 랑 'uploaded_at'으로 구성되어 있습니다.
-                // 따라서 profile_image의 image를 추가로 불렀습니다.
-                // image의 주소는 s3 주소를 backend의 .env에 저장했기 때문에 해당 내용이 없이 세부 URL만 있는 상태입니다.
-                // 따라서 검증된 s3 주소를 API에서 (= profileService.getSignedImageUrl) 불러와야 합니다.
-                // GPT 아님!
 
                 ProfileService.getSignedImageUrl(profileData.profile_image.image)
                     .then((imageUrl) => {
@@ -48,6 +43,20 @@ function MyProfile() {
                 }
 
                 setImageUrl(profileData.profile_image.image || '/images/basicProfile.png');
+
+                // GPT summary 처리
+                if (profileData.gpt_summarized_personality) {
+                    try {
+                        const parsedGptSummary = JSON.parse(profileData.gpt_summarized_personality);
+                        setGptSummary({
+                            summarized: Array.isArray(parsedGptSummary.summarized) ? parsedGptSummary.summarized : [],
+                            advice: Array.isArray(parsedGptSummary.advice) ? parsedGptSummary.advice : [],
+                        });
+                    } catch (error) {
+                        console.error('Error parsing GPT summary:', error);
+                        setGptSummary({ summarized: [], advice: [] });
+                    }
+                }
             } catch (error) {
                 console.error('Error fetching profile data.', error);
             } finally {
@@ -60,8 +69,8 @@ function MyProfile() {
 
     if (isLoading) {
         return (
-            <div className="[w-100%] bg-[#f6f6f6] min-h-screen flex items-center justify-center">
-                <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-gray-900"></div>
+            <div className="[w-100%] bg-[#f6f6f6] h-[1000px] min-h-screen flex items-center justify-center">
+                {/* Add loading spinner or message here */}
             </div>
         );
     }
@@ -148,14 +157,9 @@ function MyProfile() {
         navigate('/signup/2', { state: { isEditing: true, profileData } });
     };
 
-    const parsedPersonality =
-        profileData && profileData.gpt_summarized_personality ? JSON.parse(profileData.gpt_summarized_personality) : {};
-    const summarized = parsedPersonality.summarized || [];
-    const advice = parsedPersonality.advice || [];
-
     const formatListWithIndex = (list) => {
-        if (!Array.isArray(list)) {
-            return null;
+        if (!Array.isArray(list) || list.length === 0) {
+            return <p>데이터가 없습니다.</p>;
         }
         return list.map((item, index) => (
             <div key={index}>
@@ -415,16 +419,19 @@ function MyProfile() {
                                         <p className="text-2xl font-semibold text-center mb-12">
                                             팀원들은 나의 협업 성향에 대해 다음과 같이 느꼈어요!
                                         </p>
-                                        <div className="flex flex-col  justify-around mt-5">
-                                            <h3 className="text-3xl font-bold text-[#4053ff]">Summary</h3>
-
-                                            <div className="flex-1 bg-[rgba(204,209,255,0.2)] rounded-[20px] p-12 m-5 md:m-12 text-xl">
-                                                {formatListWithIndex(summarized)}
-                                            </div>
-                                            <h3 className="text-3xl font-bold text-[#4053ff]">Advice</h3>
-
-                                            <div className="flex-1 bg-[rgba(204,209,255,0.2)] rounded-[20px] p-12 m-5 md:m-12 text-xl">
-                                                {formatListWithIndex(advice)}
+                                        <div className="bg-white rounded-[20px] p-5 mt-5">
+                                            <p className="text-2xl font-semibold text-center mb-12">
+                                                팀원들은 나의 협업 성향에 대해 다음과 같이 느꼈어요!
+                                            </p>
+                                            <div className="flex flex-col justify-around mt-5">
+                                                <h3 className="text-3xl font-bold text-[#4053ff]">Summary</h3>
+                                                <div className="flex-1 bg-[rgba(204,209,255,0.2)] rounded-[20px] p-12 m-5 md:m-12 text-xl">
+                                                    {formatListWithIndex(gptSummary.summarized)}
+                                                </div>
+                                                <h3 className="text-3xl font-bold text-[#4053ff]">Advice</h3>
+                                                <div className="flex-1 bg-[rgba(204,209,255,0.2)] rounded-[20px] p-12 m-5 md:m-12 text-xl">
+                                                    {formatListWithIndex(gptSummary.advice)}
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
