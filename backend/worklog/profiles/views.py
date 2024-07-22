@@ -348,6 +348,7 @@ class UserLongQuestionAnswersView(generics.GenericAPIView):
                 "request = { '같이 프로젝트를 하면서 의견을 제시하지만 요점이 없는 의견만 제시함. 하지만 적극적인 태도는 좋음 발표력이 매우 좋고 리더십이 있음. 회의 시간을 잘 지키지 않음'}\n"
                 "Then, your response should be in the format just like this.\n"
                 "response format(application/json) = {'summarized': <your summarized answer>, 'advice': <your advice>}\n"
+                "Your answer must be in json format (application/json) this is very important. You MUST respond in json format"
                 "For example,\n"
                 "gpt_response = { 'summarized' = '의견을 적극적으로 제시하지만 요점이 없고 회의시간을 잘 지키지 않는다. 하지만 발표력이 매우 좋고 리더십이 있다.', 'advice' = '적극적인 태도는 좋지만 의견 제시할 때 요점을 먼저 정리하고 제시해보세요!', '회의 시간을 잘 지켜보세요!' }\n"
                 "You have to give longer summary and advices. Particularly with the advice, you have to recommend methods to strengthen or make better with the defaults. "
@@ -381,8 +382,8 @@ class UserLongQuestionAnswersView(generics.GenericAPIView):
                 return Response({"error": "Failed to decode OpenAI response"}, status=500)
 
             existing_summary = json.loads(evaluated_user.gpt_summarized_personality) if evaluated_user.gpt_summarized_personality else {}
-            updated_summary = existing_summary.get('summarized', '') + "\n" + openai_response_dict['summarized']
-            updated_advice = existing_summary.get('advice', '') + "\n" + openai_response_dict['advice']
+            updated_summary = existing_summary.get('summarized', '') + "\n" + "\n" + openai_response_dict['summarized']
+            updated_advice = existing_summary.get('advice', '') + "\n" + "\n" + openai_response_dict['advice']
 
             evaluated_user.gpt_summarized_personality = json.dumps({
                 'summarized': updated_summary,

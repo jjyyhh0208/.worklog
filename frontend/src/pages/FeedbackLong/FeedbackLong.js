@@ -80,6 +80,7 @@ const FeedbackLong = ({ isLoggedIn }) => {
                 },
             ],
         };
+        // console.log(questionAnswers);
 
         // 1. questionAnswers를 별도의 엔드포인트로 전송
         FeedbackService.submitQuestionAnswers(questionAnswers)
@@ -98,6 +99,7 @@ const FeedbackLong = ({ isLoggedIn }) => {
                     },
                     question_answers: questionAnswers.question_answers, // 그대로 유지
                 };
+                console.log('this is my finalFeedbackData : ', finalFeedbackData);
 
                 return FeedbackService.submitAnswers(finalFeedbackData);
             })
