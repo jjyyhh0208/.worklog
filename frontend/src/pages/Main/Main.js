@@ -92,13 +92,13 @@ function Main() {
                         showStatus={false}
                     >
                         <div>
-                            <img className="w-full h-full object-cover" src="/images/onboarding1.png" alt="Sample 1" />
+                            <img src="/images/mainImage1.png" alt="Sample 1" className="w-full h-full object-cover" />
                         </div>
                         <div>
-                            <img className="w-full h-full object-cover" src="/images/onboarding2.png" alt="Sample 2" />
+                            <img src="/images/mainImage2.png" alt="Sample 2" className="w-full h-full object-cover" />
                         </div>
                         <div>
-                            <img className="w-full h-full object-cover" src="/images/onboarding3.png" alt="Sample 3" />
+                            <img src="/images/mainImage3.png" alt="Sample 3" className="w-full h-full object-cover" />
                         </div>
                     </Carousel>
                 </div>
@@ -109,12 +109,13 @@ function Main() {
                     </h2>
                     <div className="space-y-4">
                         <div className="p-4">
-                            <div className="text-gray-800 font-bold">v. 0.1 배포완료</div>
+                            <div className="text-gray-800 font-bold text-lg">v. 0.1 배포완료</div>
                             <div className="text-gray-600">2024-07-22</div>
                             <hr className="my-4" />
-                            <div className="text-black">
-                                안녕하세요, WORKLOG 운영팀입니다. 일하는 모두를 위한 피드백 서비스가 드디어
-                                출시되었습니다. 많은 관심과 응원 부탁드립니다.
+                            <div className="text-black mb-10">
+                                안녕하세요, WORKLOG 운영팀입니다. <br />
+                                일하는 모두를 위한 피드백 서비스가 드디어 출시되었습니다. <br />
+                                많은 관심과 응원 부탁드립니다.
                             </div>
                         </div>
                     </div>
@@ -138,41 +139,48 @@ function Main() {
                 </div>
             </div>
             <div className="text-2xl font-medium m-8">.WORKLOG에는 어떤 성격이 있을까요?</div>
-            <div className="flex flex-wrap justify-between mt-4 w-[90%] rounded-lg">
-                {typeData.map((type, index) => (
-                    <div
-                        key={index}
-                        className="text-center mx-2 my-1 group duration-300   transform hover:scale-105"
-                        onClick={() => scrollToSection(index)}
-                    >
-                        <i
-                            className={`fas ${
-                                iconMapping[type.disc_character]
-                            } fa-2x w-12 h-12 mx-auto text-gray-400 group-hover:text-[#4053FF] group-hover:cursor-pointer`}
-                        ></i>
-                        <div className="text-gray-800 text-lg font-bold group-hover:text-[#4053FF] group-hover:cursor-pointer">
-                            {type.disc_character}
-                        </div>
-                    </div>
-                ))}
+            <div className="flex justify-center mt-4 w-[90%] rounded-lg">
+                <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-4 w-full">
+                    {typeData.map(
+                        (type, index) =>
+                            type.disc_character !== 'None' && (
+                                <div
+                                    key={index}
+                                    className="text-center mx-2 my-1 group"
+                                    onClick={() => scrollToSection(index)}
+                                >
+                                    <i
+                                        className={`fas ${
+                                            iconMapping[type.disc_character]
+                                        } fa-2x w-12 h-12 mx-auto text-gray-400 group-hover:text-[#4053FF] group-hover:cursor-pointer`}
+                                    ></i>
+                                    <div className="text-gray-800 text-lg font-bold group-hover:text-[#4053FF] group-hover:cursor-pointer">
+                                        {type.disc_character}
+                                    </div>
+                                </div>
+                            )
+                    )}
+                </div>
             </div>
+
             {groups.map((group, groupIndex) => (
                 <div key={groupIndex} className="mt-8 scroll-mt-12 w-[90%]">
-                    {group.types.map((type, typeIndex) => (
-                        <div key={typeIndex} className="mt-10" ref={type.ref}>
-                            <div className="flex flex-wrap mt-5 justify-around">
-                                <div
-                                    className="text-xl w-60 h-16 mb-10 rounded-lg px-5 py-2 text-center flex items-center justify-center text-white font-bold"
-                                    style={{ backgroundColor: type.color }}
-                                >
-                                    {type.title}
+                    {group.types.map(
+                        (type, typeIndex) =>
+                            type.title !== 'None' && (
+                                <div key={typeIndex} className="mt-10" ref={type.ref}>
+                                    <div className="flex flex-wrap mt-5 justify-around">
+                                        <div
+                                            className="text-xl w-60 h-16 mb-10 rounded-lg px-5 py-2 text-center flex items-center justify-center text-white font-bold"
+                                            style={{ backgroundColor: type.color }}
+                                        >
+                                            {type.title}
+                                        </div>
+                                        <div className="w-full lg:w-3/4 text-black text-xl leading-relaxed"></div>
+                                    </div>
                                 </div>
-                                <div className="w-full lg:w-3/4 text-black text-xl leading-relaxed">
-                                    {/* Other content related to the type */}
-                                </div>
-                            </div>
-                        </div>
-                    ))}
+                            )
+                    )}
                     <p className="text-xl mt-5 text-black ml-8 mb-8">{group.description}</p>
                 </div>
             ))}

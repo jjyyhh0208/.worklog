@@ -9,7 +9,7 @@ const OnBoarding2 = () => {
         navigate(`/on-boarding/${page}`);
     };
 
-    const handleContainerClick = () => {
+    const handleNextClick = () => {
         navigate('/on-boarding/3');
     };
 
@@ -18,7 +18,7 @@ const OnBoarding2 = () => {
     };
 
     return (
-        <div className="w-[100%] flex flex-col items-center mt-28" onClick={handleContainerClick}>
+        <div className="w-[100%] flex flex-col items-center mt-28">
             <h1 className="absolute top-7 left-9 text-[#4053ff] text-center text-4xl font-extrabold">.WORKLOG</h1>
             <div className="flex justify-center gap-5 mb-4">
                 <div
@@ -51,7 +51,10 @@ const OnBoarding2 = () => {
                 <span className="text-black text-2xl font-bold">직관적이고 답하기 쉬운 설문지 구성</span>
             </div>
             <div className="relative w-full max-w-screen-lg h-[700px] p-10 ">
-                <div className="absolute inset-0 flex justify-center items-center">
+                <div
+                    className="absolute inset-0 flex justify-center items-center hover:cursor-pointer"
+                    onClick={handleNextClick}
+                >
                     <div
                         className="w-[110%] h-[90%] bg-center bg-cover"
                         style={{ backgroundImage: "url('/images/onboarding2.png')" }}

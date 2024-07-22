@@ -26,6 +26,20 @@ function MyProfile() {
                     profileData.gender === 'F' ? 'Female' : profileData.gender === 'M' ? 'Male' : 'None';
                 setProfileData(profileData);
 
+                // profile_image는 'image' 랑 'uploaded_at'으로 구성되어 있습니다.
+                // 따라서 profile_image의 image를 추가로 불렀습니다.
+                // image의 주소는 s3 주소를 backend의 .env에 저장했기 때문에 해당 내용이 없이 세부 URL만 있는 상태입니다.
+                // 따라서 검증된 s3 주소를 API에서 (= profileService.getSignedImageUrl) 불러와야 합니다.
+                // GPT 아님!
+
+                ProfileService.getSignedImageUrl(profileData.profile_image.image)
+                    .then((imageUrl) => {
+                        setImageUrl(imageUrl);
+                    })
+                    .catch((error) => {
+                        console.error('Error fetching signed URL:', error);
+                    });
+
                 const discData = typeData.find((item) => item.disc_character === profileData.disc_character);
                 if (discData) {
                     setDISCData(discData);
@@ -33,7 +47,7 @@ function MyProfile() {
                     console.error('DISC character not found:', profileData.disc_character);
                 }
 
-                setImageUrl(profileData.image || '/images/basicProfile.png');
+                setImageUrl(profileData.profile_image.image || '/images/basicProfile.png');
             } catch (error) {
                 console.error('Error fetching profile data.', error);
             } finally {
@@ -134,14 +148,28 @@ function MyProfile() {
         navigate('/signup/2', { state: { isEditing: true, profileData } });
     };
 
-    // JSON 파싱하여 summarized와 advice 값을 추출
     const parsedPersonality =
         profileData && profileData.gpt_summarized_personality ? JSON.parse(profileData.gpt_summarized_personality) : {};
-    const summarized = parsedPersonality.summarized || '';
-    const advice = parsedPersonality.advice || '';
+    const summarized = parsedPersonality.summarized || [];
+    const advice = parsedPersonality.advice || [];
+
+    const formatListWithIndex = (list) => {
+        if (!Array.isArray(list)) {
+            return null;
+        }
+        return list.map((item, index) => (
+            <div key={index}>
+                <strong>팀원 {index + 1}</strong>
+                <br />
+                {item}
+                <br />
+                <br />
+            </div>
+        ));
+    };
 
     return (
-        <div className="w-[100%] bg-[#f6f6f6] min-h-screen py-8 px-4 sm:px-6 lg:px-8">
+        <div className="w-[100%] bg-[#f6f6f6] min-h-screen py-8 px-4 sm:px-6 lg:px-8 mt-16">
             <div className="max-w-5xl mx-auto">
                 {/* 프로필 헤더 */}
                 <div className="bg-white flex justify-between rounded-[50px] shadow-md p-6 sm:p-8 mb-8 w-[70%]">
@@ -368,12 +396,12 @@ function MyProfile() {
                                             <h3 className="text-3xl font-bold text-[#4053ff]">Summary</h3>
 
                                             <div className="flex-1 bg-[rgba(204,209,255,0.2)] rounded-[20px] p-12 m-5 md:m-12 text-xl">
-                                                <p>{profileData.gpt_summarized_personality}</p>
+                                                {formatListWithIndex(summarized)}
                                             </div>
                                             <h3 className="text-3xl font-bold text-[#4053ff]">Advice</h3>
 
                                             <div className="flex-1 bg-[rgba(204,209,255,0.2)] rounded-[20px] p-12 m-5 md:m-12 text-xl">
-                                                <p>{profileData.gpt_summarized_personality}</p>
+                                                {formatListWithIndex(advice)}
                                             </div>
                                         </div>
                                     </div>

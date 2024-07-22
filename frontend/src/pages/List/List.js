@@ -43,7 +43,7 @@ function List() {
     };
 
     return (
-        <div className="w-full bg-[#ffffff] min-h-screen p-4 sm:p-8 md:p-12 lg:p-8">
+        <div className="w-full bg-[#ffffff] min-h-screen p-4 sm:p-8 md:p-12 lg:p-8  mt-16">
             <div className="flex justify-between items-center pt-7 w-full max-w-[1000px] mx-auto">
                 <h1 className="text-[#4053ff] text-xl sm:text-2xl font-bold">내가 팔로우한 프로필</h1>
                 <svg

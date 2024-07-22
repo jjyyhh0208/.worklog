@@ -184,7 +184,7 @@ const AboutUs = () => {
     ];
 
     return (
-        <div className="bg-gray-100 flex justify-center m-0 w-full h-full overflow-y-auto">
+        <div className="bg-gray-100 flex justify-center m-0 w-full h-full overflow-y-auto  mt-16">
             <div className="p-10 w-full lg:w-4/5 rounded-3xl bg-white flex-shrink-0 mt-12 mb-12 overflow-y-auto">
                 <h1 className="text-black text-6xl font-extrabold mb-4">FAQ</h1>
                 <div className="w-full h-px bg-gray-400 mb-8"></div>
@@ -204,7 +204,7 @@ const AboutUs = () => {
                 </div>
 
                 {/* Q2 */}
-                <div className="mb-10">
+                <div className="mb-10  mt-16">
                     <p className="text-2xl font-bold text-black mb-2">Q. 8가지 협업 유형은 어떻게 나뉘나요?</p>
                     <div className="mb-10 flex flex-wrap items-center">
                         <div className="flex flex-wrap gap-4 mb-5 justify-start w-full lg:w-1/2 ml-9">

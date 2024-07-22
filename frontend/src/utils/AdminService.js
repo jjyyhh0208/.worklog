@@ -1,4 +1,5 @@
 import API from './API';
+import axios from 'axios';
 
 const AdminService = {
     registerUser: (userData) => {
@@ -99,23 +100,64 @@ const AdminService = {
         try {
             const response = await API.delete('/profiles/auth/delete/');
 
-            console.log('API 응답:', response); // 전체 응답 로깅
-
             if (response.status === 204) {
                 console.log('성공적으로 회원 탈퇴가 이루어졌습니다.');
-                return true; // 유저 탈퇴 성공 시 true 반환
+                return true;
             } else {
-                console.log('예상치 못한 응답 상태:', response.status);
                 throw new Error('예상치 못한 응답 상태: ' + response.status);
             }
         } catch (error) {
-            console.error('회원 탈퇴 중 오류가 발생했습니다.', error);
-            if (error.response) {
-                console.error('오류 응답:', error.response);
-                console.error('오류 상태:', error.response.status);
-                console.error('오류 데이터:', error.response.data);
-            }
             throw new Error('회원 탈퇴 중 오류가 발생했습니다: ' + error.message);
+        }
+    },
+    loginKakao: async (code) => {
+        const config = {
+            method: 'POST',
+            url: 'https://kauth.kakao.com/oauth/token',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
+            },
+            data: new URLSearchParams({
+                grant_type: 'authorization_code',
+                client_id: process.env.REACT_APP_KAKAO_CLIENT_ID,
+                redirect_uri: `${window.location.origin}/profiles/auth/kakao/callback`,
+                code: code,
+            }),
+        };
+
+        try {
+            const response = await axios(config);
+            return response.data;
+        } catch (error) {
+            console.error('Error during Kakao login:', error);
+            throw error;
+        }
+    },
+
+    sendKakaoTokenToDjango: async (kakaoData) => {
+        try {
+            const response = await axios.post('profiles/api/kakao-login/', kakaoData);
+            return response.data;
+        } catch (error) {
+            console.error('Error sending Kakao token to Django:', error);
+            throw error;
+        }
+    },
+
+    handleKakaoLogin: async (code) => {
+        try {
+            const kakaoData = await AdminService.loginKakao(code);
+            const result = await AdminService.sendKakaoTokenToDjango(kakaoData);
+            console.log(kakaoData);
+            console.log(result);
+
+            localStorage.setItem('authToken', result.token);
+
+            return result;
+        } catch (error) {
+            console.error('Login failed:', error);
+            console.log(error);
+            throw error;
         }
     },
 };

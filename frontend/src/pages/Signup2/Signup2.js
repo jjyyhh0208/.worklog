@@ -1,5 +1,3 @@
-//signup2
-
 import React, { useState, useEffect } from 'react';
 import styles from './Signup2.module.css';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -12,8 +10,8 @@ function Signup2({ signUpInfo, setSignUpInfo }) {
     const location = useLocation();
     const isEditing = location.state?.isEditing || false;
     const profileData = location.state?.profileData || {};
-    const [selectedGender, setSelectedGender] = useState(location.state?.gender || '');
-    const [selectedAge, setSelectedAge] = useState(location.state?.age || '');
+    const [selectedGender, setSelectedGender] = useState('');
+    const [selectedAge, setSelectedAge] = useState('');
     const [file, setFile] = useState(null);
     const [fileName, setFileName] = useState('');
     const [imageUrl, setImageUrl] = useState('');
@@ -26,12 +24,12 @@ function Signup2({ signUpInfo, setSignUpInfo }) {
                 const userProfileData = await ProfileService.fetchUserProfile();
                 setSignUpInfo({
                     ...signUpInfo,
-                    name: userProfileData.name || location.state?.name || '',
-                    age: userProfileData.age || location.state?.age || '',
-                    gender: userProfileData.gender || location.state?.gender || '',
+                    name: userProfileData.name,
+                    age: userProfileData.age,
+                    gender: userProfileData.gender,
                 });
-                setSelectedAge(userProfileData.age || location.state?.age || '');
-                setSelectedGender(userProfileData.gender || location.state?.gender || '');
+                setSelectedAge(userProfileData.age);
+                setSelectedGender(userProfileData.gender);
             } catch (error) {
                 console.error('Error fetching data:', error);
             }
@@ -117,27 +115,37 @@ function Signup2({ signUpInfo, setSignUpInfo }) {
     const handleNextClick = async (e) => {
         e.preventDefault();
 
-        const formData = new FormData();
-        formData.append('name', signUpInfo.name === null ? signUpInfo.username : signUpInfo.name);
-        formData.append('age', selectedAge);
-        formData.append('gender', signUpInfo.gender === 'None' ? '' : signUpInfo.gender);
         if (file) {
+            const formData = new FormData();
             formData.append('image', file);
+
+            try {
+                await API.post('/profiles/user/set/profile-image/', formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                    },
+                });
+                setUploadMessage('Image uploaded successfully');
+                await fetchProfileImage();
+            } catch (error) {
+                setUploadMessage(
+                    error.response ? `Failed to upload image: ${error.response.data}` : 'Failed to upload image'
+                );
+                console.error('Failed to update user info:', error);
+            }
         }
 
         try {
-            await ProfileService.setUserBasicInfo(formData);
+            await ProfileService.setUserBasicInfo({
+                name: signUpInfo.name === null ? signUpInfo.username : signUpInfo.name,
+                age: selectedAge,
+                gender: signUpInfo.gender === 'None' ? null : signUpInfo.gender,
+            });
 
             if (isEditing) {
                 navigate('/my-profile');
             } else {
-                navigate('/signup/3', {
-                    state: {
-                        name: signUpInfo.name,
-                        age: selectedAge,
-                        gender: signUpInfo.gender,
-                    },
-                });
+                navigate('/signup/3');
             }
         } catch (error) {
             setUploadMessage('Failed to update user info');
@@ -173,15 +181,19 @@ function Signup2({ signUpInfo, setSignUpInfo }) {
     };
 
     const handleBackClick = () => {
-        console.log('회원탈퇴');
-        AdminService.userDelete()
-            .then(() => {
-                navigate(-1);
-                localStorage.removeItem('authToken');
-            })
-            .catch((error) => {
-                console.error('회원 탈퇴 중 오류가 발생했습니다.', error);
-            });
+        if (!isEditing) {
+            // 수정 중이 아닐때는 유저 삭제
+            AdminService.userDelete()
+                .then(() => {
+                    navigate(-1);
+                    // authToken은 signup1에 도착 후 삭제 (속도 이슈)
+                })
+                .catch((error) => {
+                    console.error('회원 탈퇴 중 오류가 발생했습니다.', error);
+                });
+        } else {
+            navigate(-1);
+        }
     };
 
     return (

@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import AdminService from '../../utils/AdminService';
 import { useNavigate } from 'react-router-dom';
+import KakaoLogin from '../../components/KakaoLogin/KakaoLogin';
 
 function Signup1({ signUpInfo, setSignUpInfo }) {
     const [error, setError] = useState('');
     const [isIdAvailable, setIsIdAvailable] = useState(null);
+    const [isPasswordAvailable, setIsPasswordAvailable] = useState(true);
     const [availabilityMessage, setAvailabilityMessage] = useState('');
     const navigate = useNavigate();
 
@@ -19,9 +21,17 @@ function Signup1({ signUpInfo, setSignUpInfo }) {
     const checkUserNameHandler = async (e) => {
         e.preventDefault();
 
+        setError('');
+        setAvailabilityMessage('');
+
+        if (signUpInfo.username.trim() === '') {
+            setAvailabilityMessage('아이디를 입력해주세요.');
+            setIsIdAvailable(false);
+            return;
+        }
+
         try {
             const response = await AdminService.checkUserName(signUpInfo.username);
-
             if (response.isUnique) {
                 setIsIdAvailable(true);
                 setAvailabilityMessage('사용 가능한 아이디입니다.');
@@ -41,6 +51,7 @@ function Signup1({ signUpInfo, setSignUpInfo }) {
 
         if (isIdAvailable === false || isIdAvailable === null) {
             setAvailabilityMessage('아이디 중복 확인을 해주세요.');
+            setIsIdAvailable(false);
             return;
         }
 
@@ -62,6 +73,7 @@ function Signup1({ signUpInfo, setSignUpInfo }) {
             const apiErrorMessage = error.message || '회원가입 도중 오류가 발생했습니다. 다시 시도해주세요.';
             setError(apiErrorMessage);
             setAvailabilityMessage(apiErrorMessage);
+            setIsPasswordAvailable(false);
         }
     };
 
@@ -78,7 +90,7 @@ function Signup1({ signUpInfo, setSignUpInfo }) {
     };
 
     return (
-        <div className="w-[100%] flex flex-col items-center p-5 w-full md:w-4/5 max-w-2xl mx-auto">
+        <div className="w-[100%] flex flex-col items-center p-5 md:w-4/5 max-w-2xl mx-auto mt-16">
             <h1 className="text-[#4053ff] text-4xl font-extrabold cursor-pointer mb-5" onClick={logoHandler}>
                 .WORKLOG
             </h1>
@@ -96,21 +108,22 @@ function Signup1({ signUpInfo, setSignUpInfo }) {
                         </svg>
                     </button>
                 </div>
-                <h2 className="text-black text-2xl font-bold text-center mb-5">SIGN UP</h2>
+                <h2 className="text-black text-2xl font-bold text-center mb-8">SIGN UP</h2>
+                <div className="w-full text-sm mb-5 min-h-3">
+                    {availabilityMessage && (
+                        <div className={`${isIdAvailable && isPasswordAvailable ? 'text-blue-500' : 'text-red-500'}`}>
+                            {isIdAvailable && isPasswordAvailable ? (
+                                <span>&#x2714; {availabilityMessage}</span>
+                            ) : (
+                                <span>&#x2716; {availabilityMessage}</span>
+                            )}
+                        </div>
+                    )}
+                </div>
                 <form className="flex flex-col items-center w-full" onSubmit={signUpHandler}>
                     <div className="flex justify-start items-center w-full mb-2">
-                        <span className="text-base font-bold w-16">아이디</span>
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="15"
-                            height="15"
-                            viewBox="0 0 25 26"
-                            fill="none"
-                            className="mr-1"
-                        >
-                            {/* ... (SVG path remains the same) */}
-                        </svg>
-                        <span className="text-xs font-medium flex-1 whitespace-nowrap">
+                        <span className="text-base font-bold w-12 mr-1">아이디</span>
+                        <span className="text-xs font-medium flex-1 whitespace-nowrap text-gray-500">
                             아이디는 최초 설정 이후 변경이 불가합니다.
                         </span>
                     </div>
@@ -169,6 +182,7 @@ function Signup1({ signUpInfo, setSignUpInfo }) {
                         </button>
                     </div>
                 </form>
+                <KakaoLogin></KakaoLogin>
             </div>
         </div>
     );

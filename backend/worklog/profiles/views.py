@@ -1,7 +1,10 @@
 import profile
 from pyexpat import model
 from django.views import View
-from django.contrib.auth import login
+from django.contrib.auth import get_user_model, login
+from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth.backends import ModelBackend
+from django.utils.decorators import method_decorator
 import openai
 import ast
 from django.conf import settings
@@ -35,10 +38,12 @@ from .serializers import (
 from django.http import JsonResponse
 from utils.s3_utils import get_signed_url
 import os
+import logging
 import requests
 from rest_framework.authtoken.models import Token
 
 site_url = os.getenv('SITE_HTTP')
+logger = logging.getLogger(__name__)
 
 # s3 접근 인증 받는 함수
 def get_signed_url_view(request, image_path):
@@ -163,15 +168,63 @@ class KakaoView(View):
             return JsonResponse({'error': 'SOCIAL_AUTH_KAKAO_CLIENT_ID is not set'}, status=500)
 
         return redirect(f"{kakao_api}&client_id={client_id}&redirect_uri={redirect_url}")
+        
+@method_decorator(csrf_exempt, name='dispatch')
+class KakaoLoginView(View):
+    def post(self, request):
+        # 프론트엔드에서 전송한 카카오 토큰 데이터 받기
+        kakao_token = request.POST.get('access_token')
+        
+        if not kakao_token:
+            return JsonResponse({'error': 'No access token provided'}, status=400)
+
+        # 카카오 API를 통해 사용자 정보 가져오기
+        kakao_user_api = "https://kapi.kakao.com/v2/user/me"
+        headers = {"Authorization": f"Bearer {kakao_token}"}
+        user_information_response = requests.get(kakao_user_api, headers=headers)
+        
+        if user_information_response.status_code != 200:
+            return JsonResponse({'error': 'Failed to get user info from Kakao'}, status=400)
+
+        user_information = user_information_response.json()
+
+        user_id = user_information["id"]
+        nickname = user_information["properties"]["nickname"]
+
+        # 사용자 생성 또는 조회
+        User = get_user_model()
+        user, created = User.objects.get_or_create(username=f'kakao_{user_id}')
+        
+        if created:
+            user.name = nickname
+            user.set_unusable_password()
+            user.save()
+            is_new_user = True
+        else:
+            is_new_user = False
+
+        # 로그인 처리
+        login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+        
+        # 토큰 생성 또는 조회
+        token, _ = Token.objects.get_or_create(user=user)
+
+        response_data = {
+            'message': '로그인 성공',
+            'user': {'id': user.id, 'nickname': user.name},
+            'is_new_user': is_new_user,
+            'token': token.key
+        }
+        return JsonResponse(response_data, status=200)
     
+@method_decorator(csrf_exempt, name='dispatch')
 class KakaoCallBackView(View):
     def get(self, request):
         code = request.GET.get("code")
-
         data = {
             "grant_type": "authorization_code",
             "client_id": os.getenv('SOCIAL_AUTH_KAKAO_CLIENT_ID'),
-            "redirect_uri": f"{site_url}profiles/auth/kakao/callback",
+            "redirect_uri": f"{request.scheme}://{request.get_host()}/profiles/auth/kakao/callback",
             "code": code
         }
 
@@ -188,22 +241,30 @@ class KakaoCallBackView(View):
         user_information_response = requests.get(kakao_user_api, headers=headers)
         user_information = user_information_response.json()
 
-        # user_information을 사용하여 서버에 로그인
         user_id = user_information["id"]
         nickname = user_information["properties"]["nickname"]
 
         User = get_user_model()
         try:
             user = User.objects.get(username=user_id)
+            is_new_user = False
         except User.DoesNotExist:
-            # Create a new user if not exists
-            user = User(username=nickname)
+            user = User(username=user_id, name=nickname)
             user.set_unusable_password()
             user.save()
-        
-            login(request, user)
-        return JsonResponse({'message': '로그인 성공', 'user': {'id': user_id, 'nickname': nickname}}, status=200)     
+            is_new_user = True
 
+        login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+        
+        token, created = Token.objects.get_or_create(user=user)
+
+        response_data = {
+            'message': '로그인 성공',
+            'user': {'id': user_id, 'nickname': nickname},
+            'is_new_user': is_new_user,
+            'token': token.key
+        }
+        return JsonResponse(response_data, status=200)
     
 #유저 프로필을 불러오는 View
 class UserProfileView(generics.RetrieveAPIView):
@@ -211,6 +272,18 @@ class UserProfileView(generics.RetrieveAPIView):
     serializer_class = UserProfileSerializer
     permission_classes = []
     lookup_field = 'username'
+
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
+        data = serializer.data
+        
+        if request.user.is_authenticated:
+            data['is_following'] = request.user.friends.filter(username=instance.username).exists()
+        else:
+            data['is_following'] = False
+        
+        return Response(data)
 
 # 현재 내 프로필을 불러오는 View
 class UserCurrentProfileView(generics.RetrieveAPIView):
@@ -440,23 +513,28 @@ class UserLongQuestionAnswersView(generics.GenericAPIView):
                 logger.error(f"Failed to decode OpenAI response: {e}")
                 return Response({"error": "Failed to decode OpenAI response"}, status=500)
 
-            existing_summary = json.loads(evaluated_user.gpt_summarized_personality) if evaluated_user.gpt_summarized_personality else {}
-            updated_summary = existing_summary.get('summarized', '') + "\n" + "\n" + openai_response_dict['summarized']
-            updated_advice = existing_summary.get('advice', '') + "\n" + "\n" + openai_response_dict['advice']
+            # 기존 요약과 조언을 리스트로 처리하도록 수정
+            existing_personality = json.loads(evaluated_user.gpt_summarized_personality) if evaluated_user.gpt_summarized_personality else {}
+            summarized_list = existing_personality.get('summarized', [])
+            advice_list = existing_personality.get('advice', [])
+
+            summarized_list.append(openai_response_dict['summarized'])
+            advice_list.append(openai_response_dict['advice'])
 
             evaluated_user.gpt_summarized_personality = json.dumps({
-                'summarized': updated_summary,
-                'advice': updated_advice
+                'summarized': summarized_list,
+                'advice': advice_list
             }, ensure_ascii=False)
             evaluated_user.save()
 
             return Response({
-                "summarized": updated_summary,
-                "advice": updated_advice
+                "summarized": summarized_list,
+                "advice": advice_list
             })
         except Exception as e:
             logger.error(f"Error in UserLongQuestionAnswersView: {e}")
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
     
 #db 테스트용 뷰
@@ -491,12 +569,14 @@ class FollowFriendView(generics.GenericAPIView):
     def post(self, request, *args, **kwargs):
         user = request.user
         friend_name = request.data.get('friend_name')
-
+        
+        # 유저 팔로우 요청에 필요한 검증
         if not friend_name:
             return Response({"detail": "Friend name is required."}, status=status.HTTP_400_BAD_REQUEST)
         
         friend = get_object_or_404(User, username=friend_name)
-
+        
+        # 자기 자신을 팔로우하는 것을 방지
         if friend == user:
             return Response({"detail": "You cannot follow yourself."}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -510,15 +590,18 @@ class UnfollowFriendView(generics.GenericAPIView):
     def post(self, request, *args, **kwargs):
         user = request.user
         friend_name = request.data.get('friend_name')
-
+        
+        # 유저 언팔로우 요청에 필요한 검증
         if not friend_name:
             return Response({"detail": "Friend name is required."}, status=status.HTTP_400_BAD_REQUEST)
         
         friend = get_object_or_404(User, username=friend_name)
-
+        
+        # 자기 자신을 언팔로우하는 것을 방지
         if friend == user:
             return Response({"detail": "You cannot unfollow yourself."}, status=status.HTTP_400_BAD_REQUEST)
 
         user.friends.remove(friend)
         return Response({"detail": f"You have unfollowed {friend.name}"}, status=status.HTTP_200_OK)
+
     

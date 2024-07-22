@@ -36,11 +36,13 @@ function FriendProfile() {
         const fetchData = async () => {
             try {
                 const profileData = await ProfileService.fetchFriendProfile(username);
+                setProfileData(profileData);
+                setIsFollowing(profileData.is_following);
+                console.log('Initial following state:', profileData.is_following);
+
                 profileData.old = 2025 - profileData.age;
                 profileData.gender =
                     profileData.gender === 'F' ? 'Female' : profileData.gender === 'M' ? 'Male' : 'None';
-                setProfileData(profileData);
-                setIsFollowing(profileData.is_following);
 
                 const discData = typeData.find((item) => item.disc_character === profileData.disc_character);
                 if (discData) {
@@ -70,13 +72,16 @@ function FriendProfile() {
         }
 
         try {
+            let updatedFollowingStatus;
             if (isFollowing) {
                 await ProfileService.unfollowUser(username);
-                setIsFollowing(false);
+                updatedFollowingStatus = false;
             } else {
                 await ProfileService.followUser(username);
-                setIsFollowing(true);
+                updatedFollowingStatus = true;
             }
+            setIsFollowing(updatedFollowingStatus);
+            console.log('Updated following state:', updatedFollowingStatus);
         } catch (error) {
             console.error('팔로우/팔로우 취소 중 오류가 발생했습니다.', error);
         }
@@ -105,7 +110,7 @@ function FriendProfile() {
     }
 
     return (
-        <div className="w-[100%] bg-[#f6f6f6] min-h-screen py-8 px-4 sm:px-6 lg:px-8">
+        <div className="w-[100%] bg-[#f6f6f6] min-h-screen py-8 px-4 sm:px-6 lg:px-8 mt-16">
             <div className="max-w-5xl mx-auto">
                 <button
                     onClick={handleGoBack}
@@ -348,12 +353,12 @@ function FriendProfile() {
                                             <h3 className="text-3xl font-bold text-[#4053ff]">Summary</h3>
 
                                             <div className="flex-1 bg-[rgba(204,209,255,0.2)] rounded-[20px] p-12 m-5 md:m-12 text-xl">
-                                                <p>{profileData.gpt_summarized_personality}</p>
+                                                {formatListWithIndex(summarized)}
                                             </div>
                                             <h3 className="text-3xl font-bold text-[#4053ff]">Advice</h3>
 
                                             <div className="flex-1 bg-[rgba(204,209,255,0.2)] rounded-[20px] p-12 m-5 md:m-12 text-xl">
-                                                <p>{profileData.gpt_summarized_personality}</p>
+                                                {formatListWithIndex(advice)}
                                             </div>
                                         </div>
                                     </div>
