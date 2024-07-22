@@ -114,43 +114,40 @@ function FriendProfile() {
     };
 
     if (isLoading) {
-        return <div className="bg-[#f6f6f6] p-5 flex flex-col items-center">Loading...</div>;
+        return <div className="bg-[#f6f6f6] w-[100%] h-[1000px] "></div>;
     }
 
     return (
-        <div className="w-[100%] bg-[#f6f6f6] p-5 flex flex-col items-center width  mt-16">
-            <div className="flex flex-col items-center w-full max-w-[1150px]">
-                <div className="flex flex-col md:flex-row items-center mb-5 mt-5 w-full">
-                    <div className="bg-white rounded-[50px] shadow-md p-4 w-full md:w-auto h-auto md:h-[180px] flex-shrink-0 mb-5 md:mb-0 md:mr-12 relative flex items-center">
-                        <div className="flex flex-col md:flex-row items-center justify-between w-full">
-                            <div className="flex items-center">
-                                <img
-                                    src={imageUrl || '/images/basicProfile.png'}
-                                    alt="Profile"
-                                    className="w-28 h-28 rounded-full object-cover m-5 border border-black"
-                                />
-                                <div className="ml-5">
-                                    <h1 className="text-3xl font-bold">{profileData.name}</h1>
-                                    <div className="flex items-center mt-2">
-                                        <span className="w-24 text-xl font-bold">나이</span>
-                                        <span className="text-xl font-bold">{profileData.old}</span>
-                                    </div>
-                                    <div className="flex items-center mt-2">
-                                        <span className="w-24 text-xl font-bold">성별</span>
-                                        <span className="text-xl font-bold">{profileData.gender}</span>
-                                    </div>
-                                    <div className="flex items-center mt-2">
-                                        <span className="w-24 text-xl font-bold">ID</span>
-                                        <span className="text-xl font-bold">{profileData.username}</span>
-                                    </div>
-                                </div>
+        <div className="w-[100%] bg-[#f6f6f6] min-h-screen py-8 px-4 sm:px-6 lg:px-8">
+            <div className="max-w-5xl mx-auto">
+                {/* 프로필 헤더 */}
+                <div className="bg-white flex justify-between rounded-[50px] shadow-md p-6 sm:p-8 mb-8 w-[70%]">
+                    <div className="flex flex-col sm:flex-row items-center sm:items-start space-y-4 sm:space-y-0 sm:space-x-6">
+                        <img
+                            src={imageUrl || '/images/basicProfile.png'}
+                            alt="Profile"
+                            className="w-28 h-28 rounded-full object-cover border border-gray-200"
+                        />
+                        <div className="text-center sm:text-left">
+                            <h1 className="text-3xl font-bold">{profileData.name}</h1>
+                            <p className="text-xl text-gray-600 mt-1">@{profileData.username}</p>
+                            <div className="mt-2 flex flex-wrap justify-center sm:justify-start gap-2">
+                                <span className="bg-gray-100 px-3 py-1 rounded-full text-sm">{profileData.old} 세</span>
+                                <span className="bg-gray-100 px-3 py-1 rounded-full text-sm">{profileData.gender}</span>
                             </div>
-                            <div className="mt-5 md:mt-0 ml-4 self-end">
-                                {profileData &&
-                                    (profileData.disc_character === 'None' ? (
+                        </div>
+                        <div className="mt-5 md:mt-0 ml-4 self-end">
+                            {profileData && (
+                                <div
+                                    className="w-[120px] h-[40px] rounded-[10px] mr-8 flex items-center justify-center text-white text-2xl font-semibold "
+                                    style={{
+                                        backgroundColor: discTypeColors[profileData.disc_character],
+                                    }}
+                                >
+                                    {profileData && profileData.disc_character === 'None' ? (
                                         <svg
                                             xmlns="http://www.w3.org/2000/svg"
-                                            className="w-[120px] h-[40px] rounded-[10px] p-[5%] bg-[#a7a7a76f]"
+                                            className="w-7 h-8 mt-5 mx-auto mb-5 opacity-50"
                                             viewBox="0 0 164 187"
                                             fill="none"
                                         >
@@ -162,7 +159,7 @@ function FriendProfile() {
                                         </svg>
                                     ) : (
                                         <div
-                                            className="w-[120px] h-[40px] rounded-[10px] mr-8 flex items-center justify-center text-white text-2xl font-semibold "
+                                            className="w-[120px] h-[40px] rounded-[10px] mr-8 flex items-center justify-center text-white text-2xl font-semibold"
                                             style={{
                                                 backgroundColor:
                                                     discTypeColors[profileData.disc_character] || discTypeColors.None,
@@ -170,13 +167,14 @@ function FriendProfile() {
                                         >
                                             {profileData.disc_character}
                                         </div>
-                                    ))}
-                            </div>
+                                    )}
+                                </div>
+                            )}
                         </div>
                     </div>
-                    <div className="flex flex-col items-center gap-8">
+                    <div className="flex-col flex gap-2">
                         <button
-                            className={`w-60 h-[70px] text-xl font-bold rounded-[20px] ${
+                            className={`mr-5 px-6 py-2 h-12 w-44 text-xl font-bold rounded-[20px] ${
                                 isFollowing ? 'bg-gray-500' : 'bg-[#4053ff]'
                             } text-white`}
                             onClick={handleFollowClick}
@@ -184,16 +182,18 @@ function FriendProfile() {
                             {isFollowing ? '팔로우 취소' : '팔로우'}
                         </button>
                         <button
-                            className="w-60 h-[70px] bg-[#f8bd23] text-white text-xl font-bold rounded-[20px]"
+                            className="mr-5 px-6 py-2 h-12 w-44 bg-[#f8bd23] text-white text-lg font-bold rounded-[20px] hover:bg-opacity-90 transition duration-300"
                             onClick={handleFeedbackClick}
                         >
                             협업 평가 작성
                         </button>
                     </div>
                 </div>
-                <div className="w-full max-w-[1150px]">
+                {/* 메인 컨텐츠 */}
+
+                <div className="w-[100%] max-w-[1150px]">
                     <div className="bg-white rounded-[50px] shadow-md mb-5 p-8 md:p-16 relative">
-                        <h2 className="text-3xl md:text-4xl font-extrabold mb-4">
+                        <h2 className="text-3xl md:text-4l font-extrabold mb-4">
                             {profileData.name}님이 추구하는 업무 스타일
                         </h2>
                         <hr className="border-t border-gray-300 my-3" />
@@ -208,7 +208,7 @@ function FriendProfile() {
                             ))}
                         </div>
 
-                        <h2 className="text-3xl md:text-4xl font-extrabold mb-4">타인이 바라보는 업무 스타일</h2>
+                        <h2 className="text-3xl md:text-4l font-extrabold mb-4">타인이 바라보는 업무 스타일</h2>
                         <hr className="border-t border-gray-300 my-3" />
                         {profileData.feedback_count >= 3 ? (
                             <div className="flex flex-wrap gap-3 mt-3 mb-8">
@@ -242,7 +242,7 @@ function FriendProfile() {
                             </div>
                         )}
 
-                        <h2 className="text-3xl md:text-4xl font-extrabold mb-4">
+                        <h2 className="text-3xl md:text-4l font-extrabold mb-4">
                             {profileData.name}님이 관심 있는 업종/직군 분야는?
                         </h2>
                         <hr className="border-t border-gray-300 my-3" />
@@ -260,9 +260,9 @@ function FriendProfile() {
                     </div>
 
                     <div className="bg-white rounded-[50px] shadow-md mb-5 p-8 md:p-16 relative">
-                        <h2 className="text-3xl md:text-4xl font-extrabold mb-4">타인이 평가하는 {profileData.name}</h2>
+                        <h2 className="text-3xl md:text-4l font-extrabold mb-4">타인이 평가하는 {profileData.name}</h2>
                         <div className="absolute top-8 right-12 bg-[#e1e1e1] px-4 py-2 rounded-[10px] text-xl font-bold">
-                            답변수: {profileData.feedback_count}
+                            {profileData?.feedback_count}개의 피드백이 쌓였어요{' '}
                         </div>
                         <hr className="border-t border-gray-300 my-3" />
                         {profileData.feedback_count >= 3 ? (
@@ -298,20 +298,26 @@ function FriendProfile() {
                                     <div className="w-full md:w-[70%] text-xl mt-5">
                                         <p>{DISCData.description}</p>
                                         <div className="font-semibold mt-8 mb-3">
-                                            <strong>강점 및 보완할 점은?</strong>
+                                            <strong className="mt-8 mb-2 font-bold text-[#4053FF]">
+                                                강점 및 보완할 점은?
+                                            </strong>
                                         </div>
                                         <p>
-                                            <strong>• 강점:</strong> {DISCData.strength.join(', ')}
+                                            <strong>이 유형의 강점은:</strong> {DISCData.strength.join(', ')}
                                         </p>
                                         <p>
-                                            <strong>• 보완할 점:</strong> {DISCData.weakness.join(', ')}
+                                            <strong>상대적으로 이 유형은:</strong> {DISCData.weakness.join(', ')}
                                         </p>
                                         <div className="font-semibold mt-8 mb-3">
-                                            <strong>{DISCData.disc_character}와 맞는 협업 유형은?</strong>
+                                            <strong className="mt-8 mb-2 font-bold text-[#4053FF]">
+                                                {DISCData.disc_character}와 맞는 협업 유형은?
+                                            </strong>
                                         </div>
                                         {DISCData.suitable_type.map((type, index) => (
-                                            <div key={index} className="mb-3">
-                                                <strong>• {type.name}:</strong>
+                                            <div key={index}>
+                                                <strong className="mt-8 mb-2 font-semibold text-[#4053FF]">
+                                                    {type.name}
+                                                </strong>
                                                 <p>{type.description}</p>
                                             </div>
                                         ))}
@@ -336,10 +342,14 @@ function FriendProfile() {
                                         <p className="text-2xl font-semibold text-center mb-12">
                                             팀원들은 {profileData.name}님의 협업 성향에 대해 다음과 같이 느꼈어요!
                                         </p>
-                                        <div className="flex flex-col md:flex-row justify-around mt-5">
+                                        <div className="flex flex-col  justify-around mt-5">
+                                            <h3 className="text-3xl font-bold text-[#4053ff]">Summary</h3>
+
                                             <div className="flex-1 bg-[rgba(204,209,255,0.2)] rounded-[20px] p-12 m-5 md:m-12 text-xl">
                                                 {formatListWithIndex(summarized)}
                                             </div>
+                                            <h3 className="text-3xl font-bold text-[#4053ff]">Advice</h3>
+
                                             <div className="flex-1 bg-[rgba(204,209,255,0.2)] rounded-[20px] p-12 m-5 md:m-12 text-xl">
                                                 {formatListWithIndex(advice)}
                                             </div>

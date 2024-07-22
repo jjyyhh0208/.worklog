@@ -50,10 +50,39 @@ function Header({ isLoggedIn }) {
     };
 
     return (
+<<<<<<< HEAD
         <header className="fixed top-0 left-0 right-0 w-full p-4 bg-white flex justify-between items-center shadow-md z-50">
             <div className="flex items-center">
                 <Link to={profileData ? '/my-profile' : '/'}>
                     <h1 className="text-[#4053ff] text-2xl font-extrabold hover:cursor-default mr-6">.WORKLOG</h1>
+=======
+        
+        <div className="relative z-10 flex flex-col md:flex-row justify-between items-center bg-white h-auto md:h-20 w-full px-4 md:px-8 py-4 shadow-md">
+            <Link to={profileData ? '/my-profile' : '/'} className="mb-4 md:mb-0 ">
+                <span className="text-[#4053ff] text-2xl sm:text-3xl md:text-4xl font-extrabold">.WORKLOG</span>
+            </Link>
+            <nav className="flex flex-col md:flex-row w-full gap-20 md:w-auto justify-between items-center gap-space-y-4 md:space-y-0 md:space-x-4 lg:space-x-8">
+                <Link
+                    to="/my-profile"
+                    className={`flex items-center ${isActive(
+                        '/my-profile'
+                    )} text-xs sm:text-sm md:text-base font-medium hover:text-[#4053ff] transition-colors duration-300`}
+                >
+                    내 프로필
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="16"
+                        height="16"
+                        viewBox="0 0 30 28"
+                        fill="none"
+                        className="ml-1 md:ml-2 w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5"
+                    >
+                        <path
+                            d="M15 0.666504L0 12.0951H3.75V27.3332H11.25V19.7141H18.75V27.3332H26.25V11.9808L30 12.0951L15 0.666504Z"
+                            fill="currentColor"
+                        />
+                    </svg>
+>>>>>>> 7e6f31abc8539ca337df4b65e6d9fa8dbb46f525
                 </Link>
                 <nav className="flex space-x-4">
                     <Link

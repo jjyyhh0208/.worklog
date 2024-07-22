@@ -21,7 +21,7 @@ function Main() {
     };
 
     const scrollToSection = (index) => {
-        const offset = 50;
+        const offset = 100;
         const top = refs.current[index].current.getBoundingClientRect().top + window.pageYOffset - offset;
         window.scrollTo({ top, behavior: 'smooth' });
     };
@@ -59,7 +59,7 @@ function Main() {
     return (
         <div className="relative flex flex-col items-center min-h-screen w-full overflow-y-auto">
             <header className="fixed top-0 left-0 right-0 w-full p-4 bg-white flex justify-between items-center shadow-md z-50">
-                <h1 className="text-[#4053ff] text-2xl font-extrabold hover:cursor-default">.WORKLOG</h1>
+                <h1 className="text-[#4053ff] text-2xl sm:text-3xl md:text-4xl font-extrabold">.WORKLOG</h1>
                 <div className="flex space-x-4">
                     <button
                         className="text-gray-500 py-2 text-lg font-bold hover:bg-transparent hover:text-[#0453FF]"
@@ -92,25 +92,13 @@ function Main() {
                         showStatus={false}
                     >
                         <div>
-                            <img
-                                className="w-full h-full object-cover"
-                                src="https://via.placeholder.com/800x300.png?text=Sample+Image+1"
-                                alt="Sample 1"
-                            />
+                            <img className="w-full h-full object-cover" src="/images/onboarding1.png" alt="Sample 1" />
                         </div>
                         <div>
-                            <img
-                                className="w-full h-full object-cover"
-                                src="https://via.placeholder.com/800x300.png?text=Sample+Image+2"
-                                alt="Sample 2"
-                            />
+                            <img className="w-full h-full object-cover" src="/images/onboarding2.png" alt="Sample 2" />
                         </div>
                         <div>
-                            <img
-                                className="w-full h-full object-cover"
-                                src="https://via.placeholder.com/800x300.png?text=Sample+Image+3"
-                                alt="Sample 3"
-                            />
+                            <img className="w-full h-full object-cover" src="/images/onboarding3.png" alt="Sample 3" />
                         </div>
                     </Carousel>
                 </div>

@@ -82,10 +82,10 @@ function FeedbackIntro() {
         <div className="w-[100%] flex flex-col items-center bg-gray-100 overflow-y-auto min-h-[90%] h-screen  mt-16">
             <div className="p-9 md:w-3/5 w-11/12 rounded-2xl bg-white flex-shrink-0 my-9 flex flex-col items-center shadow-lg relative overflow-y-auto">
                 <ProgressBar progress={20} /> {/* ProgressBar 추가 */}
-                <div className="absolute top-8 right-12 text-2xl font-bold text-black bg-gray-300 p-3 rounded-lg shadow-md">
+                <div className="absolute top- right-8 text-xl font-bold text-black bg-gray-300 p-3 rounded-lg shadow-md">
                     1/5
                 </div>
-                <div className="absolute top-12 left-8">
+                <div className="absolute top-8 left-8">
                     <button type="submit" onClick={handleBackClick} className=" cursor-pointer hover:bg-white">
                         <svg xmlns="http://www.w3.org/2000/svg" width="60" height="50" viewBox="0 0 24 24" fill="none">
                             <path
@@ -98,7 +98,7 @@ function FeedbackIntro() {
                         </svg>
                     </button>
                 </div>
-                <div className="text-[#4053ff] text-4xl font-extrabold leading-normal mt-8 my-2">
+                <div className="text-[#4053ff] text-3xl font-extrabold leading-normal mt-12 my-2">
                     {profileData
                         ? `${profileData.name}님의 업무 스타일은 어떤 이미지가 돋보이나요?`
                         : '스스로 생각하기에 본인의 업무 스타일은 어떤 이미지가 돋보이나요?'}
@@ -116,7 +116,7 @@ function FeedbackIntro() {
                                 </clipPath>
                             </defs>
                         </svg>
-                        <span className="text-[#9b8f8f] text-xl font-medium leading-normal ml-2">
+                        <span className="text-[#9b8f8f] text-xl font-medium leading-normal ml-1">
                             키워드는 최대 3개까지 선택해주세요.
                         </span>
                     </div>
@@ -136,7 +136,7 @@ function FeedbackIntro() {
                         </button>
                     ))}
                 </div>
-                <div className="flex justify-end items-center mt-48 mb-4 w-full">
+                <div className="flex justify-end items-center mt-60 mb-2 w-full">
                     <button
                         className="w-36 h-12 rounded-lg bg-[#4053ff] border-none text-white text-lg font-bold cursor-pointer"
                         type="submit"
