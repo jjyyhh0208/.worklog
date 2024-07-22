@@ -1,6 +1,4 @@
-// KakaoShareButton.js
 import React from 'react';
-import styles from './KakaoShareButton.module.css'; // 스타일 모듈 가져오기
 
 const KakaoShareButton = () => {
     const shareToKakao = () => {
@@ -30,13 +28,13 @@ const KakaoShareButton = () => {
     return (
         <a
             href="#"
-            className={styles.kakaoShareButton}
+            className="flex justify-center items-center rounded-lg bg-white w-20 h-20 cursor-pointer"
             onClick={(e) => {
                 e.preventDefault();
                 shareToKakao();
             }}
         >
-            <img src="/images/kakao.png" alt="Kakao" width="40" height="40" className={styles.kakaoShareImg} />
+            <img src="/images/kakao.png" alt="Kakao" className="max-w-full max-h-full" />
         </a>
     );
 };
