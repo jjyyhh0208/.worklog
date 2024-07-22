@@ -1,7 +1,7 @@
 //signup2
 
 import React, { useState, useEffect } from 'react';
-import styles from './Signup2.module.css';
+
 import { useNavigate, useLocation } from 'react-router-dom';
 import ProfileService from '../../utils/ProfileService';
 import AdminService from '../../utils/AdminService';
@@ -185,15 +185,25 @@ function Signup2({ signUpInfo, setSignUpInfo }) {
     };
 
     return (
-        <div className={styles.container}>
-            <h1 className={styles.h1} onClick={logoHandler}>
+        <div className="flex flex-col items-center mt-56 md:mt-40 sm:mt-24">
+            <h1
+                className="absolute top-7 left-9 text-[#4053ff] text-5xl font-extrabold cursor-pointer sm:text-4xl sm:top-5 sm:left-5"
+                onClick={logoHandler}
+            >
                 .WORKLOG
             </h1>
 
-            <h2 className={styles.h2}>기본프로필 등록</h2>
-            <div className={styles.back}>
-                <button type="submit" onClick={handleBackClick} className={styles.backBtn}>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="60" height="50" viewBox="0 0 24 24" fill="none">
+            <h2 className="text-3xl font-bold mb-24 sm:text-2xl sm:mb-16">기본프로필 등록</h2>
+            <div className="absolute -left-20 top-24 sm:-left-10 sm:top-20">
+                <button type="submit" onClick={handleBackClick} className="bg-transparent hover:bg-white">
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="60"
+                        height="50"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        className="sm:w-12 sm:h-10"
+                    >
                         <path
                             d="M15.5 19l-7-7 7-7"
                             stroke="#4053ff"
@@ -204,82 +214,92 @@ function Signup2({ signUpInfo, setSignUpInfo }) {
                     </svg>
                 </button>
             </div>
-            <form className={styles.signUp}>
-                <div className={styles.idbox}></div>
-                <span className={styles.span}>이름</span>
+            <form className="flex flex-col items-center gap-2.5">
+                <span className="text-2xl font-bold self-start sm:text-xl">이름</span>
                 <input
-                    className={styles.input}
+                    className="w-[440px] h-[90px] px-2.5 rounded-lg border-2 border-[#4053ff] bg-white mb-5 text-xl sm:w-[300px] sm:h-[60px] sm:text-base"
                     type="text"
                     placeholder="사용할 닉네임을 입력해주세요."
                     name="name"
                     value={signUpInfo.name}
                     onChange={handleInputChange}
                 />
-                <span className={styles.span}>출생연도</span>
-                <select className={styles.input} value={selectedAge} onChange={handleAgeChange}>
+                <span className="text-2xl font-bold self-start sm:text-xl">출생연도</span>
+                <select
+                    className="w-[440px] h-[90px] px-2.5 rounded-lg border-2 border-[#4053ff] bg-white mb-5 text-xl sm:w-[300px] sm:h-[60px] sm:text-base"
+                    value={selectedAge}
+                    onChange={handleAgeChange}
+                >
                     <option value="">출생연도를 선택하세요</option>
                     {ageOptions}
                 </select>
-                <span className={styles.span}>성별</span>
-                <div className={styles.genderButtons}>
-                    <button
-                        type="button"
-                        className={`${styles.genderButton} ${selectedGender === 'M' ? styles.selected : ''}`}
-                        onClick={() => handleGenderClick('M')}
-                    >
-                        Male
-                    </button>
-                    <button
-                        type="button"
-                        className={`${styles.genderButton} ${selectedGender === 'F' ? styles.selected : ''}`}
-                        onClick={() => handleGenderClick('F')}
-                    >
-                        Female
-                    </button>
-                    <button
-                        type="button"
-                        className={`${styles.genderButton} ${selectedGender === 'N' ? styles.selected : ''}`}
-                        onClick={() => handleGenderClick('N')}
-                    >
-                        None
-                    </button>
+                <span className="text-2xl font-bold self-start sm:text-xl">성별</span>
+                <div className="flex gap-2.5 mb-5">
+                    {['M', 'F', 'N'].map((gender) => (
+                        <button
+                            key={gender}
+                            type="button"
+                            className={`w-[138px] h-[59px] rounded-lg text-2xl font-semibold 
+                                ${
+                                    selectedGender === gender ? 'bg-[#4053ff] text-white' : 'bg-[#d9d9d9] text-black'
+                                } sm:w-[100px] sm:h-[40px] sm:text-lg`}
+                            onClick={() => handleGenderClick(gender)}
+                        >
+                            {gender === 'M' ? 'Male' : gender === 'F' ? 'Female' : 'None'}
+                        </button>
+                    ))}
                 </div>
-                <span className={styles.span}>프로필 이미지</span>
+                <span className="text-2xl font-bold self-start sm:text-xl">프로필 이미지</span>
                 <label
-                    className={`${styles.preview} ${isActive ? styles.active : ''}`}
+                    className={`flex flex-col items-center justify-center gap-2.5 w-full p-[70px] border-3 border-dashed rounded-md bg-white cursor-pointer 
+                        ${isActive ? 'bg-[#efeef3] border-black' : 'border-[#eee] hover:border-black'} 
+                        sm:p-[40px]`}
                     onDragEnter={handleDragStart}
                     onDragOver={handleDragOver}
                     onDragLeave={handleDragEnd}
                     onDrop={handleDrop}
                 >
-                    <input type="file" className={styles.file} onChange={handleFileChange} />
+                    <input type="file" className="hidden" onChange={handleFileChange} />
                     {!file && (
                         <>
-                            <svg className={styles.icon} x="0px" y="0px" viewBox="0 0 24 24">
+                            <svg
+                                className="w-24 h-24 pointer-events-none sm:w-16 sm:h-16"
+                                x="0px"
+                                y="0px"
+                                viewBox="0 0 24 24"
+                            >
                                 <path fill="transparent" d="M0,0h24v24H0V0z" />
                                 <path
                                     fill="#000"
                                     d="M20.5,5.2l-1.4-1.7C18.9,3.2,18.5,3,18,3H6C5.5,3,5.1,3.2,4.8,3.5L3.5,5.2C3.2,5.6,3,6,3,6.5V19  c0,1.1,0.9,2,2,2h14c1.1,0,2-0.9,2-2V6.5C21,6,20.8,5.6,20.5,5.2z M12,17.5L6.5,12H10v-2h4v2h3.5L12,17.5z M5.1,5l0.8-1h12l0.9,1  H5.1z"
                                 />
                             </svg>
-                            <p className={styles.preview_msg}>클릭 혹은 파일을 이곳에 드롭하세요.</p>
-                            <p className={styles.preview_desc}>파일당 최대 3MB</p>
+                            <p className="font-medium text-lg mt-5 mb-2.5 sm:text-base">
+                                클릭 혹은 파일을 이곳에 드롭하세요.
+                            </p>
+                            <p className="text-sm sm:text-xs">파일당 최대 3MB</p>
                         </>
                     )}
                     {file && (
-                        <div className={styles.imagePreview}>
-                            <img src={imageUrl} alt="Profile" className={styles.profileImage} />
-                            <div className={styles.imagetext}>{fileName}</div>
+                        <div className="flex flex-col items-center">
+                            <img
+                                src={imageUrl}
+                                alt="Profile"
+                                className="max-h-[200px] max-w-[200px] sm:max-h-[150px] sm:max-w-[150px]"
+                            />
+                            <div className="mt-5 text-xl sm:text-base">{fileName}</div>
                         </div>
                     )}
                 </label>
 
-                <div className={styles.nextbox}>
-                    <div>
-                        <button className={styles.nextBtn} type="button" onClick={handleNextClick}>
-                            {isEditing ? '수정 완료' : 'NEXT'}
-                        </button>
-                    </div>
+                <div className="">
+                    <button
+                        className="w-[148px] h-[49px] rounded-[15px] bg-[#4053ff] text-white text-2xl font-bold absolute left-1/2 transform -translate-x-1/2 cursor-pointer sm:w-[120px] sm:h-[40px] sm:text-xl"
+                        type="button"
+                        onClick={handleNextClick}
+                    >
+                        {isEditing ? '수정 완료' : 'NEXT'}
+                    </button>
                 </div>
             </form>
         </div>
