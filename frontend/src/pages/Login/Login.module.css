@@ -1,182 +1,150 @@
+.pageContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    width: 100%;
+}
+
 .container {
     display: flex;
     flex-direction: column;
-    margin-top: 226px;
+    justify-content: center;
     align-items: center;
+    padding: 40px;
+    box-sizing: border-box;
+    border: 1px solid #e0e0e0;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+    border-radius: 10px;
+    width: 60%;
 }
 
 .h1 {
-    position: absolute;
-    top: 27px;
-    left: 36px;
     color: #4053ff;
     text-align: center;
-    font-size: 47.962px;
-    font-style: normal;
+    font-size: 2.5rem;
     font-weight: 800;
-    line-height: normal;
     cursor: pointer;
+    margin-bottom: 50px;
 }
 
 .h2 {
     color: #000;
-    font-size: 30px;
-    font-style: normal;
+    font-size: 1.5rem;
     font-weight: 700;
-    line-height: normal;
+    margin-bottom: 10px;
 }
 
 .span {
     color: #000;
-    font-size: 25px;
-    font-style: normal;
+    font-size: 1rem;
     font-weight: 700;
-    line-height: normal;
     margin-bottom: 10px;
-    margin-left: 15%;
 }
 
-/* input 스타일 */
 .input {
-    display: flex;
-    height: 73px;
-    width: 70%;
-    padding: 10px;
-    justify-content: center;
-    align-items: center;
-    gap: 10px;
-    flex-shrink: 0;
+    width: 80%;
+    max-width: 600px;
+    padding: 15px;
     border-radius: 10px;
     border: 2px solid #4053ff;
     background: #fff;
     margin-bottom: 20px;
-    font-size: 21px;
-    align-self: center;
+    font-size: 1rem;
+    box-sizing: border-box;
 }
 
 .button {
     background-color: #9da4e5;
-    border-radius: 1vw; /* viewport 너비의 1% 둥근 모서리 */
+    border-radius: 10px;
     border: none;
-    align-self: center;
-    width: 20vw; /* viewport 너비의 20% 너비 */
-    height: 8vw; /* viewport 너비의 8% 높이 */
-    max-width: 157.848px; /* 최대 너비 설정 */
-    max-height: 62px; /* 최대 높이 설정 */
-    flex-shrink: 0;
+    width: 80%;
+    max-width: 600px;
+    padding: 15px;
     color: #f6f6f6;
-    font-size: 21px;
-    font-style: normal;
+    font-size: 1.1rem;
     font-weight: 400;
-    line-height: normal;
-    margin-top: 40px;
+    margin-top: 20px;
     cursor: pointer;
 }
 
 .login {
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    width: 35%;
+    align-items: center;
+    width: 100%;
+    max-width: 800px;
 }
+
 .errorMessage {
     color: red;
     margin-bottom: 20px;
-    font-size: 18px;
+    font-size: 1.125rem;
 }
 
-/* Media queries for responsiveness */
 @media (max-width: 1024px) {
     .h1 {
-        font-size: 36px;
-        top: 20px;
-        left: 20px;
+        font-size: 2rem;
     }
 
     .h2 {
-        font-size: 24px;
-        margin-top: 80px;
+        font-size: 1.5rem;
     }
 
     .span {
-        font-size: 20px;
+        font-size: 1.125rem;
     }
 
     .input {
-        width: 350px;
-        height: 60px;
-        font-size: 18px;
+        font-size: 1rem;
     }
 
     .button {
-        width: 140px;
-        height: 50px;
-        font-size: 18px;
+        font-size: 1rem;
     }
 }
 
 @media (max-width: 768px) {
-    .container {
-        margin-top: 150px;
-    }
-
     .h1 {
-        font-size: 30px;
-        top: 15px;
-        left: 15px;
+        font-size: 1.75rem;
     }
 
     .h2 {
-        font-size: 20px;
-        margin-top: 60px;
+        font-size: 1.25rem;
     }
 
     .span {
-        font-size: 18px;
+        font-size: 1rem;
     }
 
     .input {
-        width: 300px;
-        height: 50px;
-        font-size: 16px;
+        font-size: 0.875rem;
     }
 
     .button {
-        width: 120px;
-        height: 45px;
-        font-size: 16px;
+        font-size: 0.875rem;
     }
 }
 
 @media (max-width: 480px) {
-    .container {
-        margin-top: 100px;
-    }
-
     .h1 {
-        font-size: 24px;
-        top: 10px;
-        left: 10px;
+        font-size: 1.5rem;
     }
 
     .h2 {
-        font-size: 18px;
-        margin-top: 50px;
+        font-size: 1rem;
     }
 
     .span {
-        font-size: 16px;
+        font-size: 0.875rem;
     }
 
     .input {
-        width: 250px;
-        height: 40px;
-        font-size: 14px;
+        font-size: 0.75rem;
     }
 
     .button {
-        width: 100px;
-        height: 40px;
-        font-size: 14px;
+        font-size: 0.75rem;
     }
 }

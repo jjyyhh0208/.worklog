@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Route, Routes, useLocation } from 'react-router-dom';
 import axios from 'axios';
-import './styles/global.css';
+import './App.css';
 
 // Pages
 import Main from './pages/Main/Main';
@@ -28,7 +28,6 @@ import Error from './components/Error/Error';
 import AuthRedirect from './components/AuthRedirect';
 import ProtectedRoute from './components/ProtectedRoute';
 import ProfileService from './utils/ProfileService';
-import UploadImage from './pages/UploadImage';
 
 axios.defaults.xsrfCookieName = 'csrftoken';
 axios.defaults.xsrfHeaderName = 'X-CSRFToken';
@@ -107,7 +106,6 @@ function App() {
                 <Route path="/on-boarding/2" element={<OnBoarding2 />} />
                 <Route path="/on-boarding/3" element={<OnBoarding3 />} />
                 <Route path="/friend-profile/:username" element={<FriendProfile />} />
-                <Route path="/test" element={<UploadImage />} />
                 <Route path="/list/:username" element={<List />} />
 
                 {/* 보호된 라우트 */}

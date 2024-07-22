@@ -43,6 +43,7 @@
     border-radius: 50%;
     object-fit: cover;
     margin: 20px;
+    border: 1px solid #000;
 }
 
 .profileDetails {
@@ -121,6 +122,8 @@
 /* 기존 스타일... */
 
 .unfollowButton {
+    height: 70px;
+    width: 240px;
     background-color: grey;
     color: white;
     border: none;

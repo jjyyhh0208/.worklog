@@ -1,6 +1,5 @@
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import styles from './OnBoarding2.module.css';
 
 const OnBoarding2 = () => {
     const navigate = useNavigate();
@@ -15,44 +14,50 @@ const OnBoarding2 = () => {
     };
 
     const getDotClassName = (page) => {
-        return location.pathname === `/on-boarding/${page}` ? styles.dotBlue : styles.dotGray;
+        return location.pathname === `/on-boarding/${page}` ? 'bg-[#4053ff]' : 'bg-gray-400';
     };
 
     return (
-        <div className={styles.container}>
-            <h1 className={styles.h1}>.WORKLOG</h1>
-            <div className={styles.dotBox}>
+        <div className="flex flex-col items-center mt-36" onClick={handleContainerClick}>
+            <h1 className="absolute top-7 left-9 text-[#4053ff] text-center text-4xl font-extrabold">.WORKLOG</h1>
+            <div className="flex justify-center gap-5 mb-12">
                 <div
-                    className={getDotClassName(1)}
+                    className={`${getDotClassName(1)} w-6 h-6 rounded-full cursor-pointer`}
                     onClick={(e) => {
                         e.stopPropagation();
                         handleDotClick(1);
                     }}
                 ></div>
                 <div
-                    className={getDotClassName(2)}
+                    className={`${getDotClassName(2)} w-6 h-6 rounded-full cursor-pointer`}
                     onClick={(e) => {
                         e.stopPropagation();
                         handleDotClick(2);
                     }}
                 ></div>
                 <div
-                    className={getDotClassName(3)}
+                    className={`${getDotClassName(3)} w-6 h-6 rounded-full cursor-pointer`}
                     onClick={(e) => {
                         e.stopPropagation();
                         handleDotClick(3);
                     }}
                 ></div>
             </div>
-            <div className={styles.descriptionContainer}>
-                <span className={styles.description}>
+            <div className="text-center">
+                <span className="text-black text-2xl font-medium">
                     내가 생각하는 팀원의 업무 스타일은?
                     <br />
                 </span>
-                <span className={styles.descriptionBold}>직관적이고 답하기 쉬운 설문지 구성</span>
+                <span className="text-black text-2xl font-bold">직관적이고 답하기 쉬운 설문지 구성</span>
             </div>
-            <div className={styles.mainImageContainer} onClick={handleContainerClick}>
-                <div className={styles.mainImage} />
+            <div
+                className="relative w-full max-w-screen-lg h-[700px] p-10 cursor-pointer"
+                onClick={handleContainerClick}
+            >
+                <div
+                    className="w-full h-full bg-center bg-cover"
+                    style={{ backgroundImage: "url('/images/onboarding2.png')" }}
+                />
             </div>
         </div>
     );

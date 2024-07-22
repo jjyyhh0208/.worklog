@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import styles from './Signup4.module.css';
 import ProfileService from '../../utils/ProfileService';
+import AdminService from '../../utils/AdminService';
 
 function Signup4({ signUpInfo, setSignUpInfo }) {
     const navigate = useNavigate();
@@ -131,7 +132,23 @@ function Signup4({ signUpInfo, setSignUpInfo }) {
 
     const logoHandler = () => {
         if (!isEditing) {
-            navigate('/', { state: { selectedInterests } });
+            signUpInfo.username = '';
+            signUpInfo.password1 = '';
+            signUpInfo.password2 = '';
+            signUpInfo.name = '';
+            signUpInfo.gender = '';
+            signUpInfo.age = '';
+
+            AdminService.userDelete()
+                .then(() => {
+                    navigate('/', { state: { selectedInterests } });
+                    localStorage.removeItem('authToken');
+                    localStorage.removeItem('selectedInterests');
+                    localStorage.removeItem('selectedWorkStyles');
+                })
+                .catch((error) => {
+                    console.error('회원 탈퇴 중 오류가 발생했습니다.', error);
+                });
         } else {
             navigate('/my-profile', { state: { selectedInterests } });
         }

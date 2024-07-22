@@ -59,6 +59,13 @@ function Search() {
         navigate(`/friend-profile/${username}`);
     };
 
+        const handleKeyPress = (e) => {
+            if (e.key === 'Enter') {
+                handleSearch();
+            }
+        };
+
+
     return (
         <div className={styles.searchContainer}>
             <div className={styles.searchBar}>
@@ -66,6 +73,7 @@ function Search() {
                     type="text"
                     value={searchTerm}
                     onChange={handleInputChange}
+                    onKeyPress={handleKeyPress}
                     placeholder="알고 싶은 동료의 ID 또는 닉네임을 입력하세요"
                 />
                 <button onClick={handleSearch}>
