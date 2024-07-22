@@ -18,9 +18,9 @@ const OnBoarding2 = () => {
     };
 
     return (
-        <div className="flex flex-col items-center mt-36" onClick={handleContainerClick}>
+        <div className="w-[100%] flex flex-col items-center mt-28" onClick={handleContainerClick}>
             <h1 className="absolute top-7 left-9 text-[#4053ff] text-center text-4xl font-extrabold">.WORKLOG</h1>
-            <div className="flex justify-center gap-5 mb-12">
+            <div className="flex justify-center gap-5 mb-4">
                 <div
                     className={`${getDotClassName(1)} w-6 h-6 rounded-full cursor-pointer`}
                     onClick={(e) => {
@@ -51,13 +51,15 @@ const OnBoarding2 = () => {
                 <span className="text-black text-2xl font-bold">직관적이고 답하기 쉬운 설문지 구성</span>
             </div>
             <div
-                className="relative w-full max-w-screen-lg h-[700px] p-10 cursor-pointer"
-                onClick={handleContainerClick}
+                className="relative w-full max-w-screen-lg h-[700px] p-10 "
+               
             >
-                <div
-                    className="w-full h-full bg-center bg-cover"
+                <div className="absolute inset-0 flex justify-center items-center">
+                    <div
+                        className="w-[110%] h-[90%] bg-center bg-cover"
                     style={{ backgroundImage: "url('/images/onboarding2.png')" }}
                 />
+            </div>
             </div>
         </div>
     );

@@ -43,9 +43,9 @@ function List() {
     };
 
     return (
-        <div className="w-[100%] bg-[#f6f6f6] min-h-screen p-20">
-            <div className="flex justify-between items-center pt-7 w-9/10 mx-auto">
-                <h1 className="text-[#4053ff] text-2xl font-bold">내가 팔로우한 프로필</h1>
+        <div className="w-full bg-[#ffffff] min-h-screen p-4 sm:p-8 md:p-12 lg:p-8">
+            <div className="flex justify-between items-center pt-7 w-full max-w-[1000px] mx-auto">
+                <h1 className="text-[#4053ff] text-xl sm:text-2xl font-bold">내가 팔로우한 프로필</h1>
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="52"
@@ -69,71 +69,82 @@ function List() {
                     />
                 </svg>
             </div>
-            <div className="bg-[#ccd1ff33] bg-opacity-20 flex flex-wrap gap-5 p-7 mx-auto rounded-2xl justify-around w-7/10">
-                {friends.length > 0 ? (
-                    friends.map((friend) => (
-                        <div
-                            key={friend.id}
-                            className="bg-white rounded-2xl shadow-md p-4 text-center w-56 h-67 relative flex flex-col items-center"
-                        >
-                            <div
-                                className="absolute top-0 left-0 w-full text-center p-2 text-white text-xs font-bold rounded-t-2xl"
-                                style={{
-                                    backgroundColor: discTypeColors[friend.disc_character] || discTypeColors.None,
-                                }}
-                            >
-                                {friend.disc_character !== 'None' && friend.disc_character}
-                            </div>
-                            <div className="pt-5 flex flex-col items-center mt-4">
-                                <img
-                                    src={friend.profileImage || '/images/basicProfile.png'}
-                                    alt={`${friend.name}'s profile`}
-                                    className="rounded-full h-28 w-28 mb-1 border border-black"
-                                />
-                                <h2 className="text-lg font-bold mb-2">{friend.name}</h2>
-                                <button
-                                    onClick={() => handleEvaluationClick(friend.username)}
-                                    className="bg-yellow-400 border-none rounded-md text-white text-lg font-semibold cursor-pointer p-2.5 hover:bg-yellow-500"
+            <div className="bg-[#ccd1ff33] bg-opacity-20 p-4 sm:p-7 mx-auto rounded-2xl w-full max-w-[1000px]">
+                <div className="flex justify-center">
+                    <div
+                        className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 ${
+                            friends.length < 3 ? 'sm:grid-cols-1 lg:grid-cols-2' : ''
+                        }`}
+                    >
+                        {friends.length > 0 ? (
+                            friends.map((friend) => (
+                                <div
+                                    key={friend.id}
+                                    className="bg-white rounded-2xl shadow-md p-4 text-center w-56 h-68 relative flex flex-col items-center duration-300   transform hover:scale-105"
                                 >
-                                    프로필 보러가기
-                                </button>
+                                    <div
+                                        className="absolute top-0 left-0 w-full text-center p-2 text-white text-xs font-bold rounded-t-2xl h-8 flex items-center justify-center"
+                                        style={{
+                                            backgroundColor:
+                                                discTypeColors[friend.disc_character] || discTypeColors.None,
+                                        }}
+                                    >
+                                        {friend.disc_character !== 'None' ? friend.disc_character : '\u00A0'}
+                                    </div>
+                                    <div className="pt-5 flex flex-col items-center mt-4">
+                                        <img
+                                            src={friend.profileImage || '/images/basicProfile.png'}
+                                            alt={`${friend.name}'s profile`}
+                                            className="rounded-full h-28 w-28 mb-1 border border-black"
+                                        />
+                                        <h2 className="text-lg font-bold mb-2">{friend.name}</h2>
+                                        <button
+                                            onClick={() => handleEvaluationClick(friend.username)}
+                                            className="bg-yellow-400 text-white font-bold py-2 px-3 rounded hover:bg-yellow-500"
+                                        >
+                                            프로필 보러가기
+                                        </button>
+                                    </div>
+                                </div>
+                            ))
+                        ) : (
+                            <div className="col-span-full flex flex-col items-center text-center">
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    width="150"
+                                    height="150"
+                                    viewBox="0 0 252 252"
+                                    fill="none"
+                                >
+                                    <path
+                                        d="M94.5 21C66.99 21 44.625 43.365 44.625 70.875C44.625 97.86 65.73 119.7 93.24 120.645C94.08 120.54 94.92 120.54 95.55 120.645C95.76 120.645 95.865 120.645 96.075 120.645C96.18 120.645 96.18 120.645 96.285 120.645C123.165 119.7 144.27 97.86 144.375 70.875C144.375 43.365 122.01 21 94.5 21Z"
+                                        fill="#D2D2D2"
+                                        fillOpacity="0.82"
+                                    />
+                                    <path
+                                        d="M147.84 148.575C118.545 129.045 70.7701 129.045 41.2651 148.575C27.9301 157.5 20.5801 169.575 20.5801 182.49C20.5801 195.405 27.9301 207.375 41.1601 216.195C55.8601 226.065 75.1801 231 94.5001 231C113.82 231 133.14 226.065 147.84 216.195C161.07 207.27 168.42 195.3 168.42 182.28C168.315 169.365 161.07 157.395 147.84 148.575Z"
+                                        fill="#D2D2D2"
+                                        fillOpacity="0.82"
+                                    />
+                                    <path
+                                        d="M209.895 77.0701C211.575 97.4401 197.085 115.29 177.03 117.705C176.925 117.705 176.925 117.705 176.82 117.705H176.505C175.875 117.705 175.245 117.705 174.72 117.915C164.535 118.44 155.19 115.185 148.155 109.2C158.97 99.5401 165.165 85.0501 163.905 69.3001C163.17 60.7951 160.23 53.0251 155.82 46.4101C159.81 44.4151 164.43 43.1551 169.155 42.7351C189.735 40.9501 208.11 56.2801 209.895 77.0701Z"
+                                        fill="#D2D2D2"
+                                        fillOpacity="0.82"
+                                    />
+                                    <path
+                                        d="M230.895 174.195C230.055 184.38 223.545 193.2 212.625 199.185C202.125 204.96 188.895 207.69 175.77 207.375C183.33 200.55 187.74 192.045 188.58 183.015C189.63 169.995 183.435 157.5 171.045 147.525C164.01 141.96 155.82 137.55 146.895 134.295C170.1 127.575 199.29 132.09 217.245 146.58C226.905 154.35 231.84 164.115 230.895 174.195Z"
+                                        fill="#D2D2D2"
+                                        fillOpacity="0.82"
+                                    />
+                                </svg>
+                                <p className="text-black font-inter text-lg font-medium">
+                                    아직 팔로우한 동료가 없습니다.
+                                </p>
+                                <p className="text-black font-inter text-lg font-medium">새로운 동료를 추가해보세요!</p>
                             </div>
-                        </div>
-                    ))
-                ) : (
-                    <div className="flex flex-col items-center text-center">
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="150"
-                            height="150"
-                            viewBox="0 0 252 252"
-                            fill="none"
-                        >
-                            <path
-                                d="M94.5 21C66.99 21 44.625 43.365 44.625 70.875C44.625 97.86 65.73 119.7 93.24 120.645C94.08 120.54 94.92 120.54 95.55 120.645C95.76 120.645 95.865 120.645 96.075 120.645C96.18 120.645 96.18 120.645 96.285 120.645C123.165 119.7 144.27 97.86 144.375 70.875C144.375 43.365 122.01 21 94.5 21Z"
-                                fill="#D2D2D2"
-                                fillOpacity="0.82"
-                            />
-                            <path
-                                d="M147.84 148.575C118.545 129.045 70.7701 129.045 41.2651 148.575C27.9301 157.5 20.5801 169.575 20.5801 182.49C20.5801 195.405 27.9301 207.375 41.1601 216.195C55.8601 226.065 75.1801 231 94.5001 231C113.82 231 133.14 226.065 147.84 216.195C161.07 207.27 168.42 195.3 168.42 182.28C168.315 169.365 161.07 157.395 147.84 148.575Z"
-                                fill="#D2D2D2"
-                                fillOpacity="0.82"
-                            />
-                            <path
-                                d="M209.895 77.0701C211.575 97.4401 197.085 115.29 177.03 117.705C176.925 117.705 176.925 117.705 176.82 117.705H176.505C175.875 117.705 175.245 117.705 174.72 117.915C164.535 118.44 155.19 115.185 148.155 109.2C158.97 99.5401 165.165 85.0501 163.905 69.3001C163.17 60.7951 160.23 53.0251 155.82 46.4101C159.81 44.4151 164.43 43.1551 169.155 42.7351C189.735 40.9501 208.11 56.2801 209.895 77.0701Z"
-                                fill="#D2D2D2"
-                                fillOpacity="0.82"
-                            />
-                            <path
-                                d="M230.895 174.195C230.055 184.38 223.545 193.2 212.625 199.185C202.125 204.96 188.895 207.69 175.77 207.375C183.33 200.55 187.74 192.045 188.58 183.015C189.63 169.995 183.435 157.5 171.045 147.525C164.01 141.96 155.82 137.55 146.895 134.295C170.1 127.575 199.29 132.09 217.245 146.58C226.905 154.35 231.84 164.115 230.895 174.195Z"
-                                fill="#D2D2D2"
-                                fillOpacity="0.82"
-                            />
-                        </svg>
-                        <p className="text-black font-inter text-lg font-medium">아직 팔로우한 동료가 없습니다.</p>
-                        <p className="text-black font-inter text-lg font-medium">새로운 동료를 추가해보세요!</p>
+                        )}
                     </div>
-                )}
+                </div>
             </div>
         </div>
     );

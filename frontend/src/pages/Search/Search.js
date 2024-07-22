@@ -102,7 +102,7 @@ function Search() {
                     {searchResults.map((result) => (
                         <div
                             key={result.username}
-                            className="bg-white border border-gray-300 rounded-3xl p-5 flex flex-col items-center cursor-pointer shadow-md w-60 h-72 relative"
+                            className="bg-white border border-gray-300 rounded-3xl p-5 flex flex-col items-center  cursor-pointer duration-300   transform hover:scale-105 shadow-md w-60 h-72 relative"
                             onClick={() => handleProfileClick(result.username)}
                         >
                             <svg
