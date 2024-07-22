@@ -90,7 +90,7 @@ const Feedback = () => {
     };
 
     return (
-        <div className="flex flex-col items-center bg-gray-100 overflow-y-auto min-h-[90%] h-screen ">
+        <div className="w-[100%] flex flex-col items-center bg-gray-100 overflow-y-auto min-h-[90%] h-screen ">
             <div className="p-9 md:w-3/5 w-11/12 rounded-2xl bg-white flex-shrink-0 my-9 flex flex-col items-center shadow-lg relative ">
                 <ProgressBar progress={progress} /> {/* ProgressBar 추가 */}
                 <div className="absolute top-8 right-12 text-2xl font-bold text-black bg-gray-300 p-3 rounded-lg shadow-md">

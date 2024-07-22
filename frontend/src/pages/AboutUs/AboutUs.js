@@ -213,7 +213,7 @@ const AboutUs = () => {
                                 .map((type, index) => (
                                     <span
                                         key={index}
-                                        className="px-4 py-2 rounded-lg w-32 h-10 text-center cursor-pointer text-white font-bold "
+                                        className="px-4 py-2 rounded-lg w-32 h-10 text-center cursor-pointer text-white font-bold duration-300   transform hover:scale-105"
                                         style={{ backgroundColor: type.color }}
                                         onClick={() => scrollToSection(targetRefs[type.title])}
                                     >
@@ -238,41 +238,44 @@ const AboutUs = () => {
                 {groups.map((group, groupIndex) => (
                     <div key={groupIndex} className="mt-12 scroll-mt-12">
                         <h2 className="text-3xl font-bold text-black mb-2">{group.title}</h2>
-                        <p className="text-xl text-black ml-8 mb-8">{group.description}</p>
+                        <p className="text-xl mt-5 text-black ml-8 mb-8">{group.description}</p>
 
                         {/* 유형별 설명 */}
                         {group.types.map((type, typeIndex) => (
-                            <div key={typeIndex} className="mt-8" ref={type.ref}>
+                            <div key={typeIndex} className="mt-10" ref={type.ref}>
                                 <div className="flex flex-wrap mt-5 justify-around">
                                     <div
-                                        className="text-xl w-60 h-16 rounded-lg px-5 py-2 text-center flex items-center justify-center text-white font-bold"
+                                        className="text-xl w-60 h-16 mb-10 rounded-lg px-5 py-2 text-center flex items-center justify-center text-white font-bold"
                                         style={{ backgroundColor: type.color }}
                                     >
                                         {type.title}
                                     </div>
-                                    <div className="w-full lg:w-3/4 text-black text-xl">
-                                        <p>{type.description}</p>
-                                        <div className="mt-8 mb-2 font-semibold">
-                                            {type.title}형과 맞는 협업 유형은?
-                                        </div>
-                                        <p className="mb-2">
+                                    <div className="w-full lg:w-3/4 text-black text-xl leading-relaxed">
+                                        <p className="mb-6">{type.description}</p>
+
+                                        <p className="mb-4 font-bold  text-[#4053FF]">
                                             <strong>강점 및 보완할 점은?</strong>
                                         </p>
-                                        <p className="mb-4">
-                                            <strong>• 이 유형의 강점은:</strong> {type.strengths}
+                                        <p className="mb-6">
+                                            <strong>이 유형의 강점은:</strong> {type.strengths}
                                         </p>
-                                        <p className="mb-4">
-                                            <strong>• 상대적으로 이 유형은:</strong> {type.weaknesses}
+                                        <p className="mb-6">
+                                            <strong>상대적으로 이 유형은:</strong> {type.weaknesses}
                                         </p>
-                                        <p className="mb-2">
-                                            <strong>• 강점 강화: {type.bestMatch}</strong>
-                                        </p>
-                                        <p>{type.bestMatchDescription}</p>
+                                        <div className="mt-8 mb-2 font-bold text-[#4053FF]">
+                                            {type.title}형과 맞는 협업 유형은?
+                                        </div>
+                                        <div className="block mb-2">
+                                            <strong>{type.bestMatch}</strong>
+                                            <div className="text-[#6B7280]"> 강점을 더 강화 시켜 주는 협업 유형</div>
+                                        </div>
+                                        <div>{type.bestMatchDescription}</div>
                                         <br />
-                                        <p>
-                                            <strong>• 상호 보완이 되는 협업 유형은?: {type.complement}</strong>
-                                        </p>
-                                        <p>{type.complementDescription}</p>
+                                        <div>
+                                            <strong className="block mb-2">{type.complement}</strong>
+                                            <div className="text-[#6B7280]"> 상호 보완이 되는 협업 유형</div>
+                                        </div>
+                                        <div>{type.complementDescription}</div>
                                     </div>
                                 </div>
                             </div>

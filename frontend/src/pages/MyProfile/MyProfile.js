@@ -122,28 +122,6 @@ function MyProfile() {
         }, 2000);
     };
 
-    const handleSlackShare = () => {
-        if (!profileData || !profileData.username) {
-            alert('프로필 데이터를 불러오는데 문제가 발생했습니다. 페이지를 새로고침하고 다시 시도해주세요.');
-            return;
-        }
-
-        let profileLink = ProfileService.getUserProfileLink(profileData.username);
-        if (!profileLink.startsWith('http')) {
-            profileLink = 'https://' + profileLink;
-        }
-        const text = `${profileData.name}님의 프로필을 확인해보세요: ${profileLink}`;
-
-        // 더블 인코딩 적용
-        const encodedUrl = encodeURIComponent(encodeURIComponent(profileLink));
-        const encodedText = encodeURIComponent(text);
-
-        const slackShareUrl = `https://slack.com/share/url?url=${encodedUrl}&text=${encodedText}`;
-
-        // 새 창에서 Slack 공유 페이지 열기
-        window.open(slackShareUrl, '_blank', 'noopener,noreferrer');
-    };
-
     const handleKeywordEdit = () => {
         navigate('/signup/3', { state: { isEditing: true, profileData } });
     };
@@ -153,7 +131,7 @@ function MyProfile() {
     };
 
     return (
-        <div className="bg-[#f6f6f6] p-5 flex flex-col items-center">
+        <div className="w-[100%] bg-[#f6f6f6] p-5 flex flex-col items-center">
             <div className="flex flex-col items-center w-full max-w-[1150px]">
                 <div className="flex flex-col md:flex-row items-center mb-5 mt-5 w-full">
                     <div className="bg-white rounded-[50px] shadow-md p-4 w-full md:w-auto h-auto md:h-[180px] flex-shrink-0 mb-5 md:mb-0 md:mr-12 relative flex items-center">
@@ -197,7 +175,7 @@ function MyProfile() {
                                         </svg>
                                     ) : (
                                         <div
-                                            className="w-[120px] h-[40px] rounded-[20px] flex items-center justify-center text-white text-2xl font-semibold"
+                                            className="w-[120px] h-[40px] rounded-[10px] mr-8 flex items-center justify-center text-white text-2xl font-semibold"
                                             style={{
                                                 backgroundColor:
                                                     discTypeColors[profileData.disc_character] || discTypeColors.None,
@@ -220,7 +198,9 @@ function MyProfile() {
                                 }}
                             >
                                 <svg
+                                
                                     xmlns="http://www.w3.org/2000/svg"
+                                    className='ml-3'
                                     width="40"
                                     height="40"
                                     viewBox="0 0 40 40"
@@ -243,19 +223,9 @@ function MyProfile() {
                             >
                                 <img src="/images/instagram.png" alt="Instagram" className="max-w-full max-h-full" />
                             </a>
-                            <a
-                                href="#"
-                                className="flex justify-center items-center rounded-lg bg-white w-16 h-16 cursor-pointer"
-                                onClick={(e) => {
-                                    e.preventDefault();
-                                    handleSlackShare();
-                                }}
-                            >
-                                <img src="/images/slack.png" alt="Slack" className="max-w-full max-h-full" />
-                            </a>
                         </div>
                         <button
-                            className="w-80 h-[50px] bg-[#9b8f8f] text-white text-xl font-bold rounded-[10px]"
+                            className="w-60 h-[50px] bg-[#9b8f8f] text-white text-xl font-bold rounded-[10px]"
                             onClick={handleProfileEdit}
                         >
                             프로필 수정

@@ -52,7 +52,7 @@ function Login() {
                 <input
                     className="flex h-[73px] w-[70%] p-2.5 justify-center items-center gap-2.5 flex-shrink-0 rounded-lg border-2 border-[#4053FF] bg-white mb-5 text-[21px] self-center"
                     type="text"
-                    placeholder="아이디를 입력하세요"
+                    placeholder="아이디를 입력해주세요"
                     name="username"
                     value={loginInfo.username}
                     onChange={loginChangeHandler}
@@ -61,7 +61,7 @@ function Login() {
                 <input
                     className="flex h-[73px] w-[70%] p-2.5 justify-center items-center gap-2.5 flex-shrink-0 rounded-lg border-2 border-[#4053FF] bg-white mb-5 text-[21px] self-center"
                     type="password"
-                    placeholder="비밀번호를 입력하세요"
+                    placeholder="비밀번호를 입력해주세요"
                     name="password"
                     value={loginInfo.password}
                     onChange={loginChangeHandler}
