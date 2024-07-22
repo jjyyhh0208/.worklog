@@ -110,61 +110,38 @@ function FriendProfile() {
         navigate(`/feedback/intro/${username}`);
     };
 
-    const handleGoBack = () => {
-        const params = new URLSearchParams(location.search);
-        const from = params.get('from');
-        const query = params.get('q');
-
-        if (from === 'search' && query) {
-            navigate(`/search?q=${encodeURIComponent(query)}`);
-        } else {
-            navigate(`/list/${username}`);
-        }
-    };
-    if (isLoading) {
-        return <div className="bg-[#f6f6f6] w-[100%] h-[1000px] "></div>;
-    }
-
     return (
-        <div className="w-[100%] bg-[#f6f6f6] min-h-screen py-8 px-4 sm:px-6 lg:px-8 mt-16">
+        <div className="w-full bg-[#f6f6f6] min-h-screen py-8 px-4 sm:px-6 lg:px-8 mt-16">
             <div className="max-w-5xl mx-auto">
-                <button
-                    onClick={handleGoBack}
-                    className="absolute top-32 left-48 text-blue-500 bg-transparent border-none cursor-pointer focus:outline-none hover:bg-transparent"
-                    style={{ textDecoration: 'none' }}
-                >
-                    <svg xmlns="http://www.w3.org/2000/svg" width="60" height="50" viewBox="0 0 24 24" fill="none">
-                        <path
-                            d="M15.5 19l-7-7 7-7"
-                            stroke="#4053ff"
-                            strokeWidth="2.5"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                        />
-                    </svg>
-                </button>
                 {/* 프로필 헤더 */}
-                <div className="bg-white flex justify-between rounded-[50px] shadow-md p-6 sm:p-8 mb-8 w-[70%]">
-                    <div className="flex flex-col sm:flex-row items-center sm:items-start space-y-4 sm:space-y-0 sm:space-x-6">
-                        <img
-                            src={imageUrl || '/images/basicProfile.png'}
-                            alt="Profile"
-                            className="w-28 h-28 rounded-full object-cover border border-gray-200"
-                        />
-                        <div className="text-center sm:text-left">
-                            <h1 className="text-3xl font-bold">{profileData.name}</h1>
-                            <p className="text-xl text-gray-600 mt-1">@{profileData.username}</p>
-                            <div className="mt-2 flex flex-wrap justify-center sm:justify-start gap-2">
-                                <span className="bg-gray-100 px-3 py-1 rounded-full text-sm">{profileData.old} 세</span>
-                                <span className="bg-gray-100 px-3 py-1 rounded-full text-sm">{profileData.gender}</span>
+                <div className="bg-white rounded-[50px] shadow-md p-4 sm:p-6 md:p-8 mb-8 w-[100%] sm:w-[100%] md:w-[100%] lg:w-[100%] mx-auto">
+                    <div className="flex flex-col sm:flex-row items-center sm:items-start justify-between ">
+                        <div className="flex space-y-4 sm:space-y-0 sm:space-x-6">
+                            <img
+                                src={imageUrl || '/images/basicProfile.png'}
+                                alt="Profile"
+                                className="w-28 h-28 rounded-full object-cover border border-gray-200"
+                            />
+                            <div className="text-center sm:text-left">
+                                <h1 className="text-3xl font-bold">{profileData?.name}</h1>
+                                <p className="text-xl text-gray-600 mt-1">@{profileData?.username}</p>
+                                <div className="mt-2 flex flex-wrap justify-center sm:justify-start gap-2">
+                                    <span className="bg-gray-100 px-3 py-1 rounded-full text-sm">
+                                        {profileData?.old} 세
+                                    </span>
+                                    <span className="bg-gray-100 px-3 py-1 rounded-full text-sm">
+                                        {profileData?.gender}
+                                    </span>
+                                </div>
                             </div>
                         </div>
-                        <div className="mt-5 md:mt-0 ml-4 self-end">
+
+                        <div className="mt-4 mr-7 md:mt-0 self-center md:self-start ">
                             {profileData && (
                                 <div
-                                    className="w-[120px] h-[40px] rounded-[10px] mr-8 flex items-center justify-center text-white text-2xl font-semibold "
+                                    className="w-[120px] h-[40px] rounded-[10px] flex items-center justify-center text-white text-2xl font-semibold "
                                     style={{
-                                        backgroundColor: discTypeColors[profileData.disc_character],
+                                        backgroundColor: discTypeColors[profileData?.disc_character],
                                     }}
                                 >
                                     {profileData && profileData.disc_character === 'None' ? (
@@ -195,7 +172,7 @@ function FriendProfile() {
                             )}
                         </div>
                     </div>
-                    <div className="flex-col flex gap-2">
+                    <div className="flex flex-col sm:flex-row justify-end items-center mt-6 md:mt-4">
                         <button
                             className={`mr-5 px-6 py-2 h-12 w-44 text-xl font-bold rounded-[20px] ${
                                 isFollowing ? 'bg-gray-500' : 'bg-[#4053ff]'
@@ -217,11 +194,11 @@ function FriendProfile() {
                 <div className="w-[100%] max-w-[1150px]">
                     <div className="bg-white rounded-[50px] shadow-md mb-5 p-8 md:p-16 relative">
                         <h2 className="text-3xl md:text-4l font-extrabold mb-4">
-                            {profileData.name}님이 추구하는 업무 스타일
+                            {profileData?.name}님이 추구하는 업무 스타일
                         </h2>
                         <hr className="border-t border-gray-300 my-3" />
                         <div className="flex flex-wrap gap-3 mt-3 mb-8">
-                            {profileData.work_styles.map((style) => (
+                            {profileData?.work_styles.map((style) => (
                                 <span
                                     key={style.id}
                                     className="px-5 py-2 rounded-full bg-[#909bff] text-white text-lg md:text-2xl font-bold"
@@ -233,10 +210,10 @@ function FriendProfile() {
 
                         <h2 className="text-3xl md:text-4l font-extrabold mb-4">타인이 바라보는 업무 스타일</h2>
                         <hr className="border-t border-gray-300 my-3" />
-                        {profileData.feedback_count >= 3 ? (
+                        {profileData?.feedback_count >= 3 ? (
                             <div className="flex flex-wrap gap-3 mt-3 mb-8">
-                                {profileData.feedback_workstyles &&
-                                    profileData.feedback_workstyles.map((style) => (
+                                {profileData?.feedback_workstyles &&
+                                    profileData?.feedback_workstyles.map((style) => (
                                         <span
                                             key={style.id}
                                             className="px-5 py-2 rounded-full bg-[#ffbf1c] text-white text-lg md:text-2xl font-bold"
@@ -266,11 +243,11 @@ function FriendProfile() {
                         )}
 
                         <h2 className="text-3xl md:text-4l font-extrabold mb-4">
-                            {profileData.name}님이 관심 있는 업종/직군 분야는?
+                            {profileData?.name}님이 관심 있는 업종/직군 분야는?
                         </h2>
                         <hr className="border-t border-gray-300 my-3" />
                         <div className="flex flex-wrap gap-3 mt-3 ">
-                            {profileData.interests &&
+                            {profileData?.interests &&
                                 profileData.interests.map((interest) => (
                                     <span
                                         key={interest.id}
@@ -283,12 +260,12 @@ function FriendProfile() {
                     </div>
 
                     <div className="bg-white rounded-[50px] shadow-md mb-5 p-8 md:p-16 relative">
-                        <h2 className="text-3xl md:text-4l font-extrabold mb-4">타인이 평가하는 {profileData.name}</h2>
+                        <h2 className="text-3xl md:text-4l font-extrabold mb-4">타인이 평가하는 {profileData?.name}</h2>
                         <div className="absolute top-8 right-12 bg-[#e1e1e1] px-4 py-2 rounded-[10px] text-xl font-bold">
                             {profileData?.feedback_count}개의 피드백이 쌓였어요{' '}
                         </div>
                         <hr className="border-t border-gray-300 my-3" />
-                        {profileData.feedback_count >= 3 ? (
+                        {profileData?.feedback_count >= 3 ? (
                             <>
                                 <div className="w-full md:w-[1000px] mx-auto">
                                     {profileData.disc_scores &&
