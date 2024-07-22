@@ -10,7 +10,7 @@ from .views import (
     ProfileImageView, get_signed_url_view, TestAnswers, 
     FollowFriendView, UserDeleteView, UnfollowFriendView, 
     # google_callback, google_login, GoogleLogin
-    KakaoView, KakaoCallBackView
+    KakaoView, KakaoCallBackView, KakaoLoginView
     )
 
 
@@ -47,12 +47,10 @@ urlpatterns = [
     path('auth/check-username/', UniqueIdCheck.as_view(), name='check-username'), # 유저 이름 중복 검사
     path('auth/delete/', UserDeleteView.as_view(), name='user-delete'), # 유저 삭제 엔드포인트
 
-    # # Social Account
-    # path('user/google/login', google_login, name='google_login'),
-    # path('user/google/callback/', google_callback, name='google_callback'),
-    # path('user/google/login/finish/', GoogleLogin.as_view(), name='google_login_todjango'),
+    # Social Account
     path('auth/kakao/callback', KakaoCallBackView.as_view(), name='kakao_callback'),
     path('auth/kakao', KakaoView.as_view(), name='kakao_auth'),
+    path('api/kakao-login/', KakaoLoginView.as_view(), name='kakao_login'),
 
     #GPT용 답변 추출
     path('user/feedback-answers/', UserLongQuestionAnswersView.as_view(), name='user-feedback-answers'), # 유저의 답변을 저장하는 엔드포인트

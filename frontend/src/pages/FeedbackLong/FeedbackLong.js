@@ -22,10 +22,15 @@ const FeedbackLong = ({ isLoggedIn }) => {
     });
     const [showModal, setShowModal] = useState(false);
 
-    const handleCloseModal = () => {
-        setShowModal(false);
-        navigate(`/friend-profile/${username}`);
-    };
+    useEffect(() => {
+        if (showModal) {
+            const timer = setTimeout(() => {
+                setShowModal(false);
+                navigate(`/friend-profile/${username}`);
+            }, 2000);
+            return () => clearTimeout(timer);
+        }
+    }, [showModal, navigate, username]);
 
     useEffect(() => {
         ProfileService.fetchFriendProfile(username)
@@ -182,9 +187,11 @@ const FeedbackLong = ({ isLoggedIn }) => {
                     </button>
                 </div>
             </div>
-            <Modal show={showModal} handleClose={handleCloseModal}>
-                <div>피드백이 성공적으로 제출되었습니다!</div>
-            </Modal>
+            {showModal && (
+                <Modal>
+                    <div>피드백이 성공적으로 제출되었습니다!</div>
+                </Modal>
+            )}
         </div>
     );
 };

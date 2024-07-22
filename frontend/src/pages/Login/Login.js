@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import AdminService from '../../utils/AdminService';
 import { useNavigate } from 'react-router-dom';
+import KakaoLogin from '../../components/KakaoLogin/KakaoLogin';
 
 function Login() {
     const [loginInfo, setLoginInfo] = useState({ username: '', password: '' });
@@ -37,11 +38,13 @@ function Login() {
 
     return (
         <div className="flex flex-col items-center p-5 w-full md:w-4/5 max-w-2xl mx-auto">
-            <h1 className="text-[#4053ff] text-4xl font-extrabold cursor-pointer mb-5" onClick={logoHandler}>
-                .WORKLOG
-            </h1>
             <div className="w-full border border-gray-300 rounded-lg p-5 relative">
-                <h2 className="text-black text-2xl font-bold text-center mb-5">LOGIN</h2>
+                <h1
+                    className="text-[#4053ff] text-4xl font-extrabold cursor-pointer mb-5 text-center"
+                    onClick={logoHandler}
+                >
+                    .WORKLOG
+                </h1>
                 {error && <div className="w-full text-sm text-red-500 mb-5">{error}</div>}
                 <form className="flex flex-col items-center w-full" onSubmit={loginHandler}>
                     <span className="w-full text-base font-bold mb-1">아이디</span>
@@ -71,6 +74,7 @@ function Login() {
                         </button>
                     </div>
                 </form>
+                <KakaoLogin></KakaoLogin>
             </div>
         </div>
     );

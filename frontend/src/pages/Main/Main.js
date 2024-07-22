@@ -44,12 +44,12 @@ function Main() {
             {
                 title: type.disc_character,
                 description: type.description,
-                strengths: type.strength.join(' '),
-                weaknesses: type.weakness.join(' '),
-                bestMatch: type.suitable_type[0].name,
-                bestMatchDescription: type.suitable_type[0].description,
-                complement: type.suitable_type[1].name,
-                complementDescription: type.suitable_type[1].description,
+                strengths: Array.isArray(type.strength) ? type.strength.join(' ') : '',
+                weaknesses: Array.isArray(type.weakness) ? type.weakness.join(' ') : '',
+                bestMatch: type.suitable_type?.[0]?.name ?? '',
+                bestMatchDescription: type.suitable_type?.[0]?.description ?? '',
+                complement: type.suitable_type?.[1]?.name ?? '',
+                complementDescription: type.suitable_type?.[1]?.description ?? '',
                 color: type.color,
                 ref: refs.current[index],
             },
@@ -121,12 +121,13 @@ function Main() {
                     </h2>
                     <div className="space-y-4">
                         <div className="p-4">
-                            <div className="text-gray-800 font-bold">v. 0.1 배포완료</div>
+                            <div className="text-gray-800 font-bold text-lg">v. 0.1 배포완료</div>
                             <div className="text-gray-600">2024-07-22</div>
                             <hr className="my-4" />
-                            <div className="text-black">
-                                안녕하세요, WORKLOG 운영팀입니다. 일하는 모두를 위한 피드백 서비스가 드디어
-                                출시되었습니다. 많은 관심과 응원 부탁드립니다.
+                            <div className="text-black mb-10">
+                                안녕하세요, WORKLOG 운영팀입니다. <br />
+                                일하는 모두를 위한 피드백 서비스가 드디어 출시되었습니다. <br />
+                                많은 관심과 응원 부탁드립니다.
                             </div>
                         </div>
                     </div>
@@ -150,20 +151,23 @@ function Main() {
                 </div>
             </div>
             <div className="text-2xl font-medium m-8">.WORKLOG에는 어떤 성격이 있을까요?</div>
-            <div className="flex flex-wrap justify-between mt-4 w-[90%] rounded-lg">
-                {typeData.map((type, index) => (
-                    <div key={index} className="text-center mx-2 my-1 group" onClick={() => scrollToSection(index)}>
-                        <i
-                            className={`fas ${
-                                iconMapping[type.disc_character]
-                            } fa-2x w-12 h-12 mx-auto text-gray-400 group-hover:text-[#4053FF] group-hover:cursor-pointer`}
-                        ></i>
-                        <div className="text-gray-800 text-lg font-bold group-hover:text-[#4053FF] group-hover:cursor-pointer">
-                            {type.disc_character}
+            <div className="flex justify-center mt-4 w-[90%] rounded-lg">
+                <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-4 w-full">
+                    {typeData.map((type, index) => (
+                        <div key={index} className="text-center mx-2 my-1 group" onClick={() => scrollToSection(index)}>
+                            <i
+                                className={`fas ${
+                                    iconMapping[type.disc_character]
+                                } fa-2x w-12 h-12 mx-auto text-gray-400 group-hover:text-[#4053FF] group-hover:cursor-pointer`}
+                            ></i>
+                            <div className="text-gray-800 text-lg font-bold group-hover:text-[#4053FF] group-hover:cursor-pointer">
+                                {type.disc_character}
+                            </div>
                         </div>
-                    </div>
-                ))}
+                    ))}
+                </div>
             </div>
+
             {groups.map((group, groupIndex) => (
                 <div key={groupIndex} className="mt-8 scroll-mt-12 w-[90%]">
                     {group.types.map((type, typeIndex) => (
