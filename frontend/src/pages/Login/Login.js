@@ -44,26 +44,23 @@ function Login() {
             <h1 className={styles.h1} onClick={logoHandler}>
                 .WORKLOG
             </h1>
-            <h2 className={styles.h2}>LOGIN</h2>
 
             {/* 에러 메시지 표시 */}
             {error && <div className={styles.errorMessage}>{error}</div>}
 
             <form className={styles.login} onSubmit={loginHandler}>
-                <span className={styles.span}>아이디</span>
                 <input
                     className={styles.input}
                     type="text"
-                    placeholder="아이디를 입력하세요"
+                    placeholder="아이디를 입력해주세요"
                     name="username"
                     value={loginInfo.username}
                     onChange={loginChangeHandler}
                 />
-                <span className={styles.span}>비밀번호</span>
                 <input
                     className={styles.input}
                     type="password"
-                    placeholder="비밀번호를 입력하세요"
+                    placeholder="비밀번호를 입력해주세요"
                     name="password"
                     value={loginInfo.password}
                     onChange={loginChangeHandler}

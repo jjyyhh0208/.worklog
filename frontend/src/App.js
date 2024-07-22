@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Route, Routes, useLocation } from 'react-router-dom';
 import axios from 'axios';
-import './styles/global.css';
+import './App.css';
 
 // Pages
 import Main from './pages/Main/Main';
