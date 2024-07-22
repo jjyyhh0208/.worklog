@@ -123,28 +123,6 @@ function MyProfile() {
         }, 2000);
     };
 
-    const handleSlackShare = () => {
-        if (!profileData || !profileData.username) {
-            alert('프로필 데이터를 불러오는데 문제가 발생했습니다. 페이지를 새로고침하고 다시 시도해주세요.');
-            return;
-        }
-
-        let profileLink = ProfileService.getUserProfileLink(profileData.username);
-        if (!profileLink.startsWith('http')) {
-            profileLink = 'https://' + profileLink;
-        }
-        const text = `${profileData.name}님의 프로필을 확인해보세요: ${profileLink}`;
-
-        // 더블 인코딩 적용
-        const encodedUrl = encodeURIComponent(encodeURIComponent(profileLink));
-        const encodedText = encodeURIComponent(text);
-
-        const slackShareUrl = `https://slack.com/share/url?url=${encodedUrl}&text=${encodedText}`;
-
-        // 새 창에서 Slack 공유 페이지 열기
-        window.open(slackShareUrl, '_blank', 'noopener,noreferrer');
-    };
-
     const handleKeywordEdit = () => {
         navigate('/signup/3', { state: { isEditing: true, profileData } });
     };
@@ -232,9 +210,6 @@ function MyProfile() {
                                 <KakaoShareButton />
                                 <a href="#" onClick={handleInstagramShare}>
                                     <img src="/images/instagram.png" alt="Instagram" width="40" height="40" />
-                                </a>
-                                <a href="#" onClick={handleSlackShare}>
-                                    <img src="/images/slack.png" alt="Slack" width="60" height="30" />
                                 </a>
                             </div>
                             <button className={styles.profileEditButton} onClick={handleProfileEdit}>
