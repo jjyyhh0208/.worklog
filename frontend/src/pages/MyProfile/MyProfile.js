@@ -141,7 +141,7 @@ function MyProfile() {
         }
         return list.map((item, index) => (
             <div key={index}>
-                <strong>팀원 {index + 1}:</strong>
+                <strong>팀원 {index + 1}</strong>
                 <br />
                 {item}
                 <br />
