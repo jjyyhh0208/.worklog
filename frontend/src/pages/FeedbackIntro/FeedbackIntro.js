@@ -75,11 +75,11 @@ function FeedbackIntro() {
     };
 
     const handleBackClick = () => {
-        navigate(-1);
+        navigate(`/friend-profile/${username}`);
     };
 
     return (
-        <div className="flex flex-col items-center bg-gray-100 overflow-y-auto min-h-[90%] h-screen">
+        <div className="w-[100%] flex flex-col items-center bg-gray-100 overflow-y-auto min-h-[90%] h-screen">
             <div className="p-9 md:w-3/5 w-11/12 rounded-2xl bg-white flex-shrink-0 my-9 flex flex-col items-center shadow-lg relative overflow-y-auto">
                 <ProgressBar progress={20} /> {/* ProgressBar 추가 */}
                 <div className="absolute top-8 right-12 text-2xl font-bold text-black bg-gray-300 p-3 rounded-lg shadow-md">
@@ -125,10 +125,10 @@ function FeedbackIntro() {
                     {keywords.map((keyword) => (
                         <button
                             key={keyword}
-                            className={`px-4 py-2 border border-gray-300 bg-gray-100 cursor-pointer transition-all duration-300 rounded-full text-lg font-semibold ${
+                            className={`px-4 py-2 border border-gray-300 cursor-pointer transition-all duration-300 rounded-full text-lg font-semibold ${
                                 selectedKeywords.includes(keyword)
                                     ? 'bg-[#4053ff] text-white'
-                                    : 'bg-[#ccd1ff] text-white'
+                                    : 'bg-gray-300 text-[#4053ff] hover:bg-[#ccd1ff] hover:text-white'
                             }`}
                             onClick={() => handleKeywordClick(keyword)}
                         >
