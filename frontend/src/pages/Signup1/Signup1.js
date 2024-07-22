@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import styles from './Signup1.module.css';
 import AdminService from '../../utils/AdminService';
 import { useNavigate } from 'react-router-dom';
 
@@ -79,12 +78,19 @@ function Signup1({ signUpInfo, setSignUpInfo }) {
     };
 
     return (
-        <div className={styles.container}>
-            <h1 className={styles.h1} onClick={logoHandler}>
+        <div className="flex flex-col items-center mt-[226px] md:mt-[150px] sm:mt-[100px]">
+            <h1
+                className="absolute top-[27px] left-[36px] text-[#4053FF] text-center text-[48px] font-extrabold cursor-pointer md:text-[36px] md:top-[20px] md:left-[20px] sm:text-[28px] sm:top-[20px] sm:left-[10px]"
+                onClick={logoHandler}
+            >
                 .WORKLOG
             </h1>
-            <div className={styles.back}>
-                <button type="submit" onClick={handleBackClick} className={styles.backBtn}>
+            <div className="mt-3 -ml-[80%]">
+                <button
+                    type="submit"
+                    onClick={handleBackClick}
+                    className="all-unset bg-inherit cursor-pointer border-none shadow-none rounded-0 p-0 overflow-visible hover:bg-white"
+                >
                     <svg xmlns="http://www.w3.org/2000/svg" width="60" height="50" viewBox="0 0 24 24" fill="none">
                         <path
                             d="M15.5 19l-7-7 7-7"
@@ -96,13 +102,20 @@ function Signup1({ signUpInfo, setSignUpInfo }) {
                     </svg>
                 </button>
             </div>
-            <h2 className={styles.h2}>SIGN UP</h2>
-            <form className={styles.signUp} onSubmit={signUpHandler}>
-                <div className={styles.idbox}>
-                    <button className={styles.duplicatebtn} type="button" onClick={checkUserNameHandler}>
+            <h2 className="text-black text-[30px] font-bold md:text-[24px] sm:text-[20px]">SIGN UP</h2>
+            <form
+                className="relative flex flex-col items-center gap-2.5 mt-[100px] min-w-[500px] md:min-w-[300px] sm:min-w-[250px]"
+                onSubmit={signUpHandler}
+            >
+                <div className="absolute top-[35px] left-[150%] transform -translate-x-1/2 flex flex-col items-start text-center self-center line-height-[70px] min-w-[500px] md:min-w-[300px] sm:min-w-[250px]">
+                    <button
+                        className="bg-[#9da4e5] w-[145px] h-[50px] text-[#f6f6f6] text-[17px] ml-4 mt-[40px] cursor-pointer rounded-[13px] border-none md:w-[120px] md:h-[40px] md:text-[15px] sm:w-[100px] sm:h-[35px] sm:text-[14px]"
+                        type="button"
+                        onClick={checkUserNameHandler}
+                    >
                         중복 확인
                     </button>
-                    <div>
+                    <div className="flex items-center mt-2">
                         <svg xmlns="http://www.w3.org/2000/svg" width="25" height="26" viewBox="0 0 25 26" fill="none">
                             <g clipPath="url(#clip0_231_547)">
                                 <path
@@ -116,51 +129,55 @@ function Signup1({ signUpInfo, setSignUpInfo }) {
                                 </clipPath>
                             </defs>
                         </svg>
-                        <span>아이디는 최초 설정 이후 변경이 불가합니다.</span>
+                        <span className="ml-2">아이디는 최초 설정 이후 변경이 불가합니다.</span>
                     </div>
                 </div>
-
-                <span className={styles.span}>아이디</span>
-
+                <span className="text-black text-[25px] font-bold mb-2.5 self-start md:text-[20px] sm:text-[18px]">
+                    아이디
+                </span>
                 <input
-                    className={styles.input}
+                    className="flex w-full max-w-[422px] h-[73px] p-2.5 justify-center items-center gap-2.5 flex-shrink-0 rounded-lg border-2 border-[#4053FF] bg-white mb-5 text-[21px] md:max-w-[100%] md:h-[60px] md:text-[18px] sm:h-[50px] sm:text-[16px]"
                     type="text"
                     placeholder="영문자, 숫자 외 문자는 포함될 수 없습니다"
                     name="username"
                     value={signUpInfo.username}
                     onChange={signUpChangeHandler}
                 />
-                {/* 중복 확인 결과 메시지 */}
-                {availabilityMessage && <div className={styles.availabilityMessage}>{availabilityMessage}</div>}
-                <span className={styles.span}>비밀번호</span>
+                {availabilityMessage && <div className="text-[20px]">{availabilityMessage}</div>}
+                <span className="text-black text-[25px] font-bold mb-2.5 self-start md:text-[20px] sm:text-[18px]">
+                    비밀번호
+                </span>
                 <input
-                    className={styles.input}
+                    className="flex w-full max-w-[422px] h-[73px] p-2.5 justify-center items-center gap-2.5 flex-shrink-0 rounded-lg border-2 border-[#4053FF] bg-white mb-5 text-[21px] md:max-w-[100%] md:h-[60px] md:text-[18px] sm:h-[50px] sm:text-[16px]"
                     type="password"
                     placeholder="비밀번호를 입력해주세요"
                     name="password1"
                     value={signUpInfo.password1}
                     onChange={signUpChangeHandler}
                 />
-                <span className={styles.span}>비밀번호 재입력</span>
+                <span className="text-black text-[25px] font-bold mb-2.5 self-start md:text-[20px] sm:text-[18px]">
+                    비밀번호 재입력
+                </span>
                 <input
-                    className={styles.input}
+                    className="flex w-full max-w-[422px] h-[73px] p-2.5 justify-center items-center gap-2.5 flex-shrink-0 rounded-lg border-2 border-[#4053FF] bg-white mb-5 text-[21px] md:max-w-[100%] md:h-[60px] md:text-[18px] sm:h-[50px] sm:text-[16px]"
                     type="password"
                     placeholder="비밀번호를 다시 입력해주세요"
                     name="password2"
                     value={signUpInfo.password2}
                     onChange={signUpChangeHandler}
                 />
-
-                <div className={styles.nextbox}>
-                    <div>
-                        <button className={styles.nextBtn} type="submit">
-                            NEXT
-                        </button>
-                    </div>
+                <div className="absolute top-[550px] left-[130%] transform -translate-x-1/2 items-start w-[110%] text-center self-center line-height-[70px] flex justify-around md:top-[450px] sm:top-[400px]">
+                    <button
+                        className="w-[148px] h-[49.109px] flex-shrink-0 rounded-[15.337px] bg-[#4053FF] border-none text-white text-[24px] font-bold absolute left-1/2 transform -translate-x-1/2 cursor-pointer md:w-[120px] md:h-[40px] md:text-[20px] sm:w-[100px] sm:h-[35px] sm:text-[18px]"
+                        type="submit"
+                    >
+                        NEXT
+                    </button>
                 </div>
             </form>
         </div>
     );
+
 }
 
 export default Signup1;

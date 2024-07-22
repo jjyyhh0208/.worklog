@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import styles from './Signup4.module.css';
 import ProfileService from '../../utils/ProfileService';
 
 function Signup4({ signUpInfo, setSignUpInfo }) {
@@ -137,13 +136,22 @@ function Signup4({ signUpInfo, setSignUpInfo }) {
     };
 
     return (
-        <div className={styles.container}>
-            <h1 className={styles.h1} onClick={logoHandler}>
+        <div className="flex flex-col items-center mt-56 lg:mt-36 md:mt-24 sm:mt-16">
+            <h1
+                className="absolute top-7 left-9 text-[#4053ff] text-5xl font-extrabold cursor-pointer lg:text-4xl md:text-3xl sm:text-2xl lg:top-5 lg:left-5 md:top-4 md:left-4 sm:top-3 sm:left-3"
+                onClick={logoHandler}
+            >
                 .WORKLOG
             </h1>
-            <h2 className={styles.h2}>기본 프로필 등록</h2>
-            <div className={styles.back}>
-                <button type="submit" onClick={handleBackClick} className={styles.backBtn}>
+            <h2 className="absolute top-7 right-9 text-black text-3xl font-bold lg:text-2xl md:text-xl sm:text-lg lg:top-5 lg:right-5 md:top-4 md:right-4 sm:top-3 sm:right-3">
+                기본 프로필 등록
+            </h2>
+            <div className="absolute top-24 left-9 lg:top-20 lg:left-5 md:top-16 md:left-4 sm:top-14 sm:left-3">
+                <button
+                    type="submit"
+                    onClick={handleBackClick}
+                    className="bg-transparent border-none cursor-pointer p-0"
+                >
                     <svg xmlns="http://www.w3.org/2000/svg" width="60" height="50" viewBox="0 0 24 24" fill="none">
                         <path
                             d="M15.5 19l-7-7 7-7"
@@ -155,8 +163,10 @@ function Signup4({ signUpInfo, setSignUpInfo }) {
                     </svg>
                 </button>
             </div>
-            <p className={styles.instruction}>관심있는 업종/직군 분야를 골라 주세요.</p>
-            <div className={styles.instructionbox}>
+            <p className="text-[#4053ff] text-4xl font-semibold mb-6 lg:text-3xl md:text-2xl sm:text-xl">
+                관심있는 업종/직군 분야를 골라 주세요.
+            </p>
+            <div className="flex items-center mb-8">
                 <svg xmlns="http://www.w3.org/2000/svg" width="25" height="26" viewBox="0 0 25 26" fill="none">
                     <g clipPath="url(#clip0_231_547)">
                         <path
@@ -170,16 +180,16 @@ function Signup4({ signUpInfo, setSignUpInfo }) {
                         </clipPath>
                     </defs>
                 </svg>
-                <span className={styles.span}>
+                <span className="text-[#9b8f8f] text-lg font-medium ml-2">
                     키워드는 최대 3개까지 선택해주세요. 제한없이 수정이 가능하니 편하게 골라주세요!
                 </span>
             </div>
-            <div className={styles.keywordsContainer}>
+            <div className="flex flex-wrap justify-start gap-2.5 mb-8 w-full max-w-4xl h-96 overflow-y-auto">
                 {interestKeywords.map((keyword) => (
                     <button
                         key={keyword}
-                        className={`${styles.keywordButton} ${
-                            selectedInterests.includes(keyword) ? styles.selected : ''
+                        className={`py-2 px-4 rounded-lg min-w-[148px] h-[50px] text-3xl font-bold text-center ${
+                            selectedInterests.includes(keyword) ? 'bg-[#4053ff] text-white' : 'bg-[#ccd1ff] text-white'
                         }`}
                         onClick={() => handleKeywordClick(keyword)}
                     >
@@ -187,8 +197,12 @@ function Signup4({ signUpInfo, setSignUpInfo }) {
                     </button>
                 ))}
             </div>
-            <div className={styles.nextbox}>
-                <button className={styles.completeBtn} type="submit" onClick={handleCompleteClick}>
+            <div className="absolute bottom-8 right-[20%] lg:right-[10%] md:right-[5%] sm:right-4">
+                <button
+                    className="w-[148px] h-[49px] rounded-2xl bg-[#4053ff] text-white text-2xl font-bold cursor-pointer"
+                    type="submit"
+                    onClick={handleCompleteClick}
+                >
                     {isEditing ? '수정 완료' : '가입 완료'}
                 </button>
             </div>

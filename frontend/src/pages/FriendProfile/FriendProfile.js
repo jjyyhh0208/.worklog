@@ -89,7 +89,7 @@ function FriendProfile() {
     };
 
     if (isLoading) {
-        return <div className={styles.profileContainer}></div>;
+        return <div className="bg-[#f6f6f6] p-5 flex flex-col items-center"></div>;
     }
 
     return (

@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import ProfileService from '../../utils/ProfileService';
-import styles from './List.module.css';
 
 const discTypeColors = {
     '목표 달성자': '#FF5473',
@@ -44,9 +43,9 @@ function List() {
     };
 
     return (
-        <div className={styles.listContainer}>
-            <div className={styles.header}>
-                <h1 className={styles.title}>내가 팔로우한 프로필</h1>
+        <div className="bg-[#f6f6f6] min-h-screen p-20">
+            <div className="flex justify-between items-center pt-7 w-9/10 mx-auto">
+                <h1 className="text-[#4053ff] text-2xl font-bold">내가 팔로우한 프로필</h1>
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="52"
@@ -54,7 +53,7 @@ function List() {
                     viewBox="0 0 52 53"
                     fill="none"
                     onClick={handleSearchClick}
-                    className={styles.searchIcon}
+                    className="cursor-pointer"
                 >
                     <path
                         d="M47.6017 5.54817C46.0417 3.7715 43.7233 2.6665 41.1667 2.6665C38.74 2.6665 36.53 3.66317 34.9483 5.28817C34.0383 6.21984 33.345 7.3465 32.9333 8.60317C32.6517 9.46984 32.5 10.3798 32.5 11.3332C32.5 12.9582 32.955 14.4965 33.7567 15.7965C34.19 16.5332 34.7533 17.2048 35.4033 17.7682C36.92 19.1548 38.935 19.9998 41.1667 19.9998C42.12 19.9998 43.03 19.8482 43.875 19.5448C45.8683 18.9165 47.5367 17.5515 48.5767 15.7965C49.0317 15.0598 49.3783 14.2148 49.5733 13.3482C49.7467 12.6982 49.8333 12.0265 49.8333 11.3332C49.8333 9.12317 48.9883 7.0865 47.6017 5.54817ZM44.395 12.9148H42.7917V14.6048C42.7917 15.4932 42.055 16.2298 41.1667 16.2298C40.2783 16.2298 39.5417 15.4932 39.5417 14.6048V12.9148H37.9383C37.05 12.9148 36.3133 12.1782 36.3133 11.2898C36.3133 10.4015 37.05 9.66484 37.9383 9.66484H39.5417V8.1265C39.5417 7.23817 40.2783 6.5015 41.1667 6.5015C42.055 6.5015 42.7917 7.23817 42.7917 8.1265V9.66484H44.395C45.2833 9.66484 46.02 10.4015 46.02 11.2898C46.02 12.1782 45.305 12.9148 44.395 12.9148Z"
@@ -70,28 +69,31 @@ function List() {
                     />
                 </svg>
             </div>
-            <div className={styles.list}>
+            <div className="bg-[#ccd1ff33] bg-opacity-20 flex flex-wrap gap-5 p-7 mx-auto rounded-2xl justify-around w-7/10">
                 {friends.length > 0 ? (
                     friends.map((friend) => (
-                        <div key={friend.id} className={styles.friendCard}>
+                        <div
+                            key={friend.id}
+                            className="bg-white rounded-2xl shadow-md p-4 text-center w-56 h-67 relative flex flex-col items-center"
+                        >
                             <div
-                                className={styles.disc_character}
+                                className="absolute top-0 left-0 w-full text-center p-2 text-white text-xs font-bold rounded-t-2xl"
                                 style={{
                                     backgroundColor: discTypeColors[friend.disc_character] || discTypeColors.None,
                                 }}
                             >
                                 {friend.disc_character !== 'None' && friend.disc_character}
                             </div>
-                            <div className={styles.friendDescription}>
+                            <div className="pt-5 flex flex-col items-center mt-4">
                                 <img
                                     src={friend.profileImage || '/images/basicProfile.png'}
                                     alt={`${friend.name}'s profile`}
-                                    className={styles.profileImage}
+                                    className="rounded-full h-28 w-28 mb-1 border border-black"
                                 />
-                                <h2 className={styles.name}>{friend.name}</h2>
+                                <h2 className="text-lg font-bold mb-2">{friend.name}</h2>
                                 <button
                                     onClick={() => handleEvaluationClick(friend.username)}
-                                    className={styles.evaluationButton}
+                                    className="bg-yellow-400 border-none rounded-md text-white text-lg font-semibold cursor-pointer p-2.5 hover:bg-yellow-500"
                                 >
                                     프로필 보러가기
                                 </button>
@@ -99,7 +101,7 @@ function List() {
                         </div>
                     ))
                 ) : (
-                    <div className={styles.noFriendsMessage}>
+                    <div className="flex flex-col items-center text-center">
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
                             width="150"
@@ -110,26 +112,26 @@ function List() {
                             <path
                                 d="M94.5 21C66.99 21 44.625 43.365 44.625 70.875C44.625 97.86 65.73 119.7 93.24 120.645C94.08 120.54 94.92 120.54 95.55 120.645C95.76 120.645 95.865 120.645 96.075 120.645C96.18 120.645 96.18 120.645 96.285 120.645C123.165 119.7 144.27 97.86 144.375 70.875C144.375 43.365 122.01 21 94.5 21Z"
                                 fill="#D2D2D2"
-                                fill-opacity="0.82"
+                                fillOpacity="0.82"
                             />
                             <path
                                 d="M147.84 148.575C118.545 129.045 70.7701 129.045 41.2651 148.575C27.9301 157.5 20.5801 169.575 20.5801 182.49C20.5801 195.405 27.9301 207.375 41.1601 216.195C55.8601 226.065 75.1801 231 94.5001 231C113.82 231 133.14 226.065 147.84 216.195C161.07 207.27 168.42 195.3 168.42 182.28C168.315 169.365 161.07 157.395 147.84 148.575Z"
                                 fill="#D2D2D2"
-                                fill-opacity="0.82"
+                                fillOpacity="0.82"
                             />
                             <path
                                 d="M209.895 77.0701C211.575 97.4401 197.085 115.29 177.03 117.705C176.925 117.705 176.925 117.705 176.82 117.705H176.505C175.875 117.705 175.245 117.705 174.72 117.915C164.535 118.44 155.19 115.185 148.155 109.2C158.97 99.5401 165.165 85.0501 163.905 69.3001C163.17 60.7951 160.23 53.0251 155.82 46.4101C159.81 44.4151 164.43 43.1551 169.155 42.7351C189.735 40.9501 208.11 56.2801 209.895 77.0701Z"
                                 fill="#D2D2D2"
-                                fill-opacity="0.82"
+                                fillOpacity="0.82"
                             />
                             <path
                                 d="M230.895 174.195C230.055 184.38 223.545 193.2 212.625 199.185C202.125 204.96 188.895 207.69 175.77 207.375C183.33 200.55 187.74 192.045 188.58 183.015C189.63 169.995 183.435 157.5 171.045 147.525C164.01 141.96 155.82 137.55 146.895 134.295C170.1 127.575 199.29 132.09 217.245 146.58C226.905 154.35 231.84 164.115 230.895 174.195Z"
                                 fill="#D2D2D2"
-                                fill-opacity="0.82"
+                                fillOpacity="0.82"
                             />
                         </svg>
-                        <p>아직 팔로우한 동료가 없습니다.</p>
-                        <p>새로운 동료를 추가해보세요!</p>
+                        <p className="text-black font-inter text-lg font-medium">아직 팔로우한 동료가 없습니다.</p>
+                        <p className="text-black font-inter text-lg font-medium">새로운 동료를 추가해보세요!</p>
                     </div>
                 )}
             </div>
