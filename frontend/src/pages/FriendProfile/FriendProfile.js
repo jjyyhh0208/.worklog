@@ -159,7 +159,7 @@ function FriendProfile() {
                                         </svg>
                                     ) : (
                                         <div
-                                            className="w-[120px] h-[40px] rounded-[10px] mr-8 flex items-center justify-center text-white text-2xl font-semibold"
+                                            className="w-[120px] h-[40px] rounded-[10px]  flex items-center justify-center text-white text-xl font-semibold"
                                             style={{
                                                 backgroundColor:
                                                     discTypeColors[profileData.disc_character] || discTypeColors.None,

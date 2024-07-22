@@ -10,6 +10,7 @@ function MyProfile() {
     const [profileData, setProfileData] = useState(null);
     const [imageUrl, setImageUrl] = useState(null);
     const [DISCData, setDISCData] = useState(null);
+    const [gptSummary, setGptSummary] = useState({ summarized: [], advice: [] });
     const navigate = useNavigate();
 
     const discTypeColors = typeData.reduce((acc, item) => {
@@ -25,12 +26,6 @@ function MyProfile() {
                 profileData.gender =
                     profileData.gender === 'F' ? 'Female' : profileData.gender === 'M' ? 'Male' : 'None';
                 setProfileData(profileData);
-
-                // profile_image는 'image' 랑 'uploaded_at'으로 구성되어 있습니다.
-                // 따라서 profile_image의 image를 추가로 불렀습니다.
-                // image의 주소는 s3 주소를 backend의 .env에 저장했기 때문에 해당 내용이 없이 세부 URL만 있는 상태입니다.
-                // 따라서 검증된 s3 주소를 API에서 (= profileService.getSignedImageUrl) 불러와야 합니다.
-                // GPT 아님!
 
                 ProfileService.getSignedImageUrl(profileData.profile_image.image)
                     .then((imageUrl) => {
@@ -48,6 +43,20 @@ function MyProfile() {
                 }
 
                 setImageUrl(profileData.profile_image.image || '/images/basicProfile.png');
+
+                // GPT summary 처리
+                if (profileData.gpt_summarized_personality) {
+                    try {
+                        const parsedGptSummary = JSON.parse(profileData.gpt_summarized_personality);
+                        setGptSummary({
+                            summarized: Array.isArray(parsedGptSummary.summarized) ? parsedGptSummary.summarized : [],
+                            advice: Array.isArray(parsedGptSummary.advice) ? parsedGptSummary.advice : [],
+                        });
+                    } catch (error) {
+                        console.error('Error parsing GPT summary:', error);
+                        setGptSummary({ summarized: [], advice: [] });
+                    }
+                }
             } catch (error) {
                 console.error('Error fetching profile data.', error);
             } finally {
@@ -60,8 +69,8 @@ function MyProfile() {
 
     if (isLoading) {
         return (
-            <div className="[w-100%] bg-[#f6f6f6] min-h-screen flex items-center justify-center">
-                <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-gray-900"></div>
+            <div className="[w-100%] bg-[#f6f6f6] h-[1000px] min-h-screen flex items-center justify-center">
+                {/* Add loading spinner or message here */}
             </div>
         );
     }
@@ -148,14 +157,9 @@ function MyProfile() {
         navigate('/signup/2', { state: { isEditing: true, profileData } });
     };
 
-    const parsedPersonality =
-        profileData && profileData.gpt_summarized_personality ? JSON.parse(profileData.gpt_summarized_personality) : {};
-    const summarized = parsedPersonality.summarized || [];
-    const advice = parsedPersonality.advice || [];
-
     const formatListWithIndex = (list) => {
-        if (!Array.isArray(list)) {
-            return null;
+        if (!Array.isArray(list) || list.length === 0) {
+            return <p>데이터가 없습니다.</p>;
         }
         return list.map((item, index) => (
             <div key={index}>
@@ -195,7 +199,30 @@ function MyProfile() {
                                         backgroundColor: discTypeColors[profileData.disc_character],
                                     }}
                                 >
-                                    {profileData.disc_character}
+                                    {profileData && profileData.disc_character === 'None' ? (
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            className="w-7 h-8 mt-5 mx-auto mb-5 opacity-50"
+                                            viewBox="0 0 164 187"
+                                            fill="none"
+                                        >
+                                            <path
+                                                d="M145.592 81.5315H136.856V55.3249C136.856 24.8234 112.033 0 81.5315 0C51.03 0 26.2066 24.8234 26.2066 55.3249V81.5315H17.471C7.82557 81.5315 0 89.3571 0 99.0025V168.887C0 178.532 7.82557 186.358 17.471 186.358H145.592C155.237 186.358 163.063 178.532 163.063 168.887V99.0025C163.063 89.3571 155.237 81.5315 145.592 81.5315ZM107.738 81.5315H55.3249V55.3249C55.3249 40.8749 67.0815 29.1184 81.5315 29.1184C95.9815 29.1184 107.738 40.8749 107.738 55.3249V81.5315Z"
+                                                fill="black"
+                                                fillOpacity="0.25"
+                                            />
+                                        </svg>
+                                    ) : (
+                                        <div
+                                            className="w-[120px] h-[40px] rounded-[10px] flex items-center justify-center text-white text-xl font-semibold"
+                                            style={{
+                                                backgroundColor:
+                                                    discTypeColors[profileData.disc_character] || discTypeColors.None,
+                                            }}
+                                        >
+                                            {profileData.disc_character}
+                                        </div>
+                                    )}
                                 </div>
                             )}
                         </div>
@@ -392,19 +419,23 @@ function MyProfile() {
                                         <p className="text-2xl font-semibold text-center mb-12">
                                             팀원들은 나의 협업 성향에 대해 다음과 같이 느꼈어요!
                                         </p>
-                                        <div className="flex flex-col  justify-around mt-5">
-                                            <h3 className="text-3xl font-bold text-[#4053ff]">Summary</h3>
-
-                                            <div className="flex-1 bg-[rgba(204,209,255,0.2)] rounded-[20px] p-12 m-5 md:m-12 text-xl">
-                                                {formatListWithIndex(summarized)}
-                                            </div>
-                                            <h3 className="text-3xl font-bold text-[#4053ff]">Advice</h3>
-
-                                            <div className="flex-1 bg-[rgba(204,209,255,0.2)] rounded-[20px] p-12 m-5 md:m-12 text-xl">
-                                                {formatListWithIndex(advice)}
+                                        <div className="bg-white rounded-[20px] p-5 mt-5">
+                                            <p className="text-2xl font-semibold text-center mb-12">
+                                                팀원들은 나의 협업 성향에 대해 다음과 같이 느꼈어요!
+                                            </p>
+                                            <div className="flex flex-col justify-around mt-5">
+                                                <h3 className="text-3xl font-bold text-[#4053ff]">Summary</h3>
+                                                <div className="flex-1 bg-[rgba(204,209,255,0.2)] rounded-[20px] p-12 m-5 md:m-12 text-xl">
+                                                    {formatListWithIndex(gptSummary.summarized)}
+                                                </div>
+                                                <h3 className="text-3xl font-bold text-[#4053ff]">Advice</h3>
+                                                <div className="flex-1 bg-[rgba(204,209,255,0.2)] rounded-[20px] p-12 m-5 md:m-12 text-xl">
+                                                    {formatListWithIndex(gptSummary.advice)}
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
+                                    
                                 </div>
                             </>
                         ) : (

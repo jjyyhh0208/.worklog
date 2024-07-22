@@ -13,7 +13,7 @@ const AboutUs = () => {
     };
 
     const scrollToSection = (ref) => {
-        const offset = 50;
+        const offset = 100;
         const top = ref.current.getBoundingClientRect().top + window.pageYOffset - offset;
         window.scrollTo({ top, behavior: 'smooth' });
     };
