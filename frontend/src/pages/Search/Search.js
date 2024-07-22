@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import ProfileService from '../../utils/ProfileService';
 
 function Search() {
@@ -9,8 +9,15 @@ function Search() {
     const [isOwnProfile, setIsOwnProfile] = useState(false);
     const [currentUser, setCurrentUser] = useState(null);
     const navigate = useNavigate();
+    const location = useLocation();
 
     useEffect(() => {
+        const params = new URLSearchParams(location.search);
+        const query = params.get('q');
+        if (query) {
+            setSearchTerm(query);
+            handleSearch(query);
+        }
         fetchCurrentUser();
         window.scrollTo(0, 0);
     }, []);
@@ -25,21 +32,42 @@ function Search() {
     };
 
     const handleInputChange = (e) => {
-        setSearchTerm(e.target.value);
+        const value = e.target.value;
+        setSearchTerm(value);
         setNotFound(false);
         setIsOwnProfile(false);
+        navigate(`?q=${value}`);
     };
 
-    const handleSearch = async () => {
+    const handleSearch = async (query) => {
         try {
-            if (currentUser && searchTerm === currentUser.username) {
+            if (currentUser && query === currentUser.username) {
                 setIsOwnProfile(true);
                 setSearchResults([]);
                 setNotFound(false);
                 return;
             }
 
-            const results = await ProfileService.fetchSearchResults(searchTerm);
+            const results = await ProfileService.fetchSearchResults(query);
+            console.log(results);
+            // 이미지 불러오기
+            const resultsWithImages = await Promise.all(
+                results.map(async (result) => {
+                    if (result.profile_image) {
+                        try {
+                            const imageUrl = await ProfileService.getSignedImageUrl(result.profile_image.image);
+                            console.log(imageUrl);
+                            return { ...result, profileImage: imageUrl };
+                        } catch (error) {
+                            console.error('Error fetching signed URL:', error);
+                            return result;
+                        }
+                    } else {
+                        return result;
+                    }
+                })
+            );
+
             if (results.length > 0) {
                 setSearchResults(results);
                 setNotFound(false);
@@ -54,11 +82,19 @@ function Search() {
         }
     };
 
+    useEffect(() => {
+        const delayDebounceFn = setTimeout(() => {
+            handleSearch(searchTerm);
+        }, 300);
+
+        return () => clearTimeout(delayDebounceFn);
+    }, [searchTerm]);
+
     const handleProfileClick = (username) => {
         if (currentUser && username === currentUser.username) {
             navigate('/my-profile');
         } else {
-            navigate(`/friend-profile/${username}`);
+            navigate(`/friend-profile/${username}?q=${searchTerm}`); // search term도 같이 전송 (뒤로 가기를 구현하기 위함)
         }
     };
 
@@ -78,12 +114,12 @@ function Search() {
 
     const handleKeyPress = (e) => {
         if (e.key === 'Enter') {
-            handleSearch();
+            handleSearch(searchTerm);
         }
     };
 
     return (
-        <div className="w-[100%] flex flex-col items-center bg-[#F6F6F6] w-full min-h-screen pt-8  mt-16">
+        <div className="flex flex-col items-center bg-[#F6F6F6] w-full min-h-screen pt-8  mt-16">
             <div className="flex items-center gap-2 mb-8">
                 <input
                     type="text"
