@@ -28,7 +28,7 @@ const KakaoShareButton = () => {
     return (
         <a
             href="#"
-            className="flex justify-center items-center rounded-lg bg-white w-20 h-20 cursor-pointer"
+            className="flex justify-center items-center rounded-lg bg-white w-16 h-16 cursor-pointer"
             onClick={(e) => {
                 e.preventDefault();
                 shareToKakao();

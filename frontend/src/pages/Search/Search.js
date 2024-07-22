@@ -56,7 +56,11 @@ function Search() {
     };
 
     const handleProfileClick = (username) => {
-        navigate(`/friend-profile/${username}`);
+        if (currentUser && username === currentUser.username) {
+            navigate('/my-profile');
+        } else {
+            navigate(`/friend-profile/${username}`);
+        }
     };
 
         const handleKeyPress = (e) => {
