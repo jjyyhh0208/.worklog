@@ -32,6 +32,14 @@ function Signup3({ signUpInfo, setSignUpInfo }) {
                             keyword3: fetchedKeywords[2] || '',
                         },
                     });
+                } else {
+                    // Load from local storage if available
+                    const storedKeywords = localStorage.getItem('selectedWorkStyles');
+                    if (storedKeywords) {
+                        const parsedKeywords = JSON.parse(storedKeywords);
+                        setSelectedKeywords(parsedKeywords);
+                        updateSignUpInfo(parsedKeywords);
+                    }
                 }
             } catch (error) {
                 console.error('Error fetching data:', error);
@@ -40,6 +48,17 @@ function Signup3({ signUpInfo, setSignUpInfo }) {
 
         fetchData();
     }, [isEditing]);
+
+    const updateSignUpInfo = (keywords) => {
+        setSignUpInfo({
+            ...signUpInfo,
+            work_style: {
+                keyword1: keywords[0] || '',
+                keyword2: keywords[1] || '',
+                keyword3: keywords[2] || '',
+            },
+        });
+    };
 
     const handleKeywordClick = (keyword) => {
         let newKeywords = [...selectedKeywords];
@@ -50,17 +69,14 @@ function Signup3({ signUpInfo, setSignUpInfo }) {
                 newKeywords.push(keyword);
             } else {
                 alert('최대 3개의 키워드만 선택 가능합니다.');
+                return;
             }
         }
         setSelectedKeywords(newKeywords);
-        setSignUpInfo({
-            ...signUpInfo,
-            work_style: {
-                keyword1: newKeywords[0] || '',
-                keyword2: newKeywords[1] || '',
-                keyword3: newKeywords[2] || '',
-            },
-        });
+        updateSignUpInfo(newKeywords);
+
+        // Save to local storage
+        localStorage.setItem('selectedWorkStyles', JSON.stringify(newKeywords));
     };
 
     const handleNextClick = () => {
@@ -72,11 +88,6 @@ function Signup3({ signUpInfo, setSignUpInfo }) {
             const foundKeyword = keywords.find((kw) => kw === keyword);
             return foundKeyword ? keywords.indexOf(foundKeyword) + 1 : null;
         });
-
-        if (selectedKeywords.length === 0) {
-            alert('최소 1개의 키워드를 선택해주세요.');
-            return;
-        }
 
         ProfileService.setUserWorkStyles(selectedKeywordIds)
             .then(() => {

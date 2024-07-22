@@ -8,7 +8,7 @@ function Signup4({ signUpInfo, setSignUpInfo }) {
     const location = useLocation();
     const isEditing = location.state?.isEditing || false;
     const profileData = location.state?.profileData || {};
-    const [selectedInterests, setSelectedInterests] = useState(location.state?.selectedInterests || []);
+    const [selectedInterests, setSelectedInterests] = useState([]);
     const [interestKeywords, setInterestKeywords] = useState([]);
 
     useEffect(() => {
@@ -24,19 +24,22 @@ function Signup4({ signUpInfo, setSignUpInfo }) {
                     setSelectedInterests(fetchedInterests);
                     updateSignUpInfo(fetchedInterests);
                 } else {
-                    setSignUpInfo((prevState) => ({
-                        ...prevState,
-                        name: location.state?.name || prevState.name,
-                        age: location.state?.age || prevState.age,
-                        gender: location.state?.gender || prevState.gender,
-                        work_style: location.state?.selectedKeywords || prevState.work_style,
-                    }));
-
-                    if (location.state?.selectedInterests) {
-                        setSelectedInterests(location.state.selectedInterests);
-                        updateSignUpInfo(location.state.selectedInterests);
+                    // Load from local storage if available
+                    const storedInterests = localStorage.getItem('selectedInterests');
+                    if (storedInterests) {
+                        const parsedInterests = JSON.parse(storedInterests);
+                        setSelectedInterests(parsedInterests);
+                        updateSignUpInfo(parsedInterests);
                     }
                 }
+
+                setSignUpInfo((prevState) => ({
+                    ...prevState,
+                    name: location.state?.name || prevState.name,
+                    age: location.state?.age || prevState.age,
+                    gender: location.state?.gender || prevState.gender,
+                    work_style: location.state?.selectedKeywords || prevState.work_style,
+                }));
             } catch (error) {
                 console.error('Error fetching data:', error);
             }
@@ -70,6 +73,9 @@ function Signup4({ signUpInfo, setSignUpInfo }) {
         }
         setSelectedInterests(newInterests);
         updateSignUpInfo(newInterests);
+
+        // Save to local storage
+        localStorage.setItem('selectedInterests', JSON.stringify(newInterests));
     };
 
     const handleCompleteClick = () => {
@@ -86,6 +92,10 @@ function Signup4({ signUpInfo, setSignUpInfo }) {
 
         ProfileService.setUserInterest(selectedInterestIds)
             .then(() => {
+                // Clear local storage after successful completion
+                localStorage.removeItem('selectedInterests');
+                localStorage.removeItem('selectedWorkStyles');
+
                 if (isEditing) {
                     navigate('/my-profile', {
                         state: {
@@ -99,6 +109,9 @@ function Signup4({ signUpInfo, setSignUpInfo }) {
                         },
                     });
                 } else {
+                    // Clear local storage after successful completion
+                    localStorage.removeItem('selectedInterests');
+                    localStorage.removeItem('selectedWorkStyles');
                     navigate('/on-boarding/1', {
                         state: {
                             profileData: { ...signUpInfo, interests: selectedInterests },
