@@ -83,7 +83,7 @@ function Search() {
     };
 
     return (
-        <div className="w-[100%] flex flex-col items-center bg-[#F6F6F6] w-full min-h-screen pt-8">
+        <div className="w-[100%] flex flex-col items-center bg-[#F6F6F6] w-full min-h-screen pt-8  mt-16">
             <div className="flex items-center gap-2 mb-8">
                 <input
                     type="text"

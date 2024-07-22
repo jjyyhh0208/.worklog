@@ -165,7 +165,7 @@ function MyProfile() {
     };
 
     return (
-        <div className="w-[100%] bg-[#f6f6f6] p-5 flex flex-col items-center">
+        <div className="w-[100%] bg-[#f6f6f6] p-5 flex flex-col items-center mt-16">
             <div className="flex flex-col items-center w-full max-w-[1150px]">
                 <div className="flex flex-col md:flex-row items-center mb-5 mt-5 w-full">
                     <div className="bg-white rounded-[50px] shadow-md p-4 w-full md:w-auto h-auto md:h-[180px] flex-shrink-0 mb-5 md:mb-0 md:mr-12 relative flex items-center">
