@@ -18,11 +18,7 @@ const OnBoarding3 = () => {
     };
 
     return (
-<<<<<<< HEAD
-        <div className="w-[100%] flex flex-col items-center mt-36">
-=======
-        <div className="w-[100%] flex flex-col items-center mt-28" >
->>>>>>> 6861338727f3a296215ad1addbfec50fdb8dd0a4
+        <div className="w-[100%] flex flex-col items-center mt-28">
             <h1 className="absolute top-7 left-9 text-[#4053ff] text-center text-4xl font-extrabold">.WORKLOG</h1>
             <div className="flex justify-center gap-5 mb-4">
                 <div
@@ -69,7 +65,6 @@ const OnBoarding3 = () => {
                 >
                     내 프로필 바로 가기
                 </button>
-                
             </div>
         </div>
     );
