@@ -169,34 +169,7 @@ function MyProfile() {
     };
 
     return (
-<<<<<<< HEAD
-        <div className="w-[100%] bg-[#f6f6f6] p-5 flex flex-col items-center mt-16">
-            <div className="flex flex-col items-center w-full max-w-[1150px]">
-                <div className="flex flex-col md:flex-row items-center mb-5 mt-5 w-full">
-                    <div className="bg-white rounded-[50px] shadow-md p-4 w-full md:w-auto h-auto md:h-[180px] flex-shrink-0 mb-5 md:mb-0 md:mr-12 relative flex items-center">
-                        <div className="flex flex-col md:flex-row items-center justify-between w-full">
-                            <div className="flex items-center">
-                                <img
-                                    src={imageUrl || '/images/basicProfile.png'}
-                                    alt="Profile"
-                                    className="w-28 h-28 rounded-full object-cover m-5 border border-black"
-                                />
-                                <div className="ml-5">
-                                    <h1 className="text-3xl font-bold">{profileData?.name}</h1>
-                                    <div className="flex items-center mt-2">
-                                        <span className="w-24 text-xl font-bold">나이</span>
-                                        <span className="text-xl font-bold">{profileData?.old}</span>
-                                    </div>
-                                    <div className="flex items-center mt-2">
-                                        <span className="w-24 text-xl font-bold">성별</span>
-                                        <span className="text-xl font-bold">{profileData?.gender}</span>
-                                    </div>
-                                    <div className="flex items-center mt-2">
-                                        <span className="w-24 text-xl font-bold">ID</span>
-                                        <span className="text-xl font-bold">{profileData?.username}</span>
-                                    </div>
-=======
-        <div className="w-[100%] bg-[#f6f6f6] min-h-screen py-8 px-4 sm:px-6 lg:px-8">
+        <div className="w-[100%] bg-[#f6f6f6] min-h-screen py-8 px-4 sm:px-6 lg:px-8 mt-16">
             <div className="max-w-5xl mx-auto">
                 {/* 프로필 헤더 */}
                 <div className="bg-white flex justify-between rounded-[50px] shadow-md p-6 sm:p-8 mb-8 w-[70%]">
@@ -223,7 +196,6 @@ function MyProfile() {
                                     }}
                                 >
                                     {profileData.disc_character}
->>>>>>> 7e6f31abc8539ca337df4b65e6d9fa8dbb46f525
                                 </div>
                             )}
                         </div>
@@ -236,16 +208,9 @@ function MyProfile() {
                             >
                                 <svg
                                     xmlns="http://www.w3.org/2000/svg"
-<<<<<<< HEAD
-                                    className="ml-3"
-                                    width="40"
-                                    height="40"
-                                    viewBox="0 0 40 40"
-=======
                                     width="20"
                                     height="20"
                                     viewBox="0 0 24 24"
->>>>>>> 7e6f31abc8539ca337df4b65e6d9fa8dbb46f525
                                     fill="none"
                                     stroke="currentColor"
                                     strokeWidth="2"

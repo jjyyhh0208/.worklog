@@ -44,7 +44,7 @@ const FeedbackLong = ({ isLoggedIn }) => {
                 .then((data) => setMyProfileData(data))
                 .catch((error) => console.error('Error fetching profile data:', error));
         }
-    }, [isLoggedIn]);
+    }, [myprofileData]);
 
     const handleInputChange = (event, question) => {
         const { value } = event.target;
@@ -75,43 +75,34 @@ const FeedbackLong = ({ isLoggedIn }) => {
         const workStylesData = (JSON.parse(localStorage.getItem('workStyles')) || { work_styles: [] }).work_styles;
         const scores = JSON.parse(localStorage.getItem('scores')) || { D: 0, I: 0, S: 0, C: 0 };
 
-        const questionAnswers = {
-            user_to: profileData.username, // 평가받는 유저의 유저네임 추가
+        const finalFeedbackData = {
+            id: profileData.id,
+            user: profileData.username,
+            user_by: myprofileData?.username || '',
+            work_styles: workStylesData,
+            score: {
+                d_score: scores.D,
+                i_score: scores.I,
+                s_score: scores.S,
+                c_score: scores.C,
+            },
             question_answers: [
                 {
-                    question: '협업 경험에서 좋았던 점은 무엇이었나요?',
+                    question: { long_question: '협업 경험에서 좋았던 점은 무엇이었나요?' },
                     answer: feedbackData.long_questions.question1,
                 },
                 {
-                    question: '협업 경험에서 아쉬웠던 점은 무엇이었나요?',
+                    question: { long_question: '협업 경험에서 아쉬웠던 점은 무엇이었나요?' },
                     answer: feedbackData.long_questions.question2,
                 },
                 {
-                    question: '마지막으로 하고 싶은 말을 적어주세요!',
+                    question: { long_question: '마지막으로 하고 싶은 말을 적어주세요!' },
                     answer: feedbackData.long_questions.question3,
                 },
             ],
         };
 
-        // 1. questionAnswers를 별도의 엔드포인트로 전송
-        FeedbackService.submitQuestionAnswers(questionAnswers)
-            .then(() => {
-                // questionAnswers 전송이 성공하면 기존 데이터를 전송
-                const finalFeedbackData = {
-                    id: profileData.id,
-                    user: profileData.username,
-                    user_by: myprofileData?.username || '',
-                    work_styles: workStylesData,
-                    score: {
-                        d_score: scores.D,
-                        i_score: scores.I,
-                        s_score: scores.S,
-                        c_score: scores.C,
-                    },
-                };
-
-                return FeedbackService.submitAnswers(finalFeedbackData);
-            })
+        FeedbackService.submitAnswers(finalFeedbackData)
             .then(() => setShowModal(true))
             .catch((error) => console.error('Error submitting feedback:', error));
     };
@@ -123,13 +114,13 @@ const FeedbackLong = ({ isLoggedIn }) => {
     };
 
     return (
-        <div className="w-[100%] flex flex-col items-center bg-gray-100 overflow-y-auto min-h-[90%] h-screen  mt-16">
+        <div className="w-[100%] flex flex-col items-center bg-gray-100 overflow-y-auto min-h-[90%] h-screen">
             <div className="p-9 md:w-3/5 w-11/12 rounded-2xl bg-white flex-shrink-0 my-9 flex flex-col items-center shadow-lg relative overflow-y-auto">
                 <ProgressBar progress={100} /> {/* ProgressBar 추가 */}
-                <div className="absolute top- right-8 text-xl font-bold text-black bg-gray-300 p-3 rounded-lg shadow-md">
+                <div className="absolute top-8 right-12 text-2xl font-bold text-black bg-gray-300 p-3 rounded-lg shadow-md">
                     5/5
                 </div>
-                <div className="absolute top-8 left-8">
+                <div className="absolute top-12 left-8">
                     <button type="submit" onClick={handleBackClick} className=" cursor-pointer hover:bg-white">
                         <svg xmlns="http://www.w3.org/2000/svg" width="60" height="50" viewBox="0 0 24 24" fill="none">
                             <path
@@ -142,7 +133,7 @@ const FeedbackLong = ({ isLoggedIn }) => {
                         </svg>
                     </button>
                 </div>
-                <div className="text-[#000000] text-2xl font-extrabold leading-normal ml-20 mr-20 mt-12 my-2">
+                <div className="text-[#000000] text-3xl font-extrabold leading-normal ml-20 mr-20 mt-8 my-2">
                     <div>
                         마지막으로 {profileData ? `${profileData.name}` : '유저'}님에게 하고 싶은 말을 자유롭게
                         써주세요.
@@ -158,7 +149,7 @@ const FeedbackLong = ({ isLoggedIn }) => {
                     </div>
                     <div className="w-full flex justify-center my-4">
                         <textarea
-                            className="w-[90%] max-w-4xl p-4 bg-gray-100 rounded-lg min-h-[120px] resize-none overflow-hidden"
+                            className="w-full max-w-4xl p-4 bg-gray-100 rounded-lg min-h-[120px] resize-none overflow-hidden"
                             placeholder="회의 때의 모습, 준비성, 아이스브레이킹, 역량, 커뮤니케이션 방법 등 다양한 측면에서 자유롭게 의견을 남겨 주세요. 따뜻한 피드백을 기다립니다."
                             value={feedbackData.long_questions.question1}
                             onChange={(event) => handleInputChange(event, 'question1')}
@@ -169,7 +160,7 @@ const FeedbackLong = ({ isLoggedIn }) => {
                     </div>
                     <div className="w-full flex justify-center my-4">
                         <textarea
-                            className="w-[90%] max-w-4xl p-4 bg-gray-100 rounded-lg min-h-[120px] resize-none overflow-hidden"
+                            className="w-full max-w-4xl p-4 bg-gray-100 rounded-lg min-h-[120px] resize-none overflow-hidden"
                             placeholder="회의 때의 모습, 준비성, 아이스브레이킹, 역량, 커뮤니케이션 방법 등 다양한 측면에서 자유롭게 의견을 남겨 주세요. 따뜻한 피드백을 기다립니다."
                             value={feedbackData.long_questions.question2}
                             onChange={(event) => handleInputChange(event, 'question2')}
@@ -180,14 +171,14 @@ const FeedbackLong = ({ isLoggedIn }) => {
                     </div>
                     <div className="w-full flex justify-center my-4">
                         <textarea
-                            className="w-[90%] max-w-4xl p-4 bg-gray-100 rounded-lg min-h-[120px] resize-none overflow-hidden"
+                            className="w-full max-w-4xl p-4 bg-gray-100 rounded-lg min-h-[120px] resize-none overflow-hidden"
                             placeholder="자유롭게 하고 싶은 말을 적어주세요! 없을 시 '없음'을 기재해주세요."
                             value={feedbackData.long_questions.question3}
                             onChange={(event) => handleInputChange(event, 'question3')}
                         />
                     </div>
                 </div>
-                <div className="flex justify-end items-center mt-8 mb-4 w-full">
+                <div className="flex justify-end items-center mt-16 mb-4 w-full">
                     <button
                         className="w-36 h-12 rounded-lg bg-[#4053ff] border-none text-white text-lg font-bold cursor-pointer"
                         onClick={handleFormSubmit}

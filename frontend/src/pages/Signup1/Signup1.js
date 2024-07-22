@@ -90,7 +90,7 @@ function Signup1({ signUpInfo, setSignUpInfo }) {
     };
 
     return (
-        <div className="w-[100%] flex flex-col items-center p-5 w-full md:w-4/5 max-w-2xl mx-auto">
+        <div className="w-[100%] flex flex-col items-center p-5 md:w-4/5 max-w-2xl mx-auto mt-16">
             <h1 className="text-[#4053ff] text-4xl font-extrabold cursor-pointer mb-5" onClick={logoHandler}>
                 .WORKLOG
             </h1>
@@ -144,8 +144,6 @@ function Signup1({ signUpInfo, setSignUpInfo }) {
                             중복 확인
                         </button>
                     </div>
-<<<<<<< HEAD
-=======
                     {availabilityMessage && (
                         <div
                             className={`w-full text-sm mb-5 ${
@@ -157,7 +155,6 @@ function Signup1({ signUpInfo, setSignUpInfo }) {
                             {availabilityMessage}
                         </div>
                     )}
->>>>>>> 7e6f31abc8539ca337df4b65e6d9fa8dbb46f525
                     <span className="w-full text-base font-bold mb-1">비밀번호</span>
                     <input
                         className="w-full h-10 px-3 border border-gray-300 rounded-md text-sm mb-5 focus:outline-none focus:ring-2 focus:ring-blue-500"
