@@ -18,7 +18,7 @@ const OnBoarding3 = () => {
     };
 
     return (
-        <div className="w-[100%] flex flex-col items-center mt-36">
+        <div className="w-[100%] flex flex-col items-center mt-28">
             <h1 className="absolute top-7 left-9 text-[#4053ff] text-center text-4xl font-extrabold">.WORKLOG</h1>
             <div className="flex justify-center gap-5 mb-4">
                 <div
