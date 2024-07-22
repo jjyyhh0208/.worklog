@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import styles from './FriendProfile.module.css';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import ProfileService from '../../utils/ProfileService';
 import keywordIcons from '../../components/KeywordIcons/KeywordIcons';
 import typeData from '../../data/typeData.json';
@@ -13,6 +12,8 @@ function FriendProfile() {
     const [imageUrl, setImageUrl] = useState(null);
     const [DISCData, setDISCData] = useState(null);
     const navigate = useNavigate();
+    const location = useLocation();
+
     const [showWarning, setShowWarning] = useState(false);
     const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem('authToken'));
 
@@ -88,6 +89,17 @@ function FriendProfile() {
         navigate(`/feedback/intro/${username}`);
     };
 
+    const handleGoBack = () => {
+        const params = new URLSearchParams(location.search);
+        const from = params.get('from');
+        const query = params.get('q');
+
+        if (from === 'search' && query) {
+            navigate(`/search?q=${encodeURIComponent(query)}`);
+        } else {
+            navigate(`/list/${username}`);
+        }
+    };
     if (isLoading) {
         return <div className="bg-[#f6f6f6] w-[100%] h-[1000px] "></div>;
     }
@@ -95,6 +107,21 @@ function FriendProfile() {
     return (
         <div className="w-[100%] bg-[#f6f6f6] min-h-screen py-8 px-4 sm:px-6 lg:px-8">
             <div className="max-w-5xl mx-auto">
+                <button
+                    onClick={handleGoBack}
+                    className="absolute top-32 left-48 text-blue-500 bg-transparent border-none cursor-pointer focus:outline-none hover:bg-transparent"
+                    style={{ textDecoration: 'none' }}
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="60" height="50" viewBox="0 0 24 24" fill="none">
+                        <path
+                            d="M15.5 19l-7-7 7-7"
+                            stroke="#4053ff"
+                            strokeWidth="2.5"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                        />
+                    </svg>
+                </button>
                 {/* 프로필 헤더 */}
                 <div className="bg-white flex justify-between rounded-[50px] shadow-md p-6 sm:p-8 mb-8 w-[70%]">
                     <div className="flex flex-col sm:flex-row items-center sm:items-start space-y-4 sm:space-y-0 sm:space-x-6">

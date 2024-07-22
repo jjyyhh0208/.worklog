@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import ProfileService from '../../utils/ProfileService';
 
 function Search() {
@@ -9,11 +9,20 @@ function Search() {
     const [isOwnProfile, setIsOwnProfile] = useState(false);
     const [currentUser, setCurrentUser] = useState(null);
     const navigate = useNavigate();
+    const location = useLocation();
 
     useEffect(() => {
         fetchCurrentUser();
         window.scrollTo(0, 0);
-    }, []);
+
+        // URL에서 검색어 가져오기
+        const params = new URLSearchParams(location.search);
+        const query = params.get('q');
+        if (query) {
+            setSearchTerm(query);
+            handleSearch(query);
+        }
+    }, [location]);
 
     const fetchCurrentUser = async () => {
         try {
@@ -30,19 +39,21 @@ function Search() {
         setIsOwnProfile(false);
     };
 
-    const handleSearch = async () => {
+    const handleSearch = async (term = searchTerm) => {
         try {
-            if (currentUser && searchTerm === currentUser.username) {
+            if (currentUser && term === currentUser.username) {
                 setIsOwnProfile(true);
                 setSearchResults([]);
                 setNotFound(false);
                 return;
             }
 
-            const results = await ProfileService.fetchSearchResults(searchTerm);
+            const results = await ProfileService.fetchSearchResults(term);
             if (results.length > 0) {
                 setSearchResults(results);
                 setNotFound(false);
+                // 검색 결과가 있을 때 URL 업데이트
+                navigate(`/search?q=${encodeURIComponent(term)}`, { replace: true });
             } else {
                 setSearchResults([]);
                 setNotFound(true);
@@ -58,7 +69,7 @@ function Search() {
         if (currentUser && username === currentUser.username) {
             navigate('/my-profile');
         } else {
-            navigate(`/friend-profile/${username}`);
+            navigate(`/friend-profile/${username}?from=search&q=${encodeURIComponent(searchTerm)}`);
         }
     };
 
