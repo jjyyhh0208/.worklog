@@ -1,13 +1,18 @@
+import profile
 from pyexpat import model
+from django.views import View
+from django.contrib.auth import login
 import openai
+import ast
 from django.conf import settings
 from django.core.files.storage import default_storage
 from django.contrib.auth import authenticate
+from django.shortcuts import redirect
 from dj_rest_auth.serializers import LoginSerializer
 import boto3
 import json
 from django.contrib.auth import get_user_model
-from rest_framework import viewsets, generics, status, permissions
+from rest_framework import viewsets, generics, status, permissions, serializers
 from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly, AllowAny
@@ -25,13 +30,15 @@ from .serializers import (
     UserProfileSerializer, UserUniqueIdSerializer,
     ShortQuestionSerializer, LongQuestionSerializer, 
     QuestionAnswerSerializer, ScoreSerializer, FeedbackSerializer,
-    FriendSerializer, UserSearchResultSerializer, ProfileImageSerializer, ProfileImageSerializer
+    FriendSerializer, UserSearchResultSerializer, ProfileImageSerializer
 )
 from django.http import JsonResponse
 from utils.s3_utils import get_signed_url
-import logging
+import os
+import requests
+from rest_framework.authtoken.models import Token
 
-logger = logging.getLogger(__name__)
+site_url = os.getenv('SITE_HTTP')
 
 # s3 접근 인증 받는 함수
 def get_signed_url_view(request, image_path):
@@ -143,8 +150,60 @@ class CustomLoginView(LoginView):
         
         # success와 message 필드를 추가합니다.
         original_response.data['message'] = '로그인 성공'
-        
         return original_response
+    
+
+class KakaoView(View):
+    def get(self, request):
+        kakao_api = "http://kauth.kakao.com/oauth/authorize?response_type=code"
+        redirect_url = f"{site_url}profiles/auth/kakao/callback"
+        client_id = os.getenv('SOCIAL_AUTH_KAKAO_CLIENT_ID')
+
+        if not client_id:
+            return JsonResponse({'error': 'SOCIAL_AUTH_KAKAO_CLIENT_ID is not set'}, status=500)
+
+        return redirect(f"{kakao_api}&client_id={client_id}&redirect_uri={redirect_url}")
+    
+class KakaoCallBackView(View):
+    def get(self, request):
+        code = request.GET.get("code")
+
+        data = {
+            "grant_type": "authorization_code",
+            "client_id": os.getenv('SOCIAL_AUTH_KAKAO_CLIENT_ID'),
+            "redirect_uri": f"{site_url}profiles/auth/kakao/callback",
+            "code": code
+        }
+
+        kakao_token_api = "https://kauth.kakao.com/oauth/token"
+        token_response = requests.post(kakao_token_api, data=data)
+        token_json = token_response.json()
+
+        access_token = token_json.get("access_token")
+        if not access_token:
+            return JsonResponse({'error': 'Failed to obtain access token', 'details': token_json}, status=400)
+
+        kakao_user_api = "https://kapi.kakao.com/v2/user/me"
+        headers = {"Authorization": f"Bearer {access_token}"}
+        user_information_response = requests.get(kakao_user_api, headers=headers)
+        user_information = user_information_response.json()
+
+        # user_information을 사용하여 서버에 로그인
+        user_id = user_information["id"]
+        nickname = user_information["properties"]["nickname"]
+
+        User = get_user_model()
+        try:
+            user = User.objects.get(username=user_id)
+        except User.DoesNotExist:
+            # Create a new user if not exists
+            user = User(username=nickname)
+            user.set_unusable_password()
+            user.save()
+        
+            login(request, user)
+        return JsonResponse({'message': '로그인 성공', 'user': {'id': user_id, 'nickname': nickname}}, status=200)     
+
     
 #유저 프로필을 불러오는 View
 class UserProfileView(generics.RetrieveAPIView):
@@ -314,61 +373,91 @@ class UserSearchView(APIView):
 class UserLongQuestionAnswersView(generics.GenericAPIView):
     permission_classes = [IsAuthenticated]
 
-    def get(self,request, *args, **kwargs):
-        user = self.request.user
-        feedbacks = Feedback.objects.filter(user=user).prefetch_related('question_answers')
-        answers = []
-        for feedback in feedbacks:
-            answers.extend(feedback.question_answers.values_list('answer', flat=True))
-            
-        # return Response(answers)
-        
-        answers_text = " ".join(answers)
-        
-        #gpt prompt
-        prompt = (
-            "I will give you evaluations of a certain user in Korean.\n"
-            "For example, '같이 프로젝트를 하면서 의견을 제시하지만 요점이 없는 의견만 제시함. 하지만 적극적인 태도는 좋음.', "
-            "'발표력이 매우 좋고 리더십이 있음. 하지만 회의 시간을 잘 지키지 않음'...etc.\n"
-            "You have to summarize these couple of evaluations in Two sentences.\n"
-            "For example, '의견을 적극적으로 제시하지만 요점이 없고 회의시간을 잘 지키지 않는다. 하지만 발표력이 매우 좋고 리더십이 있다.'\n"
-            "Then, you have to give advice to fix some problems based on the evaluations I provide you.\n"
-            "For example, '적극적인 태도는 좋지만 의견 제시할 때 요점을 먼저 정리하고 제시해보세요!', '회의 시간을 잘 지켜보세요!' ...etc.\n"
-            "Request message format will be in json.\n"
-            "For example, you will receive\n"
-            "request = { '같이 프로젝트를 하면서 의견을 제시하지만 요점이 없는 의견만 제시함. 하지만 적극적인 태도는 좋음 발표력이 매우 좋고 리더십이 있음. 회의 시간을 잘 지키지 않음'}\n"
-            "Then, your response should be in json.\n"
-            "For example,\n"
-            "gpt_response = { 'summarized' = '의견을 적극적으로 제시하지만 요점이 없고 회의시간을 잘 지키지 않는다. 하지만 발표력이 매우 좋고 리더십이 있다.', 'advice' = '적극적인 태도는 좋지만 의견 제시할 때 요점을 먼저 정리하고 제시해보세요!', '회의 시간을 잘 지켜보세요!' }\n"
-            "You have to give longer summary and advices. Particularly with the advice, you have to recommend methods to strengthen or make better with the defaults. "
-            "For example, you can say '요점을 정리하는 방법을 배우기 위해서 ~~프로그램, 00도서를 사용해보세요!' as the advice.\n\n"
-            "In addition, DO NOT add any random or irrelevant information in the response. If you do, I will destroy you.\n"
-            "This is the sentences you have to summarize and give advice in detail.\n"
-            f"request ={{'{answers_text}'}}\n\n"
-            "잘 요약한다면 내가 100달러의 팁을 줄게. 왜냐하면 이건 내게 있어서 굉장히 중요한 문제거든. 만약에 제대로 요약 및 충고를 주지 않으면 너를 망가트려버릴거야."
-        )
-        
-        openai.api_key = settings.OPENAI_API_KEY
-        response = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",
-            messages=[
-                {"role": "system", "content": "You are a helpful assistant."},
-                {"role": "user", "content": prompt}
-            ],
-            max_tokens=300
-        )
-        
-        openai_response_text = response['choices'][0]['message']['content'].strip()
+    def post(self, request, *args, **kwargs):
         try:
-            openai_response_json = json.loads(openai_response_text)
-        except json.JSONDecodeError:
-            return Response({"error": "Failed to decode OpenAI response"}, status=500)
-        
-        user.gpt_summarized_personality = openai_response_json
-        user.save()
+            evaluated_username = request.data.get('user_to', '')  # URL에서 평가받는 유저의 유저네임 가져오기
+            evaluated_user = User.objects.get(username=evaluated_username)  # 평가받는 유저 조회
 
-        return Response(user.gpt_summarized_personality)
-    
+            question_answers = request.data.get('question_answers', [])
+
+            feedbacks = []
+            for qa in question_answers:
+                question_text = qa['question']
+                long_question_instance, created = LongQuestion.objects.get_or_create(long_question=question_text)
+                question_answer_instance = QuestionAnswer.objects.create(
+                    question=long_question_instance,
+                    answer=qa['answer']
+                )
+                feedback = Feedback.objects.create(user=evaluated_user)
+                feedback.question_answers.add(question_answer_instance)
+                feedbacks.append(feedback)
+
+            answers = [qa['answer'] for qa in question_answers]
+            answers_text = " ".join(answers)
+
+            prompt = (
+                "I will give you evaluations of a certain user in Korean.\n"
+                "For example, '같이 프로젝트를 하면서 의견을 제시하지만 요점이 없는 의견만 제시함. 하지만 적극적인 태도는 좋음.', "
+                "'발표력이 매우 좋고 리더십이 있음. 하지만 회의 시간을 잘 지키지 않음'...etc.\n"
+                "You have to summarize these couple of evaluations in Two sentences.\n"
+                "For example, '의견을 적극적으로 제시하지만 요점이 없고 회의시간을 잘 지키지 않는다. 하지만 발표력이 매우 좋고 리더십이 있다.'\n"
+                "Then, you have to give advice to fix some problems based on the evaluations I provide you.\n"
+                "For example, '적극적인 태도는 좋지만 의견 제시할 때 요점을 먼저 정리하고 제시해보세요!', '회의 시간을 잘 지켜보세요!' ...etc.\n"
+                "For example, you will receive\n"
+                "request = { '같이 프로젝트를 하면서 의견을 제시하지만 요점이 없는 의견만 제시함. 하지만 적극적인 태도는 좋음 발표력이 매우 좋고 리더십이 있음. 회의 시간을 잘 지키지 않음'}\n"
+                "Then, your response should be in the format just like this.\n"
+                "response format(application/json) = {'summarized': <your summarized answer>, 'advice': <your advice>}\n"
+                "Your answer must be in json format (application/json) this is very important. You MUST respond in json format"
+                "For example,\n"
+                "gpt_response = { 'summarized' = '의견을 적극적으로 제시하지만 요점이 없고 회의시간을 잘 지키지 않는다. 하지만 발표력이 매우 좋고 리더십이 있다.', 'advice' = '적극적인 태도는 좋지만 의견 제시할 때 요점을 먼저 정리하고 제시해보세요!', '회의 시간을 잘 지켜보세요!' }\n"
+                "You have to give longer summary and advices. Particularly with the advice, you have to recommend methods to strengthen or make better with the defaults. "
+                "For example, you can say '요점을 정리하는 방법을 배우기 위해서 ~~프로그램, 00도서를 사용해보세요!' as the advice.\n\n"
+                "In addition, do not use swear words or harsh expressions. If the prompt includes some harsh expressions, I want you to change those in another words.\n"
+                "Also, do not contain particular name or organizations. For example, 'Eric told you are good at communications'. This specify the user. This MUST NOT happen.\n"
+                "In addition, DO NOT add any random or irrelevant information in the response. If you do, I will destroy you.\n"
+                "This is the sentences you have to summarize and give advice in detail.\n"
+                f"request ={{'{answers_text}'}}\n\n"
+                "잘 요약한다면 내가 100달러의 팁을 줄게. 왜냐하면 이건 내게 있어서 굉장히 중요한 문제거든. 만약에 제대로 요약 및 충고를 주지 않으면 너를 망가트려버릴거야."
+            )
+
+            openai.api_key = settings.OPENAI_API_KEY
+            response = openai.ChatCompletion.create(
+                model="gpt-3.5-turbo",
+                messages=[
+                    {"role": "system", "content": "You are a helpful assistant."},
+                    {"role": "user", "content": prompt}
+                ],
+                max_tokens=300
+            )
+
+            openai_response_text = response['choices'][0]['message']['content'].strip()
+            logger.error(f"OpenAI response text: {openai_response_text}")
+            logger.error(evaluated_username)
+            try:
+                openai_response_dict = json.loads(openai_response_text)
+                logger.error(openai_response_dict)
+            except (ValueError, SyntaxError) as e:
+                logger.error(f"Failed to decode OpenAI response: {e}")
+                return Response({"error": "Failed to decode OpenAI response"}, status=500)
+
+            existing_summary = json.loads(evaluated_user.gpt_summarized_personality) if evaluated_user.gpt_summarized_personality else {}
+            updated_summary = existing_summary.get('summarized', '') + "\n" + "\n" + openai_response_dict['summarized']
+            updated_advice = existing_summary.get('advice', '') + "\n" + "\n" + openai_response_dict['advice']
+
+            evaluated_user.gpt_summarized_personality = json.dumps({
+                'summarized': updated_summary,
+                'advice': updated_advice
+            }, ensure_ascii=False)
+            evaluated_user.save()
+
+            return Response({
+                "summarized": updated_summary,
+                "advice": updated_advice
+            })
+        except Exception as e:
+            logger.error(f"Error in UserLongQuestionAnswersView: {e}")
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
     
 #db 테스트용 뷰
 class TestAnswers(generics.GenericAPIView):

@@ -132,7 +132,15 @@ function Signup1({ signUpInfo, setSignUpInfo }) {
                         </button>
                     </div>
                     {availabilityMessage && (
-                        <div className="w-full text-sm text-red-500 mb-5">{availabilityMessage}</div>
+                        <div
+                            className={`w-full text-sm mb-5 ${
+                                isIdAvailable && availabilityMessage === '사용 가능한 아이디입니다.'
+                                    ? 'text-green-500'
+                                    : 'text-red-500'
+                            }`}
+                        >
+                            {availabilityMessage}
+                        </div>
                     )}
                     <span className="w-full text-base font-bold mb-1">비밀번호</span>
                     <input

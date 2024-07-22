@@ -45,7 +45,7 @@ function MyProfile() {
     }, []);
 
     if (isLoading) {
-        return <div className="bg-[#f6f6f6] p-5 flex flex-col items-center"></div>;
+        return <div className="bg-[#f6f6f6] w-[100%] h-[1000px] "></div>;
     }
 
     const handleCopyLink = () => {
@@ -129,6 +129,12 @@ function MyProfile() {
     const handleProfileEdit = () => {
         navigate('/signup/2', { state: { isEditing: true, profileData } });
     };
+
+    // JSON 파싱하여 summarized와 advice 값을 추출
+    const parsedPersonality =
+        profileData && profileData.gpt_summarized_personality ? JSON.parse(profileData.gpt_summarized_personality) : {};
+    const summarized = parsedPersonality.summarized || '';
+    const advice = parsedPersonality.advice || '';
 
     return (
         <div className="w-[100%] bg-[#f6f6f6] p-5 flex flex-col items-center">
