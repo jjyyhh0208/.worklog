@@ -114,8 +114,11 @@ function Main() {
                             <hr className="my-4" />
                             <div className="text-black mb-10">
                                 안녕하세요, WORKLOG 운영팀입니다. <br />
-                                일하는 모두를 위한 피드백 서비스가 드디어 출시되었습니다. <br />
-                                많은 관심과 응원 부탁드립니다.
+                                <br />
+                                익명 팀원 피드백 서비스, .WORKLOG가 드디어 출시 되었습니다. <br />
+                                일하는 모두를 위한 더 나은 서비스가 되도록 하겠습니다. <br />
+                                추후 유형별 신규 캐릭터를 포함한 업데이트가 예정되어 있습니다.
+                                <br /> 많은 관심과 응원 부탁드립니다.
                             </div>
                         </div>
                     </div>
@@ -127,18 +130,20 @@ function Main() {
                         className="text-[#4053ff] text-3xl font-extrabold mb-4 inline-block pb-6 border-b border-gray-300"
                         style={{ marginBottom: '16px' }}
                     >
-                        .WORKLOG <span className="text-gray-400">: 일하는 모두를 위한 자기이해 서비스</span>
+                        .WORKLOG<span className="text-gray-400"> : 익명 팀원 피드백 서비스 </span>
                     </div>
                     <br />
                     <span className="text-xl text-black leading-relaxed">
-                        함께 일했던 사람들의 피드백을 모아, 자기 자신의 업무 상황 속 페르소나를 한층 더 이해해 보는 건
-                        어떨까요? .WORKLOG는 웹 브라우저 기반의 서비스로, 협업으로 일하는 모두를 위한 일종의 자기이해
-                        서비스예요. 타인이 평가하는 '협업 활동에서의 나' 를 기록해 줌으로써, 본인이 실제로 팀 내의
-                        모습을 객관적인 시선에서 이해할 수 있도록 도와준답니다.
+                        나는 일할 때 어떤 사람일까요? 함께 일했던 사람들의 피드백을 모아, 본인의 업무 페르소나를
+                        파악하고 싶은 당신께 워크로그가 찾아 왔습니다! <br />
+                        .WORKLOG는 웹 브라우저 기반의 서비스로, 협업으로 일하는 모두를 위한 일종의 자기이해 서비스예요.
+                        <br />
+                        세분화 된 설문지 문항과 AI를 활용해 타인이 평가하는 '협업 활동에서의 나' 를 체계적으로
+                        분석하면서, 본인의 실제로 팀 내의 모습을 객관적인 시선에서 이해할 수 있도록 도와줍니다.
                     </span>
                 </div>
             </div>
-            <div className="text-2xl font-medium m-8">.WORKLOG에는 어떤 성격이 있을까요?</div>
+            <div className="text-2xl font-medium m-8">.WORKLOG에는 어떤 유형이 있을까요?</div>
             <div className="flex justify-center mt-4 w-[90%] rounded-lg">
                 <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-4 w-full">
                     {typeData.map(

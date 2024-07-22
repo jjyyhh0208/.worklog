@@ -40,15 +40,22 @@ function Search() {
         navigate(`?q=${value}`);
     };
 
+<<<<<<< HEAD
     const handleSearch = async (query) => {
         try {
             if (currentUser && query === currentUser.username) {
+=======
+    const handleSearch = async (term = searchTerm) => {
+        try {
+            if (currentUser && term === currentUser.username) {
+>>>>>>> a22d50144ffed3b966dab17c04f9e927add85036
                 setIsOwnProfile(true);
                 setSearchResults([]);
                 setNotFound(false);
                 return;
             }
 
+<<<<<<< HEAD
             const results = await ProfileService.fetchSearchResults(query);
             console.log(results);
 
@@ -68,6 +75,9 @@ function Search() {
                 })
             );
 
+=======
+            const results = await ProfileService.fetchSearchResults(term);
+>>>>>>> a22d50144ffed3b966dab17c04f9e927add85036
             if (results.length > 0) {
                 setResultsWithImages(resultsWithImages);
                 setNotFound(false);

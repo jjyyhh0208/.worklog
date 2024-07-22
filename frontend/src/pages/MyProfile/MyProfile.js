@@ -169,28 +169,28 @@ function MyProfile() {
     };
 
     return (
-        <div className="w-[100%] bg-[#f6f6f6] min-h-screen py-8 px-4 sm:px-6 lg:px-8 mt-16">
+        <div className="w-full bg-[#f6f6f6] min-h-screen py-8 px-4 sm:px-6 lg:px-8 mt-16">
             <div className="max-w-5xl mx-auto">
                 {/* 프로필 헤더 */}
-                <div className="bg-white flex justify-between rounded-[50px] shadow-md p-6 sm:p-8 mb-8 w-[70%]">
-                    <div className="flex flex-col sm:flex-row items-center sm:items-start space-y-4 sm:space-y-0 sm:space-x-6">
+                <div className="bg-white rounded-[50px] shadow-md p-4 sm:p-6 md:p-8 mb-8 w-[100%] sm:w-[100%] md:w-[100%] lg:w-[100%] mx-auto">
+                    <div className="flex flex-col md:flex-row items-center md:items-start space-y-4 md:space-y-0 md:space-x-6">
                         <img
                             src={imageUrl || '/images/basicProfile.png'}
                             alt="Profile"
-                            className="w-28 h-28 rounded-full object-cover border border-gray-200"
+                            className="w-24 h-24 sm:w-28 sm:h-28 rounded-full object-cover border border-gray-200"
                         />
-                        <div className="text-center sm:text-left">
-                            <h1 className="text-3xl font-bold">{profileData.name}</h1>
-                            <p className="text-xl text-gray-600 mt-1">@{profileData.username}</p>
-                            <div className="mt-2 flex flex-wrap justify-center sm:justify-start gap-2">
+                        <div className="text-center md:text-left flex-grow">
+                            <h1 className="text-2xl sm:text-3xl font-bold">{profileData.name}</h1>
+                            <p className="text-lg sm:text-xl text-gray-600 mt-1">@{profileData.username}</p>
+                            <div className="mt-2 flex flex-wrap justify-center md:justify-start gap-2">
                                 <span className="bg-gray-100 px-3 py-1 rounded-full text-sm">{profileData.old} 세</span>
                                 <span className="bg-gray-100 px-3 py-1 rounded-full text-sm">{profileData.gender}</span>
                             </div>
                         </div>
-                        <div className="mt-5 md:mt-0 ml-4 self-end">
+                        <div className="mt-4 md:mt-0 self-center md:self-start">
                             {profileData && (
                                 <div
-                                    className="w-[120px] h-[40px] rounded-[10px] mr-8 flex items-center justify-center text-white text-2xl font-semibold "
+                                    className="w-[200px] h-[50px] rounded-[10px] flex items-center justify-center text-white text-2xl font-semibold "
                                     style={{
                                         backgroundColor: discTypeColors[profileData.disc_character],
                                     }}
@@ -210,7 +210,7 @@ function MyProfile() {
                                         </svg>
                                     ) : (
                                         <div
-                                            className="w-[120px] h-[40px] rounded-[10px] mr-8 flex items-center justify-center text-white text-2xl font-semibold"
+                                            className="w-[200px] h-[50px] rounded-[10px] mr-8 flex items-center justify-center text-white text-2xl font-semibold"
                                             style={{
                                                 backgroundColor:
                                                     discTypeColors[profileData.disc_character] || discTypeColors.None,
@@ -223,8 +223,8 @@ function MyProfile() {
                             )}
                         </div>
                     </div>
-                    <div className="flex-col flex ">
-                        <div className="mt-4 ml-4  mb-4 flex flex-wrap gap-3">
+                    <div className="flex flex-col sm:flex-row justify-between items-center mt-6 md:mt-4">
+                        <div className="flex gap-3 mb-4 sm:mb-0">
                             <button
                                 onClick={handleCopyLink}
                                 className="w-10 h-10 bg-white shadow-md rounded-full hover:bg-gray-200 transition duration-300 flex items-center justify-center"
@@ -245,7 +245,7 @@ function MyProfile() {
                                 </svg>
                             </button>
                             <div className="w-10 h-10 bg-white shadow-md rounded-full hover:bg-gray-200 transition duration-300 flex items-center justify-center">
-                                <KakaoShareButton />
+                                <KakaoShareButton username={profileData.username} />
                             </div>
                             <button
                                 onClick={handleInstagramShare}
@@ -256,7 +256,7 @@ function MyProfile() {
                         </div>
                         <button
                             onClick={handleProfileEdit}
-                            className="mr-5 px-6 py-2 h-12 w-44 bg-[#9b8f8f] text-white text-lg font-bold rounded-[10px] hover:bg-opacity-90 transition duration-300"
+                            className="px-6 py-2 h-12 w-full sm:w-44 bg-[#9b8f8f] text-white text-lg font-bold rounded-[10px] hover:bg-opacity-90 transition duration-300"
                         >
                             프로필 수정
                         </button>
