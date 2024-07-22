@@ -1,13 +1,16 @@
 from pyexpat import model
+from django.views import View
+from django.contrib.auth import login
 import openai
 from django.conf import settings
 from django.core.files.storage import default_storage
 from django.contrib.auth import authenticate
+from django.shortcuts import redirect
 from dj_rest_auth.serializers import LoginSerializer
 import boto3
 import json
 from django.contrib.auth import get_user_model
-from rest_framework import viewsets, generics, status, permissions
+from rest_framework import viewsets, generics, status, permissions, serializers
 from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly, AllowAny
@@ -25,13 +28,15 @@ from .serializers import (
     UserProfileSerializer, UserUniqueIdSerializer,
     ShortQuestionSerializer, LongQuestionSerializer, 
     QuestionAnswerSerializer, ScoreSerializer, FeedbackSerializer,
-    FriendSerializer, UserSearchResultSerializer, ProfileImageSerializer, ProfileImageSerializer
+    FriendSerializer, UserSearchResultSerializer, ProfileImageSerializer
 )
 from django.http import JsonResponse
 from utils.s3_utils import get_signed_url
-import logging
+import os
+import requests
+from rest_framework.authtoken.models import Token
 
-logger = logging.getLogger(__name__)
+site_url = os.getenv('SITE_HTTP')
 
 # s3 접근 인증 받는 함수
 def get_signed_url_view(request, image_path):
@@ -143,8 +148,60 @@ class CustomLoginView(LoginView):
         
         # success와 message 필드를 추가합니다.
         original_response.data['message'] = '로그인 성공'
-        
         return original_response
+    
+
+class KakaoView(View):
+    def get(self, request):
+        kakao_api = "http://kauth.kakao.com/oauth/authorize?response_type=code"
+        redirect_url = f"{site_url}profiles/auth/kakao/callback"
+        client_id = os.getenv('SOCIAL_AUTH_KAKAO_CLIENT_ID')
+
+        if not client_id:
+            return JsonResponse({'error': 'SOCIAL_AUTH_KAKAO_CLIENT_ID is not set'}, status=500)
+
+        return redirect(f"{kakao_api}&client_id={client_id}&redirect_uri={redirect_url}")
+    
+class KakaoCallBackView(View):
+    def get(self, request):
+        code = request.GET.get("code")
+
+        data = {
+            "grant_type": "authorization_code",
+            "client_id": os.getenv('SOCIAL_AUTH_KAKAO_CLIENT_ID'),
+            "redirect_uri": f"{site_url}profiles/auth/kakao/callback",
+            "code": code
+        }
+
+        kakao_token_api = "https://kauth.kakao.com/oauth/token"
+        token_response = requests.post(kakao_token_api, data=data)
+        token_json = token_response.json()
+
+        access_token = token_json.get("access_token")
+        if not access_token:
+            return JsonResponse({'error': 'Failed to obtain access token', 'details': token_json}, status=400)
+
+        kakao_user_api = "https://kapi.kakao.com/v2/user/me"
+        headers = {"Authorization": f"Bearer {access_token}"}
+        user_information_response = requests.get(kakao_user_api, headers=headers)
+        user_information = user_information_response.json()
+
+        # user_information을 사용하여 서버에 로그인
+        user_id = user_information["id"]
+        nickname = user_information["properties"]["nickname"]
+
+        User = get_user_model()
+        try:
+            user = User.objects.get(username=user_id)
+        except User.DoesNotExist:
+            # Create a new user if not exists
+            user = User(username=nickname)
+            user.set_unusable_password()
+            user.save()
+        
+            login(request, user)
+        return JsonResponse({'message': '로그인 성공', 'user': {'id': user_id, 'nickname': nickname}}, status=200)     
+
     
 #유저 프로필을 불러오는 View
 class UserProfileView(generics.RetrieveAPIView):

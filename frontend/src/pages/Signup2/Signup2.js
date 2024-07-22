@@ -1,3 +1,5 @@
+//signup2
+
 import React, { useState, useEffect } from 'react';
 import styles from './Signup2.module.css';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -10,8 +12,8 @@ function Signup2({ signUpInfo, setSignUpInfo }) {
     const location = useLocation();
     const isEditing = location.state?.isEditing || false;
     const profileData = location.state?.profileData || {};
-    const [selectedGender, setSelectedGender] = useState('');
-    const [selectedAge, setSelectedAge] = useState('');
+    const [selectedGender, setSelectedGender] = useState(location.state?.gender || '');
+    const [selectedAge, setSelectedAge] = useState(location.state?.age || '');
     const [file, setFile] = useState(null);
     const [fileName, setFileName] = useState('');
     const [imageUrl, setImageUrl] = useState('');
@@ -24,12 +26,12 @@ function Signup2({ signUpInfo, setSignUpInfo }) {
                 const userProfileData = await ProfileService.fetchUserProfile();
                 setSignUpInfo({
                     ...signUpInfo,
-                    name: userProfileData.name,
-                    age: userProfileData.age,
-                    gender: userProfileData.gender,
+                    name: userProfileData.name || location.state?.name || '',
+                    age: userProfileData.age || location.state?.age || '',
+                    gender: userProfileData.gender || location.state?.gender || '',
                 });
-                setSelectedAge(userProfileData.age);
-                setSelectedGender(userProfileData.gender);
+                setSelectedAge(userProfileData.age || location.state?.age || '');
+                setSelectedGender(userProfileData.gender || location.state?.gender || '');
             } catch (error) {
                 console.error('Error fetching data:', error);
             }
@@ -115,37 +117,27 @@ function Signup2({ signUpInfo, setSignUpInfo }) {
     const handleNextClick = async (e) => {
         e.preventDefault();
 
+        const formData = new FormData();
+        formData.append('name', signUpInfo.name === null ? signUpInfo.username : signUpInfo.name);
+        formData.append('age', selectedAge);
+        formData.append('gender', signUpInfo.gender === 'None' ? '' : signUpInfo.gender);
         if (file) {
-            const formData = new FormData();
             formData.append('image', file);
-
-            try {
-                await API.post('/profiles/user/set/profile-image/', formData, {
-                    headers: {
-                        'Content-Type': 'multipart/form-data',
-                    },
-                });
-                setUploadMessage('Image uploaded successfully');
-                await fetchProfileImage();
-            } catch (error) {
-                setUploadMessage(
-                    error.response ? `Failed to upload image: ${error.response.data}` : 'Failed to upload image'
-                );
-                console.error('Failed to update user info:', error);
-            }
         }
 
         try {
-            await ProfileService.setUserBasicInfo({
-                name: signUpInfo.name === null ? signUpInfo.username : signUpInfo.name,
-                age: selectedAge,
-                gender: signUpInfo.gender === 'None' ? null : signUpInfo.gender,
-            });
+            await ProfileService.setUserBasicInfo(formData);
 
             if (isEditing) {
                 navigate('/my-profile');
             } else {
-                navigate('/signup/3');
+                navigate('/signup/3', {
+                    state: {
+                        name: signUpInfo.name,
+                        age: selectedAge,
+                        gender: signUpInfo.gender,
+                    },
+                });
             }
         } catch (error) {
             setUploadMessage('Failed to update user info');
@@ -180,117 +172,127 @@ function Signup2({ signUpInfo, setSignUpInfo }) {
         navigate('/');
     };
 
-    const handleBackClick = async () => {
-        if (!isEditing) {
-            navigate(-1);
-            try {
-                const response = await AdminService.userDelete();
-            } catch (error) {
+    const handleBackClick = () => {
+        console.log('회원탈퇴');
+        AdminService.userDelete()
+            .then(() => {
+                navigate(-1);
+                localStorage.removeItem('authToken');
+            })
+            .catch((error) => {
                 console.error('회원 탈퇴 중 오류가 발생했습니다.', error);
-            }
-        } else {
-            navigate(-1);
-        }
+            });
     };
 
     return (
-        <div className={styles.container}>
-            <h1 className={styles.h1} onClick={logoHandler}>
+        <div className="w-full flex flex-col items-center p-5 md:w-4/5 max-w-2xl mx-auto">
+            <h1 className="text-[#4053ff] text-4xl font-extrabold cursor-pointer mb-5" onClick={logoHandler}>
                 .WORKLOG
             </h1>
 
-            <h2 className={styles.h2}>기본프로필 등록</h2>
-            <div className={styles.back}>
-                <button type="submit" onClick={handleBackClick} className={styles.backBtn}>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="60" height="50" viewBox="0 0 24 24" fill="none">
-                        <path
-                            d="M15.5 19l-7-7 7-7"
-                            stroke="#4053ff"
-                            strokeWidth="2.5"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                        />
-                    </svg>
-                </button>
-            </div>
-            <form className={styles.signUp}>
-                <div className={styles.idbox}></div>
-                <span className={styles.span}>이름</span>
-                <input
-                    className={styles.input}
-                    type="text"
-                    placeholder="사용할 닉네임을 입력해주세요."
-                    name="name"
-                    value={signUpInfo.name}
-                    onChange={handleInputChange}
-                />
-                <span className={styles.span}>출생연도</span>
-                <select className={styles.input} value={selectedAge} onChange={handleAgeChange}>
-                    <option value="">출생연도를 선택하세요</option>
-                    {ageOptions}
-                </select>
-                <span className={styles.span}>성별</span>
-                <div className={styles.genderButtons}>
-                    <button
-                        type="button"
-                        className={`${styles.genderButton} ${selectedGender === 'M' ? styles.selected : ''}`}
-                        onClick={() => handleGenderClick('M')}
-                    >
-                        Male
-                    </button>
-                    <button
-                        type="button"
-                        className={`${styles.genderButton} ${selectedGender === 'F' ? styles.selected : ''}`}
-                        onClick={() => handleGenderClick('F')}
-                    >
-                        Female
-                    </button>
-                    <button
-                        type="button"
-                        className={`${styles.genderButton} ${selectedGender === 'N' ? styles.selected : ''}`}
-                        onClick={() => handleGenderClick('N')}
-                    >
-                        None
+            <div className="w-full border border-gray-300 rounded-lg p-5 relative">
+                <h2 className="text-black text-2xl font-bold text-center mb-5">기본프로필 등록</h2>
+                <div className="absolute top-5 left-5">
+                    <button type="button" onClick={handleBackClick} className="focus:outline-none hover:bg-transparent">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="30" viewBox="0 0 24 24" fill="none">
+                            <path
+                                d="M15.5 19l-7-7 7-7"
+                                stroke="#4053ff"
+                                strokeWidth="2.5"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                            />
+                        </svg>
                     </button>
                 </div>
-                <span className={styles.span}>프로필 이미지</span>
-                <label
-                    className={`${styles.preview} ${isActive ? styles.active : ''}`}
-                    onDragEnter={handleDragStart}
-                    onDragOver={handleDragOver}
-                    onDragLeave={handleDragEnd}
-                    onDrop={handleDrop}
-                >
-                    <input type="file" className={styles.file} onChange={handleFileChange} />
-                    {!file && (
-                        <>
-                            <svg className={styles.icon} x="0px" y="0px" viewBox="0 0 24 24">
-                                <path fill="transparent" d="M0,0h24v24H0V0z" />
-                                <path
-                                    fill="#000"
-                                    d="M20.5,5.2l-1.4-1.7C18.9,3.2,18.5,3,18,3H6C5.5,3,5.1,3.2,4.8,3.5L3.5,5.2C3.2,5.6,3,6,3,6.5V19  c0,1.1,0.9,2,2,2h14c1.1,0,2-0.9,2-2V6.5C21,6,20.8,5.6,20.5,5.2z M12,17.5L6.5,12H10v-2h4v2h3.5L12,17.5z M5.1,5l0.8-1h12l0.9,1  H5.1z"
+                <form className="flex flex-col items-center w-full">
+                    <span className="w-full text-base font-bold mb-1">이름</span>
+                    <input
+                        className="w-full h-10 px-3 border border-gray-300 rounded-md text-sm mb-5 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        type="text"
+                        placeholder="사용할 닉네임을 입력해주세요."
+                        name="name"
+                        value={signUpInfo.name}
+                        onChange={handleInputChange}
+                    />
+                    <span className="w-full text-base font-bold mb-1">출생연도</span>
+                    <select
+                        className="w-full h-10 px-3 border border-gray-300 rounded-md text-sm mb-5 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        value={selectedAge}
+                        onChange={handleAgeChange}
+                    >
+                        <option value="">출생연도를 선택하세요</option>
+                        {ageOptions}
+                    </select>
+                    <span className="w-full text-base font-bold mb-1">성별</span>
+                    <div className="flex justify-between w-full mb-5">
+                        {['M', 'F', 'N'].map((gender) => (
+                            <button
+                                key={gender}
+                                type="button"
+                                className={`w-[32%] py-2 rounded-md text-sm font-bold transition-colors duration-200 ${
+                                    selectedGender === gender
+                                        ? 'bg-[#4053ff] text-white'
+                                        : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                                }`}
+                                onClick={() => handleGenderClick(gender)}
+                            >
+                                {gender === 'M' ? 'Male' : gender === 'F' ? 'Female' : 'None'}
+                            </button>
+                        ))}
+                    </div>
+                    <span className="w-full text-base font-bold mb-1">프로필 이미지</span>
+                    <label
+                        className={`w-full h-40 border-2 border-dashed rounded-lg flex flex-col items-center justify-center cursor-pointer transition-colors duration-200 ${
+                            isActive ? 'border-blue-500 bg-blue-50' : 'border-gray-300 hover:bg-gray-50'
+                        }`}
+                        onDragEnter={handleDragStart}
+                        onDragOver={handleDragOver}
+                        onDragLeave={handleDragEnd}
+                        onDrop={handleDrop}
+                    >
+                        <input type="file" className="hidden" onChange={handleFileChange} />
+                        {!file ? (
+                            <>
+                                <svg
+                                    className="w-12 h-12 text-gray-400"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                >
+                                    <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth="2"
+                                        d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+                                    ></path>
+                                </svg>
+                                <p className="mt-2 text-sm text-gray-500">클릭 혹은 파일을 이곳에 드롭하세요.</p>
+                                <p className="text-xs text-gray-500">파일당 최대 3MB</p>
+                            </>
+                        ) : (
+                            <div className="w-full h-full flex items-center justify-center">
+                                <img
+                                    src={imageUrl}
+                                    alt="Profile"
+                                    className="max-w-full max-h-full object-cover rounded"
                                 />
-                            </svg>
-                            <p className={styles.preview_msg}>클릭 혹은 파일을 이곳에 드롭하세요.</p>
-                            <p className={styles.preview_desc}>파일당 최대 3MB</p>
-                        </>
-                    )}
-                    {file && (
-                        <div className={styles.imagePreview}>
-                            <img src={imageUrl} alt="Profile" className={styles.profileImage} />
-                            <div className={styles.imagetext}>{fileName}</div>
-                        </div>
-                    )}
-                </label>
-
-                <div className={styles.nextbox}>
-                    <div>
-                        <button className={styles.nextBtn} type="button" onClick={handleNextClick}>
+                            </div>
+                        )}
+                    </label>
+                    {fileName && <p className="mt-2 text-sm text-gray-500">{fileName}</p>}
+                    <div className="w-full flex justify-center mt-8">
+                        <button
+                            className="w-full py-2 px-4 bg-[#4053ff] text-white rounded-md text-xl cursor-pointer hover:bg-[#3442cc] transition-colors duration-200"
+                            type="button"
+                            onClick={handleNextClick}
+                        >
                             {isEditing ? '수정 완료' : 'NEXT'}
                         </button>
                     </div>
-                </div>
-            </form>
+                </form>
+            </div>
         </div>
     );
 }

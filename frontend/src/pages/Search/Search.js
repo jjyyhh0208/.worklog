@@ -1,9 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import styles from './Search.module.css';
 import ProfileService from '../../utils/ProfileService';
-
-
 
 function Search() {
     const [searchTerm, setSearchTerm] = useState('');
@@ -13,9 +10,6 @@ function Search() {
     const [currentUser, setCurrentUser] = useState(null);
     const navigate = useNavigate();
 
-    
-    
-    
     useEffect(() => {
         fetchCurrentUser();
         window.scrollTo(0, 0);
@@ -61,19 +55,35 @@ function Search() {
     };
 
     const handleProfileClick = (username) => {
-        navigate(`/friend-profile/${username}`);
+        if (currentUser && username === currentUser.username) {
+            navigate('/my-profile');
+        } else {
+            navigate(`/friend-profile/${username}`);
+        }
+    };
+
+    const handleKeyPress = (e) => {
+        if (e.key === 'Enter') {
+            handleSearch();
+        }
     };
 
     return (
-        <div className={styles.searchContainer}>
-            <div className={styles.searchBar}>
+        <div className="flex flex-col items-center bg-[#F6F6F6] w-full min-h-screen pt-8">
+            <div className="flex items-center gap-2 mb-8">
                 <input
                     type="text"
                     value={searchTerm}
                     onChange={handleInputChange}
+                    onKeyPress={handleKeyPress}
                     placeholder="알고 싶은 동료의 ID 또는 닉네임을 입력하세요"
+                    className="w-96 sm:w-112 p-2 border-2 border-gray-300 rounded-md"
                 />
-                <button onClick={handleSearch}>
+
+                <button
+                    onClick={handleSearch}
+                    className="bg-transparent border-none cursor-pointer hover:bg-gray-200 p-2 rounded-full"
+                >
                     <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 50 50" fill="none">
                         <path
                             d="M21.6787 0.0619393C9.72446 0.0619393 0 9.7864 0 21.7407C0 33.695 9.72446 43.4194 21.6787 43.4194C25.3332 43.4194 28.9256 42.5523 31.9607 40.8799C32.2038 41.1725 32.4733 41.442 32.7659 41.6851L38.9598 47.879C39.5317 48.5226 40.2291 49.0425 41.0093 49.4067C41.7894 49.771 42.6357 49.9719 43.4963 49.9973C44.3569 50.0226 45.2136 49.8718 46.0138 49.554C46.814 49.2363 47.5408 48.7584 48.1496 48.1496C48.7584 47.5408 49.2363 46.814 49.554 46.0138C49.8718 45.2136 50.0226 44.3569 49.9973 43.4963C49.9719 42.6357 49.771 41.7894 49.4067 41.0093C49.0425 40.2292 48.5226 39.5317 47.879 38.9598L41.6851 32.7659C41.3834 32.464 41.0513 32.1942 40.6941 31.9607C42.3664 28.9256 43.4194 25.3951 43.4194 21.6787C43.4194 9.72446 33.695 0 21.7407 0L21.6787 0.0619393ZM21.6787 6.25586C30.2883 6.25586 37.1635 13.1311 37.1635 21.7407C37.1635 25.8287 35.677 29.607 33.0756 32.3942C33.0136 32.4562 32.9517 32.5181 32.8897 32.58C32.5972 32.8232 32.3276 33.0927 32.0845 33.3853C29.3592 35.8628 25.6428 37.2874 21.6168 37.2874C13.0072 37.2874 6.13199 30.4122 6.13199 21.8026C6.13199 13.1931 13.0072 6.3178 21.6168 6.3178L21.6787 6.25586Z"
@@ -83,16 +93,16 @@ function Search() {
                 </button>
             </div>
             {isOwnProfile && (
-                <div className={styles.notFoundMessage}>
-                    <h3>자기 자신과 더 친해지는 건 언제나 환영이에요.</h3>
+                <div className="text-center mt-5">
+                    <h3 className="text-xl font-medium">자기 자신과 더 친해지는 건 언제나 환영이에요.</h3>
                 </div>
             )}
             {searchResults.length > 0 && !isOwnProfile && (
-                <div className={styles.searchResults}>
+                <div className="flex flex-wrap justify-center gap-8 mb-8 max-w-4xl">
                     {searchResults.map((result) => (
                         <div
                             key={result.username}
-                            className={styles.profileCard}
+                            className="bg-white border border-gray-300 rounded-3xl p-5 flex flex-col items-center cursor-pointer shadow-md w-60 h-72 relative"
                             onClick={() => handleProfileClick(result.username)}
                         >
                             <svg
@@ -101,6 +111,7 @@ function Search() {
                                 height="30"
                                 viewBox="0 0 47 47"
                                 fill="none"
+                                className="absolute top-2 right-2"
                             >
                                 <path
                                     d="M23.5001 44.5524C11.8872 44.5524 2.448 35.1132 2.448 23.5003C2.448 11.8874 11.8872 2.44824 23.5001 2.44824C35.113 2.44824 44.5522 11.8874 44.5522 23.5003C44.5522 35.1132 35.113 44.5524 23.5001 44.5524ZM23.5001 5.38574C13.5126 5.38574 5.3855 13.5128 5.3855 23.5003C5.3855 33.4878 13.5126 41.6149 23.5001 41.6149C33.4876 41.6149 41.6147 33.4878 41.6147 23.5003C41.6147 13.5128 33.4876 5.38574 23.5001 5.38574Z"
@@ -118,22 +129,26 @@ function Search() {
                             <img
                                 src={result.profileImage || '/images/basicProfile.png'}
                                 alt="Profile"
-                                className={styles.profileImage}
+                                className="rounded-full h-28 w-28 mb-2 mt-5 border border-black"
                             />
-                            <h2 className={styles.name}>{result.name}</h2>
-                            <p className={styles.username}>ID: {result.username}</p>
-                            <div className={styles.follow}>
-                                <button className={styles.viewProfileButton}>프로필 보러 가기</button>
+                            <h2 className="text-lg font-bold mb-1">{result.name}</h2>
+                            <p className="text-sm text-gray-600 mb-3">ID: {result.username}</p>
+                            <div className="mt-auto">
+                                <button className="bg-yellow-400 text-white font-bold py-2 px-4 rounded hover:bg-yellow-500">
+                                    프로필 보러 가기
+                                </button>
                             </div>
                         </div>
                     ))}
                 </div>
             )}
             {notFound && !isOwnProfile && (
-                <div className={styles.notFoundMessage}>
-                    <h3>'{searchTerm}'를 찾을 수 없습니다.</h3>
-                    <p>입력하신 아이디로 등록한 회원이 없습니다.</p>
-                    <p>링크를 통해 친구 프로필을 찾거나, 다시 한 번 아이디를 확인해 주세요.</p>
+                <div className="text-center mt-5">
+                    <h3 className="text-2xl font-medium mb-2">'{searchTerm}'를 찾을 수 없습니다.</h3>
+                    <p className="text-gray-500 text-lg">입력하신 아이디로 등록한 회원이 없습니다.</p>
+                    <p className="text-gray-500 text-lg">
+                        링크를 통해 친구 프로필을 찾거나, 다시 한 번 아이디를 확인해 주세요.
+                    </p>
                 </div>
             )}
         </div>
