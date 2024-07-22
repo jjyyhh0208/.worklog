@@ -152,9 +152,15 @@ class FriendSerializer(serializers.ModelSerializer):
 
 # 유저 검색 모델
 class UserSearchResultSerializer(serializers.ModelSerializer):
+    profile_image = serializers.SerializerMethodField()
     class Meta:
         model = User
-        fields = ['username', 'name']
+        fields = ['username', 'name','profile_image']
+    def get_profile_image(self, obj):
+        if obj.profile_image:
+            request = self.context.get('request')
+            return request.build_absolute_uri(obj.profile_image.url)
+        return None
     
 # 아이디 중복 검사를 위한 로직
 class UserUniqueIdSerializer(serializers.ModelSerializer):
