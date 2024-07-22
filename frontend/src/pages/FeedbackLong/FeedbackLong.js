@@ -4,6 +4,7 @@ import styles from './FeedbackLong.module.css';
 import ProgressBar from '../../components/ProgressBar/ProgressBar'; // ProgressBar import
 import FeedbackService from '../../utils/FeedbackService';
 import ProfileService from '../../utils/ProfileService';
+import Modal from '../../components/Modal/Modal'; // Import the Modal component
 
 const FeedbackLong = ({ isLoggedIn }) => {
     const navigate = useNavigate();
@@ -19,6 +20,12 @@ const FeedbackLong = ({ isLoggedIn }) => {
             question3: '',
         },
     });
+    const [showModal, setShowModal] = useState(false);
+
+    const handleCloseModal = () => {
+        setShowModal(false);
+        navigate(`/friend-profile/${username}`);
+    };
 
     useEffect(() => {
         ProfileService.fetchFriendProfile(username)
@@ -90,7 +97,7 @@ const FeedbackLong = ({ isLoggedIn }) => {
         };
 
         FeedbackService.submitAnswers(finalFeedbackData)
-            .then(() => navigate(`/friend-profile/${username}`))
+            .then(() => setShowModal(true))
             .catch((error) => console.error('Error submitting feedback:', error));
     };
 
@@ -160,6 +167,9 @@ const FeedbackLong = ({ isLoggedIn }) => {
                     </button>
                 </div>
             </div>
+            <Modal show={showModal} handleClose={handleCloseModal}>
+                <div>피드백이 성공적으로 제출되었습니다!</div>
+            </Modal>
         </div>
     );
 };

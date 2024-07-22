@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styles from './Signup1.module.css';
 import AdminService from '../../utils/AdminService';
 import { useNavigate } from 'react-router-dom';
@@ -12,6 +12,10 @@ function Signup1({ signUpInfo, setSignUpInfo }) {
     const signUpChangeHandler = (e) => {
         setSignUpInfo({ ...signUpInfo, [e.target.name]: e.target.value });
     };
+
+    useEffect(() => {
+        localStorage.removeItem('authToken');
+    }, []);
 
     const checkUserNameHandler = async (e) => {
         e.preventDefault();

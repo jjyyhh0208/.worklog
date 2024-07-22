@@ -182,13 +182,11 @@ function Signup2({ signUpInfo, setSignUpInfo }) {
 
     const handleBackClick = async () => {
         if (!isEditing) {
-            localStorage.removeItem('authToken');
             navigate(-1);
             try {
                 const response = await AdminService.userDelete();
             } catch (error) {
                 console.error('회원 탈퇴 중 오류가 발생했습니다.', error);
-                localStorage.removeItem('authToken');
             }
         } else {
             navigate(-1);
