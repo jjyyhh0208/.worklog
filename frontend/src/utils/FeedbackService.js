@@ -42,7 +42,6 @@ const FeedbackService = {
         return API.post('/profiles/feedbacks/', transformedAnswers)
             .then((response) => response.data)
             .catch((error) => {
-                console.error('답변을 제출하는 동안 오류가 발생했습니다.', error);
                 throw error;
             });
     },
@@ -51,7 +50,6 @@ const FeedbackService = {
         return API.post('/profiles/user/feedback-answers/', questionAnswers)
             .then((response) => response.data)
             .catch((error) => {
-                console.error('질문과 답변을 제출하는 동안 오류가 발생했습니다.', error);
                 throw error;
             });
     },

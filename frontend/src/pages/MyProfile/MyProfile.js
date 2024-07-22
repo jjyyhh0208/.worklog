@@ -144,11 +144,25 @@ function MyProfile() {
         navigate('/signup/2', { state: { isEditing: true, profileData } });
     };
 
-    // JSON 파싱하여 summarized와 advice 값을 추출
     const parsedPersonality =
         profileData && profileData.gpt_summarized_personality ? JSON.parse(profileData.gpt_summarized_personality) : {};
-    const summarized = parsedPersonality.summarized || '';
-    const advice = parsedPersonality.advice || '';
+    const summarized = parsedPersonality.summarized || [];
+    const advice = parsedPersonality.advice || [];
+
+    const formatListWithIndex = (list) => {
+        if (!Array.isArray(list)) {
+            return null;
+        }
+        return list.map((item, index) => (
+            <div key={index}>
+                <strong>팀원 {index + 1}</strong>
+                <br />
+                {item}
+                <br />
+                <br />
+            </div>
+        ));
+    };
 
     return (
         <div className="w-[100%] bg-[#f6f6f6] p-5 flex flex-col items-center">
@@ -398,10 +412,10 @@ function MyProfile() {
                                         </p>
                                         <div className="flex flex-col md:flex-row justify-around mt-5">
                                             <div className="flex-1 bg-[rgba(204,209,255,0.2)] rounded-[20px] p-12 m-5 md:m-12 text-xl">
-                                                <p>{profileData.gpt_summarized_personality}</p>
+                                                {formatListWithIndex(summarized)}
                                             </div>
                                             <div className="flex-1 bg-[rgba(204,209,255,0.2)] rounded-[20px] p-12 m-5 md:m-12 text-xl">
-                                                <p>{profileData.gpt_summarized_personality}</p>
+                                                {formatListWithIndex(advice)}
                                             </div>
                                         </div>
                                     </div>

@@ -38,10 +38,12 @@ from .serializers import (
 from django.http import JsonResponse
 from utils.s3_utils import get_signed_url
 import os
+import logging
 import requests
 from rest_framework.authtoken.models import Token
 
-site_url = os.getenv('SITE_LOCAL')
+site_url = os.getenv('SITE_HTTP')
+logger = logging.getLogger(__name__)
 
 # s3 접근 인증 받는 함수
 def get_signed_url_view(request, image_path):
@@ -271,6 +273,18 @@ class UserProfileView(generics.RetrieveAPIView):
     permission_classes = []
     lookup_field = 'username'
 
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
+        data = serializer.data
+        
+        if request.user.is_authenticated:
+            data['is_following'] = request.user.friends.filter(username=instance.username).exists()
+        else:
+            data['is_following'] = False
+        
+        return Response(data)
+
 # 현재 내 프로필을 불러오는 View
 class UserCurrentProfileView(generics.RetrieveAPIView):
     queryset = User.objects.all()
@@ -499,23 +513,28 @@ class UserLongQuestionAnswersView(generics.GenericAPIView):
                 logger.error(f"Failed to decode OpenAI response: {e}")
                 return Response({"error": "Failed to decode OpenAI response"}, status=500)
 
-            existing_summary = json.loads(evaluated_user.gpt_summarized_personality) if evaluated_user.gpt_summarized_personality else {}
-            updated_summary = existing_summary.get('summarized', '') + "\n" + "\n" + openai_response_dict['summarized']
-            updated_advice = existing_summary.get('advice', '') + "\n" + "\n" + openai_response_dict['advice']
+            # 기존 요약과 조언을 리스트로 처리하도록 수정
+            existing_personality = json.loads(evaluated_user.gpt_summarized_personality) if evaluated_user.gpt_summarized_personality else {}
+            summarized_list = existing_personality.get('summarized', [])
+            advice_list = existing_personality.get('advice', [])
+
+            summarized_list.append(openai_response_dict['summarized'])
+            advice_list.append(openai_response_dict['advice'])
 
             evaluated_user.gpt_summarized_personality = json.dumps({
-                'summarized': updated_summary,
-                'advice': updated_advice
+                'summarized': summarized_list,
+                'advice': advice_list
             }, ensure_ascii=False)
             evaluated_user.save()
 
             return Response({
-                "summarized": updated_summary,
-                "advice": updated_advice
+                "summarized": summarized_list,
+                "advice": advice_list
             })
         except Exception as e:
             logger.error(f"Error in UserLongQuestionAnswersView: {e}")
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
     
 #db 테스트용 뷰
@@ -550,12 +569,14 @@ class FollowFriendView(generics.GenericAPIView):
     def post(self, request, *args, **kwargs):
         user = request.user
         friend_name = request.data.get('friend_name')
-
+        
+        # 유저 팔로우 요청에 필요한 검증
         if not friend_name:
             return Response({"detail": "Friend name is required."}, status=status.HTTP_400_BAD_REQUEST)
         
         friend = get_object_or_404(User, username=friend_name)
-
+        
+        # 자기 자신을 팔로우하는 것을 방지
         if friend == user:
             return Response({"detail": "You cannot follow yourself."}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -569,15 +590,18 @@ class UnfollowFriendView(generics.GenericAPIView):
     def post(self, request, *args, **kwargs):
         user = request.user
         friend_name = request.data.get('friend_name')
-
+        
+        # 유저 언팔로우 요청에 필요한 검증
         if not friend_name:
             return Response({"detail": "Friend name is required."}, status=status.HTTP_400_BAD_REQUEST)
         
         friend = get_object_or_404(User, username=friend_name)
-
+        
+        # 자기 자신을 언팔로우하는 것을 방지
         if friend == user:
             return Response({"detail": "You cannot unfollow yourself."}, status=status.HTTP_400_BAD_REQUEST)
 
         user.friends.remove(friend)
         return Response({"detail": f"You have unfollowed {friend.name}"}, status=status.HTTP_200_OK)
+
     
