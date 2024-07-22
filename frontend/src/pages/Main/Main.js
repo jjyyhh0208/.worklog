@@ -21,7 +21,7 @@ function Main() {
     };
 
     const scrollToSection = (index) => {
-        const offset = 50;
+        const offset = 100;
         const top = refs.current[index].current.getBoundingClientRect().top + window.pageYOffset - offset;
         window.scrollTo({ top, behavior: 'smooth' });
     };
@@ -59,7 +59,7 @@ function Main() {
     return (
         <div className="relative flex flex-col items-center min-h-screen w-full overflow-y-auto">
             <header className="fixed top-0 left-0 right-0 w-full p-4 bg-white flex justify-between items-center shadow-md z-50">
-                <h1 className="text-[#4053ff] text-2xl font-extrabold hover:cursor-default">.WORKLOG</h1>
+                <h1 className="text-[#4053ff] text-2xl sm:text-3xl md:text-4xl font-extrabold">.WORKLOG</h1>
                 <div className="flex space-x-4">
                     <button
                         className="text-gray-500 py-2 text-lg font-bold hover:bg-transparent hover:text-[#0453FF]"
@@ -92,25 +92,13 @@ function Main() {
                         showStatus={false}
                     >
                         <div>
-                            <img
-                                className="w-full h-full object-cover"
-                                src="https://via.placeholder.com/800x300.png?text=Sample+Image+1"
-                                alt="Sample 1"
-                            />
+                            <img src="/images/mainImage1.png" alt="Sample 1" className="w-full h-full object-cover" />
                         </div>
                         <div>
-                            <img
-                                className="w-full h-full object-cover"
-                                src="https://via.placeholder.com/800x300.png?text=Sample+Image+2"
-                                alt="Sample 2"
-                            />
+                            <img src="/images/mainImage2.png" alt="Sample 2" className="w-full h-full object-cover" />
                         </div>
                         <div>
-                            <img
-                                className="w-full h-full object-cover"
-                                src="https://via.placeholder.com/800x300.png?text=Sample+Image+3"
-                                alt="Sample 3"
-                            />
+                            <img src="/images/mainImage3.png" alt="Sample 3" className="w-full h-full object-cover" />
                         </div>
                     </Carousel>
                 </div>
@@ -153,38 +141,46 @@ function Main() {
             <div className="text-2xl font-medium m-8">.WORKLOG에는 어떤 성격이 있을까요?</div>
             <div className="flex justify-center mt-4 w-[90%] rounded-lg">
                 <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-4 w-full">
-                    {typeData.map((type, index) => (
-                        <div key={index} className="text-center mx-2 my-1 group" onClick={() => scrollToSection(index)}>
-                            <i
-                                className={`fas ${
-                                    iconMapping[type.disc_character]
-                                } fa-2x w-12 h-12 mx-auto text-gray-400 group-hover:text-[#4053FF] group-hover:cursor-pointer`}
-                            ></i>
-                            <div className="text-gray-800 text-lg font-bold group-hover:text-[#4053FF] group-hover:cursor-pointer">
-                                {type.disc_character}
-                            </div>
-                        </div>
-                    ))}
+                    {typeData.map(
+                        (type, index) =>
+                            type.disc_character !== 'None' && (
+                                <div
+                                    key={index}
+                                    className="text-center mx-2 my-1 group"
+                                    onClick={() => scrollToSection(index)}
+                                >
+                                    <i
+                                        className={`fas ${
+                                            iconMapping[type.disc_character]
+                                        } fa-2x w-12 h-12 mx-auto text-gray-400 group-hover:text-[#4053FF] group-hover:cursor-pointer`}
+                                    ></i>
+                                    <div className="text-gray-800 text-lg font-bold group-hover:text-[#4053FF] group-hover:cursor-pointer">
+                                        {type.disc_character}
+                                    </div>
+                                </div>
+                            )
+                    )}
                 </div>
             </div>
 
             {groups.map((group, groupIndex) => (
                 <div key={groupIndex} className="mt-8 scroll-mt-12 w-[90%]">
-                    {group.types.map((type, typeIndex) => (
-                        <div key={typeIndex} className="mt-10" ref={type.ref}>
-                            <div className="flex flex-wrap mt-5 justify-around">
-                                <div
-                                    className="text-xl w-60 h-16 mb-10 rounded-lg px-5 py-2 text-center flex items-center justify-center text-white font-bold"
-                                    style={{ backgroundColor: type.color }}
-                                >
-                                    {type.title}
+                    {group.types.map(
+                        (type, typeIndex) =>
+                            type.title !== 'None' && (
+                                <div key={typeIndex} className="mt-10" ref={type.ref}>
+                                    <div className="flex flex-wrap mt-5 justify-around">
+                                        <div
+                                            className="text-xl w-60 h-16 mb-10 rounded-lg px-5 py-2 text-center flex items-center justify-center text-white font-bold"
+                                            style={{ backgroundColor: type.color }}
+                                        >
+                                            {type.title}
+                                        </div>
+                                        <div className="w-full lg:w-3/4 text-black text-xl leading-relaxed"></div>
+                                    </div>
                                 </div>
-                                <div className="w-full lg:w-3/4 text-black text-xl leading-relaxed">
-                                    {/* Other content related to the type */}
-                                </div>
-                            </div>
-                        </div>
-                    ))}
+                            )
+                    )}
                     <p className="text-xl mt-5 text-black ml-8 mb-8">{group.description}</p>
                 </div>
             ))}
