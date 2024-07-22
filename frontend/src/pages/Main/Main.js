@@ -21,7 +21,7 @@ function Main() {
     };
 
     const scrollToSection = (index) => {
-        const offset = 50;
+        const offset = 100;
         const top = refs.current[index].current.getBoundingClientRect().top + window.pageYOffset - offset;
         window.scrollTo({ top, behavior: 'smooth' });
     };
@@ -59,7 +59,7 @@ function Main() {
     return (
         <div className="relative flex flex-col items-center min-h-screen w-full overflow-y-auto">
             <header className="fixed top-0 left-0 right-0 w-full p-4 bg-white flex justify-between items-center shadow-md z-50">
-                <h1 className="text-[#4053ff] text-2xl font-extrabold hover:cursor-default">.WORKLOG</h1>
+                <h1 className="text-[#4053ff] text-2xl sm:text-3xl md:text-4xl font-extrabold">.WORKLOG</h1>
                 <div className="flex space-x-4">
                     <button
                         className="text-gray-500 py-2 text-lg font-bold hover:bg-transparent hover:text-[#0453FF]"
@@ -152,7 +152,11 @@ function Main() {
             <div className="text-2xl font-medium m-8">.WORKLOG에는 어떤 성격이 있을까요?</div>
             <div className="flex flex-wrap justify-between mt-4 w-[90%] rounded-lg">
                 {typeData.map((type, index) => (
-                    <div key={index} className="text-center mx-2 my-1 group" onClick={() => scrollToSection(index)}>
+                    <div
+                        key={index}
+                        className="text-center mx-2 my-1 group duration-300   transform hover:scale-105"
+                        onClick={() => scrollToSection(index)}
+                    >
                         <i
                             className={`fas ${
                                 iconMapping[type.disc_character]
