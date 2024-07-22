@@ -45,7 +45,7 @@ function MyProfile() {
     }, []);
 
     if (isLoading) {
-        return <div className="bg-[#f6f6f6] p-5 flex flex-col items-center"></div>;
+        return <div className="bg-[#f6f6f6] w-[100%] h-[1000px] "></div>;
     }
 
     const handleCopyLink = () => {

@@ -50,8 +50,9 @@ function Header({ isLoggedIn }) {
     };
 
     return (
+        
         <div className="relative z-10 flex flex-col md:flex-row justify-between items-center bg-white h-auto md:h-20 w-full px-4 md:px-8 py-4 shadow-md">
-            <Link to={profileData ? '/my-profile' : '/'} className="mb-4 md:mb-0">
+            <Link to={profileData ? '/my-profile' : '/'} className="mb-4 md:mb-0 ">
                 <span className="text-[#4053ff] text-2xl sm:text-3xl md:text-4xl font-extrabold">.WORKLOG</span>
             </Link>
             <nav className="flex flex-col md:flex-row w-full gap-20 md:w-auto justify-between items-center gap-space-y-4 md:space-y-0 md:space-x-4 lg:space-x-8">

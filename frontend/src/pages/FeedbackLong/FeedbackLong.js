@@ -112,10 +112,10 @@ const FeedbackLong = ({ isLoggedIn }) => {
         <div className="w-[100%] flex flex-col items-center bg-gray-100 overflow-y-auto min-h-[90%] h-screen">
             <div className="p-9 md:w-3/5 w-11/12 rounded-2xl bg-white flex-shrink-0 my-9 flex flex-col items-center shadow-lg relative overflow-y-auto">
                 <ProgressBar progress={100} /> {/* ProgressBar 추가 */}
-                <div className="absolute top-8 right-12 text-2xl font-bold text-black bg-gray-300 p-3 rounded-lg shadow-md">
+                <div className="absolute top- right-8 text-xl font-bold text-black bg-gray-300 p-3 rounded-lg shadow-md">
                     5/5
                 </div>
-                <div className="absolute top-12 left-8">
+                <div className="absolute top-8 left-8">
                     <button type="submit" onClick={handleBackClick} className=" cursor-pointer hover:bg-white">
                         <svg xmlns="http://www.w3.org/2000/svg" width="60" height="50" viewBox="0 0 24 24" fill="none">
                             <path
@@ -128,7 +128,7 @@ const FeedbackLong = ({ isLoggedIn }) => {
                         </svg>
                     </button>
                 </div>
-                <div className="text-[#000000] text-3xl font-extrabold leading-normal ml-20 mr-20 mt-8 my-2">
+                <div className="text-[#000000] text-2xl font-extrabold leading-normal ml-20 mr-20 mt-12 my-2">
                     <div>
                         마지막으로 {profileData ? `${profileData.name}` : '유저'}님에게 하고 싶은 말을 자유롭게
                         써주세요.
@@ -144,7 +144,7 @@ const FeedbackLong = ({ isLoggedIn }) => {
                     </div>
                     <div className="w-full flex justify-center my-4">
                         <textarea
-                            className="w-full max-w-4xl p-4 bg-gray-100 rounded-lg min-h-[120px] resize-none overflow-hidden"
+                            className="w-[90%] max-w-4xl p-4 bg-gray-100 rounded-lg min-h-[120px] resize-none overflow-hidden"
                             placeholder="회의 때의 모습, 준비성, 아이스브레이킹, 역량, 커뮤니케이션 방법 등 다양한 측면에서 자유롭게 의견을 남겨 주세요. 따뜻한 피드백을 기다립니다."
                             value={feedbackData.long_questions.question1}
                             onChange={(event) => handleInputChange(event, 'question1')}
@@ -155,7 +155,7 @@ const FeedbackLong = ({ isLoggedIn }) => {
                     </div>
                     <div className="w-full flex justify-center my-4">
                         <textarea
-                            className="w-full max-w-4xl p-4 bg-gray-100 rounded-lg min-h-[120px] resize-none overflow-hidden"
+                            className="w-[90%] max-w-4xl p-4 bg-gray-100 rounded-lg min-h-[120px] resize-none overflow-hidden"
                             placeholder="회의 때의 모습, 준비성, 아이스브레이킹, 역량, 커뮤니케이션 방법 등 다양한 측면에서 자유롭게 의견을 남겨 주세요. 따뜻한 피드백을 기다립니다."
                             value={feedbackData.long_questions.question2}
                             onChange={(event) => handleInputChange(event, 'question2')}
@@ -166,14 +166,14 @@ const FeedbackLong = ({ isLoggedIn }) => {
                     </div>
                     <div className="w-full flex justify-center my-4">
                         <textarea
-                            className="w-full max-w-4xl p-4 bg-gray-100 rounded-lg min-h-[120px] resize-none overflow-hidden"
+                            className="w-[90%] max-w-4xl p-4 bg-gray-100 rounded-lg min-h-[120px] resize-none overflow-hidden"
                             placeholder="자유롭게 하고 싶은 말을 적어주세요! 없을 시 '없음'을 기재해주세요."
                             value={feedbackData.long_questions.question3}
                             onChange={(event) => handleInputChange(event, 'question3')}
                         />
                     </div>
                 </div>
-                <div className="flex justify-end items-center mt-16 mb-4 w-full">
+                <div className="flex justify-end items-center mt-8 mb-4 w-full">
                     <button
                         className="w-36 h-12 rounded-lg bg-[#4053ff] border-none text-white text-lg font-bold cursor-pointer"
                         onClick={handleFormSubmit}

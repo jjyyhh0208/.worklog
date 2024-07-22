@@ -59,7 +59,7 @@ function Main() {
     return (
         <div className="relative flex flex-col items-center min-h-screen w-full overflow-y-auto">
             <header className="fixed top-0 left-0 right-0 w-full p-4 bg-white flex justify-between items-center shadow-md z-50">
-                <h1 className="text-[#4053ff] text-2xl font-extrabold hover:cursor-default">.WORKLOG</h1>
+                <h1 className="text-[#4053ff] text-2xl sm:text-3xl md:text-4xl font-extrabold">.WORKLOG</h1>
                 <div className="flex space-x-4">
                     <button
                         className="text-gray-500 py-2 text-lg font-bold hover:bg-transparent hover:text-[#0453FF]"
