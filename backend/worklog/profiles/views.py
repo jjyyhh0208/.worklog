@@ -43,6 +43,9 @@ from django.core.cache import cache
 import uuid
 import urllib.parse
 from django.utils.text import slugify
+import logging
+
+logger = logging.getLogger(__name__)
 
 BASE_URL = 'https://api.dot-worklog.com'
 REACT_APP_BASE_URL="https://dot-worklog/login/redirect"
