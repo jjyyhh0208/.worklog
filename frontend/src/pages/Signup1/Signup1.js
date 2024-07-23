@@ -90,7 +90,7 @@ function Signup1({ signUpInfo, setSignUpInfo }) {
     };
 
     return (
-        <div className="w-[100%] flex flex-col items-center p-5 w-full md:w-4/5 max-w-2xl mx-auto">
+        <div className="w-[100%] flex flex-col items-center p-5 md:w-4/5 max-w-2xl mx-auto mt-16">
             <h1 className="text-[#4053ff] text-4xl font-extrabold cursor-pointer mb-5" onClick={logoHandler}>
                 .WORKLOG
             </h1>

@@ -50,7 +50,7 @@ function Header({ isLoggedIn }) {
     };
 
     return (
-        <header className="fixed top-0 left-0 right-0 w-full p-4 bg-white flex justify-between items-center shadow-md z-50">
+        <header className="fixed top-0 left-0 right-0 w-full p-3.5 bg-white flex justify-between items-center shadow-md z-50">
             <div className="flex items-center">
                 <Link to={profileData ? '/my-profile' : '/'}>
                     <h1 className="text-[#4053ff] text-2xl font-extrabold hover:cursor-default mr-6">.WORKLOG</h1>
@@ -60,7 +60,7 @@ function Header({ isLoggedIn }) {
                         to="/my-profile"
                         className={`flex items-center ${isActive(
                             '/my-profile'
-                        )} text-xs sm:text-sm md:text-base font-medium hover:text-[#4053ff] transition-colors duration-300 whitespace-nowrap`}
+                        )} text-gray-500 py-2 text-sm font-bold hover:bg-transparent hover:text-[#0453FF]`}
                     >
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -81,7 +81,7 @@ function Header({ isLoggedIn }) {
                         to={`/list/${profileData?.username}`}
                         className={`flex items-center ${isActive(
                             `/list/${profileData?.username}`
-                        )} text-xs sm:text-sm md:text-base font-medium hover:text-[#4053ff] transition-colors duration-300 whitespace-nowrap`}
+                        )} text-gray-500 py-2 text-sm font-bold hover:bg-transparent hover:text-[#0453FF]`}
                     >
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -102,7 +102,7 @@ function Header({ isLoggedIn }) {
                         to="/about-us"
                         className={`flex items-center ${isActive(
                             '/about-us'
-                        )} text-xs sm:text-sm md:text-base font-medium hover:text-[#4053ff] transition-colors duration-300 whitespace-nowrap`}
+                        )} text-gray-500 py-2 text-sm font-bold hover:bg-transparent hover:text-[#0453FF]`}
                     >
                         <svg
                             xmlns="http://www.w3.org/2000/svg"

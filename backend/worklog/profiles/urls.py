@@ -11,7 +11,7 @@ from .views import (
     ProfileImageView, get_signed_url_view, TestAnswers, 
     FollowFriendView, UserDeleteView, UnfollowFriendView, 
     # google_callback, google_login, GoogleLogin
-    KakaoView, KakaoCallBackView, KakaoLoginView
+    KakaoLoginCallback, get_token
     )
 
 
@@ -41,6 +41,14 @@ urlpatterns = [
     path('user/follow/', FollowFriendView.as_view(), name='user-follow'), # 유저 팔로우 엔드포인트
     path('user/get-signed-url/<path:image_path>/', get_signed_url_view, name='get_signed_url'), # s3 인증값을 받는 엔드포인트
 
+    #GPT용 답변 추출
+    path('user/feedback-answers/', UserLongQuestionAnswersView.as_view(), name='user-feedback-answers'), # 유저의 답변을 저장하는 엔드포인트
+    path('user/test/', TestAnswers.as_view(), name='test-answers'), # 테스트용 답변을 저장하는 엔드포인트
+    
+    # 친구 추가
+    path('user/follow/', FollowFriendView.as_view(), name='user-follow'), # 유저 팔로우 엔드포인트
+    path('user/unfollow/', UnfollowFriendView.as_view(), name='user-unfollow'), # 유저 언팔로우 엔드포인트
+
     # Auth
     path('auth/login/', CustomLoginView.as_view(), name='custom_login'), # 로그인 오류메시지 추가한 Custom ViewSet 사용
     path('auth/', include('dj_rest_auth.urls')),  # 로그인, 로그아웃, 비밀번호 변경, 비밀번호 초기화 등을 위한 엔드포인트 기본 제공 기능
@@ -49,14 +57,6 @@ urlpatterns = [
     path('auth/delete/', UserDeleteView.as_view(), name='user-delete'), # 유저 삭제 엔드포인트
 
     # Social Account
-    path('auth/kakao/callback', KakaoCallBackView.as_view(), name='kakao_callback'),
-    path('auth/kakao', KakaoView.as_view(), name='kakao_auth'),
-    path('api/kakao-login/', KakaoLoginView.as_view(), name='kakao_login'),
-
-    #GPT용 답변 추출
-    path('user/feedback-answers/', UserLongQuestionAnswersView.as_view(), name='user-feedback-answers'), # 유저의 답변을 저장하는 엔드포인트
-    path('user/test/', TestAnswers.as_view(), name='test-answers'), # 테스트용 답변을 저장하는 엔드포인트
-    
-    path('user/follow/', FollowFriendView.as_view(), name='user-follow'), # 유저 팔로우 엔드포인트
-    path('user/unfollow/', UnfollowFriendView.as_view(), name='user-unfollow'), # 유저 언팔로우 엔드포인트
+    path('auth/kakao/callback', KakaoLoginCallback.as_view(), name='kakao_login_callback'),
+    path('auth/kakao/get-token', get_token, name='get_token'),
 ]

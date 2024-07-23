@@ -146,15 +146,17 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
 # 친구목록을 보여주는 모델    
 class FriendSerializer(serializers.ModelSerializer):
+    profile_image = ProfileImageSerializer(source='profile_image_object', read_only=True)
     class Meta:
         model = User
-        fields = ['username', 'name', 'disc_character']
+        fields = ['username', 'name', 'disc_character', 'profile_image']
 
 # 유저 검색 모델
 class UserSearchResultSerializer(serializers.ModelSerializer):
+    profile_image = ProfileImageSerializer(source='profile_image_object', read_only=True)
     class Meta:
         model = User
-        fields = ['username', 'name']
+        fields = ['username', 'name','profile_image']
     
 # 아이디 중복 검사를 위한 로직
 class UserUniqueIdSerializer(serializers.ModelSerializer):

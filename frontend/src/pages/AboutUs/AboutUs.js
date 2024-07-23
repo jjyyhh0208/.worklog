@@ -13,7 +13,7 @@ const AboutUs = () => {
     };
 
     const scrollToSection = (ref) => {
-        const offset = 50;
+        const offset = 100;
         const top = ref.current.getBoundingClientRect().top + window.pageYOffset - offset;
         window.scrollTo({ top, behavior: 'smooth' });
     };
@@ -193,13 +193,13 @@ const AboutUs = () => {
                 <div className="mb-10">
                     <p className="text-2xl font-bold text-black mb-2">Q. .WORKLOG는 어떤 서비스인가요?</p>
                     <p className="text-xl text-black ml-8">
-                        <span className="text-blue-600 text-3xl font-extrabold">.WORKLOG</span>
+                        <span className="text-[#4350ff] text-3xl font-extrabold">.WORKLOG</span>
                         <br />
                         <br />
-                        함께 일했던 사람들의 피드백을 모아, 자기 자신의 업무 상황 속 페르소나를 한층 더 이해해 보는 건
-                        어떨까요? .WORKLOG는 웹 브라우저 기반의 서비스로, 협업으로 일하는 모두를 위한 일종의 자기이해
-                        서비스예요. 타인이 평가하는 '협업 활동에서의 나' 를 기록해 줌으로써, 본인이 실제로 팀 내의
-                        모습을 객관적인 시선에서 이해할 수 있도록 도와준답니다.
+                        나는 일할 때 어떤 사람일까요? 함께 일했던 사람들의 피드백을 모아, 본인의 업무 페르소나를
+                        파악하고 싶은 당신께 워크로그가 찾아 왔습니다. WORKLOG는 웹 브라우저 기반의 서비스로, 협업으로
+                        일하는 모두를 위한 일종의 자기이해 서비스예요. 타인이 평가하는 '협업 활동에서의 나' 를 기록해
+                        줌으로써, 본인의 실제로 팀 내의 모습을 객관적인 시선에서 이해할 수 있도록 도와줍니다.
                     </p>
                 </div>
 

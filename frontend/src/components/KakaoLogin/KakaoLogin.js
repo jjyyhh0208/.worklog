@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AdminService from '../../utils/AdminService';
 
@@ -8,8 +8,11 @@ const KakaoLogin = () => {
     const REDIRECT_URI = `${window.location.origin}/profiles/auth/kakao/callback`;
 
     const handleLogin = () => {
-        const kakaoAuthUrl = `https://kauth.kakao.com/oauth/authorize?client_id=${KAKAO_CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=code`;
-        window.location.href = kakaoAuthUrl;
+        alert('준비 중입니다. 조금만 기다려주세요!');
+        navigate('/login');
+
+        // const kakaoAuthUrl = `https://kauth.kakao.com/oauth/authorize?client_id=${KAKAO_CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=code`;
+        // window.location.href = kakaoAuthUrl;
     };
 
     return (
