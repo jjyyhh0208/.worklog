@@ -1,5 +1,4 @@
 import API from './API';
-import axios from 'axios';
 
 const AdminService = {
     registerUser: (userData) => {
@@ -110,57 +109,26 @@ const AdminService = {
             throw new Error('회원 탈퇴 중 오류가 발생했습니다: ' + error.message);
         }
     },
-    loginKakao: async (code) => {
-        const config = {
-            method: 'POST',
-            url: 'https://kauth.kakao.com/oauth/token',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
-            },
-            data: new URLSearchParams({
-                grant_type: 'authorization_code',
-                client_id: process.env.REACT_APP_KAKAO_CLIENT_ID,
-                redirect_uri: `${window.location.origin}/profiles/auth/kakao/callback`,
-                code: code,
-            }),
-        };
 
-        try {
-            const response = await axios(config);
-            return response.data;
-        } catch (error) {
-            console.error('Error during Kakao login:', error);
-            throw error;
-        }
-    },
-
-    sendKakaoTokenToDjango: async (kakaoData) => {
-        try {
-            const response = await axios.post('/profiles/auth/kakao/callback', {
-                access_token: kakaoData.access_token,
+    // django 내부에서 처리한 토큰 값을 불러옵니다.
+    getToken: (code) => {
+        return API.get(`/profiles/auth/kakao/get-token?code=${code}`)
+            .then((response) => {
+                if (response.status === 200) {
+                    return response.data;
+                } else {
+                    throw new Error(`토큰을 가져오는 중 오류가 발생했습니다. 상태 코드: ${response.status}`);
+                }
+            })
+            .catch((error) => {
+                if (error.response) {
+                    throw new Error(`서버 오류: ${error.response.status} - ${error.response.data}`);
+                } else if (error.request) {
+                    throw new Error('서버로부터 응답을 받지 못했습니다.');
+                } else {
+                    throw new Error('요청 설정 중 오류가 발생했습니다: ' + error.message);
+                }
             });
-            return response.data;
-        } catch (error) {
-            console.error('Error sending Kakao token to Django:', error);
-            throw error;
-        }
-    },
-
-    handleKakaoLogin: async (code) => {
-        try {
-            const kakaoData = await AdminService.loginKakao(code);
-            const result = await AdminService.sendKakaoTokenToDjango(kakaoData);
-            console.log(kakaoData);
-            console.log(result);
-
-            localStorage.setItem('authToken', result.token);
-
-            return result;
-        } catch (error) {
-            console.error('Login failed:', error);
-            console.log(error);
-            throw error;
-        }
     },
 };
 
