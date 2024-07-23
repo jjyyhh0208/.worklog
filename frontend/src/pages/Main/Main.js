@@ -88,7 +88,7 @@ function Main() {
                         showThumbs={false}
                         infiniteLoop={true}
                         autoPlay={true}
-                        interval={2000}
+                        interval={1800}
                         showStatus={false}
                     >
                         <div>
@@ -99,6 +99,9 @@ function Main() {
                         </div>
                         <div>
                             <img src="/images/mainImage3.png" alt="Sample 3" className="w-full h-full object-cover" />
+                        </div>
+                        <div>
+                            <img src="/images/mainImage3.png" alt="Sample 4" className="w-full h-full object-cover" />
                         </div>
                     </Carousel>
                 </div>
@@ -117,7 +120,6 @@ function Main() {
                                 <br />
                                 익명 팀원 피드백 서비스, .WORKLOG가 드디어 출시 되었습니다. <br />
                                 일하는 모두를 위한 더 나은 서비스가 되도록 하겠습니다. <br />
-                                추후 유형별 신규 캐릭터를 포함한 업데이트가 예정되어 있습니다.
                                 <br /> 많은 관심과 응원 부탁드립니다.
                             </div>
                         </div>

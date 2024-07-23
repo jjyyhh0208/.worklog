@@ -159,7 +159,7 @@ function FriendProfile() {
                                         </svg>
                                     ) : (
                                         <div
-                                            className="w-[200px] h-[50px] rounded-[10px] mr-8 flex items-center justify-center text-white text-2xl font-semibold"
+                                            className="w-[200px] h-[50px] rounded-[10px] mr-4 ml-4 flex items-center justify-center text-white text-2xl font-semibold"
                                             style={{
                                                 backgroundColor:
                                                     discTypeColors[profileData.disc_character] || discTypeColors.None,
@@ -295,6 +295,8 @@ function FriendProfile() {
                                             데이터 로딩 중...
                                         </div>
                                     )}
+                                    {DISCData.disc_img}
+
                                     <div className="w-full md:w-[70%] text-xl mt-5">
                                         <p>{DISCData.description}</p>
                                         <div className="font-semibold mt-8 mb-3">

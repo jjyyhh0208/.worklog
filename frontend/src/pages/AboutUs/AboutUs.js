@@ -28,6 +28,8 @@ const AboutUs = () => {
                     ref: targetRefs['목표 달성자'],
                     color: '#FF5473',
                     title: '목표 달성자',
+                    disc_img: './images/mainImage1.png',
+
                     description:
                         '분석적이고 논리적인 사고를 하는 유형이에요. 모든 일을 철저하고 완벽하게 처리하며 중대한 일도 단시간에 마칠 수 있어요. 또한 눈에 보이는 결과를 얻어내려고 노력하는 유형입니다. 혼자 일하는 것을 선호하며 대인관계보다는 사실이나 결과에 초점을 두는 편입니다.',
                     strengths:
@@ -250,6 +252,7 @@ const AboutUs = () => {
                                     >
                                         {type.title}
                                     </div>
+                                    {type.disc_img}
                                     <div className="w-full lg:w-3/4 text-black text-xl leading-relaxed">
                                         <p className="mb-6">{type.description}</p>
 
