@@ -57,17 +57,10 @@ function Main() {
     }));
 
     return (
-<<<<<<< HEAD
-        <div className="relative flex flex-col items-center min-h-screen w-full overflow-y-auto">
-            <header className="fixed top-0 left-0 right-0 w-full p-4 bg-white flex justify-between items-center shadow-md z-50">
-                <h1 className="text-[#4053ff] text-lg sm:text-xl md:text-2xl font-extrabold">.WORKLOG</h1>
-                <div className="flex space-x-4">
-=======
         <div className="relative flex flex-col items-center min-h-screen w-full overflow-y-auto mb-0">
             <header className="fixed top-0 mb-0 mt-0 left-0 right-0 w-full h-16 bg-white flex justify-between items-center shadow-md z-50">
                 <h1 className="text-[#4053ff] text-2xl font-extrabold hover:cursor-default mr-6 ml-3.5">.WORKLOG</h1>
                 <div className="flex space-x-4 mr-4">
->>>>>>> 2b96f97e90544720b8b90d37de4212c0766ab1bf
                     <button
                         className="text-gray-500 py-2 text-sm font-bold hover:bg-transparent hover:text-[#0453FF]"
                         onClick={handleLoginClick}

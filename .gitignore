@@ -34,3 +34,5 @@ staticfiles/
 
 __pycache__/
 staticfiles/
+*.sqlite3
+*.db

@@ -180,7 +180,6 @@ function MyProfile() {
                     <div className="flex flex-col md:flex-row items-center md:items-start space-y-4 md:space-y-0 md:space-x-6">
                         <img
                             src={imageUrl || '/images/basicProfile.png'}
-                            alt="Profile"
                             className="w-24 h-24 sm:w-28 sm:h-28 rounded-full object-cover border border-gray-200"
                         />
                         <div className="text-center md:text-left flex-grow">
