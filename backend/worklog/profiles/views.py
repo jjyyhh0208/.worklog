@@ -2,9 +2,7 @@ import profile
 from pyexpat import model
 from django.views import View
 from django.contrib.auth import get_user_model, login
-from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.backends import ModelBackend
-from django.utils.decorators import method_decorator
 import openai
 import ast
 from django.conf import settings
@@ -15,7 +13,7 @@ from dj_rest_auth.serializers import LoginSerializer
 import boto3
 import json
 from django.contrib.auth import get_user_model
-from rest_framework import viewsets, generics, status, permissions, serializers
+from rest_framework import viewsets, generics, status, permissions, mixins
 from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly, AllowAny
@@ -38,12 +36,17 @@ from .serializers import (
 from django.http import JsonResponse
 from utils.s3_utils import get_signed_url
 import os
-import logging
 import requests
 from rest_framework.authtoken.models import Token
+from django.utils.datastructures import MultiValueDictKeyError
+from django.core.cache import cache
+import uuid
+import urllib.parse
+from django.utils.text import slugify
 
-site_url = os.getenv('SITE_HTTP')
-logger = logging.getLogger(__name__)
+BASE_URL = 'https://api.dot-worklog.com'
+REACT_APP_BASE_URL="https://dot-worklog/login/redirect"
+
 
 # s3 접근 인증 받는 함수
 def get_signed_url_view(request, image_path):
@@ -108,6 +111,7 @@ class ProfileImageView(APIView):
 
     def post(self, request, *args, **kwargs):
         user = request.user
+        print(user.username)
         try:
             # Check if the user already has a profile image
             profile_image = ProfileImage.objects.get(user=user)
@@ -157,59 +161,74 @@ class CustomLoginView(LoginView):
         original_response.data['message'] = '로그인 성공'
         return original_response
     
+## 카카오 관련 URI
 
-class KakaoView(View):
-    def get(self, request):
-        kakao_api = "http://kauth.kakao.com/oauth/authorize?response_type=code"
-        redirect_url = f"{site_url}profiles/auth/kakao/callback"
-        client_id = os.getenv('SOCIAL_AUTH_KAKAO_CLIENT_ID')
+KAKAO_TOKEN_API = "https://kauth.kakao.com/oauth/token"
+KAKAO_USER_API = "https://kapi.kakao.com/v2/user/me"
+KAKAO_CALLBACK_URI = BASE_URL + "profiles/auth/kakao/callback"
 
-        if not client_id:
-            return JsonResponse({'error': 'SOCIAL_AUTH_KAKAO_CLIENT_ID is not set'}, status=500)
-
-        return redirect(f"{kakao_api}&client_id={client_id}&redirect_uri={redirect_url}")
-
-@method_decorator(csrf_exempt, name='dispatch')
-class KakaoLoginView(View):
-    def post(self, request):
-        kakao_token = request.POST.get('access_token')
-
-        if not kakao_token:
-            return JsonResponse({'error': 'No access token provided'}, status=400)
-
-        kakao_user_api = "https://kapi.kakao.com/v2/user/me"
-        headers = {"Authorization": f"Bearer {kakao_token}"}
-        user_information_response = requests.get(kakao_user_api, headers=headers)
-
-        if user_information_response.status_code != 200:
-            return JsonResponse({'error': 'Failed to get user info from Kakao'}, status=400)
-
-        user_information = user_information_response.json()
-        user_id = user_information["id"]
-        nickname = user_information["properties"]["nickname"]
-
-        User = get_user_model()
-        user, created = User.objects.get_or_create(username=f'kakao_{user_id}')
-        
-        if created:
-            user.name = nickname
-            user.set_unusable_password()
-            user.save()
-            is_new_user = True
-        else:
-            is_new_user = False
-
-        login(request, user, backend='django.contrib.auth.backends.ModelBackend')
-        
-        token, _ = Token.objects.get_or_create(user=user)
-
-        response_data = {
-            'message': '로그인 성공',
-            'user': {'id': user.id, 'nickname': user.name},
-            'is_new_user': is_new_user,
-            'token': token.key
+# 카카오 인가 과정 STEP 1: react에서 'code'를 받아서 카카오에 회원정보를 요청한다.
+class KakaoLoginCallback(generics.GenericAPIView, mixins.ListModelMixin):
+    def get(self, request, *args, **kwargs):
+        try: # STEP 1-1. code를 가져온다.
+            code = request.GET["code"]
+        except MultiValueDictKeyError: # code가 없다면 오류 발생
+            return Response({"error": "Code parameter is missing"}, status=status.HTTP_400_BAD_REQUEST)
+        # STEP 1-2. code를 활용해서 access token을 받아온다.
+        data = {
+          "grant_type": "authorization_code",
+          "client_id": os.getenv('SOCIAL_AUTH_KAKAO_CLIENT_ID'),
+          "redirect_uri": KAKAO_CALLBACK_URI,
+          "code": code,
         }
-        return JsonResponse(response_data, status=200)
+        token_response = requests.post(KAKAO_TOKEN_API, data=data).json()
+        access_token = token_response.get('access_token')
+        if not access_token: # access token이 없다면 오류 발생
+            return Response({"error": "Access token not found in the response"}, status=status.HTTP_400_BAD_REQUEST)
+
+        # STEP 1-3. access token을 활용해서 사용자 정보를 불러옴.
+        headers = {"Authorization": f"Bearer ${access_token}"}
+        user_info_response = requests.get(KAKAO_USER_API, headers=headers)
+        if user_info_response.status_code != 200: # 사용자 정보가 없다면 오류 발생
+            return Response({"error": user_info_response.text}, status=status.HTTP_400_BAD_REQUEST)
+        user_information = user_info_response.json()
+        kakao_account = user_information.get('kakao_account')
+        kakao_id = user_information.get('id')
+        if not kakao_id:
+            return Response({"error": "Kakao ID not found in the response"}, status=status.HTTP_400_BAD_REQUEST)
+        nickname = kakao_account.get('profile', {}).get('nickname')
+        # 중간 테스트용 코드: return Response(kakao_account, status=status.HTTP_200_OK)
+
+        # STEP2. 사용자 정보를 활용하여 내부 로그인 구현
+        # 우리의 key 값은 username임 (kakao에서의 nickname을 활용)
+        
+        try:
+            user = User.objects.get(username=kakao_id)
+            is_new = False
+        except User.DoesNotExist:
+            try:
+                user = User.objects.create(username=kakao_id)
+                user.set_unusable_password()
+                user.save()
+                is_new = True
+            except Exception as e:
+                return Response({"error": "Error creating user"}, status=status.HTTP_400_BAD_REQUEST)
+        token, created = Token.objects.get_or_create(user=user)
+        one_time_code = str(uuid.uuid4())
+        cache.set(one_time_code, {'token': token.key, 'is_new': is_new}, timeout=300)
+        
+        # 중간체크 코드: return Response({'key': token.key}, status=200)
+        redirect_url = f"{REACT_APP_BASE_URL}?code={one_time_code}"
+        return redirect(redirect_url)
+    
+# Session에 저장했던 토큰을 불러오는 함수    
+def get_token(request):
+    code = request.GET.get('code')
+    data = cache.get(code)
+    if data:
+        cache.delete(code)  # 사용 후 삭제
+        return JsonResponse(data)
+    return JsonResponse({'error': 'Invalid or expired code'}, status=400)
     
 #유저 프로필을 불러오는 View
 class UserProfileView(generics.RetrieveAPIView):
