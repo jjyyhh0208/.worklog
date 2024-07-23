@@ -42,10 +42,6 @@ from django.utils.datastructures import MultiValueDictKeyError
 from django.core.cache import cache
 import uuid
 import urllib.parse
-from django.utils.text import slugify
-
-BASE_URL = 'https://api.dot-worklog.com'
-REACT_APP_BASE_URL="https://dot-worklog/login/redirect"
 
 
 # s3 접근 인증 받는 함수
@@ -162,10 +158,10 @@ class CustomLoginView(LoginView):
         return original_response
     
 ## 카카오 관련 URI
-
+BASE_URL = 'http://ec2-43-202-115-16.ap-northeast-2.compute.amazonaws.com'
 KAKAO_TOKEN_API = "https://kauth.kakao.com/oauth/token"
 KAKAO_USER_API = "https://kapi.kakao.com/v2/user/me"
-KAKAO_CALLBACK_URI = BASE_URL + "profiles/auth/kakao/callback"
+KAKAO_CALLBACK_URI = BASE_URL + "/profiles/auth/kakao/callback"
 
 # 카카오 인가 과정 STEP 1: react에서 'code'를 받아서 카카오에 회원정보를 요청한다.
 class KakaoLoginCallback(generics.GenericAPIView, mixins.ListModelMixin):
@@ -183,6 +179,7 @@ class KakaoLoginCallback(generics.GenericAPIView, mixins.ListModelMixin):
         }
         token_response = requests.post(KAKAO_TOKEN_API, data=data).json()
         access_token = token_response.get('access_token')
+        print(token_response)
         if not access_token: # access token이 없다면 오류 발생
             return Response({"error": "Access token not found in the response"}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -193,7 +190,7 @@ class KakaoLoginCallback(generics.GenericAPIView, mixins.ListModelMixin):
             return Response({"error": user_info_response.text}, status=status.HTTP_400_BAD_REQUEST)
         user_information = user_info_response.json()
         kakao_account = user_information.get('kakao_account')
-        kakao_id = user_information.get('id')
+        kakao_id = 'kakao_' + str(user_information.get('id'))
         if not kakao_id:
             return Response({"error": "Kakao ID not found in the response"}, status=status.HTTP_400_BAD_REQUEST)
         nickname = kakao_account.get('profile', {}).get('nickname')
@@ -207,7 +204,7 @@ class KakaoLoginCallback(generics.GenericAPIView, mixins.ListModelMixin):
             is_new = False
         except User.DoesNotExist:
             try:
-                user = User.objects.create(username=kakao_id)
+                user = User.objects.create(username=kakao_id, name=nickname)
                 user.set_unusable_password()
                 user.save()
                 is_new = True
@@ -217,7 +214,10 @@ class KakaoLoginCallback(generics.GenericAPIView, mixins.ListModelMixin):
         one_time_code = str(uuid.uuid4())
         cache.set(one_time_code, {'token': token.key, 'is_new': is_new}, timeout=300)
         
-        # 중간체크 코드: return Response({'key': token.key}, status=200)
+        # 중간체크 코드: 
+        # return Response({'key': token.key}, status=200)
+    
+        REACT_APP_BASE_URL="http://localhost:3000/login/redirect"
         redirect_url = f"{REACT_APP_BASE_URL}?code={one_time_code}"
         return redirect(redirect_url)
     
