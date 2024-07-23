@@ -14,7 +14,10 @@ from datetime import timedelta
 from pathlib import Path
 import os
 from dotenv import load_dotenv
+from decouple import config
 
+SECRET_KEY = config('SECRET_KEY', default='fallback_secret_key')
+BASE_URL = config('BASE_URL', default='http://localhost:8000')
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 #Base directory == worklog/backend/worklog

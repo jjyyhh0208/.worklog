@@ -36,12 +36,18 @@ from .serializers import (
 from django.http import JsonResponse
 from utils.s3_utils import get_signed_url
 import os
+import jwt
+import datetime
 import requests
 from rest_framework.authtoken.models import Token
 from django.utils.datastructures import MultiValueDictKeyError
 from django.core.cache import cache
 import uuid
-import urllib.parse
+from decouple import config
+
+
+SECRET_KEY = config('SECRET_KEY', default='fallback_secret_key')  
+BASE_URL = config('BASE_URL', default='http://localhost:8000')
 
 
 # s3 접근 인증 받는 함수
@@ -158,7 +164,6 @@ class CustomLoginView(LoginView):
         return original_response
     
 ## 카카오 관련 URI
-BASE_URL = 'http://ec2-43-202-115-16.ap-northeast-2.compute.amazonaws.com'
 KAKAO_TOKEN_API = "https://kauth.kakao.com/oauth/token"
 KAKAO_USER_API = "https://kapi.kakao.com/v2/user/me"
 KAKAO_CALLBACK_URI = BASE_URL + "/profiles/auth/kakao/callback"
@@ -211,25 +216,28 @@ class KakaoLoginCallback(generics.GenericAPIView, mixins.ListModelMixin):
             except Exception as e:
                 return Response({"error": "Error creating user"}, status=status.HTTP_400_BAD_REQUEST)
         token, created = Token.objects.get_or_create(user=user)
-        one_time_code = str(uuid.uuid4())
-        cache.set(one_time_code, {'token': token.key, 'is_new': is_new}, timeout=300)
+        # JWT 토큰 생성
+        payload = {
+            'token': token.key,
+            'is_new': is_new,
+            'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=5)  # 5분 유효
+        }
+        one_time_code = jwt.encode(payload, SECRET_KEY, algorithm='HS256')
         
-        # 중간체크 코드: 
-        # return Response({'key': token.key}, status=200)
-    
-        REACT_APP_BASE_URL="http://localhost:3000/login/redirect"
+        REACT_APP_BASE_URL = "http://localhost:3000/login/redirect"
         redirect_url = f"{REACT_APP_BASE_URL}?code={one_time_code}"
         return redirect(redirect_url)
-    
-# Session에 저장했던 토큰을 불러오는 함수    
+
 def get_token(request):
     code = request.GET.get('code')
-    data = cache.get(code)
-    if data:
-        cache.delete(code)  # 사용 후 삭제
+    try:
+        payload = jwt.decode(code, SECRET_KEY, algorithms=['HS256'])
+        data = {'token': payload['token'], 'is_new': payload['is_new']}
         return JsonResponse(data)
-    return JsonResponse({'error': 'Invalid or expired code'}, status=400)
-    
+    except jwt.ExpiredSignatureError:
+        return JsonResponse({'error': 'Expired code'}, status=400)
+    except jwt.InvalidTokenError:
+        return JsonResponse({'error': 'Invalid code'}, status=400)
 #유저 프로필을 불러오는 View
 class UserProfileView(generics.RetrieveAPIView):
     queryset = User.objects.all()

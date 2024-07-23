@@ -122,7 +122,7 @@ const AdminService = {
             })
             .catch((error) => {
                 if (error.response) {
-                    throw new Error(`서버 오류: ${error.response.status} - ${error.response.data}`);
+                    throw new Error(`서버 오류: ${error.response.status} - ${JSON.stringify(error.response.data)}`);
                 } else if (error.request) {
                     throw new Error('서버로부터 응답을 받지 못했습니다.');
                 } else {
