@@ -1,20 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
+import styles from './FriendProfile.module.css';
 import ProfileService from '../../utils/ProfileService';
 import keywordIcons from '../../components/KeywordIcons/KeywordIcons';
 import typeData from '../../data/typeData.json';
 
 function FriendProfile() {
     const { username } = useParams();
+    const location = useLocation();
+    const queryParams = new URLSearchParams(location.search);
+    const searchTerm = queryParams.get('q');
     const [isLoading, setIsLoading] = useState(true);
     const [profileData, setProfileData] = useState(null);
     const [isFollowing, setIsFollowing] = useState(false);
     const [imageUrl, setImageUrl] = useState(null);
     const [DISCData, setDISCData] = useState(null);
     const navigate = useNavigate();
-    const location = useLocation();
     const [showWarning, setShowWarning] = useState(false);
     const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem('authToken'));
+
     const parsedPersonality =
         profileData && profileData.gpt_summarized_personality ? JSON.parse(profileData.gpt_summarized_personality) : {};
     const summarized = parsedPersonality.summarized || [];
