@@ -44,6 +44,10 @@ from django.utils.datastructures import MultiValueDictKeyError
 from django.core.cache import cache
 import uuid
 from decouple import config
+import urllib.parse
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 SECRET_KEY = config('SECRET_KEY', default='fallback_secret_key')  

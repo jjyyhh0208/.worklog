@@ -44,7 +44,7 @@ const FeedbackLong = ({ isLoggedIn }) => {
                 .then((data) => setMyProfileData(data))
                 .catch((error) => console.error('Error fetching profile data:', error));
         }
-    }, [myprofileData]);
+    }, [isLoggedIn]);
 
     const handleInputChange = (event, question) => {
         const { value } = event.target;
@@ -73,36 +73,47 @@ const FeedbackLong = ({ isLoggedIn }) => {
         }
 
         const workStylesData = (JSON.parse(localStorage.getItem('workStyles')) || { work_styles: [] }).work_styles;
-        const scores = JSON.parse(localStorage.getItem('scores')) || { D: 0, I: 0, S: 0, C: 0 };
+        const scoresData = JSON.parse(localStorage.getItem('scores')) || { D: 0, I: 0, S: 0, C: 0 };
 
-        const finalFeedbackData = {
+        const questionAnswers = [
+            {
+                question: { long_question: '협업 경험에서 좋았던 점은 무엇이었나요?' },
+                answer: question1,
+            },
+            {
+                question: { long_question: '협업 경험에서 아쉬웠던 점은 무엇이었나요?' },
+                answer: question2,
+            },
+            {
+                question: { long_question: '마지막으로 하고 싶은 말을 적어주세요!' },
+                answer: question3,
+            },
+        ];
+
+        // 피드백 데이터 객체
+        const feedbackPayload = {
             id: profileData.id,
             user: profileData.username,
             user_by: myprofileData?.username || '',
             work_styles: workStylesData,
             score: {
-                d_score: scores.D,
-                i_score: scores.I,
-                s_score: scores.S,
-                c_score: scores.C,
+                d_score: scoresData.D,
+                i_score: scoresData.I,
+                s_score: scoresData.S,
+                c_score: scoresData.C,
             },
-            question_answers: [
-                {
-                    question: { long_question: '협업 경험에서 좋았던 점은 무엇이었나요?' },
-                    answer: feedbackData.long_questions.question1,
-                },
-                {
-                    question: { long_question: '협업 경험에서 아쉬웠던 점은 무엇이었나요?' },
-                    answer: feedbackData.long_questions.question2,
-                },
-                {
-                    question: { long_question: '마지막으로 하고 싶은 말을 적어주세요!' },
-                    answer: feedbackData.long_questions.question3,
-                },
-            ],
+            question_answers: questionAnswers,
         };
 
-        FeedbackService.submitAnswers(finalFeedbackData)
+        // 첫 번째 API 호출: 피드백 데이터 제출
+        FeedbackService.submitAnswers(feedbackPayload)
+            .then(() => {
+                // 두 번째 API 호출: 질문과 답변 데이터 제출
+                return FeedbackService.submitQuestionAnswers({
+                    user_to: profileData.username,
+                    question_answers: questionAnswers,
+                });
+            })
             .then(() => setShowModal(true))
             .catch((error) => console.error('Error submitting feedback:', error));
     };
@@ -180,17 +191,19 @@ const FeedbackLong = ({ isLoggedIn }) => {
                 </div>
                 <div className="flex justify-end items-center mt-16 mb-4 w-full">
                     <button
-                        className="w-36 h-12 rounded-lg bg-[#4053ff] border-none text-white text-lg font-bold cursor-pointer"
+                        className="w-36 h-12 rounded-lg bg-[#4053ff] text-white font-bold"
                         onClick={handleFormSubmit}
                     >
-                        완료
+                        제출하기
                     </button>
                 </div>
             </div>
             {showModal && (
-                <Modal>
-                    <div>피드백이 성공적으로 제출되었습니다!</div>
-                </Modal>
+                <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50">
+                    <div className="bg-white p-6 rounded-lg shadow-lg text-center">
+                        <p className="text-lg font-bold">피드백이 제출되었습니다!</p>
+                    </div>
+                </div>
             )}
         </div>
     );
