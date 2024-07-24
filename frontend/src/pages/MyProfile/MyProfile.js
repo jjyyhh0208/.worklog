@@ -361,8 +361,8 @@ function MyProfile() {
                                             </div>
                                         ))}
                                 </div>
-                                <div className="flex flex-wrap flex-col justify-around mt-8">
-                                    <div className="items-center justify-left flex">
+                                <div className="flex flex-wrap flex-col justify-center items-center text-center w-full mt-8">
+                                    <div className="items-center justify-center flex flex-col">
                                         {profileData && DISCData ? (
                                             <div
                                                 className="w-60 h-[60px] rounded-[20px] flex items-center justify-center text-white text-2xl font-bold mt-5"
@@ -381,7 +381,7 @@ function MyProfile() {
                                             className="w-44 h-44"
                                         />
                                     </div>
-                                    <div className="w-full md:w-[70%] text-xl mt-5">
+                                    <div className=" w-full md:w-[80%] text-xl mt-5">
                                         <p>{DISCData.description}</p>
                                         <div className="font-semibold mt-8 mb-3">
                                             <strong className="mt-8 mb-2 font-bold text-[#4053FF]">
@@ -391,17 +391,18 @@ function MyProfile() {
                                         <strong>이 유형의 강점은:</strong> {DISCData.strength}
                                         <br />
                                         <strong>상대적으로 이 유형은:</strong> {DISCData.weakness}
-                                        <div className="font-semibold mt-8 mb-3">
-                                            <strong className="mt-8 mb-2 font-bold text-[#4053FF]">
+                                        <div className="font-semibold mt-16 mb-3">
+                                            <strong className="mt-16 mb-2 font-bold text-[#4053FF]">
                                                 {DISCData.disc_character}와 맞는 협업 유형은?
                                             </strong>
                                         </div>
                                         {DISCData.suitable_type.map((type, index) => (
                                             <div key={index}>
-                                                <strong className="mt-8 mb-2 font-semibold text-[#4053FF]">
+                                                <strong className="mt-12 mb-2 font-semibold text-[#4053FF]">
                                                     {type.name}
                                                 </strong>
                                                 <p>{type.description}</p>
+                                                <br />
                                             </div>
                                         ))}
                                     </div>
@@ -425,19 +426,14 @@ function MyProfile() {
                                         <p className="text-2xl font-semibold text-center mb-12">
                                             팀원들은 나의 협업 성향에 대해 다음과 같이 느꼈어요!
                                         </p>
-                                        <div className="bg-white rounded-[20px] p-5 mt-5">
-                                            <p className="text-2xl font-semibold text-center mb-12">
-                                                팀원들은 나의 협업 성향에 대해 다음과 같이 느꼈어요!
-                                            </p>
-                                            <div className="flex flex-col justify-around mt-5">
-                                                <h3 className="text-3xl font-bold text-[#4053ff]">Summary</h3>
-                                                <div className="flex-1 bg-[rgba(204,209,255,0.2)] rounded-[20px] p-12 m-5 md:m-12 text-xl">
-                                                    {formatListWithIndex(gptSummary.summarized)}
-                                                </div>
-                                                <h3 className="text-3xl font-bold text-[#4053ff]">Advice</h3>
-                                                <div className="flex-1 bg-[rgba(204,209,255,0.2)] rounded-[20px] p-12 m-5 md:m-12 text-xl">
-                                                    {formatListWithIndex(gptSummary.advice)}
-                                                </div>
+                                        <div className="flex flex-col justify-around mt-5">
+                                            <h3 className="text-3xl font-bold text-[#4053ff]">Summary</h3>
+                                            <div className="flex-1 bg-[rgba(204,209,255,0.2)] rounded-[20px] p-12 m-5 md:m-12 text-xl">
+                                                {formatListWithIndex(gptSummary.summarized)}
+                                            </div>
+                                            <h3 className="text-3xl font-bold text-[#4053ff]">Advice</h3>
+                                            <div className="flex-1 bg-[rgba(204,209,255,0.2)] rounded-[20px] p-12 m-5 md:m-12 text-xl">
+                                                {formatListWithIndex(gptSummary.advice)}
                                             </div>
                                         </div>
                                     </div>

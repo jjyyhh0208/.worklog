@@ -293,29 +293,30 @@ function FriendProfile() {
                                             </div>
                                         ))}
                                 </div>
-                                <div className="flex flex-wrap justify-around mt-8">
-                                    {/* <div className="items-center justify-left flex"> */}
-                                    {profileData && DISCData ? (
-                                        <div
-                                            className="w-60 h-[60px] rounded-[20px] flex items-center justify-center text-white text-2xl font-bold mt-5"
-                                            style={{
-                                                backgroundColor: discTypeColors[profileData.disc_character],
-                                            }}
-                                        >
-                                            {DISCData.disc_character}
-                                        </div>
-                                    ) : (
-                                        <div className="w-60 h-[60px] rounded-[20px] flex items-center justify-center bg-gray-200 text-2xl font-bold mt-5">
-                                            데이터 로딩 중...
-                                        </div>
-                                    )}
-                                    {/* <img
+                                <div className="flex flex-wrap flex-col justify-center items-center text-center w-full mt-8">
+                                    <div className="items-center justify-center flex flex-col">
+                                        {profileData && DISCData ? (
+                                            <div
+                                                className="w-60 h-[60px] rounded-[20px] flex items-center justify-center text-white text-2xl font-bold mt-5"
+                                                style={{
+                                                    backgroundColor: discTypeColors[profileData.disc_character],
+                                                }}
+                                            >
+                                                {DISCData.disc_character}
+                                            </div>
+                                        ) : (
+                                            <div className="w-60 h-[60px] rounded-[20px] flex items-center justify-center bg-gray-200 text-2xl font-bold mt-5">
+                                                데이터 로딩 중...
+                                            </div>
+                                        )}
+                                        {/*img */}
+                                        <img
                                             src={DISCData.disc_img}
                                             alt={DISCData.disc_character}
                                             className="w-44 h-44"
-                                        /> */}
-                                    {/* </div> */}
-                                    <div className="w-full md:w-[70%] text-xl mt-5">
+                                        />
+                                    </div>
+                                    <div className="w-full md:w-[80%] text-xl mt-5">
                                         <p>{DISCData.description}</p>
                                         <div className="font-semibold mt-8 mb-3">
                                             <strong className="mt-8 mb-2 font-bold text-[#4053FF]">
@@ -328,17 +329,18 @@ function FriendProfile() {
                                         <p>
                                             <strong>상대적으로 이 유형은:</strong> {DISCData.weakness}
                                         </p>
-                                        <div className="font-semibold mt-8 mb-3">
-                                            <strong className="mt-8 mb-2 font-bold text-[#4053FF]">
+                                        <div className="font-semibold mt-16 mb-3">
+                                            <strong className="mt-16 mb-2 font-bold text-[#4053FF]">
                                                 {DISCData.disc_character}와 맞는 협업 유형은?
                                             </strong>
                                         </div>
                                         {DISCData.suitable_type.map((type, index) => (
                                             <div key={index}>
-                                                <strong className="mt-8 mb-2 font-semibold text-[#4053FF]">
+                                                <strong className="mt-16 mb-2 font-semibold text-[#4053FF]">
                                                     {type.name}
                                                 </strong>
                                                 <p>{type.description}</p>
+                                                <br />
                                             </div>
                                         ))}
                                     </div>
