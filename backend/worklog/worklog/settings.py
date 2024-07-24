@@ -18,6 +18,7 @@ from decouple import config
 
 SECRET_KEY = config('SECRET_KEY', default='fallback_secret_key')
 BASE_URL = config('BASE_URL', default='http://localhost:8000')
+REACT_APP_BASE_URL = config('REACT_APP_BASE_URL', default='http://localhost:8000/login/redirect')
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 #Base directory == worklog/backend/worklog

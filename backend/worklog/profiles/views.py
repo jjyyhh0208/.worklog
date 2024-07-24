@@ -48,6 +48,7 @@ from decouple import config
 
 SECRET_KEY = config('SECRET_KEY', default='fallback_secret_key')  
 BASE_URL = config('BASE_URL', default='http://localhost:8000')
+REACT_APP_BASE_URL = config('REACT_APP_BASE_URL', default='http://localhost:8000/login/redirect')
 
 
 # s3 접근 인증 받는 함수
@@ -224,7 +225,6 @@ class KakaoLoginCallback(generics.GenericAPIView, mixins.ListModelMixin):
         }
         one_time_code = jwt.encode(payload, SECRET_KEY, algorithm='HS256')
         
-        REACT_APP_BASE_URL = "http://localhost:3000/login/redirect"
         redirect_url = f"{REACT_APP_BASE_URL}?code={one_time_code}"
         return redirect(redirect_url)
 

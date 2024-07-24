@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 const KakaoLogin = () => {
     const REST_API_KEY = process.env.REACT_APP_KAKAO_LOGIN_API_KEY;
     const REACT_APP_BASE_URL = process.env.REACT_APP_BASE_URL;
-    const REDIRECT_URI = `${REACT_APP_BASE_URL}${process.env.REACT_APP_KAKAO_LOGIN_CALLBACK_URL}`;
+    const REDIRECT_URI = `${REACT_APP_BASE_URL}/${process.env.REACT_APP_KAKAO_LOGIN_CALLBACK_URL}`;
     const KAKAO_AUTH_URL = `https://kauth.kakao.com/oauth/authorize?client_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URI}&response_type=code`;
     return (
         <div className="w-full flex flex-col items-center mt-5">
