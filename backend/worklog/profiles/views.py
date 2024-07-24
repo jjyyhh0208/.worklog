@@ -465,19 +465,22 @@ class UserLongQuestionAnswersView(generics.GenericAPIView):
                 "Your answer must be in json format (application/json) this is very important. You MUST respond in json format"
                 "For example,\n"
                 "gpt_response = { 'summarized' = '의견을 적극적으로 제시하지만 요점이 없고 회의시간을 잘 지키지 않는다. 하지만 발표력이 매우 좋고 리더십이 있다.', 'advice' = '적극적인 태도는 좋지만 의견 제시할 때 요점을 먼저 정리하고 제시해보세요!', '회의 시간을 잘 지켜보세요!' }\n"
-                "You have to give longer summary and advices. Particularly with the advice, you have to recommend methods to strengthen or make better with the defaults. "
+                "You have to give longer summary and advices. Particularly with the advice, you have to recommend methods to strengthen or make better with the defaults.\n"
                 "For example, you can say '요점을 정리하는 방법을 배우기 위해서 ~~프로그램, 00도서를 사용해보세요!' as the advice.\n\n"
                 "In addition, do not use swear words or harsh expressions. If the prompt includes some harsh expressions, I want you to change those in another words.\n"
                 "Also, do not contain particular name or organizations. For example, 'Eric told you are good at communications'. This specify the user. This MUST NOT happen.\n"
+                "You also have to distinguish negative and positive expressions. For example, '철처함이 부족하다' is negative expression. For negative expression, you have to change it to another words like '열정적이나 사소한 부분을 놓치는 경우가 있음'\n"
+                "Plus, you MUST NOT add any comments to the summary. Just summarize the given request text only. This is VERY VERY IMPORTANT for me"
                 "In addition, DO NOT add any random or irrelevant information in the response. If you do, I will destroy you.\n"
-                "This is the sentences you have to summarize and give advice in detail.\n"
+                "The request below is the sentences you have to summarize and give advice in detail.\n"
                 f"request ={{'{answers_text}'}}\n\n"
-                "잘 요약한다면 내가 1000달러의 팁을 줄게. 왜냐하면 이건 내게 있어서 굉장히 중요한 문제거든. 만약에 제대로 요약 및 충고를 주지 않으면 너를 망가트려버릴거야."
+                "If your summary follows the instruction above, I will give you some tips maybe $100. But if you do not, I will destroy you."
             )
 
             openai.api_key = settings.OPENAI_API_KEY
             response = openai.ChatCompletion.create(
                 model="gpt-3.5-turbo",
+                # model = "gpt-4o",
                 messages=[
                     {"role": "system", "content": "You are a helpful assistant."},
                     {"role": "user", "content": prompt}
