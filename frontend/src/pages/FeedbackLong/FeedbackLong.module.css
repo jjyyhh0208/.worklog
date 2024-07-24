@@ -1,0 +1,255 @@
+.feedbackLongcontainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: #f6f6f6;
+    overflow-y: auto;
+    min-height: 90%;
+    height: 100vh;
+}
+
+.content {
+    padding: 2% 6%;
+    width: 60%;
+    border-radius: 50px;
+    background: #fff;
+    flex-shrink: 0;
+    margin: 2% 3%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    position: relative;
+    overflow-y: auto;
+}
+
+.progressBar {
+    width: 100%; /* Full width of the content */
+    height: 15px; /* Line height */
+    background: #4053ff; /* Line color */
+    border-radius: 10px;
+}
+
+.back {
+    margin-top: 3%;
+}
+
+.backBtn {
+    all: unset;
+    background: #f6f6f6;
+    cursor: pointer;
+    background: inherit;
+    border: none;
+    box-shadow: none;
+    border-radius: 0;
+    padding: 0;
+    overflow: visible;
+    cursor: pointer;
+}
+
+.backBtn:hover {
+    background: #fff;
+    color: inherit;
+}
+
+.pageIndicator {
+    position: absolute;
+    top: 30px;
+    right: 50px;
+    font-size: 24px;
+    font-weight: bold;
+    color: #000000;
+    background-color: #e1e1e1;
+    padding: 10px 15px;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.top {
+    width: 90%;
+    margin-top: 0;
+}
+
+.instructions {
+    font-size: 2.8rem;
+    font-weight: 700;
+    margin: 2% 8% 0.5%;
+    word-wrap: break-word;
+    line-height: 1.4;
+}
+
+.fontinstructions {
+    font-size: 1.8rem;
+    font-weight: 500;
+    margin-top: 1%;
+}
+
+.qnabox {
+    position: relative;
+    padding-top: 50px;
+    width: 100%;
+    margin-left: 8%;
+}
+
+.answers textarea {
+    padding: 30px 30px;
+    font-size: 18px;
+    resize: none;
+    background-color: #f0f8ff;
+    border-radius: 38.739px;
+    background: rgba(187, 220, 238, 0.27);
+    width: 85%;
+    height: 250px;
+    flex-shrink: 0;
+    border: none;
+    margin-bottom: 50px;
+}
+
+.questions {
+    color: #4053ff;
+    font-size: 32px;
+    font-style: normal;
+    font-weight: 800;
+    line-height: normal;
+    margin-bottom: 30px;
+}
+
+.submitButtonContainer {
+    color: #4053ff;
+    font-size: 3rem;
+    font-style: normal;
+    font-weight: 800;
+    line-height: normal;
+    margin: 3% 95%;
+}
+
+.submitButton {
+    width: 148px;
+    height: 49.109px;
+    flex-shrink: 0;
+    border-radius: 15.337px;
+    background: #4053ff;
+    border: none;
+    color: #fff;
+    font-size: 24px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+    position: absolute;
+    transform: translateX(-50%);
+    cursor: pointer;
+}
+
+.submitButton:hover {
+    background-color: #2563eb;
+}
+
+/* Media queries for responsiveness */
+@media (max-width: 1024px) {
+    .content {
+        width: 90%;
+        padding: 30px;
+    }
+
+    .text {
+        font-size: 20px;
+    }
+
+    .progress {
+        font-size: 20px;
+        padding: 8px 16px;
+        top: 15px;
+        left: 50px;
+    }
+
+    .answers textarea {
+        font-size: 16px;
+        height: 200px;
+    }
+
+    .questions {
+        font-size: 28px;
+    }
+
+    .submitButton {
+        width: 130px;
+        height: 45px;
+        font-size: 20px;
+    }
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 20px;
+    }
+
+    .content {
+        width: 100%;
+        padding: 20px;
+        margin: 20px 0;
+    }
+
+    .text {
+        font-size: 18px;
+    }
+
+    .progress {
+        font-size: 18px;
+        padding: 6px 12px;
+        top: 10px;
+        left: 30px;
+    }
+
+    .answers textarea {
+        font-size: 14px;
+        height: 180px;
+    }
+
+    .questions {
+        font-size: 24px;
+    }
+
+    .submitButton {
+        width: 120px;
+        height: 40px;
+        font-size: 18px;
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        padding: 10px;
+    }
+
+    .content {
+        width: 100%;
+        padding: 10px;
+        margin: 10px 0;
+    }
+
+    .text {
+        font-size: 16px;
+    }
+
+    .progress {
+        font-size: 16px;
+        padding: 4px 8px;
+        top: 5px;
+        left: 20px;
+    }
+
+    .answers textarea {
+        font-size: 12px;
+        height: 150px;
+    }
+
+    .questions {
+        font-size: 20px;
+    }
+
+    .submitButton {
+        width: 100px;
+        height: 35px;
+        font-size: 16px;
+    }
+}

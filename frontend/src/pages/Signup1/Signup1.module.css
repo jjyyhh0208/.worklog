@@ -1,0 +1,184 @@
+/* General container styles */
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    width: 80%;
+}
+
+/* Centered form container with border */
+.signup-form-container {
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 500px;
+    position: relative;
+}
+
+/* Logo styles */
+.h1 {
+    color: #4053ff;
+    text-align: center;
+    font-size: 2.5rem;
+    font-weight: 800;
+    cursor: pointer;
+    margin-bottom: 20px;
+}
+
+/* Back Button styles */
+.back {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+}
+
+.backBtn {
+    all: unset;
+    cursor: pointer;
+}
+
+.backBtn:hover {
+    background: transparent;
+}
+
+/* Title styles */
+.h2 {
+    color: #000;
+    font-size: 1.5rem;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+/* Form styles */
+.signUp {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+.idinput {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.idinput input {
+    width: 70%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    font-size: 0.8rem;
+    height: 40px;
+}
+
+.duplicatebtn {
+    background-color: #4053ff;
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    align-items: center;
+    justify-contents: center;
+    cursor: pointer;
+    font-size: 0.8rem;
+    width: 100px;
+    height: 40px;
+}
+
+.idcontainer {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+.idbox {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.idbox span {
+    width: 50px;
+}
+
+.instructions {
+    font-size: 0.7rem;
+    font-weight: 500;
+    width: auto;
+    flex: 1;
+    white-space: nowrap;
+}
+
+/* Input styles */
+.input {
+    width: 100%;
+    height: 2.5rem; /* 40px to rem */
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    font-size: 0.8rem;
+    transition: font-size 0.3s ease; /* font-size 변경 시 애니메이션 추가 */
+}
+
+.input.filled {
+    font-size: 1rem;
+}
+
+.idbox svg {
+    margin-right: 5px;
+}
+
+.idcontainer span {
+    font-size: 0.875rem;
+    color: #9b8f8f;
+}
+
+/* Label styles */
+.span {
+    width: 100%;
+    color: #000;
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 5px;
+    display: block;
+}
+
+/* Availability Message styles */
+.availabilityMessage {
+    width: 100%;
+    font-size: 0.875rem;
+    color: #d9534f;
+    margin-bottom: 20px;
+}
+
+/* Next Button styles */
+.nextbox {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.nextBtn {
+    width: 100%;
+    padding: 0.5rem 8rem;
+    background-color: #4053ff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 1.2rem;
+    cursor: pointer;
+}

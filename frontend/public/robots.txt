@@ -1,0 +1,9 @@
+User-agent: *
+Disallow: /signup/
+Disallow: /feedback/
+Disallow: /login/
+Disallow: /my-profile/
+Disallow: /friend-profile/
+Disallow: /list/
+
+Allow: /

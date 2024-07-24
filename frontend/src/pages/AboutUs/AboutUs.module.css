@@ -1,0 +1,277 @@
+.aboutUsBody {
+    background: #f6f6f6;
+    display: flex;
+    justify-content: center;
+    margin: 0;
+    width: 100%;
+    height: 100%;
+    overflow-y: auto;
+}
+
+.aboutContainer {
+    padding: 10px;
+    width: 80%;
+    border-radius: 50px;
+    background: #fff;
+    flex-shrink: 0;
+    padding-left: 100px;
+    padding-right: 100px;
+    margin-top: 50px;
+    margin-bottom: 50px;
+    justify-content: center;
+    overflow-y: auto;
+}
+
+.title {
+    color: #000;
+    font-size: 64px;
+    font-weight: 800;
+    margin-bottom: 10px;
+}
+
+.grayLine {
+    width: 100%;
+    height: 1px;
+    background: #cbcbcb;
+    margin-bottom: 30px;
+}
+
+.question {
+    margin-bottom: 40px;
+}
+
+.questionTitle {
+    font-size: 30px;
+    font-weight: bold;
+    color: #000;
+    margin-bottom: 10px;
+}
+
+.answer {
+    font-size: 24px;
+    color: #000;
+    margin-left: 30px;
+}
+
+.worklog {
+    color: #4053ff;
+    font-size: 32px;
+    font-style: normal;
+    font-weight: 800;
+    line-height: normal;
+    margin-bottom: 10px;
+}
+
+.typeContainer {
+    margin-bottom: 40px;
+}
+
+.answerbox {
+    display: flex;
+    align-items: center;
+}
+.typeButtons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 20px;
+    justify-content: start;
+    width: 50%;
+}
+.diagram {
+    width: 450px;
+    height: 450px;
+    flex-shrink: 0;
+    background: url('/public/images/discImage.png') no-repeat center center;
+    background-size: cover;
+    background-color: #ffffff;
+    margin-left: 10%;
+}
+
+.type {
+    padding: 10px 20px;
+    border-radius: 15px;
+    width: 130px;
+    height: 38px;
+    border-radius: 12.146px;
+    flex-shrink: 0;
+    color: #fff;
+    font-family: 'Inter';
+    font-size: 18px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 38px;
+    text-align: center;
+    cursor: pointer;
+}
+
+.discDescription {
+    font-size: 24px;
+    color: #000;
+    margin-left: 30px;
+}
+
+.groupSection {
+    margin-top: 50px;
+    scroll-margin-top: 50px;
+}
+
+.subtitle {
+    font-size: 28px;
+    font-weight: bold;
+    color: #000;
+    margin-bottom: 10px;
+}
+
+.groupDescription {
+    font-size: 24px;
+    color: #000;
+    margin-left: 30px;
+    margin-bottom: 30px;
+}
+
+.typeSection {
+    margin-top: 30px;
+}
+
+.typeCards {
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 20px;
+    justify-content: space-around;
+}
+
+.typeCard {
+    width: 238px;
+    height: 60px;
+    border-radius: 20px;
+    padding: 10px 20px;
+    color: #fff;
+    text-align: center;
+    font-size: 24px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.typeDescription {
+    width: 70%;
+    color: #000;
+    font-size: 23px;
+}
+
+.typeQuestion {
+    color: #000;
+    font-size: 23px;
+    font-weight: 600;
+    margin-top: 30px;
+    margin-bottom: 10px;
+}
+
+/* 반응형 스타일 */
+@media (max-width: 1024px) {
+    .title {
+        font-size: 48px;
+    }
+
+    .typeDescription {
+        width: 100%;
+    }
+}
+
+@media (max-width: 768px) {
+    .aboutContainer {
+        width: 90%;
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+
+    .title {
+        font-size: 36px;
+    }
+
+    .questionTitle {
+        font-size: 24px;
+    }
+
+    .answer,
+    .discDescription,
+    .groupDescription {
+        font-size: 20px;
+    }
+
+    .worklog {
+        font-size: 28px;
+    }
+
+    .type {
+        width: 100px;
+        height: 32px;
+        font-size: 16px;
+        line-height: 32px;
+    }
+
+    .typeCard {
+        width: 180px;
+        height: 50px;
+        font-size: 20px;
+    }
+
+    .subtitle {
+        font-size: 24px;
+    }
+
+    .typeDescription,
+    .typeQuestion {
+        font-size: 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .aboutContainer {
+        width: 100%;
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+    .title {
+        font-size: 28px;
+    }
+
+    .questionTitle {
+        font-size: 20px;
+    }
+
+    .answer,
+    .discDescription,
+    .groupDescription {
+        font-size: 18px;
+    }
+
+    .worklog {
+        font-size: 24px;
+    }
+
+    .type {
+        width: 80px;
+        height: 28px;
+        font-size: 14px;
+        line-height: 28px;
+    }
+
+    .typeCard {
+        width: 150px;
+        height: 40px;
+        font-size: 18px;
+    }
+
+    .subtitle {
+        font-size: 20px;
+    }
+
+    .typeDescription,
+    .typeQuestion {
+        font-size: 18px;
+    }
+}

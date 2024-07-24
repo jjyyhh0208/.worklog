@@ -1,0 +1,114 @@
+/* src/pages/List/List.module.css */
+
+.listContainer {
+    background: #f6f6f6;
+    min-height: 1024px;
+    padding: 0;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 30px;
+    width: 70%;
+    margin: 0 auto;
+}
+
+.title {
+    color: #4053ff;
+    font-size: 28px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+}
+.header svg {
+    cursor: pointer;
+}
+
+.list {
+    background-color: #ccd1ff33;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    padding: 30px;
+    margin: 0 auto;
+    border-radius: 20px;
+    justify-content: space-around;
+    width: 70%; /* For evenly spacing the cards */
+}
+
+.friendCard {
+    background: #fff;
+    border-radius: 20px;
+    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+    padding: 16px;
+    text-align: center;
+    width: 230px;
+    height: 270px;
+    position: relative;
+    align-items: center;
+}
+
+.disc_character {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 246px;
+    text-align: center;
+    padding: 8px;
+    color: #fff;
+    font-size: 11.706px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+}
+
+.friendDescription {
+    padding-top: 20px;
+}
+
+.profileImage {
+    border-radius: 50%;
+    height: 110px;
+    width: 110px;
+    margin: 30px auto 5px; /* Adjust margin to place image below the discType label */
+    border: 1px solid #000;
+}
+
+.name {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+
+.evaluationButton {
+    background: #ffcb00;
+    border: none;
+    border-radius: 4px;
+    color: #ffffff;
+    text-align: center;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 550;
+    line-height: normal;
+    cursor: pointer;
+    padding: 10px 15px;
+    text-decoration: none;
+}
+
+.evaluationButton:hover {
+    background: #e5b800;
+}
+.noFriendsMessage {
+    color: #000;
+    font-family: Inter;
+    font-size: 20px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+
+    text-align: center;
+}
