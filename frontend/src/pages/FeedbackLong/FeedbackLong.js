@@ -33,16 +33,12 @@ const FeedbackLong = ({ isLoggedIn }) => {
     }, [showModal, navigate, username]);
 
     useEffect(() => {
-        ProfileService.fetchFriendProfile(username)
-            .then((data) => setProfileData(data))
-            .catch(error);
+        ProfileService.fetchFriendProfile(username).then((data) => setProfileData(data));
     }, [username]);
 
     useEffect(() => {
         if (isLoggedIn) {
-            ProfileService.fetchUserProfile()
-                .then((data) => setMyProfileData(data))
-                .catch(error);
+            ProfileService.fetchUserProfile().then((data) => setMyProfileData(data));
         }
     }, [isLoggedIn]);
 

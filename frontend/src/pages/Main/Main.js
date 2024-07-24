@@ -147,7 +147,7 @@ function Main() {
             </div>
             {/* Type icons */}
             <div className="text-2xl font-bold m-8">.WORKLOG의 8가지 유형 둘러보기</div>
-            <div className="flex justify-center mt-4 w-[90%] rounded-lg">
+            <div className="flex justify-center mt-4 w-[80%] rounded-lg">
                 <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-4 w-full">
                     {typeData.types.map(
                         (type, index) =>
@@ -173,7 +173,7 @@ function Main() {
 
             {/* Group details */}
             {groups.map((group, groupIndex) => (
-                <div key={groupIndex} className="mt-8 scroll-mt-12 w-[90%]">
+                <div key={groupIndex} className="mt-8 scroll-mt-12 w-[80%]">
                     {group.types.map(
                         (type, typeIndex) =>
                             type.title !== 'None' && (
