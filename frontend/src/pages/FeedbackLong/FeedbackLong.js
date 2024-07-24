@@ -35,14 +35,14 @@ const FeedbackLong = ({ isLoggedIn }) => {
     useEffect(() => {
         ProfileService.fetchFriendProfile(username)
             .then((data) => setProfileData(data))
-            .catch((error) => console.error('Error fetching profile data:', error));
+            .catch(error);
     }, [username]);
 
     useEffect(() => {
         if (isLoggedIn) {
             ProfileService.fetchUserProfile()
                 .then((data) => setMyProfileData(data))
-                .catch((error) => console.error('Error fetching profile data:', error));
+                .catch(error);
         }
     }, [isLoggedIn]);
 
@@ -68,7 +68,6 @@ const FeedbackLong = ({ isLoggedIn }) => {
         }
 
         if (!profileData) {
-            console.error('프로필을 불러오는 데에 실패했습니다.');
             return;
         }
 

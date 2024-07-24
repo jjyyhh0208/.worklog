@@ -57,14 +57,12 @@ function FriendProfile() {
                 const profileData = await ProfileService.fetchFriendProfile(username);
                 setProfileData(profileData);
                 setIsFollowing(profileData.is_following);
-                console.log('Initial following state:', profileData.is_following);
 
                 if (profileData && profileData.disc_character) {
                     const discData = typeData.types.find((item) => item.disc_character === profileData.disc_character);
                     if (discData) {
                         setDISCData(discData);
                     } else {
-                        console.error('DISC character not found:', profileData.disc_character);
                     }
                 }
 
@@ -76,7 +74,6 @@ function FriendProfile() {
                 if (discData) {
                     setDISCData(discData);
                 } else {
-                    console.error('DISC character not found:', profileData.disc_character);
                 }
 
                 if (profileData.profile_image && profileData.profile_image.image) {
@@ -84,7 +81,6 @@ function FriendProfile() {
                     setImageUrl(signedUrl);
                 }
             } catch (error) {
-                console.error('프로필 정보를 불러오는 동안 오류가 발생했습니다.', error);
             } finally {
                 setIsLoading(false);
             }
@@ -109,10 +105,7 @@ function FriendProfile() {
                 updatedFollowingStatus = true;
             }
             setIsFollowing(updatedFollowingStatus);
-            console.log('Updated following state:', updatedFollowingStatus);
-        } catch (error) {
-            console.error('팔로우/팔로우 취소 중 오류가 발생했습니다.', error);
-        }
+        } catch (error) {}
     };
 
     const handleFeedbackClick = () => {

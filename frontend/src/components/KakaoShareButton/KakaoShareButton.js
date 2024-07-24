@@ -9,9 +9,7 @@ const KakaoShareButton = ({ username }) => {
             try {
                 const data = await ProfileService.fetchFriendProfile(username);
                 setProfileData(data);
-            } catch (error) {
-                console.error('Error fetching profile data:', error);
-            }
+            } catch (error) {}
         };
 
         fetchProfileData();

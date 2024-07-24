@@ -41,7 +41,6 @@ const AdminService = {
                 return response.data; // Return response data for further use
             })
             .catch((error) => {
-                console.log(error);
                 if (error.response && error.response.data) {
                     throw new Error('아이디는 3자 이상 30자 이하로 설정해주세요.');
                 } else {
@@ -100,7 +99,6 @@ const AdminService = {
             const response = await API.delete('/profiles/auth/delete/');
 
             if (response.status === 204) {
-                console.log('성공적으로 회원 탈퇴가 이루어졌습니다.');
                 return true;
             } else {
                 throw new Error('예상치 못한 응답 상태: ' + response.status);

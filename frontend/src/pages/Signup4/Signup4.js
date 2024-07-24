@@ -40,9 +40,7 @@ function Signup4({ signUpInfo, setSignUpInfo }) {
                     gender: location.state?.gender || prevState.gender,
                     work_style: location.state?.selectedKeywords || prevState.work_style,
                 }));
-            } catch (error) {
-                console.error('Error fetching data:', error);
-            }
+            } catch (error) {}
         };
 
         fetchData();
@@ -124,9 +122,7 @@ function Signup4({ signUpInfo, setSignUpInfo }) {
                     });
                 }
             })
-            .catch((error) => {
-                console.error('Error setting user interests:', error);
-            });
+            .catch((error) => {});
     };
 
     const logoHandler = () => {
@@ -145,9 +141,7 @@ function Signup4({ signUpInfo, setSignUpInfo }) {
                     localStorage.removeItem('selectedInterests');
                     localStorage.removeItem('selectedWorkStyles');
                 })
-                .catch((error) => {
-                    console.error('회원 탈퇴 중 오류가 발생했습니다.', error);
-                });
+                .catch((error) => {});
         } else {
             navigate('/my-profile', { state: { selectedInterests } });
         }

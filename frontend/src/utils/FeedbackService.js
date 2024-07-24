@@ -25,7 +25,6 @@ const FeedbackService = {
                 return transformedQuestions;
             })
             .catch((error) => {
-                console.error('질문을 불러오는 동안 오류가 발생했습니다.', error);
                 throw error;
             });
     },
@@ -43,7 +42,6 @@ const FeedbackService = {
         return API.post('/profiles/feedbacks/', transformedAnswers)
             .then((response) => response.data)
             .catch((error) => {
-                console.error('피드백을 제출하는 동안 오류가 발생했습니다.', error);
                 throw error;
             });
     },
@@ -52,7 +50,6 @@ const FeedbackService = {
         return API.post('/profiles/user/feedback-answers/', questionAnswers)
             .then((response) => response.data)
             .catch((error) => {
-                console.error('질문과 답변을 제출하는 동안 오류가 발생했습니다.', error.response?.data || error);
                 throw error;
             });
     },

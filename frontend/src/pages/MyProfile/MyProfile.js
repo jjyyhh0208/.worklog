@@ -31,15 +31,12 @@ function MyProfile() {
                     .then((imageUrl) => {
                         setImageUrl(imageUrl);
                     })
-                    .catch((error) => {
-                        console.error('Error fetching signed URL:', error);
-                    });
+                    .catch((error) => {});
 
                 const discData = typeData.types.find((item) => item.disc_character === profileData.disc_character);
                 if (discData) {
                     setDISCData(discData);
                 } else {
-                    console.error('DISC character not found:', profileData.disc_character);
                 }
 
                 setImageUrl(profileData.profile_image.image || '/images/basicProfile.png');
@@ -53,12 +50,10 @@ function MyProfile() {
                             advice: Array.isArray(parsedGptSummary.advice) ? parsedGptSummary.advice : [],
                         });
                     } catch (error) {
-                        console.error('Error parsing GPT summary:', error);
                         setGptSummary({ summarized: [], advice: [] });
                     }
                 }
             } catch (error) {
-                console.error('Error fetching profile data.', error);
             } finally {
                 setisLoading(false);
             }
@@ -95,7 +90,6 @@ function MyProfile() {
                         alert('프로필 링크가 복사되었습니다.');
                     })
                     .catch((error) => {
-                        console.error('링크 복사 중 오류가 발생했습니다.', error);
                         alert('링크 복사에 실패했습니다. 다시 시도해주세요.');
                     });
             } else {
@@ -107,9 +101,7 @@ function MyProfile() {
                 try {
                     document.execCommand('copy');
                     alert('프로필 링크가 복사되었습니다.');
-                } catch (err) {
-                    console.error('링크 복사 중 오류가 발생했습니다.', err);
-                }
+                } catch (err) {}
                 document.body.removeChild(textArea);
             }
         } else {
@@ -143,7 +135,6 @@ function MyProfile() {
                     alert('인스타그램 앱이 설치되어 있지 않습니다. 프로필 링크가 클립보드에 복사되었습니다.');
                 })
                 .catch((err) => {
-                    console.error('클립보드 복사 실패:', err);
                     alert('링크 복사에 실패했습니다. 수동으로 복사해주세요: ' + profileLink);
                 });
         }, 2000);
