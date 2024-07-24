@@ -123,14 +123,14 @@ const Feedback = () => {
                         <p>{q.question}</p>
                         {q.options.map((option, idx) => (
                             <div key={idx} className="flex items-center my-4">
-                                <div className="flex-1 text-xl text-gray-800">
+                                <div className="flex-1 text-xl text-gray-800 font-bold">
                                     {String.fromCharCode(65 + idx)}. {option.label}
                                 </div>
                                 <div className="flex items-center space-x-4">
                                     {[1, 2, 3, 4].map((score) => (
                                         <button
                                             key={score}
-                                            className={`w-10 h-10 rounded-full border-2 flex items-center justify-center ${
+                                            className={`w-8 h-8 rounded-full border-2 flex items-center justify-center ${
                                                 answers[q.question]?.[option.value] === score
                                                     ? 'bg-[#ffa500] text-white'
                                                     : 'bg-gray-200 text-black'

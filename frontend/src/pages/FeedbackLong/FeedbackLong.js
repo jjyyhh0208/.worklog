@@ -108,14 +108,14 @@ const FeedbackLong = ({ isLoggedIn }) => {
         // 첫 번째 API 호출: 피드백 데이터 제출
         FeedbackService.submitAnswers(feedbackPayload)
             .then(() => {
+                setShowModal(true);
                 // 두 번째 API 호출: 질문과 답변 데이터 제출
                 return FeedbackService.submitQuestionAnswers({
                     user_to: profileData.username,
                     question_answers: questionAnswers,
                 });
             })
-            .then(() => setShowModal(true))
-            .catch((error) => console.error('Error submitting feedback:', error));
+            .catch((error) => setShowModal(false));
     };
 
     const handleBackClick = () => {
@@ -200,8 +200,10 @@ const FeedbackLong = ({ isLoggedIn }) => {
             </div>
             {showModal && (
                 <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50">
-                    <div className="bg-white p-6 rounded-lg shadow-lg text-center">
-                        <p className="text-lg font-bold">피드백이 제출되었습니다!</p>
+                    <div className="fixed inset-0 flex items-center justify-center z-50">
+                        <div className="bg-[#4053ff] text-white p-8 md:p-12 rounded-lg text-center font-semibold text-lg md:text-xl">
+                            피드백이 제출되었습니다!
+                        </div>
                     </div>
                 </div>
             )}
