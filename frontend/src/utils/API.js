@@ -23,7 +23,6 @@ const API = axios.create({
     headers: {
         'Content-Type': 'application/json',
     },
-    withCredentials: true,
 });
 
 // Axios 요청 전에 회원 / 비회원 확인

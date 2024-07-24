@@ -1,12 +1,13 @@
 import API from './API';
 
 const ProfileService = {
-    setUserBasicInfo: (formData) => {
-        return API.put('/profiles/user/set/basic-info/', formData, {
-            headers: {
-                'Content-Type': 'multipart/form-data',
-            },
-        })
+    setUserBasicInfo: ({ name, age, gender }) => {
+        const requestData = {
+            name: name,
+            age: age,
+            gender: gender,
+        };
+        return API.put(`/profiles/user/set/basic-info/`, requestData)
             .then((response) => {
                 if (response.status === 200) {
                     console.log('사용자 기본 정보가 성공적으로 업데이트되었습니다.');
