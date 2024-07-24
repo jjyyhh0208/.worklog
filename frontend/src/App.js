@@ -23,6 +23,7 @@ import Feedback from './pages/Feedback/Feedback';
 import List from './pages/List/List';
 import FriendProfile from './pages/FriendProfile/FriendProfile';
 import Error from './components/Error/Error';
+import LoginRedirect from './components/KakaoLogin/LoginRedirect';
 
 // Redirect Pages
 import AuthRedirect from './components/AuthRedirect';
@@ -92,6 +93,7 @@ function App() {
             <Routes>
                 {/* 공개 라우트 */}
                 <Route path="/" element={<Main />} />
+                <Route path="/login/redirect" element={<LoginRedirect />} />
                 <Route path="/signup/1" element={<Signup1 signUpInfo={signUpInfo} setSignUpInfo={setSignUpInfo} />} />
                 <Route path="/signup/2" element={<Signup2 signUpInfo={signUpInfo} setSignUpInfo={setSignUpInfo} />} />
                 <Route path="/signup/3" element={<Signup3 signUpInfo={signUpInfo} setSignUpInfo={setSignUpInfo} />} />

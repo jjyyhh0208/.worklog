@@ -14,7 +14,11 @@ from datetime import timedelta
 from pathlib import Path
 import os
 from dotenv import load_dotenv
+from decouple import config
 
+SECRET_KEY = config('SECRET_KEY', default='fallback_secret_key')
+BASE_URL = config('BASE_URL', default='http://localhost:8000')
+REACT_APP_BASE_URL = config('REACT_APP_BASE_URL', default='http://localhost:8000/login/redirect')
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 #Base directory == worklog/backend/worklog
@@ -36,7 +40,6 @@ AWS_LOCATION = 'media'
 
 #gpt key를 환경변수로 설정
 OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
-
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/{AWS_LOCATION}/"
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
@@ -51,7 +54,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 SECRET_KEY = "django-insecure-@5j2w%83edi$)wedcsd-&8)t)8zdd6acfi&d+*a*g&d&#4z!5n"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = [
     "localhost",
@@ -63,10 +66,10 @@ ALLOWED_HOSTS = [
     ".ap-northeast-2.compute.amazonaws.com",
 ]
 
-# CORS
-CORS_ALLOW_ALL_ORIGINS = True
-CORS_ALLOW_CREDENTIALS = True
-CORS_ALLOW_HEADERS = '*'
+# # CORS
+# CORS_ALLOW_ALL_ORIGINS = True
+# CORS_ALLOW_CREDENTIALS = True
+# CORS_ALLOW_HEADERS = '*'
 
 # CSRF
 CSRF_TRUSTED_ORIGINS = [
@@ -114,7 +117,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
-    "corsheaders.middleware.CorsMiddleware",
+    # "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",

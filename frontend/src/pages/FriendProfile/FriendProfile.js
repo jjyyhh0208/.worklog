@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
-import styles from './FriendProfile.module.css';
 import ProfileService from '../../utils/ProfileService';
 import keywordIcons from '../../components/KeywordIcons/KeywordIcons';
 import typeData from '../../data/typeData.json';
@@ -47,7 +46,7 @@ function FriendProfile() {
         checkAuth();
     }, []);
 
-    const discTypeColors = typeData.reduce((acc, item) => {
+    const discTypeColors = typeData.types.reduce((acc, item) => {
         acc[item.disc_character] = item.color;
         return acc;
     }, {});
@@ -58,17 +57,23 @@ function FriendProfile() {
                 const profileData = await ProfileService.fetchFriendProfile(username);
                 setProfileData(profileData);
                 setIsFollowing(profileData.is_following);
-                console.log('Initial following state:', profileData.is_following);
+
+                if (profileData && profileData.disc_character) {
+                    const discData = typeData.types.find((item) => item.disc_character === profileData.disc_character);
+                    if (discData) {
+                        setDISCData(discData);
+                    } else {
+                    }
+                }
 
                 profileData.old = 2025 - profileData.age;
                 profileData.gender =
                     profileData.gender === 'F' ? 'Female' : profileData.gender === 'M' ? 'Male' : 'None';
 
-                const discData = typeData.find((item) => item.disc_character === profileData.disc_character);
+                const discData = typeData.types.find((item) => item.disc_character === profileData.disc_character);
                 if (discData) {
                     setDISCData(discData);
                 } else {
-                    console.error('DISC character not found:', profileData.disc_character);
                 }
 
                 if (profileData.profile_image && profileData.profile_image.image) {
@@ -76,7 +81,6 @@ function FriendProfile() {
                     setImageUrl(signedUrl);
                 }
             } catch (error) {
-                console.error('프로필 정보를 불러오는 동안 오류가 발생했습니다.', error);
             } finally {
                 setIsLoading(false);
             }
@@ -101,10 +105,7 @@ function FriendProfile() {
                 updatedFollowingStatus = true;
             }
             setIsFollowing(updatedFollowingStatus);
-            console.log('Updated following state:', updatedFollowingStatus);
-        } catch (error) {
-            console.error('팔로우/팔로우 취소 중 오류가 발생했습니다.', error);
-        }
+        } catch (error) {}
     };
 
     const handleFeedbackClick = () => {
@@ -113,7 +114,6 @@ function FriendProfile() {
         }
         navigate(`/feedback/intro/${username}`);
     };
-
     return (
         <div className="w-full bg-[#f6f6f6] min-h-screen py-8 px-4 sm:px-6 lg:px-8 mt-16">
             <div className="max-w-5xl mx-auto">
@@ -163,7 +163,7 @@ function FriendProfile() {
                                         </svg>
                                     ) : (
                                         <div
-                                            className="w-[200px] h-[50px] rounded-[10px] mr-8 flex items-center justify-center text-white text-2xl font-semibold"
+                                            className="w-[200px] h-[50px] rounded-[10px] mr-4 ml-4 flex items-center justify-center text-white text-2xl font-semibold"
                                             style={{
                                                 backgroundColor:
                                                     discTypeColors[profileData.disc_character] || discTypeColors.None,
@@ -197,7 +197,7 @@ function FriendProfile() {
 
                 <div className="w-[100%] max-w-[1150px]">
                     <div className="bg-white rounded-[50px] shadow-md mb-5 p-8 md:p-16 relative">
-                        <h2 className="text-3xl md:text-4l font-extrabold mb-4">
+                        <h2 className="text-2xl md:text-3xl font-extrabold mb-4">
                             {profileData?.name}님이 추구하는 업무 스타일
                         </h2>
                         <hr className="border-t border-gray-300 my-3" />
@@ -212,7 +212,7 @@ function FriendProfile() {
                             ))}
                         </div>
 
-                        <h2 className="text-3xl md:text-4l font-extrabold mb-4">타인이 바라보는 업무 스타일</h2>
+                        <h2 className="text-2xl md:text-3xl font-extrabold mb-4">타인이 바라보는 업무 스타일</h2>
                         <hr className="border-t border-gray-300 my-3" />
                         {profileData?.feedback_count >= 3 ? (
                             <div className="flex flex-wrap gap-3 mt-3 mb-8">
@@ -246,7 +246,7 @@ function FriendProfile() {
                             </div>
                         )}
 
-                        <h2 className="text-3xl md:text-4l font-extrabold mb-4">
+                        <h2 className="text-2xl md:text-3xl font-extrabold mb-4">
                             {profileData?.name}님이 관심 있는 업종/직군 분야는?
                         </h2>
                         <hr className="border-t border-gray-300 my-3" />
@@ -264,9 +264,11 @@ function FriendProfile() {
                     </div>
 
                     <div className="bg-white rounded-[50px] shadow-md mb-5 p-8 md:p-16 relative">
-                        <h2 className="text-3xl md:text-4l font-extrabold mb-4">타인이 평가하는 {profileData?.name}</h2>
+                        <h2 className="text-2xl md:text-3xl font-extrabold mb-4">
+                            타인이 평가하는 {profileData?.name}
+                        </h2>
                         <div className="absolute top-8 right-12 bg-[#e1e1e1] px-4 py-2 rounded-[10px] text-xl font-bold">
-                            {profileData?.feedback_count}개의 피드백이 쌓였어요{' '}
+                            {profileData?.feedback_count}개의 피드백이 쌓였어요
                         </div>
                         <hr className="border-t border-gray-300 my-3" />
                         {profileData?.feedback_count >= 3 ? (
@@ -275,31 +277,43 @@ function FriendProfile() {
                                     {profileData.disc_scores &&
                                         Object.entries(profileData.disc_scores).map(([key, value]) => (
                                             <div key={key} className="flex items-center my-10">
-                                                <span className="w-20 font-bold text-2xl mr-3">{key}</span>
-                                                <div className="w-4/5 h-[30px] bg-[#e0e0e0] rounded-[20px] overflow-hidden mx-3">
+                                                <span className="w-20 font-bold text-2xl mr-1">{key}</span>
+                                                <div className="w-8/12 h-[30px] bg-[#e0e0e0] rounded-[20px] overflow-hidden mx-3">
                                                     <div
                                                         className="h-full bg-[#4053ff] rounded-[20px]"
                                                         style={{ width: `${value}%` }}
                                                     ></div>
                                                 </div>
-                                                <span className="font-bold text-[#9b8f8f]">{value.toFixed(0)}</span>
+                                                <span className="ml-2 font-bold text-[#9b8f8f]">
+                                                    {value.toFixed(0)}
+                                                </span>
                                             </div>
                                         ))}
                                 </div>
-                                <div className="flex flex-wrap justify-around mt-8">
-                                    {profileData && DISCData ? (
-                                        <div
-                                            className="w-60 h-[60px] rounded-[20px] flex items-center justify-center text-white text-2xl font-bold mt-5"
-                                            style={{ backgroundColor: discTypeColors[profileData.disc_character] }}
-                                        >
-                                            {DISCData.disc_character}
-                                        </div>
-                                    ) : (
-                                        <div className="w-60 h-[60px] rounded-[20px] flex items-center justify-center bg-gray-200 text-2xl font-bold mt-5">
-                                            데이터 로딩 중...
-                                        </div>
-                                    )}
-                                    <div className="w-full md:w-[70%] text-xl mt-5">
+                                <div className="flex flex-wrap flex-col justify-center items-center text-center w-full mt-8">
+                                    <div className="items-center justify-center flex flex-col">
+                                        {profileData && DISCData ? (
+                                            <div
+                                                className="w-60 h-[60px] rounded-[20px] flex items-center justify-center text-white text-2xl font-bold mt-5"
+                                                style={{
+                                                    backgroundColor: discTypeColors[profileData.disc_character],
+                                                }}
+                                            >
+                                                {DISCData.disc_character}
+                                            </div>
+                                        ) : (
+                                            <div className="w-60 h-[60px] rounded-[20px] flex items-center justify-center bg-gray-200 text-2xl font-bold mt-5">
+                                                데이터 로딩 중...
+                                            </div>
+                                        )}
+                                        {/*img */}
+                                        <img
+                                            src={DISCData.disc_img}
+                                            alt={DISCData.disc_character}
+                                            className="w-44 h-44"
+                                        />
+                                    </div>
+                                    <div className="w-full md:w-[80%] text-xl mt-5">
                                         <p>{DISCData.description}</p>
                                         <div className="font-semibold mt-8 mb-3">
                                             <strong className="mt-8 mb-2 font-bold text-[#4053FF]">
@@ -307,22 +321,23 @@ function FriendProfile() {
                                             </strong>
                                         </div>
                                         <p>
-                                            <strong>이 유형의 강점은:</strong> {DISCData.strength.join(', ')}
+                                            <strong>이 유형의 강점은:</strong> {DISCData.strength}
                                         </p>
                                         <p>
-                                            <strong>상대적으로 이 유형은:</strong> {DISCData.weakness.join(', ')}
+                                            <strong>상대적으로 이 유형은:</strong> {DISCData.weakness}
                                         </p>
-                                        <div className="font-semibold mt-8 mb-3">
-                                            <strong className="mt-8 mb-2 font-bold text-[#4053FF]">
+                                        <div className="font-semibold mt-16 mb-3">
+                                            <strong className="mt-16 mb-2 font-bold text-[#4053FF]">
                                                 {DISCData.disc_character}와 맞는 협업 유형은?
                                             </strong>
                                         </div>
                                         {DISCData.suitable_type.map((type, index) => (
                                             <div key={index}>
-                                                <strong className="mt-8 mb-2 font-semibold text-[#4053FF]">
+                                                <strong className="mt-16 mb-2 font-semibold text-[#4053FF]">
                                                     {type.name}
                                                 </strong>
                                                 <p>{type.description}</p>
+                                                <br />
                                             </div>
                                         ))}
                                     </div>

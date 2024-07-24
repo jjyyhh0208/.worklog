@@ -14,9 +14,7 @@ function Header({ isLoggedIn }) {
                 .then((data) => {
                     setProfileData(data);
                 })
-                .catch((error) => {
-                    console.error('프로필 정보를 불러오는 동안 오류가 발생했습니다.', error);
-                });
+                .catch((error) => {});
         }
     }, [isLoggedIn]);
 
@@ -25,9 +23,7 @@ function Header({ isLoggedIn }) {
             .then(() => {
                 window.location.href = '/';
             })
-            .catch((error) => {
-                console.error('로그아웃 중 오류가 발생했습니다.', error);
-            });
+            .catch((error) => {});
     };
 
     const onDeleteAccountClick = () => {
@@ -36,9 +32,7 @@ function Header({ isLoggedIn }) {
                 window.location.href = '/';
                 localStorage.removeItem('authToken');
             })
-            .catch((error) => {
-                console.error('회원 탈퇴 중 오류가 발생했습니다.', error);
-            });
+            .catch((error) => {});
     };
 
     const toggleMenu = () => {
@@ -50,10 +44,10 @@ function Header({ isLoggedIn }) {
     };
 
     return (
-        <header className="fixed top-0 left-0 right-0 w-full p-3.5 bg-white flex justify-between items-center shadow-md z-50">
+        <header className="fixed top-0 left-0 right-0 w-full p-3.5 h-16 bg-white flex justify-between items-center shadow-md z-50">
             <div className="flex items-center">
                 <Link to={profileData ? '/my-profile' : '/'}>
-                    <h1 className="text-[#4053ff] text-2xl font-extrabold hover:cursor-default mr-6">.WORKLOG</h1>
+                    <h1 className="text-[#4053ff] text-2xl font-extrabold hover:cursor-pointer mr-6">.WORKLOG</h1>
                 </Link>
                 <nav className="flex space-x-4">
                     <Link

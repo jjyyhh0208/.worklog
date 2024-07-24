@@ -30,9 +30,7 @@ function Signup2({ signUpInfo, setSignUpInfo }) {
                 });
                 setSelectedAge(userProfileData.age);
                 setSelectedGender(userProfileData.gender);
-            } catch (error) {
-                console.error('Error fetching data:', error);
-            }
+            } catch (error) {}
         };
 
         fetchData();
@@ -52,9 +50,7 @@ function Signup2({ signUpInfo, setSignUpInfo }) {
                 const signedUrl = await ProfileService.getSignedImageUrl(profileData.profile_image.image);
                 setImageUrl(signedUrl);
             }
-        } catch (error) {
-            console.error('Error fetching profile image:', error);
-        }
+        } catch (error) {}
     };
 
     const signUpChangeHandler = (e) => {
@@ -131,7 +127,6 @@ function Signup2({ signUpInfo, setSignUpInfo }) {
                 setUploadMessage(
                     error.response ? `Failed to upload image: ${error.response.data}` : 'Failed to upload image'
                 );
-                console.error('Failed to update user info:', error);
             }
         }
 
@@ -149,7 +144,6 @@ function Signup2({ signUpInfo, setSignUpInfo }) {
             }
         } catch (error) {
             setUploadMessage('Failed to update user info');
-            console.error('Failed to update user info:', error);
         }
     };
 
@@ -188,9 +182,7 @@ function Signup2({ signUpInfo, setSignUpInfo }) {
                     navigate(-1);
                     // authToken은 signup1에 도착 후 삭제 (속도 이슈)
                 })
-                .catch((error) => {
-                    console.error('회원 탈퇴 중 오류가 발생했습니다.', error);
-                });
+                .catch((error) => {});
         } else {
             navigate(-1);
         }

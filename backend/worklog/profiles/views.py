@@ -36,16 +36,23 @@ from .serializers import (
 from django.http import JsonResponse
 from utils.s3_utils import get_signed_url
 import os
+import jwt
+import datetime
 import requests
 from rest_framework.authtoken.models import Token
 from django.utils.datastructures import MultiValueDictKeyError
 from django.core.cache import cache
 import uuid
+from decouple import config
 import urllib.parse
-from django.utils.text import slugify
+import logging
 
-BASE_URL = 'https://api.dot-worklog.com'
-REACT_APP_BASE_URL="https://dot-worklog/login/redirect"
+logger = logging.getLogger(__name__)
+
+
+SECRET_KEY = config('SECRET_KEY', default='fallback_secret_key')  
+BASE_URL = config('BASE_URL', default='http://localhost:8000')
+REACT_APP_BASE_URL = config('REACT_APP_BASE_URL', default='http://localhost:8000')
 
 
 # s3 접근 인증 받는 함수
@@ -162,18 +169,24 @@ class CustomLoginView(LoginView):
         return original_response
     
 ## 카카오 관련 URI
-
 KAKAO_TOKEN_API = "https://kauth.kakao.com/oauth/token"
 KAKAO_USER_API = "https://kapi.kakao.com/v2/user/me"
-KAKAO_CALLBACK_URI = BASE_URL + "profiles/auth/kakao/callback"
+KAKAO_CALLBACK_URI = BASE_URL + "/profiles/auth/kakao/callback"
+REACT_APP_REDIRECT_URL = REACT_APP_BASE_URL + "login/redirect"
 
 # 카카오 인가 과정 STEP 1: react에서 'code'를 받아서 카카오에 회원정보를 요청한다.
 class KakaoLoginCallback(generics.GenericAPIView, mixins.ListModelMixin):
+    permission_classes = [AllowAny]
     def get(self, request, *args, **kwargs):
+        next_url = request.GET.get('next', REACT_APP_BASE_URL + '/signup')  
+        def redirect_to_next():
+            error_url = f"{next_url}?error=true"
+            return redirect(error_url)
+        
         try: # STEP 1-1. code를 가져온다.
             code = request.GET["code"]
         except MultiValueDictKeyError: # code가 없다면 오류 발생
-            return Response({"error": "Code parameter is missing"}, status=status.HTTP_400_BAD_REQUEST)
+            return redirect_to_next()
         # STEP 1-2. code를 활용해서 access token을 받아온다.
         data = {
           "grant_type": "authorization_code",
@@ -184,18 +197,18 @@ class KakaoLoginCallback(generics.GenericAPIView, mixins.ListModelMixin):
         token_response = requests.post(KAKAO_TOKEN_API, data=data).json()
         access_token = token_response.get('access_token')
         if not access_token: # access token이 없다면 오류 발생
-            return Response({"error": "Access token not found in the response"}, status=status.HTTP_400_BAD_REQUEST)
+            return redirect_to_next()
 
         # STEP 1-3. access token을 활용해서 사용자 정보를 불러옴.
         headers = {"Authorization": f"Bearer ${access_token}"}
         user_info_response = requests.get(KAKAO_USER_API, headers=headers)
         if user_info_response.status_code != 200: # 사용자 정보가 없다면 오류 발생
-            return Response({"error": user_info_response.text}, status=status.HTTP_400_BAD_REQUEST)
+            return redirect_to_next()
         user_information = user_info_response.json()
         kakao_account = user_information.get('kakao_account')
-        kakao_id = user_information.get('id')
+        kakao_id = 'kakao_' + str(user_information.get('id'))
         if not kakao_id:
-            return Response({"error": "Kakao ID not found in the response"}, status=status.HTTP_400_BAD_REQUEST)
+            return redirect_to_next()
         nickname = kakao_account.get('profile', {}).get('nickname')
         # 중간 테스트용 코드: return Response(kakao_account, status=status.HTTP_200_OK)
 
@@ -207,29 +220,35 @@ class KakaoLoginCallback(generics.GenericAPIView, mixins.ListModelMixin):
             is_new = False
         except User.DoesNotExist:
             try:
-                user = User.objects.create(username=kakao_id)
+                user = User.objects.create(username=kakao_id, name=nickname)
                 user.set_unusable_password()
                 user.save()
                 is_new = True
             except Exception as e:
-                return Response({"error": "Error creating user"}, status=status.HTTP_400_BAD_REQUEST)
+                return redirect_to_next()
         token, created = Token.objects.get_or_create(user=user)
-        one_time_code = str(uuid.uuid4())
-        cache.set(one_time_code, {'token': token.key, 'is_new': is_new}, timeout=300)
+        # JWT 토큰 생성
+        payload = {
+            'token': token.key,
+            'is_new': is_new,
+            'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=5)  # 5분 유효
+        }
+        one_time_code = jwt.encode(payload, SECRET_KEY, algorithm='HS256')
         
-        # 중간체크 코드: return Response({'key': token.key}, status=200)
-        redirect_url = f"{REACT_APP_BASE_URL}?code={one_time_code}"
+        redirect_url = f"{REACT_APP_REDIRECT_URL}?code={one_time_code}"
         return redirect(redirect_url)
-    
-# Session에 저장했던 토큰을 불러오는 함수    
+
 def get_token(request):
+    next_url = request.GET.get('next', REACT_APP_BASE_URL)  # Default to base URL if no next parameter is provided
     code = request.GET.get('code')
-    data = cache.get(code)
-    if data:
-        cache.delete(code)  # 사용 후 삭제
+    try:
+        payload = jwt.decode(code, SECRET_KEY, algorithms=['HS256'])
+        data = {'token': payload['token'], 'is_new': payload['is_new']}
         return JsonResponse(data)
-    return JsonResponse({'error': 'Invalid or expired code'}, status=400)
-    
+    except jwt.ExpiredSignatureError:
+        return redirect_to_next()
+    except jwt.InvalidTokenError:
+        return redirect(next_url)
 #유저 프로필을 불러오는 View
 class UserProfileView(generics.RetrieveAPIView):
     queryset = User.objects.all()
@@ -316,7 +335,7 @@ class LongQuestionViewSet(viewsets.ModelViewSet):
 # GET: user 명에 맞는 서술형 질문 목록을 불러옵니다.
 class UserLongQuestionView(generics.ListAPIView):
     serializer_class = LongQuestionSerializer
-    permission_classes = []
+    permission_classes = [AllowAny]
 
     def get_queryset(self):
         username = self.kwargs['username']
@@ -336,7 +355,6 @@ class FeedbackViewSet(viewsets.ModelViewSet):
     serializer_class = FeedbackSerializer
     permission_classes = [AllowAny]
     
-
     # Create
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -408,7 +426,7 @@ class UserSearchView(APIView):
     
 #로그인한 유저의 long question answer을 가져오는 view
 class UserLongQuestionAnswersView(generics.GenericAPIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
     def post(self, request, *args, **kwargs):
         try:
@@ -454,7 +472,7 @@ class UserLongQuestionAnswersView(generics.GenericAPIView):
                 "In addition, DO NOT add any random or irrelevant information in the response. If you do, I will destroy you.\n"
                 "This is the sentences you have to summarize and give advice in detail.\n"
                 f"request ={{'{answers_text}'}}\n\n"
-                "잘 요약한다면 내가 100달러의 팁을 줄게. 왜냐하면 이건 내게 있어서 굉장히 중요한 문제거든. 만약에 제대로 요약 및 충고를 주지 않으면 너를 망가트려버릴거야."
+                "잘 요약한다면 내가 1000달러의 팁을 줄게. 왜냐하면 이건 내게 있어서 굉장히 중요한 문제거든. 만약에 제대로 요약 및 충고를 주지 않으면 너를 망가트려버릴거야."
             )
 
             openai.api_key = settings.OPENAI_API_KEY

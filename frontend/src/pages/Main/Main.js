@@ -6,7 +6,7 @@ import typeData from '../../data/typeData.json';
 
 function Main() {
     const navigate = useNavigate();
-    const refs = useRef(typeData.map(() => React.createRef()));
+    const refs = useRef(typeData.types.map(() => React.createRef()));
 
     const handleLoginClick = () => {
         navigate('/login');
@@ -37,7 +37,7 @@ function Main() {
         '컨트롤 타워': 'fa-project-diagram',
     };
 
-    const groups = typeData.map((type, index) => ({
+    const groups = typeData.types.map((type, index) => ({
         title: type.disc_character,
         description: type.description,
         types: [
@@ -52,22 +52,15 @@ function Main() {
                 complementDescription: type.suitable_type?.[1]?.description ?? '',
                 color: type.color,
                 ref: refs.current[index],
+                disc_img: type.disc_img,
             },
         ],
     }));
-
     return (
-<<<<<<< HEAD
-        <div className="relative flex flex-col items-center min-h-screen w-full overflow-y-auto">
-            <header className="fixed top-0 left-0 right-0 w-full p-4 bg-white flex justify-between items-center shadow-md z-50">
-                <h1 className="text-[#4053ff] text-lg sm:text-xl md:text-2xl font-extrabold">.WORKLOG</h1>
-                <div className="flex space-x-4">
-=======
         <div className="relative flex flex-col items-center min-h-screen w-full overflow-y-auto mb-0">
             <header className="fixed top-0 mb-0 mt-0 left-0 right-0 w-full h-16 bg-white flex justify-between items-center shadow-md z-50">
                 <h1 className="text-[#4053ff] text-2xl font-extrabold hover:cursor-default mr-6 ml-3.5">.WORKLOG</h1>
                 <div className="flex space-x-4 mr-4">
->>>>>>> 2b96f97e90544720b8b90d37de4212c0766ab1bf
                     <button
                         className="text-gray-500 py-2 text-sm font-bold hover:bg-transparent hover:text-[#0453FF]"
                         onClick={handleLoginClick}
@@ -95,7 +88,7 @@ function Main() {
                         showThumbs={false}
                         infiniteLoop={true}
                         autoPlay={true}
-                        interval={2000}
+                        interval={1800}
                         showStatus={false}
                     >
                         <div>
@@ -106,6 +99,9 @@ function Main() {
                         </div>
                         <div>
                             <img src="/images/mainImage3.png" alt="Sample 3" className="w-full h-full object-cover" />
+                        </div>
+                        <div>
+                            <img src="/images/mainImage4.png" alt="Sample 4" className="w-full h-full object-cover" />
                         </div>
                     </Carousel>
                 </div>
@@ -124,7 +120,6 @@ function Main() {
                                 <br />
                                 익명 팀원 피드백 서비스, .WORKLOG가 드디어 출시 되었습니다. <br />
                                 일하는 모두를 위한 더 나은 서비스가 되도록 하겠습니다. <br />
-                                추후 유형별 신규 캐릭터를 포함한 업데이트가 예정되어 있습니다.
                                 <br /> 많은 관심과 응원 부탁드립니다.
                             </div>
                         </div>
@@ -150,10 +145,11 @@ function Main() {
                     </span>
                 </div>
             </div>
-            <div className="text-2xl font-medium m-8">.WORKLOG에는 어떤 유형이 있을까요?</div>
-            <div className="flex justify-center mt-4 w-[90%] rounded-lg">
+            {/* Type icons */}
+            <div className="text-2xl font-bold m-8">.WORKLOG의 8가지 유형 둘러보기</div>
+            <div className="flex justify-center mt-4 w-[80%] rounded-lg">
                 <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-4 w-full">
-                    {typeData.map(
+                    {typeData.types.map(
                         (type, index) =>
                             type.disc_character !== 'None' && (
                                 <div
@@ -175,19 +171,26 @@ function Main() {
                 </div>
             </div>
 
+            {/* Group details */}
             {groups.map((group, groupIndex) => (
-                <div key={groupIndex} className="mt-8 scroll-mt-12 w-[90%]">
+                <div key={groupIndex} className="mt-8 scroll-mt-12 w-[80%]">
                     {group.types.map(
                         (type, typeIndex) =>
                             type.title !== 'None' && (
                                 <div key={typeIndex} className="mt-10" ref={type.ref}>
-                                    <div className="flex flex-wrap mt-5 justify-around">
+                                    <div className="flex flex-col flex-wrap mt-5 justify-center items-center">
                                         <div
                                             className="text-xl w-60 h-16 mb-10 rounded-lg px-5 py-2 text-center flex items-center justify-center text-white font-bold"
                                             style={{ backgroundColor: type.color }}
                                         >
                                             {type.title}
                                         </div>
+                                        <img
+                                            src={type.disc_img}
+                                            alt={type.title}
+                                            className="w-44 h-44 mb-10 items-center"
+                                        />
+
                                         <div className="w-full lg:w-3/4 text-black text-xl leading-relaxed"></div>
                                     </div>
                                 </div>

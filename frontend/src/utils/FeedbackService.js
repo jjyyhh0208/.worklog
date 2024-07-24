@@ -25,10 +25,10 @@ const FeedbackService = {
                 return transformedQuestions;
             })
             .catch((error) => {
-                console.error('질문을 불러오는 동안 오류가 발생했습니다.', error);
                 throw error;
             });
     },
+
     submitAnswers: (answers) => {
         const transformedAnswers = {
             id: answers.id,
