@@ -171,6 +171,8 @@ KAKAO_CALLBACK_URI = BASE_URL + "/profiles/auth/kakao/callback"
 
 # 카카오 인가 과정 STEP 1: react에서 'code'를 받아서 카카오에 회원정보를 요청한다.
 class KakaoLoginCallback(generics.GenericAPIView, mixins.ListModelMixin):
+    permission_classes = [AllowAny]
+    
     def get(self, request, *args, **kwargs):
         try: # STEP 1-1. code를 가져온다.
             code = request.GET["code"]

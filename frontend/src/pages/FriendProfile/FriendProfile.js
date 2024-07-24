@@ -204,7 +204,7 @@ function FriendProfile() {
 
                 <div className="w-[100%] max-w-[1150px]">
                     <div className="bg-white rounded-[50px] shadow-md mb-5 p-8 md:p-16 relative">
-                        <h2 className="text-3xl md:text-4l font-extrabold mb-4">
+                        <h2 className="text-2xl md:text-3xl font-extrabold mb-4">
                             {profileData?.name}님이 추구하는 업무 스타일
                         </h2>
                         <hr className="border-t border-gray-300 my-3" />
@@ -219,7 +219,7 @@ function FriendProfile() {
                             ))}
                         </div>
 
-                        <h2 className="text-3xl md:text-4l font-extrabold mb-4">타인이 바라보는 업무 스타일</h2>
+                        <h2 className="text-2xl md:text-3xl font-extrabold mb-4">타인이 바라보는 업무 스타일</h2>
                         <hr className="border-t border-gray-300 my-3" />
                         {profileData?.feedback_count >= 3 ? (
                             <div className="flex flex-wrap gap-3 mt-3 mb-8">
@@ -253,7 +253,7 @@ function FriendProfile() {
                             </div>
                         )}
 
-                        <h2 className="text-3xl md:text-4l font-extrabold mb-4">
+                        <h2 className="text-2xl md:text-3xl font-extrabold mb-4">
                             {profileData?.name}님이 관심 있는 업종/직군 분야는?
                         </h2>
                         <hr className="border-t border-gray-300 my-3" />
@@ -271,7 +271,9 @@ function FriendProfile() {
                     </div>
 
                     <div className="bg-white rounded-[50px] shadow-md mb-5 p-8 md:p-16 relative">
-                        <h2 className="text-3xl md:text-4l font-extrabold mb-4">타인이 평가하는 {profileData?.name}</h2>
+                        <h2 className="text-2xl md:text-3xl font-extrabold mb-4">
+                            타인이 평가하는 {profileData?.name}
+                        </h2>
                         <div className="absolute top-8 right-12 bg-[#e1e1e1] px-4 py-2 rounded-[10px] text-xl font-bold">
                             {profileData?.feedback_count}개의 피드백이 쌓였어요
                         </div>
@@ -282,14 +284,16 @@ function FriendProfile() {
                                     {profileData.disc_scores &&
                                         Object.entries(profileData.disc_scores).map(([key, value]) => (
                                             <div key={key} className="flex items-center my-10">
-                                                <span className="w-20 font-bold text-2xl mr-3">{key}</span>
-                                                <div className="w-4/5 h-[30px] bg-[#e0e0e0] rounded-[20px] overflow-hidden mx-3">
+                                                <span className="w-20 font-bold text-2xl mr-1">{key}</span>
+                                                <div className="w-8/12 h-[30px] bg-[#e0e0e0] rounded-[20px] overflow-hidden mx-3">
                                                     <div
                                                         className="h-full bg-[#4053ff] rounded-[20px]"
                                                         style={{ width: `${value}%` }}
                                                     ></div>
                                                 </div>
-                                                <span className="font-bold text-[#9b8f8f]">{value.toFixed(0)}</span>
+                                                <span className="ml-2 font-bold text-[#9b8f8f]">
+                                                    {value.toFixed(0)}
+                                                </span>
                                             </div>
                                         ))}
                                 </div>

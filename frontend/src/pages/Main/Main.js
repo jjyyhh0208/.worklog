@@ -146,7 +146,7 @@ function Main() {
                 </div>
             </div>
             {/* Type icons */}
-            <div className="text-2xl font-medium m-8">.WORKLOG에는 어떤 유형이 있을까요?</div>
+            <div className="text-2xl font-bold m-8">.WORKLOG의 8가지 유형 둘러보기</div>
             <div className="flex justify-center mt-4 w-[90%] rounded-lg">
                 <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-4 w-full">
                     {typeData.types.map(
