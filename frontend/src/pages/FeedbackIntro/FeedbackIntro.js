@@ -19,13 +19,17 @@ function FeedbackIntro() {
                 const fetchedKeywords = data.map((item) => item.name);
                 setKeywords(fetchedKeywords);
             })
-            .catch((error) => {});
+            .catch((error) => {
+                console.error('Error fetching work styles:', error);
+            });
 
         ProfileService.fetchFriendProfile(username)
             .then((data) => {
                 setProfileData(data);
             })
-            .catch((error) => {});
+            .catch((error) => {
+                console.error('Error fetching user data:', error);
+            });
 
         const storedWorkStyles = localStorage.getItem('workStyles');
         if (storedWorkStyles) {

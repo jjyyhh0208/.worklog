@@ -16,9 +16,13 @@ const Feedback = () => {
     const [scores, setScores] = useState(location.state?.scores || { D: 0, I: 0, S: 0, C: 0 });
 
     useEffect(() => {
-        ProfileService.fetchFriendProfile(username).then((data) => setProfileData(data));
+        ProfileService.fetchFriendProfile(username)
+            .then((data) => setProfileData(data))
+            .catch((error) => console.error('Error fetching profile data:', error));
 
-        FeedbackService.fetchQuestions().then((questions) => setQuestionsTemplate(questions));
+        FeedbackService.fetchQuestions()
+            .then((questions) => setQuestionsTemplate(questions))
+            .catch((error) => console.error('Error fetching questions:', error));
     }, [username]);
 
     const handleAnswerChange = (question, option, value) => {

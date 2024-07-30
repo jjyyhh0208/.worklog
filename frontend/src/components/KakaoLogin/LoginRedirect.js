@@ -31,6 +31,7 @@ const LoginRedirect = () => {
                     throw new Error('Invalid token data received');
                 }
             } catch (error) {
+                console.error('Error fetching token:', error);
                 navigate('/login', { state: { error: error.message } });
             }
         };

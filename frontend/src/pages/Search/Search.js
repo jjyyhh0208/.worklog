@@ -27,7 +27,9 @@ function Search() {
         try {
             const userProfile = await ProfileService.fetchUserProfile();
             setCurrentUser(userProfile);
-        } catch (error) {}
+        } catch (error) {
+            console.error('Error fetching current user profile:', error);
+        }
     };
 
     const handleInputChange = (e) => {
@@ -48,6 +50,7 @@ function Search() {
             }
 
             const results = await ProfileService.fetchSearchResults(query);
+            console.log(results);
 
             const resultsWithImages = await Promise.all(
                 results.map(async (result) => {
@@ -56,6 +59,7 @@ function Search() {
                             const imageUrl = await ProfileService.getSignedImageUrl(result.profile_image.image);
                             return { ...result, profileImage: imageUrl };
                         } catch (error) {
+                            console.error('Error fetching signed URL:', error);
                             return result;
                         }
                     } else {
@@ -72,6 +76,7 @@ function Search() {
                 setNotFound(true);
             }
         } catch (error) {
+            console.error('Search error:', error);
             setResultsWithImages([]);
             setNotFound(true);
         }
@@ -101,7 +106,9 @@ function Search() {
             }
             const updatedResults = await ProfileService.fetchSearchResults(searchTerm);
             setSearchResults(updatedResults);
-        } catch (error) {}
+        } catch (error) {
+            console.error('팔로우/팔로우 취소 중 오류가 발생했습니다.', error);
+        }
     };
 
     const handleKeyPress = (e) => {

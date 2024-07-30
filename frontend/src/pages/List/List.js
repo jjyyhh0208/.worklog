@@ -34,6 +34,7 @@ function List() {
                                 const imageUrl = await ProfileService.getSignedImageUrl(friend.profile_image.image);
                                 return { ...friend, profileImage: imageUrl };
                             } catch (error) {
+                                console.error('Error fetching signed URL:', error);
                                 return friend;
                             }
                         } else {
@@ -43,7 +44,9 @@ function List() {
                 );
                 setFriends(friendsWithImages);
             })
-            .catch((error) => {});
+            .catch((error) => {
+                console.error('오류가 발생했습니다.', error);
+            });
     }, []);
 
     const handleEvaluationClick = (username) => {

@@ -33,12 +33,24 @@ const FeedbackLong = ({ isLoggedIn }) => {
     }, [showModal, navigate, username]);
 
     useEffect(() => {
+<<<<<<< HEAD
         ProfileService.fetchFriendProfile(username).then((data) => setProfileData(data));
+=======
+        ProfileService.fetchFriendProfile(username)
+            .then((data) => setProfileData(data))
+            .catch((error) => console.error('Error fetching profile data:', error));
+>>>>>>> parent of 665d6c04 (final v.0.2.1)
     }, [username]);
 
     useEffect(() => {
         if (isLoggedIn) {
+<<<<<<< HEAD
             ProfileService.fetchUserProfile().then((data) => setMyProfileData(data));
+=======
+            ProfileService.fetchUserProfile()
+                .then((data) => setMyProfileData(data))
+                .catch((error) => console.error('Error fetching profile data:', error));
+>>>>>>> parent of 665d6c04 (final v.0.2.1)
         }
     }, [isLoggedIn]);
 
@@ -64,6 +76,7 @@ const FeedbackLong = ({ isLoggedIn }) => {
         }
 
         if (!profileData) {
+            console.error('프로필을 불러오는 데에 실패했습니다.');
             return;
         }
 

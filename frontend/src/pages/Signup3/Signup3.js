@@ -21,6 +21,7 @@ function Signup3({ signUpInfo, setSignUpInfo }) {
                 if (isEditing) {
                     const userProfileData = await ProfileService.fetchUserProfile();
                     const fetchedKeywords = userProfileData.work_styles.map((item) => item.name) || [];
+                    console.log(fetchedKeywords);
                     setSelectedKeywords(fetchedKeywords);
                     setSignUpInfo({
                         ...signUpInfo,
@@ -39,7 +40,9 @@ function Signup3({ signUpInfo, setSignUpInfo }) {
                         updateSignUpInfo(parsedKeywords);
                     }
                 }
-            } catch (error) {}
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
         };
 
         fetchData();
@@ -91,7 +94,9 @@ function Signup3({ signUpInfo, setSignUpInfo }) {
                     state: { isEditing, profileData: { ...signUpInfo, work_styles: selectedKeywords } },
                 });
             })
-            .catch((error) => {});
+            .catch((error) => {
+                console.error('Error setting user work styles:', error);
+            });
     };
 
     const logoHandler = () => {
