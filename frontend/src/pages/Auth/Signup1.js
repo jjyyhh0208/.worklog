@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import AdminService from '../../utils/AdminService';
 import { useNavigate } from 'react-router-dom';
-import KakaoLogin from '../../components/KakaoLogin/KakaoLogin';
+import KakaoLogin from '../../components/Kakao/KakaoLogin';
 
 function Signup1({ signUpInfo, setSignUpInfo }) {
     const [error, setError] = useState('');

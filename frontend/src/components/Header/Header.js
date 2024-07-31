@@ -75,7 +75,7 @@ function Header({ isLoggedIn }) {
                                 fill="currentColor"
                             />
                         </svg>
-                        내 프로필
+                        <div className="ml-2">내 프로필</div>
                     </Link>
                     <Link
                         to={`/list/${profileData?.username}`}
@@ -96,7 +96,7 @@ function Header({ isLoggedIn }) {
                                 fill="currentColor"
                             />
                         </svg>
-                        둘러보기
+                        <div className="ml-2">둘러보기</div>
                     </Link>
                     <Link
                         to="/about-us"
@@ -117,7 +117,7 @@ function Header({ isLoggedIn }) {
                                 fill="currentColor"
                             />
                         </svg>
-                        가이드북
+                        <div className="ml-2">가이드북</div>
                     </Link>
                 </nav>
             </div>

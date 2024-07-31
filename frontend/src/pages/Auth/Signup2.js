@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import styles from './Signup2.module.css';
 import { useNavigate, useLocation } from 'react-router-dom';
 import ProfileService from '../../utils/ProfileService';
 import AdminService from '../../utils/AdminService';

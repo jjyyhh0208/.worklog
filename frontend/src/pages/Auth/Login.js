@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import AdminService from '../../utils/AdminService';
 import { useNavigate } from 'react-router-dom';
-import KakaoLogin from '../../components/KakaoLogin/KakaoLogin';
+import KakaoLogin from '../../components/Kakao/KakaoLogin';
 
 function Login() {
     const [loginInfo, setLoginInfo] = useState({ username: '', password: '' });

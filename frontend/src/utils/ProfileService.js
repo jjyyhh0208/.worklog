@@ -120,10 +120,6 @@ const ProfileService = {
             });
     },
 
-    getUserProfileLink: (username) => {
-        return `${window.location.origin}/friend-profile/${username}`;
-    },
-
     fetchFriendProfile: (username) => {
         return API.get(`/profiles/user/view/${username}`)
             .then((response) => {

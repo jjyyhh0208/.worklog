@@ -1,34 +1,39 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Component } from 'react';
 import { Route, Routes, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import './App.css';
 
 // Pages
 import Main from './pages/Main/Main';
-import Signup1 from './pages/Signup1/Signup1';
-import Signup2 from './pages/Signup2/Signup2';
-import Signup3 from './pages/Signup3/Signup3';
-import Signup4 from './pages/Signup4/Signup4';
-import FeedbackLong from './pages/FeedbackLong/FeedbackLong';
-import FeedbackIntro from './pages/FeedbackIntro/FeedbackIntro';
-import Login from './pages/Login/Login';
-import Search from './pages/Search/Search';
-import MyProfile from './pages/MyProfile/MyProfile';
-import OnBoarding1 from './pages/OnBoarding1/OnBoarding1';
-import OnBoarding2 from './pages/OnBoarding2/OnBoarding2';
-import OnBoarding3 from './pages/OnBoarding3/OnBoarding3';
-import AboutUs from './pages/AboutUs/AboutUs';
-import Header from './components/Header/Header';
+import Signup1 from './pages/Auth/Signup1';
+import Signup2 from './pages/Auth/Signup2';
+import Signup3 from './pages/Auth/Signup3';
+import Signup4 from './pages/Auth/Signup4';
+import Login from './pages/Auth/Login';
+
 import Feedback from './pages/Feedback/Feedback';
+import FeedbackLong from './pages/Feedback/FeedbackLong';
+import FeedbackIntro from './pages/Feedback/FeedbackIntro';
+
+import MyProfile from './pages/Profile/MyProfile';
+import FriendProfile from './pages/Profile/FriendProfile';
+
+import OnBoarding1 from './pages/OnBoarding/OnBoarding1';
+import OnBoarding2 from './pages/OnBoarding/OnBoarding2';
+import OnBoarding3 from './pages/OnBoarding/OnBoarding3';
+
+import Search from './pages/Search/Search';
+import AboutUs from './pages/AboutUs/AboutUs';
 import List from './pages/List/List';
-import FriendProfile from './pages/FriendProfile/FriendProfile';
+
+// Component
 import Error from './components/Error/Error';
-import LoginRedirect from './components/KakaoLogin/LoginRedirect';
+import LoginRedirect from './components/Kakao/LoginRedirect';
+import Header from './components/Header/Header';
 
 // Redirect Pages
-import AuthRedirect from './components/AuthRedirect';
-import ProtectedRoute from './components/ProtectedRoute';
-import ProfileService from './utils/ProfileService';
+import AuthRedirect from './components/Auth/AuthRedirect';
+import ProtectedRoute from './components/Auth/ProtectedRoute';
 
 axios.defaults.xsrfCookieName = 'csrftoken';
 axios.defaults.xsrfHeaderName = 'X-CSRFToken';
@@ -56,17 +61,17 @@ function App() {
     });
     const [profileData, setProfileData] = useState(null);
 
-    useEffect(() => {
-        if (!window.Kakao.isInitialized()) {
-            window.Kakao.init(process.env.REACT_APP_KAKAO_APP_KEY);
-        }
+    // useEffect(() => {
+    //     if (!window.Kakao.isInitialized()) {
+    //         window.Kakao.init(process.env.REACT_APP_KAKAO_APP_KEY);
+    //     }
 
-        if (isLoggedIn()) {
-            ProfileService.fetchUserProfile()
-                .then((data) => setProfileData(data))
-                .catch((error) => console.error('프로필 정보를 불러오는 동안 오류가 발생했습니다.', error));
-        }
-    }, []);
+    //     if (isLoggedIn()) {
+    //         ProfileService.fetchUserProfile()
+    //             .then((data) => setProfileData(data))
+    //             .catch((error) => console.error('프로필 정보를 불러오는 동안 오류가 발생했습니다.', error));
+    //     }
+    // }, []);
 
     const isLoggedIn = () => {
         return !!localStorage.getItem('authToken');

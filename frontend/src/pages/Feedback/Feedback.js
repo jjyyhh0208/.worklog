@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import ProfileService from '../../utils/ProfileService';
 import FeedbackService from '../../utils/FeedbackService';
-import styles from './Feedback.module.css';
 import ProgressBar from '../../components/ProgressBar/ProgressBar';
 
 const Feedback = () => {
@@ -67,7 +66,7 @@ const Feedback = () => {
     };
 
     if (!profileData || questionsTemplate.length === 0) {
-        return <div className={styles.feedbackContainer}></div>;
+        return <div></div>;
     }
 
     const currentPageQuestions = questionsTemplate[pageIndex].map((q) => ({

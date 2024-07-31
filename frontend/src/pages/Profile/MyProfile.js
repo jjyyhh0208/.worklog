@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import ProfileService from '../../utils/ProfileService';
 import keywordIcons from '../../components/KeywordIcons/KeywordIcons';
 import typeData from '../../data/typeData.json';
-import KakaoShareButton from '../../components/KakaoShareButton/KakaoShareButton';
+import KakaoShareButton from '../../components/Kakao/KakaoShareButton';
 
 function MyProfile() {
     const [isLoading, setisLoading] = useState(true);
@@ -86,7 +86,7 @@ function MyProfile() {
         }
 
         if (profileData && profileData.username) {
-            const profileLink = ProfileService.getUserProfileLink(profileData.username);
+            const profileLink = `${window.location.origin}/friend-profile/${profileData.username}`;
 
             if (navigator.clipboard && navigator.clipboard.writeText) {
                 navigator.clipboard

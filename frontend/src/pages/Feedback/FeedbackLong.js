@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import styles from './FeedbackLong.module.css';
-import ProgressBar from '../../components/ProgressBar/ProgressBar'; // ProgressBar import
+import ProgressBar from '../../components/ProgressBar/ProgressBar';
 import FeedbackService from '../../utils/FeedbackService';
 import ProfileService from '../../utils/ProfileService';
-import Modal from '../../components/Modal/Modal'; // Import the Modal component
+import Modal from '../../components/Modal/Modal';
 
 const FeedbackLong = ({ isLoggedIn }) => {
     const navigate = useNavigate();
@@ -27,30 +26,22 @@ const FeedbackLong = ({ isLoggedIn }) => {
             const timer = setTimeout(() => {
                 setShowModal(false);
                 navigate(`/friend-profile/${username}`);
-            }, 2000);
+            }, 2500);
             return () => clearTimeout(timer);
         }
     }, [showModal, navigate, username]);
 
     useEffect(() => {
-<<<<<<< HEAD
-        ProfileService.fetchFriendProfile(username).then((data) => setProfileData(data));
-=======
         ProfileService.fetchFriendProfile(username)
             .then((data) => setProfileData(data))
             .catch((error) => console.error('Error fetching profile data:', error));
->>>>>>> parent of 665d6c04 (final v.0.2.1)
     }, [username]);
 
     useEffect(() => {
         if (isLoggedIn) {
-<<<<<<< HEAD
-            ProfileService.fetchUserProfile().then((data) => setMyProfileData(data));
-=======
             ProfileService.fetchUserProfile()
                 .then((data) => setMyProfileData(data))
                 .catch((error) => console.error('Error fetching profile data:', error));
->>>>>>> parent of 665d6c04 (final v.0.2.1)
         }
     }, [isLoggedIn]);
 
@@ -206,15 +197,7 @@ const FeedbackLong = ({ isLoggedIn }) => {
                     </button>
                 </div>
             </div>
-            {showModal && (
-                <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50">
-                    <div className="fixed inset-0 flex items-center justify-center z-50">
-                        <div className="bg-[#4053ff] text-white p-8 md:p-12 rounded-lg text-center font-semibold text-lg md:text-xl">
-                            피드백이 제출되었습니다!
-                        </div>
-                    </div>
-                </div>
-            )}
+            {showModal && <Modal />}
         </div>
     );
 };
