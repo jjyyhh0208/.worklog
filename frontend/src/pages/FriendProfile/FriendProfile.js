@@ -17,14 +17,13 @@ function FriendProfile() {
     const navigate = useNavigate();
     const [showWarning, setShowWarning] = useState(false);
     const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem('authToken'));
-
     const parsedPersonality =
         profileData && profileData.gpt_summarized_personality ? JSON.parse(profileData.gpt_summarized_personality) : {};
-    const summarized = parsedPersonality.summarized || [];
-    const advice = parsedPersonality.advice || [];
+    const positive_feedback = parsedPersonality.positive_feedback || [];
+    const constructive_feedback = parsedPersonality.constructive_feedback || [];
     const formatListWithIndex = (list) => {
-        if (!Array.isArray(list)) {
-            return null;
+        if (!Array.isArray(list) || list.length === 0) {
+            return <p>저장된 피드백 데이터가 없습니다.</p>;
         }
         return list.map((item, index) => (
             <div key={index}>
@@ -362,15 +361,15 @@ function FriendProfile() {
                                             팀원들은 {profileData.name}님의 협업 성향에 대해 다음과 같이 느꼈어요!
                                         </p>
                                         <div className="flex flex-col  justify-around mt-5">
-                                            <h3 className="text-3xl font-bold text-[#4053ff]">Summary</h3>
+                                            <h3 className="text-3xl font-bold text-[#4053ff]">긍정적 피드백</h3>
 
                                             <div className="flex-1 bg-[rgba(204,209,255,0.2)] rounded-[20px] p-12 m-5 md:m-12 text-xl">
-                                                {formatListWithIndex(summarized)}
+                                                {formatListWithIndex(positive_feedback)}
                                             </div>
-                                            <h3 className="text-3xl font-bold text-[#4053ff]">Advice</h3>
+                                            <h3 className="text-3xl font-bold text-[#4053ff]">발전적 피드백</h3>
 
                                             <div className="flex-1 bg-[rgba(204,209,255,0.2)] rounded-[20px] p-12 m-5 md:m-12 text-xl">
-                                                {formatListWithIndex(advice)}
+                                                {formatListWithIndex(constructive_feedback)}
                                             </div>
                                         </div>
                                     </div>

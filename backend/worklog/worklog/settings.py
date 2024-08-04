@@ -59,15 +59,15 @@ DEBUG = False
 ALLOWED_HOSTS = [
     "localhost",
     "127.0.0.1",
-    "www.dot-worklog.com",
-    "dot-worklog.com",
-    "api.dot-worklog.com",
-    "43.202.115.16",
-    ".ap-northeast-2.compute.amazonaws.com",
+    # "www.dot-worklog.com",
+    # "dot-worklog.com",
+    # "api.dot-worklog.com",
+    # "43.202.115.16",
+    # ".ap-northeast-2.compute.amazonaws.com",
 ]
 
 # # CORS
-# CORS_ALLOW_ALL_ORIGINS = True
+#CORS_ALLOW_ALL_ORIGINS = True
 # CORS_ALLOW_CREDENTIALS = True
 # CORS_ALLOW_HEADERS = '*'
 
@@ -75,10 +75,10 @@ ALLOWED_HOSTS = [
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:3000", 
     "http://127.0.0.1:3000",
-    "https://dot-worklog.com",
-    "https://www.dot-worklog.com",
-    "http://43.202.115.16", 
-    "http://ec2-43-202-115-16.ap-northeast-2.compute.amazonaws.com"
+    # "https://dot-worklog.com",
+    # "https://www.dot-worklog.com",
+    # "http://43.202.115.16", 
+    # "http://ec2-43-202-115-16.ap-northeast-2.compute.amazonaws.com"
     ]
 
 CSRF_COOKIE_NAME = "csrftoken"
@@ -117,7 +117,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
-    # "corsheaders.middleware.CorsMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",

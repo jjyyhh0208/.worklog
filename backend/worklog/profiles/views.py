@@ -430,8 +430,8 @@ class UserLongQuestionAnswersView(generics.GenericAPIView):
 
     def post(self, request, *args, **kwargs):
         try:
-            evaluated_username = request.data.get('user_to', '')  # URL에서 평가받는 유저의 유저네임 가져오기
-            evaluated_user = User.objects.get(username=evaluated_username)  # 평가받는 유저 조회
+            evaluated_username = request.data.get('user_to', '')
+            evaluated_user = User.objects.get(username=evaluated_username)
 
             question_answers = request.data.get('question_answers', [])
 
@@ -450,74 +450,99 @@ class UserLongQuestionAnswersView(generics.GenericAPIView):
             answers = [qa['answer'] for qa in question_answers]
             answers_text = " ".join(answers)
 
-            prompt = (
-                "I will give you evaluations of a certain user in Korean.\n"
-                "For example, '같이 프로젝트를 하면서 의견을 제시하지만 요점이 없는 의견만 제시함. 하지만 적극적인 태도는 좋음.', "
-                "'발표력이 매우 좋고 리더십이 있음. 하지만 회의 시간을 잘 지키지 않음'...etc.\n"
-                "You have to summarize these couple of evaluations in Two sentences.\n"
-                "For example, '의견을 적극적으로 제시하지만 요점이 없고 회의시간을 잘 지키지 않는다. 하지만 발표력이 매우 좋고 리더십이 있다.'\n"
-                "Then, you have to give advice to fix some problems based on the evaluations I provide you.\n"
-                "For example, '적극적인 태도는 좋지만 의견 제시할 때 요점을 먼저 정리하고 제시해보세요!', '회의 시간을 잘 지켜보세요!' ...etc.\n"
-                "For example, you will receive\n"
-                "request = { '같이 프로젝트를 하면서 의견을 제시하지만 요점이 없는 의견만 제시함. 하지만 적극적인 태도는 좋음 발표력이 매우 좋고 리더십이 있음. 회의 시간을 잘 지키지 않음'}\n"
-                "Then, your response should be in the format just like this.\n"
-                "response format(application/json) = {'summarized': <your summarized answer>, 'advice': <your advice>}\n"
-                "Your answer must be in json format (application/json) this is very important. You MUST respond in json format"
-                "For example,\n"
-                "gpt_response = { 'summarized' = '의견을 적극적으로 제시하지만 요점이 없고 회의시간을 잘 지키지 않는다. 하지만 발표력이 매우 좋고 리더십이 있다.', 'advice' = '적극적인 태도는 좋지만 의견 제시할 때 요점을 먼저 정리하고 제시해보세요!', '회의 시간을 잘 지켜보세요!' }\n"
-                "You have to give longer summary and advices. Particularly with the advice, you have to recommend methods to strengthen or make better with the defaults. "
-                "For example, you can say '요점을 정리하는 방법을 배우기 위해서 ~~프로그램, 00도서를 사용해보세요!' as the advice.\n\n"
-                "In addition, do not use swear words or harsh expressions. If the prompt includes some harsh expressions, I want you to change those in another words.\n"
-                "Also, do not contain particular name or organizations. For example, 'Eric told you are good at communications'. This specify the user. This MUST NOT happen.\n"
-                "In addition, DO NOT add any random or irrelevant information in the response. If you do, I will destroy you.\n"
-                "This is the sentences you have to summarize and give advice in detail.\n"
-                f"request ={{'{answers_text}'}}\n\n"
-                "잘 요약한다면 내가 1000달러의 팁을 줄게. 왜냐하면 이건 내게 있어서 굉장히 중요한 문제거든. 만약에 제대로 요약 및 충고를 주지 않으면 너를 망가트려버릴거야."
-            )
+            # Process good feedback
+            good_response = self.process_good_feedback(answers_text)
 
-            openai.api_key = settings.OPENAI_API_KEY
-            response = openai.ChatCompletion.create(
-                model="gpt-3.5-turbo",
-                messages=[
-                    {"role": "system", "content": "You are a helpful assistant."},
-                    {"role": "user", "content": prompt}
-                ],
-                max_tokens=300
-            )
+            # Process bad feedback
+            bad_response = self.process_bad_feedback(answers_text)
 
-            openai_response_text = response['choices'][0]['message']['content'].strip()
-            logger.error(f"OpenAI response text: {openai_response_text}")
-            logger.error(evaluated_username)
-            try:
-                openai_response_dict = json.loads(openai_response_text)
-                logger.error(openai_response_dict)
-            except (ValueError, SyntaxError) as e:
-                logger.error(f"Failed to decode OpenAI response: {e}")
-                return Response({"error": "Failed to decode OpenAI response"}, status=500)
+            # Combine and save results
+            combined_results = self.combine_and_save_results(evaluated_user, good_response, bad_response)
 
-            # 기존 요약과 조언을 리스트로 처리하도록 수정
-            existing_personality = json.loads(evaluated_user.gpt_summarized_personality) if evaluated_user.gpt_summarized_personality else {}
-            summarized_list = existing_personality.get('summarized', [])
-            advice_list = existing_personality.get('advice', [])
+            return Response(combined_results)
 
-            summarized_list.append(openai_response_dict['summarized'])
-            advice_list.append(openai_response_dict['advice'])
-
-            evaluated_user.gpt_summarized_personality = json.dumps({
-                'summarized': summarized_list,
-                'advice': advice_list
-            }, ensure_ascii=False)
-            evaluated_user.save()
-
-            return Response({
-                "summarized": summarized_list,
-                "advice": advice_list
-            })
         except Exception as e:
-            logger.error(f"Error in UserLongQuestionAnswersView: {e}")
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+    def process_good_feedback(self, answers_text):
+        good_prompt = self.create_good_prompt(answers_text)
+        return self.call_openai_api(good_prompt)
 
+    def process_bad_feedback(self, answers_text):
+        bad_prompt = self.create_bad_prompt(answers_text)
+        return self.call_openai_api(bad_prompt)
+
+    def create_good_prompt(self, answers_text):
+        return (
+            "You are an AI assistant tasked with processing feedback about a person's performance. "
+            "The feedback will be in Korean. Your job is to identify and preserve positive feedback "
+            "while removing any specific identifiers like project names or personal names. "
+            "Follow these instructions carefully:\n\n"
+            
+            "1. Identify positive feedback: Look for compliments, praise, or mentions of good qualities and actions.\n"
+            "2. Remove specific identifiers: Replace project names, personal names, or any other identifiers "
+            "with general terms like '[프로젝트]', '[이름]', or '[조직]'.\n"
+            "3. Preserve original wording: Keep the original sentence structure and wording as much as possible, "
+            "only changing what's necessary to remove identifiers.\n"
+            "4. Maintain context: Ensure the meaning and context of the feedback remains intact.\n"
+            "5. Format: Provide your response in JSON format with a single key 'positive_feedback'.\n\n"
+            
+            f"Now, process the following feedback:\n{answers_text}\n\n"
+            
+            "Remember, accurate processing is crucial. A perfect response will be highly valued."
+        )
+
+    def create_bad_prompt(self, answers_text):
+        return (
+            "You are an AI assistant tasked with processing constructive feedback about a person's performance. "
+            "The feedback will be in Korean. Your job is to identify areas for improvement, express them euphemistically, "
+            "and remove any specific identifiers. Follow these instructions carefully:\n\n"
+            
+            "1. Identify areas for improvement: Look for critiques or mentions of qualities or actions that could be enhanced.\n"
+            "2. Express euphemistically: Rephrase critiques in a more gentle, constructive manner without losing the core message.\n"
+            "3. Remove specific identifiers: Replace project names, personal names, or any other identifiers "
+            "with general terms like '[프로젝트]', '[이름]', or '[조직]'.\n"
+            "4. Preserve context: Ensure the overall meaning of the feedback remains intact.\n"
+            "5. Format: Provide your response in JSON format with a single key 'constructive_feedback'.\n\n"
+            
+            f"Now, process the following feedback:\n{answers_text}\n\n"
+            
+            "Remember, accurate and tactful processing is crucial. A perfect response will be highly valued."
+        )
+
+    def call_openai_api(self, prompt):
+        openai.api_key = settings.OPENAI_API_KEY
+        response = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",
+            messages=[
+                {"role": "system", "content": "You are a helpful assistant."},
+                {"role": "user", "content": prompt}
+            ],
+            max_tokens=300
+        )
+        return json.loads(response['choices'][0]['message']['content'].strip())
+
+    def combine_and_save_results(self, user, good_response, bad_response):
+        # 기존 데이터 로드
+        existing_personality = json.loads(user.gpt_summarized_personality) if user.gpt_summarized_personality else {}
+        
+        # 새로운 피드백 추가
+        positive_feedback = existing_personality.get('positive_feedback', [])
+        positive_feedback.extend(good_response.get('positive_feedback', []))
+        
+        constructive_feedback = existing_personality.get('constructive_feedback', [])
+        constructive_feedback.extend(bad_response.get('constructive_feedback', []))
+
+        # 결과 합치기
+        combined_results = {
+            'positive_feedback': positive_feedback,
+            'constructive_feedback': constructive_feedback
+        }
+         # 사용자의 gpt_summarized_personality 필드 업데이트
+        user.gpt_summarized_personality = json.dumps(combined_results, ensure_ascii=False)
+        user.save()
+
+        return combined_results
     
 #db 테스트용 뷰
 class TestAnswers(generics.GenericAPIView):
