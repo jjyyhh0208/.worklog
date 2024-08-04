@@ -435,7 +435,7 @@ class UserLongQuestionAnswersView(generics.GenericAPIView):
 
             question_answers = request.data.get('question_answers', [])
 
-            feedbacks = []
+            feedback = Feedback.objects.create(user=evaluated_user)
             for qa in question_answers:
                 question_text = qa['question']
                 long_question_instance, created = LongQuestion.objects.get_or_create(long_question=question_text)
@@ -443,12 +443,11 @@ class UserLongQuestionAnswersView(generics.GenericAPIView):
                     question=long_question_instance,
                     answer=qa['answer']
                 )
-                feedback = Feedback.objects.create(user=evaluated_user)
                 feedback.question_answers.add(question_answer_instance)
-                feedbacks.append(feedback)
 
             answers = [qa['answer'] for qa in question_answers]
             answers_text = " ".join(answers)
+            feedback.delete()
 
             # Process good feedback
             good_response = self.process_good_feedback(answers_text)

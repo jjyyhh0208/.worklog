@@ -14,7 +14,9 @@ function Header({ isLoggedIn }) {
                 .then((data) => {
                     setProfileData(data);
                 })
-                .catch((error) => {});
+                .catch((error) => {
+                    console.error('프로필 정보를 불러오는 동안 오류가 발생했습니다.', error);
+                });
         }
     }, [isLoggedIn]);
 
@@ -23,7 +25,9 @@ function Header({ isLoggedIn }) {
             .then(() => {
                 window.location.href = '/';
             })
-            .catch((error) => {});
+            .catch((error) => {
+                console.error('로그아웃 중 오류가 발생했습니다.', error);
+            });
     };
 
     const onDeleteAccountClick = () => {
@@ -32,7 +36,9 @@ function Header({ isLoggedIn }) {
                 window.location.href = '/';
                 localStorage.removeItem('authToken');
             })
-            .catch((error) => {});
+            .catch((error) => {
+                console.error('회원 탈퇴 중 오류가 발생했습니다.', error);
+            });
     };
 
     const toggleMenu = () => {
@@ -49,54 +55,60 @@ function Header({ isLoggedIn }) {
                 <Link to={profileData ? '/my-profile' : '/'}>
                     <h1 className="text-[#4053ff] text-2xl font-extrabold hover:cursor-pointer mr-6">.WORKLOG</h1>
                 </Link>
-                <nav className="flex space-x-4">
-                    <Link
-                        to="/my-profile"
-                        className={`flex items-center ${isActive(
-                            '/my-profile'
-                        )} text-gray-500 py-2 text-sm font-bold hover:bg-transparent hover:text-[#0453FF]`}
-                    >
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="16"
-                            height="16"
-                            viewBox="0 0 30 28"
-                            fill="none"
-                            className="ml-1 md:ml-2 w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5"
-                        >
-                            <path
-                                d="M15 0.666504L0 12.0951H3.75V27.3332H11.25V19.7141H18.75V27.3332H26.25V11.9808L30 12.0951L15 0.666504Z"
-                                fill="currentColor"
-                            />
-                        </svg>
-                        내 프로필
-                    </Link>
-                    <Link
-                        to={`/list/${profileData?.username}`}
-                        className={`flex items-center ${isActive(
-                            `/list/${profileData?.username}`
-                        )} text-gray-500 py-2 text-sm font-bold hover:bg-transparent hover:text-[#0453FF]`}
-                    >
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="16"
-                            height="16"
-                            viewBox="0 0 25 23"
-                            fill="none"
-                            className="ml-1 md:ml-2 w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5"
-                        >
-                            <path
-                                d="M0 0.388672V3.57694H25V0.388672H0ZM0 9.85783V13.0461H25V9.85783H0ZM0 19.4226V22.6109H25V19.4226H0Z"
-                                fill="currentColor"
-                            />
-                        </svg>
-                        둘러보기
-                    </Link>
+                <nav className="flex">
+                    {isLoggedIn ? (
+                        <>
+                            <Link
+                                to="/my-profile"
+                                className={`flex items-center ${isActive(
+                                    '/my-profile'
+                                )} text-gray-500 py-2 text-sm font-bold hover:bg-transparent hover:text-[#0453FF]`}
+                            >
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    width="16"
+                                    height="16"
+                                    viewBox="0 0 30 28"
+                                    fill="none"
+                                    className="ml-1 md:ml-2 w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5"
+                                >
+                                    <path
+                                        d="M15 0.666504L0 12.0951H3.75V27.3332H11.25V19.7141H18.75V27.3332H26.25V11.9808L30 12.0951L15 0.666504Z"
+                                        fill="currentColor"
+                                    />
+                                </svg>
+                                <div className="ml-2">내 프로필</div>
+                            </Link>
+                            <Link
+                                to={`/list/${profileData?.username}`}
+                                className={`flex items-center ${isActive(
+                                    `/list/${profileData?.username}`
+                                )} text-gray-500 px-2 py-2 text-sm font-bold hover:bg-transparent hover:text-[#0453FF]`}
+                            >
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    width="16"
+                                    height="16"
+                                    viewBox="0 0 25 23"
+                                    fill="none"
+                                    className="ml-1 md:ml-2 w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5"
+                                >
+                                    <path
+                                        d="M0 0.388672V3.57694H25V0.388672H0ZM0 9.85783V13.0461H25V9.85783H0ZM0 19.4226V22.6109H25V19.4226H0Z"
+                                        fill="currentColor"
+                                    />
+                                </svg>
+                                <div className="ml-2">둘러보기</div>
+                            </Link>
+                        </>
+                    ) : (
+                        <div></div>
+                    )}
                     <Link
                         to="/about-us"
                         className={`flex items-center ${isActive(
                             '/about-us'
-                        )} text-gray-500 py-2 text-sm font-bold hover:bg-transparent hover:text-[#0453FF]`}
+                        )} text-gray-500 px-1 py-2 text-sm font-bold hover:bg-transparent hover:text-[#0453FF]`}
                     >
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -111,7 +123,7 @@ function Header({ isLoggedIn }) {
                                 fill="currentColor"
                             />
                         </svg>
-                        가이드북
+                        <div className="ml-2">가이드북</div>
                     </Link>
                 </nav>
             </div>
@@ -122,36 +134,47 @@ function Header({ isLoggedIn }) {
                             onClick={toggleMenu}
                             className="inline-flex items-center bg-[#4053ff] text-white px-4 py-2 sm:px-5 sm:py-2 rounded-full text-sm sm:text-base font-medium hover:bg-[#3442cc] transition-colors duration-300 whitespace-nowrap"
                         >
-                            <i className="fas fa-user mr-2 text-sm sm:text-lg"></i>
-                            <span className="text-xs sm:text-sm">{profileData?.name}님</span>
+                            <i className="fas fa-user m-1 fa-sm text-sm sm:text-md"></i>
+                            <span className="text-sm sm:text-md ml-1">{profileData?.name}님</span>
                         </button>
 
                         <div
                             className={`absolute top-full right-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-lg flex-col ${
                                 showMenu ? 'flex' : 'hidden'
                             }`}
+                            style={{ minWidth: '110px' }}
                         >
                             <button
                                 onClick={onLogoutClick}
-                                className="bg-white text-[#4053ff] text-700 px-4 py-2 text-center text-sm sm:text-sm font-medium hover:bg-gray-100 transition-colors duration-300 rounded-lg min-w-[100px] flex-grow whitespace-nowrap"
+                                className="bg-white text-[#4053ff] text-700 px-4 py-2 text-center text-md font-medium hover:bg-gray-100 transition-colors duration-300 rounded-lg min-w-[100px] flex-grow whitespace-nowrap"
                             >
                                 로그아웃
                             </button>
                             <button
                                 onClick={onDeleteAccountClick}
-                                className="bg-white text-[#4053ff] text-700 px-4 py-2 text-center text-sm sm:text-sm font-medium hover:bg-gray-100 transition-colors duration-300 rounded-lg min-w-[100px] flex-grow whitespace-nowrap"
+                                className="bg-white text-[#4053ff] text-700 px-4 py-2 text-center text-md font-medium hover:bg-gray-100 transition-colors duration-300 rounded-lg min-w-[100px] flex-grow whitespace-nowrap"
                             >
                                 회원탈퇴
                             </button>
                         </div>
                     </>
                 ) : (
-                    <Link
-                        to="/signup/1"
-                        className="bg-[#4053ff] text-white px-3 py-1 sm:px-4 sm:py-2 rounded-full text-xs sm:text-sm font-medium hover:bg-[#3442cc] transition-colors duration-300"
-                    >
-                        내 계정 만들기
-                    </Link>
+                    <>
+                        <Link
+                            to="/signup/1"
+                            className="text-gray-500 py-2 text-sm font-bold hover:bg-transparent hover:text-[#0453FF] flex items-center"
+                        >
+                            <i className="fas fa-user mr-2 fa-lg"></i> {/* User plus icon for Sign Up */}
+                            회원가입
+                        </Link>
+                        <Link
+                            to="/login"
+                            className="text-gray-500 px-2 py-2 text-sm font-bold hover:bg-transparent hover:text-[#0453FF] flex items-center"
+                        >
+                            <i className="fas fa-sign-in-alt mr-2 fa-lg"></i> {/* Sign-in icon for Log In */}
+                            로그인
+                        </Link>
+                    </>
                 )}
             </div>
         </header>

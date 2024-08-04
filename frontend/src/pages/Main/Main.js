@@ -16,10 +16,6 @@ function Main() {
         navigate('/signup/1');
     };
 
-    const handleGuestClick = () => {
-        navigate('/search');
-    };
-
     const scrollToSection = (index) => {
         const offset = 100;
         const top = refs.current[index].current.getBoundingClientRect().top + window.pageYOffset - offset;
@@ -57,30 +53,7 @@ function Main() {
         ],
     }));
     return (
-        <div className="relative flex flex-col items-center min-h-screen w-full overflow-y-auto mb-0">
-            <header className="fixed top-0 mb-0 mt-0 left-0 right-0 w-full h-16 bg-white flex justify-between items-center shadow-md z-50">
-                <h1 className="text-[#4053ff] text-2xl font-extrabold hover:cursor-default mr-6 ml-3.5">.WORKLOG</h1>
-                <div className="flex space-x-4 mr-4">
-                    <button
-                        className="text-gray-500 py-2 text-sm font-bold hover:bg-transparent hover:text-[#0453FF]"
-                        onClick={handleLoginClick}
-                    >
-                        로그인
-                    </button>
-                    <button
-                        className="text-gray-500 py-2 text-sm font-bold hover:bg-transparent hover:text-[#0453FF]"
-                        onClick={handleSignUpClick}
-                    >
-                        회원가입
-                    </button>
-                    <button
-                        className="text-gray-500 py-2 text-sm font-bold hover:bg-transparent hover:text-[#0453FF]"
-                        onClick={handleGuestClick}
-                    >
-                        비회원으로 평가하기
-                    </button>
-                </div>
-            </header>
+        <div className="relative flex flex-col items-center w-full overflow-y-auto mb-0">
             <main className="flex flex-col items-center w-full pt-16">
                 <div className="carousel w-[80%] h-[40%] md:w-[90%]">
                     <Carousel
