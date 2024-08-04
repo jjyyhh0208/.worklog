@@ -10,9 +10,7 @@ function MyProfile() {
     // Profile
     const [profileData, setProfileData] = useState(null);
     const [imageUrl, setImageUrl] = useState(null);
-    const [gptSummary, setGptSummary] = useState({ summarized: [], advice: [] });
-
-    // DISC 정보
+    const [gptSummary, setGptSummary] = useState({ positive_feedback: [], constructive_feedback: [] });
     const [DISCData, setDISCData] = useState(null);
     const [DISCData2, setDISCData2] = useState(null);
     const [DISCCharacter, setDISCCharacter] = useState(null);
@@ -38,7 +36,6 @@ function MyProfile() {
     };
 
     const navigate = useNavigate();
-
     const discTypeColors = typeData.types.reduce((acc, item) => {
         acc[item.disc_character] = item.color;
         return acc;
@@ -103,12 +100,15 @@ function MyProfile() {
                     try {
                         const parsedGptSummary = JSON.parse(profileData.gpt_summarized_personality);
                         setGptSummary({
-                            summarized: Array.isArray(parsedGptSummary.summarized) ? parsedGptSummary.summarized : [],
-                            advice: Array.isArray(parsedGptSummary.advice) ? parsedGptSummary.advice : [],
+                            positive_feedback: Array.isArray(parsedGptSummary.positive_feedback)
+                                ? parsedGptSummary.positive_feedback
+                                : [],
+                            constructive_feedback: Array.isArray(parsedGptSummary.constructive_feedback)
+                                ? parsedGptSummary.constructive_feedback
+                                : [],
                         });
                     } catch (error) {
-                        console.error('Error parsing GPT summary:', error);
-                        setGptSummary({ summarized: [], advice: [] });
+                        setGptSummary({ positive_feedback: [], constructive_feedback: [] });
                     }
                 }
             } catch (error) {
@@ -209,7 +209,7 @@ function MyProfile() {
 
     const formatListWithIndex = (list) => {
         if (!Array.isArray(list) || list.length === 0) {
-            return <p>데이터가 없습니다.</p>;
+            return <p>저장된 피드백 데이터가 없습니다.</p>;
         }
         return list.map((item, index) => (
             <div key={index}>
@@ -555,13 +555,13 @@ function MyProfile() {
                                 {isAIOpen && (
                                     <div className="bg-white rounded-[20px] p-5">
                                         <div className="flex flex-col justify-around mt-5">
-                                            <h3 className="text-3xl font-bold text-[#4053ff]">Summary</h3>
+                                            <h3 className="text-3xl font-bold text-[#4053ff]">긍정적 피드백</h3>
                                             <div className="flex-1 bg-[rgba(204,209,255,0.2)] rounded-[20px] p-12 m-5 md:m-12 text-xl">
-                                                {formatListWithIndex(gptSummary.summarized)}
+                                                {formatListWithIndex(gptSummary.positive_feedback)}
                                             </div>
-                                            <h3 className="text-3xl font-bold text-[#4053ff]">Advice</h3>
+                                            <h3 className="text-3xl font-bold text-[#4053ff]">발전적 피드백</h3>
                                             <div className="flex-1 bg-[rgba(204,209,255,0.2)] rounded-[20px] p-12 m-5 md:m-12 text-xl">
-                                                {formatListWithIndex(gptSummary.advice)}
+                                                {formatListWithIndex(gptSummary.constructive_feedback)}
                                             </div>
                                         </div>
                                     </div>
