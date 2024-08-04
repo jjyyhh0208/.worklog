@@ -16,6 +16,7 @@ function Signup2({ signUpInfo, setSignUpInfo }) {
     const [imageUrl, setImageUrl] = useState('');
     const [uploadMessage, setUploadMessage] = useState('');
     const [isActive, setActive] = useState(false);
+    const [isDefaultProfile, setIsDefaultProfile] = useState(false);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -134,6 +135,19 @@ function Signup2({ signUpInfo, setSignUpInfo }) {
             }
         }
 
+        if (isDefaultProfile) {
+            try {
+                await API.delete('/profiles/user/set/profile-image/');
+                setImageUrl('');
+                setFile(null);
+                setFileName('');
+                setUploadMessage('Image deleted successfully');
+            } catch (error) {
+                console.error('Failed to delete image:', error);
+                // Ignore error and proceed
+            }
+        }
+
         try {
             await ProfileService.setUserBasicInfo({
                 name: signUpInfo.name === null ? signUpInfo.username : signUpInfo.name,
@@ -195,6 +209,10 @@ function Signup2({ signUpInfo, setSignUpInfo }) {
         }
     };
 
+    const handleCheckboxChange = (e) => {
+        setIsDefaultProfile(e.target.checked);
+    };
+
     return (
         <div className="w-full flex flex-col items-center p-5 md:w-4/5 max-w-2xl mx-auto">
             <h1 className="text-[#4053ff] text-4xl font-extrabold cursor-pointer mb-5" onClick={logoHandler}>
@@ -253,6 +271,19 @@ function Signup2({ signUpInfo, setSignUpInfo }) {
                         ))}
                     </div>
                     <span className="w-full text-base font-bold mb-1">프로필 이미지</span>
+                    <div className="w-full flex items-center m-2">
+                        <input
+                            type="checkbox"
+                            id="defaultProfile"
+                            name="defaultProfile"
+                            checked={isDefaultProfile}
+                            onChange={handleCheckboxChange}
+                            className="mr-2"
+                        />
+                        <label htmlFor="defaultProfile" className="text-sm text-gray-700">
+                            기본 프로필 설정하기
+                        </label>
+                    </div>
                     <label
                         className={`w-full h-40 border-2 border-dashed rounded-lg flex flex-col items-center justify-center cursor-pointer transition-colors duration-200 ${
                             isActive ? 'border-blue-500 bg-blue-50' : 'border-gray-300 hover:bg-gray-50'

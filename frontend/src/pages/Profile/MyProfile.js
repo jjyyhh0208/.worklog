@@ -493,7 +493,7 @@ function MyProfile() {
                                                         className="w-44 h-44 mb-4 mt-4 rounded-full"
                                                     />
                                                     <div className="text-center max-w-xs text-gray-700 font-semibold">
-                                                        {DISCCharacterValue}%의 유저들의 선택
+                                                        {DISCCharacterValue}% 유저들의 선택
                                                     </div>
                                                 </div>
 
@@ -513,7 +513,7 @@ function MyProfile() {
                                                         className="w-44 h-44 mb-4 mt-4 rounded-full"
                                                     />
                                                     <div className="text-center max-w-xs text-gray-700 font-semibold">
-                                                        {DISCCharacterValue2}%의 유저들의 선택
+                                                        {DISCCharacterValue2}% 유저들의 선택
                                                     </div>
                                                 </div>
                                             </div>

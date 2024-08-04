@@ -177,7 +177,7 @@ function FriendProfile() {
                 <div className="bg-white rounded-[50px] shadow-md p-4 sm:p-6 md:p-8 mb-8 w-[100%] sm:w-[100%] md:w-[100%] lg:w-[100%] mx-auto">
                     <div className="flex flex-col md:flex-row items-center md:items-start space-y-4 md:space-y-0 md:space-x-6">
                         <img
-                            src={imageUrl || '/images/basicProfile.png'}
+                            src={imageUrl || DISCData?.disc_img || '/images/basicProfile.png'}
                             className="w-24 h-24 sm:w-28 sm:h-28 rounded-full object-cover border border-gray-200"
                         />
                         <div className="text-center md:text-left flex-grow">
@@ -415,7 +415,7 @@ function FriendProfile() {
                                                         className="w-44 h-44 mb-4 mt-4 rounded-full"
                                                     />
                                                     <div className="text-center max-w-xs text-gray-700 font-semibold">
-                                                        {DISCCharacterValue}%의 유저들의 선택
+                                                        {DISCCharacterValue}% 유저들의 선택
                                                     </div>
                                                 </div>
 
@@ -435,7 +435,7 @@ function FriendProfile() {
                                                         className="w-44 h-44 mb-4 mt-4 rounded-full"
                                                     />
                                                     <div className="text-center max-w-xs text-gray-700 font-semibold">
-                                                        {DISCCharacterValue2}%의 유저들의 선택
+                                                        {DISCCharacterValue2}% 유저들의 선택
                                                     </div>
                                                 </div>
                                             </div>

@@ -135,6 +135,16 @@ class ProfileImageView(APIView):
                 image=request.FILES['image']
             )
         return Response({"message": "Profile image updated successfully"}, status=status.HTTP_200_OK)
+    def delete(self, request, *args, **kwargs):
+        user = request.user
+        try:
+            profile_image = ProfileImage.objects.get(user=user)
+            if profile_image.image:
+                self.delete_old_image(str(profile_image.image))
+            profile_image.delete()
+            return Response({"message": "Profile image deleted successfully"}, status=status.HTTP_200_OK)
+        except ProfileImage.DoesNotExist:
+            return Response({"message": "Profile image does not exist"}, status=status.HTTP_404_NOT_FOUND)
 
 
 class CustomLoginView(LoginView):

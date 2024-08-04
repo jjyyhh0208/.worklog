@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import AdminService from '../../utils/AdminService';
 import ProfileService from '../../utils/ProfileService';
 
@@ -7,6 +7,7 @@ function Header({ isLoggedIn }) {
     const [profileData, setProfileData] = useState(null);
     const location = useLocation();
     const [showMenu, setShowMenu] = useState(false);
+    const [showModal, setShowModal] = useState(false);
 
     useEffect(() => {
         if (isLoggedIn) {
@@ -31,6 +32,10 @@ function Header({ isLoggedIn }) {
     };
 
     const onDeleteAccountClick = () => {
+        setShowModal(true);
+    };
+
+    const confirmDeleteAccount = () => {
         AdminService.userDelete()
             .then(() => {
                 window.location.href = '/';
@@ -177,6 +182,31 @@ function Header({ isLoggedIn }) {
                     </>
                 )}
             </div>
+
+            {showModal && (
+                <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+                    <div className="bg-white p-6 rounded-lg shadow-lg">
+                        <h2 className="text-xl font-semibold mb-4 text-center">회원탈퇴</h2>
+                        <img className="mx-auto" src="images/discImg3.jpeg" width={100} height={100}></img>
+                        <p className="text-center">.WORKLOG에서 탈퇴하시겠습니까?</p>
+                        <p className="mb-4 text-center">탈퇴시 피드백 복구가 불가합니다.</p>
+                        <div className="flex justify-center">
+                            <button
+                                onClick={() => setShowModal(false)}
+                                className="bg-gray-300 text-black px-4 py-2 rounded mr-2 transition-transform duration-200 hover:bg-gray-400"
+                            >
+                                취소
+                            </button>
+                            <button
+                                onClick={confirmDeleteAccount}
+                                className="bg-red-500 text-white px-4 py-2 rounded transition-transform duration-200 hover:bg-red-600"
+                            >
+                                탈퇴하기
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </header>
     );
 }
