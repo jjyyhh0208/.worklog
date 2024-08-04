@@ -77,6 +77,7 @@ function App() {
             '/feedback/long/:username',
             '/feedback/intro/:username',
             '/feedback/:pageNum/:username',
+            '/friend-profile/:id',
         ];
 
         if (location.pathname === '/') {

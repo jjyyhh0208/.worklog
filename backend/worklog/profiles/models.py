@@ -102,7 +102,7 @@ class User(AbstractUser):
         feedback_count = self.feedbacks_from.count()
 
         if feedback_count < 3:
-            return {name: 0 for name in CHARACTER.values()}
+            return;
 
         character_counts = {name: 0 for name in CHARACTER.values()}
 
