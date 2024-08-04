@@ -78,6 +78,7 @@ function MyProfile() {
                     setDISCCharacterValue(discCharacterValue1);
                     setDISCCharacter2(discCharacter2);
                     setDISCCharacterValue2(discCharacterValue2);
+
                     // 1위 데이터
                     const discData = typeData.types.find((item) => item.disc_character === discCharacter1);
                     if (discData) {
@@ -135,8 +136,8 @@ function MyProfile() {
             return;
         }
 
-        if (profileData && profileData.username) {
-            const profileLink = `${window.location.origin}/friend-profile/${profileData.username}`;
+        if (profileData && profileData?.username) {
+            const profileLink = `${window.location.origin}/friend-profile/${profileData?.username}`;
 
             if (navigator.clipboard && navigator.clipboard.writeText) {
                 navigator.clipboard
@@ -173,7 +174,7 @@ function MyProfile() {
             return;
         }
 
-        const profileLink = ProfileService.getUserProfileLink(profileData.username);
+        const profileLink = ProfileService.getUserProfileLink(profileData?.username);
         const instagramUrl = `instagram://story-camera?text=${encodeURIComponent(profileLink)}`;
 
         // 인스타그램 앱이 설치되어 있는지 확인
@@ -233,14 +234,18 @@ function MyProfile() {
                             className="w-24 h-24 sm:w-28 sm:h-28 rounded-full object-cover border border-gray-200"
                         />
                         <div className="text-center md:text-left flex-grow">
-                            <h1 className="text-2xl sm:text-3xl font-bold">{profileData.name}</h1>
-                            <p className="text-lg sm:text-xl text-gray-600 mt-1">@{profileData.username}</p>
+                            <h1 className="text-2xl sm:text-3xl font-bold">{profileData?.name}</h1>
+                            <p className="text-lg sm:text-xl text-gray-600 mt-1">@{profileData?.username}</p>
                             <div className="mt-2 flex flex-wrap justify-center md:justify-start gap-2">
-                                <span className="bg-gray-100 px-3 py-1 rounded-full text-sm">{profileData.old} 세</span>
-                                <span className="bg-gray-100 px-3 py-1 rounded-full text-sm">{profileData.gender}</span>
+                                <span className="bg-gray-100 px-3 py-1 rounded-full text-sm">
+                                    {profileData?.old} 세
+                                </span>
+                                <span className="bg-gray-100 px-3 py-1 rounded-full text-sm">
+                                    {profileData?.gender}
+                                </span>
                             </div>
                         </div>
-                        <div className="mt-4 mr-7 md:mt-0 self-center md:self-start ">
+                        <div className="mt-4 md:mt-0 self-center md:self-start flex justify-center w-full">
                             {profileData && (
                                 <div
                                     className="w-[200px] h-[50px] rounded-[10px] flex items-center justify-center text-white text-2xl font-semibold"
@@ -290,7 +295,7 @@ function MyProfile() {
                                 </svg>
                             </button>
                             <div className="w-10 h-10 bg-white shadow-md rounded-full hover:bg-gray-200 transition duration-300 flex items-center justify-center">
-                                <KakaoShareButton username={profileData.username} />
+                                <KakaoShareButton username={profileData?.username} />
                             </div>
                             <button
                                 onClick={handleInstagramShare}
@@ -386,9 +391,11 @@ function MyProfile() {
                         </div>
                         <div className="mt-16 flex items-center justify-between">
                             <h2 className="text-2xl md:text-3xl font-extrabold">타인이 평가하는 나</h2>
-                            <span className="flex items-center cursor-pointer" onClick={toggleFeedbackOpen}>
-                                <i className={`fas fa-chevron-${isFeedbackOpen ? 'up' : 'down'} fa-lg mr-2`}></i>
-                            </span>
+                            {profileData?.feedback_count >= 3 && (
+                                <span className="flex items-center cursor-pointer" onClick={toggleFeedbackOpen}>
+                                    <i className={`fas fa-chevron-${isFeedbackOpen ? 'up' : 'down'} fa-lg mr-2`}></i>
+                                </span>
+                            )}
                         </div>
                         <hr className="border-t border-gray-300 my-3 mb-5" />
                         {profileData?.feedback_count >= 3 ? (
@@ -490,7 +497,7 @@ function MyProfile() {
                                                     </div>
                                                 </div>
 
-                                                <div className="flex flex-col items-center bg-white shadow-lg rounded-lg p-6 border border-gray-200 w-72 transform transition-transform duration-300 hover:scale-105 hover:cursor-pointer">
+                                                <div className="hidden md:flex flex-col items-center bg-white shadow-lg rounded-lg p-6 border border-gray-200 w-72 transform transition-transform duration-300 hover:scale-105 hover:cursor-pointer">
                                                     <div className="absolute top-2 left-2 bg-yellow-500 text-white text-sm font-bold px-2 py-1 rounded">
                                                         2위
                                                     </div>

@@ -192,7 +192,7 @@ function FriendProfile() {
                                 </span>
                             </div>
                         </div>
-                        <div className="mt-4 mr-7 md:mt-0 self-center md:self-start ">
+                        <div className="mt-4 md:mt-0 self-center md:self-start flex justify-center w-full">
                             {profileData && (
                                 <div
                                     className="w-[200px] h-[50px] rounded-[10px] flex items-center justify-center text-white text-2xl font-semibold"
@@ -227,7 +227,7 @@ function FriendProfile() {
                             } text-white`}
                             onClick={handleFollowClick}
                         >
-                            {isFollowing ? '팔로우 취소' : '팔로우'}
+                            {isFollowing ? '친구 등록취소' : '친구 등록하기'}
                         </button>
                         <button
                             className="mr-5 px-6 py-2 h-12 w-44 bg-[#f8bd23] text-white text-lg font-bold rounded-[20px] hover:bg-opacity-90 transition duration-300"
@@ -313,9 +313,11 @@ function FriendProfile() {
                         </div>
                         <div className="mt-16 flex items-center justify-between">
                             <h2 className="text-2xl md:text-3xl font-extrabold">타인이 평가하는 나</h2>
-                            <span className="flex items-center cursor-pointer" onClick={toggleFeedbackOpen}>
-                                <i className={`fas fa-chevron-${isFeedbackOpen ? 'up' : 'down'} fa-lg mr-2`}></i>
-                            </span>
+                            {profileData?.feedback_count >= 3 && (
+                                <span className="flex items-center cursor-pointer" onClick={toggleFeedbackOpen}>
+                                    <i className={`fas fa-chevron-${isFeedbackOpen ? 'up' : 'down'} fa-lg mr-2`}></i>
+                                </span>
+                            )}
                         </div>
                         <hr className="border-t border-gray-300 my-3 mb-5" />
                         {profileData?.feedback_count >= 3 ? (
@@ -405,7 +407,7 @@ function FriendProfile() {
                                                         className="w-48 h-[60px] rounded-[20px] flex items-center justify-center text-white text-2xl font-bold mt-5"
                                                         style={{ backgroundColor: discTypeColors[DISCCharacter] }}
                                                     >
-                                                        {DISCData.disc_character}
+                                                        {DISCData?.disc_character}
                                                     </div>
                                                     <img
                                                         src={DISCData?.disc_img}
@@ -417,7 +419,7 @@ function FriendProfile() {
                                                     </div>
                                                 </div>
 
-                                                <div className="flex flex-col items-center bg-white shadow-lg rounded-lg p-6 border border-gray-200 w-72 transform transition-transform duration-300 hover:scale-105 hover:cursor-pointer">
+                                                <div className="hidden md:flex flex-col items-center bg-white shadow-lg rounded-lg p-6 border border-gray-200 w-72 transform transition-transform duration-300 hover:scale-105 hover:cursor-pointer">
                                                     <div className="absolute top-2 left-2 bg-yellow-500 text-white text-sm font-bold px-2 py-1 rounded">
                                                         2위
                                                     </div>
@@ -425,7 +427,7 @@ function FriendProfile() {
                                                         className="w-48 h-[60px] rounded-[20px] flex items-center justify-center text-white text-2xl font-bold mt-5"
                                                         style={{ backgroundColor: discTypeColors[DISCCharacter2] }}
                                                     >
-                                                        {DISCData2.disc_character}
+                                                        {DISCData2?.disc_character}
                                                     </div>
                                                     <img
                                                         src={DISCData2?.disc_img}
@@ -439,7 +441,7 @@ function FriendProfile() {
                                             </div>
                                         </div>
                                         <div className="mt-8 text-2xl md:text-3xl font-bold mb-4">
-                                            {DISCData.disc_character}는..
+                                            {DISCData?.disc_character}는..
                                         </div>
 
                                         <div className=" w-full md:w-[80%] text-xl mt-5">

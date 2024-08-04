@@ -523,8 +523,10 @@ class UserLongQuestionAnswersView(generics.GenericAPIView):
 
     def combine_and_save_results(self, user, good_response, bad_response):
         # 기존 데이터 로드
-        existing_personality = json.loads(user.gpt_summarized_personality) if user.gpt_summarized_personality else {}
-        
+        existing_personality = json.loads(user.gpt_summarized_personality) if user.gpt_summarized_personality else {
+            'positive_feedback': [],
+            'constructive_feedback': []
+        }
         # 새로운 피드백 추가
         positive_feedback = existing_personality.get('positive_feedback', [])
         positive_feedback.extend(good_response.get('positive_feedback', []))
