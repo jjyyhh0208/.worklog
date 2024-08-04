@@ -61,35 +61,32 @@ function App() {
     });
     const [profileData, setProfileData] = useState(null);
 
-    // useEffect(() => {
-    //     if (!window.Kakao.isInitialized()) {
-    //         window.Kakao.init(process.env.REACT_APP_KAKAO_APP_KEY);
-    //     }
-
-    //     if (isLoggedIn()) {
-    //         ProfileService.fetchUserProfile()
-    //             .then((data) => setProfileData(data))
-    //             .catch((error) => console.error('프로필 정보를 불러오는 동안 오류가 발생했습니다.', error));
-    //     }
-    // }, []);
-
     const isLoggedIn = () => {
         return !!localStorage.getItem('authToken');
     };
 
     const renderHeader = () => {
-        //Header 넣는 페이지
+        // Header 포함 페이지 정의
         const pathsWithHeader = [
+            '/',
             '/my-profile',
             '/friend-profile',
             '/about-us',
             '/search',
-            '/list',
-            '/feedback/long',
-            '/feedback/intro',
-            `/feedback/${location.pathname.split('/')[2]}`,
+            '/list/:username',
+            '/feedback/long/:username',
+            '/feedback/intro/:username',
+            '/feedback/:pageNum/:username',
         ];
-        return pathsWithHeader.some((path) => location.pathname.includes(path));
+
+        if (location.pathname === '/') {
+            return true;
+        }
+
+        return pathsWithHeader.some((path) => {
+            const regexPath = new RegExp('^' + path.replace(/:[^\s/]+/g, '([^/]+)') + '$');
+            return regexPath.test(location.pathname);
+        });
     };
 
     return (
@@ -105,7 +102,6 @@ function App() {
                 <Route path="/signup/4" element={<Signup4 signUpInfo={signUpInfo} setSignUpInfo={setSignUpInfo} />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/about-us" element={<AboutUs />} />
-                <Route path="/search" element={<Search />} />
                 <Route path="/feedback/intro/:username" element={<FeedbackIntro />} />
                 <Route path="/feedback/:pageNum/:username" element={<Feedback />} />
                 <Route path="/feedback/long/:username" element={<FeedbackLong isLoggedIn={isLoggedIn} />} />
@@ -113,10 +109,11 @@ function App() {
                 <Route path="/on-boarding/2" element={<OnBoarding2 />} />
                 <Route path="/on-boarding/3" element={<OnBoarding3 />} />
                 <Route path="/friend-profile/:username" element={<FriendProfile />} />
-                <Route path="/list/:username" element={<List />} />
 
                 {/* 보호된 라우트 */}
                 <Route path="/my-profile" element={<ProtectedRoute element={MyProfile} />} />
+                <Route path="/search" element={<ProtectedRoute element={Search} />} />
+                <Route path="/list/:username" element={<ProtectedRoute element={List} />} />
 
                 {/* Error 페이지 - 모든 라우트의 맨 마지막에 위치 */}
                 <Route path="*" element={<Error />} />

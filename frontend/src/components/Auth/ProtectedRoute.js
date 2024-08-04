@@ -45,7 +45,7 @@ const ProtectedRoute = ({ element: Component, ...rest }) => {
     }, []);
 
     if (redirect) {
-        return <Navigate to="/search" />;
+        return <Navigate to="/" />;
     }
 
     return (

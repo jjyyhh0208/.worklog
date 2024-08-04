@@ -9,8 +9,13 @@ function MyProfile() {
     const [isLoading, setisLoading] = useState(true);
     const [profileData, setProfileData] = useState(null);
     const [imageUrl, setImageUrl] = useState(null);
-    const [DISCData, setDISCData] = useState(null);
     const [gptSummary, setGptSummary] = useState({ summarized: [], advice: [] });
+    const [DISCData, setDISCData] = useState(null);
+    const [DISCData2, setDISCData2] = useState(null);
+    const [DISCCharacter, setDISCCharacter] = useState('');
+    const [DISCCharacter2, setDISCCharacter2] = useState('');
+    const [DISCCharacterValue, setDISCCharacterValue] = useState('');
+    const [DISCCharacterValue2, setDISCCharacterValue2] = useState('');
     const navigate = useNavigate();
 
     const discTypeColors = typeData.types.reduce((acc, item) => {
@@ -35,16 +40,43 @@ function MyProfile() {
                         console.error('Error fetching signed URL:', error);
                     });
 
-                const discData = typeData.types.find((item) => item.disc_character === profileData.disc_character);
-                if (discData) {
-                    setDISCData(discData);
-                } else {
-                    console.error('DISC character not found:', profileData.disc_character);
+                const discCharacterData = profileData.disc_character;
+                if (discCharacterData) {
+                    const sortedCharacters = Object.entries(discCharacterData).sort((a, b) => b[1] - a[1]);
+
+                    // 첫 번째와 두 번째 캐릭터의 이름과 비율을 저장
+                    const firstCharacter = sortedCharacters[0];
+                    const secondCharacter = sortedCharacters[1];
+
+                    const discCharacter1 = firstCharacter[0];
+                    const discCharacterValue1 = firstCharacter[1];
+                    const discCharacter2 = secondCharacter[0];
+                    const discCharacterValue2 = secondCharacter[1];
+
+                    setDISCCharacter(discCharacter1);
+                    setDISCCharacterValue(discCharacterValue1);
+                    setDISCCharacter2(discCharacter2);
+                    setDISCCharacterValue2(discCharacterValue2);
+                    // 1위 데이터
+                    const discData = typeData.types.find((item) => item.disc_character === discCharacter1);
+                    if (discData) {
+                        setDISCData(discData);
+                    } else {
+                        console.error('DISC character not found:', discCharacter1, profileData.disc_character);
+                    }
+
+                    // 2위 데이터
+                    const discData2 = typeData.types.find((item) => item.disc_character === discCharacter2);
+                    if (discData) {
+                        setDISCData2(discData2);
+                    } else {
+                        console.error('DISC character not found:', discCharacter2, profileData.disc_character);
+                    }
                 }
 
                 setImageUrl(profileData.profile_image.image || '/images/basicProfile.png');
 
-                // GPT summary 처리
+                // GPT summary
                 if (profileData.gpt_summarized_personality) {
                     try {
                         const parsedGptSummary = JSON.parse(profileData.gpt_summarized_personality);
@@ -68,11 +100,7 @@ function MyProfile() {
     }, []);
 
     if (isLoading) {
-        return (
-            <div className="[w-100%] bg-[#f6f6f6] h-[1000px] min-h-screen flex items-center justify-center">
-                {/* Add loading spinner or message here */}
-            </div>
-        );
+        return <div className="[w-100%] bg-[#f6f6f6] h-[1000px] min-h-screen flex items-center justify-center"></div>;
     }
 
     const handleCopyLink = () => {
@@ -195,10 +223,10 @@ function MyProfile() {
                                 <div
                                     className="w-[200px] h-[50px] rounded-[10px] flex items-center justify-center text-white text-2xl font-semibold "
                                     style={{
-                                        backgroundColor: discTypeColors[profileData.disc_character],
+                                        backgroundColor: discTypeColors[DISCCharacter],
                                     }}
                                 >
-                                    {profileData && profileData.disc_character === 'None' ? (
+                                    {profileData && DISCCharacter === 'None' ? (
                                         <svg
                                             xmlns="http://www.w3.org/2000/svg"
                                             className="w-7 h-8 mt-5 mx-auto mb-5 opacity-50"
@@ -215,11 +243,10 @@ function MyProfile() {
                                         <div
                                             className="w-[200px] h-[50px] rounded-[10px] mr-4 ml-4 flex items-center justify-center text-white text-2xl font-semibold"
                                             style={{
-                                                backgroundColor:
-                                                    discTypeColors[profileData.disc_character] || discTypeColors.None,
+                                                backgroundColor: discTypeColors[DISCCharacter] || discTypeColors.None,
                                             }}
                                         >
-                                            {profileData.disc_character}
+                                            {DISCCharacter}
                                         </div>
                                     )}
                                 </div>
@@ -337,7 +364,7 @@ function MyProfile() {
                             키워드 수정
                         </button>
                     </div>
-
+                    {/* 타인이 평가하는 나 */}
                     <div className="bg-white rounded-[50px] shadow-md mb-5 p-8 md:p-16 relative">
                         <h2 className="text-2xl md:text-3xl font-extrabold mb-4">타인이 평가하는 나</h2>
                         <div className="absolute top-8 right-12 bg-[#e1e1e1] px-4 py-2 rounded-[10px] text-xl font-bold">
@@ -346,43 +373,111 @@ function MyProfile() {
                         <hr className="border-t border-gray-300 my-3" />
                         {profileData?.feedback_count >= 3 ? (
                             <>
-                                <div className="w-full md:w-[1000px] mx-auto">
+                                <div className="w-full md:w-[1000px] mx-auto ml-6">
                                     {profileData.disc_scores &&
-                                        Object.entries(profileData.disc_scores).map(([key, value]) => (
-                                            <div key={key} className="flex items-center my-10">
-                                                <span className="w-20 font-bold text-2xl mr-1">{key}</span>
-                                                <div className="w-8/12 h-[30px] bg-[#e0e0e0] rounded-[20px] overflow-hidden mx-3">
-                                                    <div
-                                                        className="h-full bg-[#4053ff] rounded-[20px]"
-                                                        style={{ width: `${value}%` }}
-                                                    ></div>
+                                        Object.entries(profileData.disc_scores).map(([key, value]) => {
+                                            const getKoreanLabel = (key) => {
+                                                switch (key) {
+                                                    case 'D':
+                                                        return '주도';
+                                                    case 'I':
+                                                        return '사교';
+                                                    case 'S':
+                                                        return '안정';
+                                                    case 'C':
+                                                        return '신중';
+                                                    default:
+                                                        return key;
+                                                }
+                                            };
+
+                                            const getTooltip = (key) => {
+                                                switch (key) {
+                                                    case 'D':
+                                                        return '주도형(Dominance)은 외향적이고 업무 중심적인 성향이 결합된 행동 유형으로, 도전과 추진력으로 동기부여를 받아요.';
+                                                    case 'I':
+                                                        return '사교형(Influence)은 외향적이며 사람 중심의 성향을 가진 유형으로, 긍정적이고 유머 감각이 뛰어난 사람들이 많아요.';
+                                                    case 'S':
+                                                        return '안정형(Steadiness)은 내향적이며 사람 중심적인 성향으로, 조직과 규율에 충실한 사람들이 많아요. 변화에 적응하는 시간이 필요하며 다른 방식대로 일하자고 하면 힘들어하기도 해요.';
+                                                    case 'C':
+                                                        return '신중형(Conscientiousness)은 내향적이며 업무 중심의 성향을 지닌 사람들로, 과묵하고 이성적인 편이에요. 또한, 논리성에 기초하기에 결정을 천천히 내리는 것을 선호해요.';
+                                                    default:
+                                                        return '';
+                                                }
+                                            };
+
+                                            return (
+                                                <div key={key} className="flex items-center my-10">
+                                                    <span className="w-14">
+                                                        <span className="font-bold text-xl md:text-2xl">
+                                                            {getKoreanLabel(key)}
+                                                        </span>
+                                                    </span>
+                                                    <span className="relative flex items-center group">
+                                                        <i className="fas fa-info-circle fa-sm text-gray-400 ml-1 cursor-pointer"></i>
+                                                        <div className="absolute left-0 bottom-full mb-2 w-max max-w-xs p-2 bg-gray-800 text-white text-xs rounded-md opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none group-hover:pointer-events-auto">
+                                                            {getTooltip(key)}
+                                                        </div>
+                                                    </span>
+                                                    <div className="w-8/12 h-[30px] bg-[#e0e0e0] rounded-[20px] overflow-hidden mx-3">
+                                                        <div
+                                                            className="h-full bg-[#4053ff] rounded-[20px]"
+                                                            style={{ width: `${value}%` }}
+                                                        ></div>
+                                                    </div>
+                                                    <span className="font-bold text-[#9b8f8f] ml-4">
+                                                        {value.toFixed(0)}
+                                                    </span>
                                                 </div>
-                                                <span className="font-bold text-[#9b8f8f] ml-2">
-                                                    {value.toFixed(0)}
-                                                </span>
-                                            </div>
-                                        ))}
+                                            );
+                                        })}
                                 </div>
+                                <h2 className="text-2xl md:text-3xl font-extrabold mb-4">
+                                    <span className="ml-2">{profileData.name}님의 주요 유형</span>
+                                </h2>
+                                <hr className="border-t border-gray-300 my-3" />
                                 <div className="flex flex-wrap flex-col justify-center items-center text-center w-full mt-8">
                                     <div className="items-center justify-center flex flex-col">
-                                        {profileData && DISCData ? (
-                                            <div
-                                                className="w-60 h-[60px] rounded-[20px] flex items-center justify-center text-white text-2xl font-bold mt-5"
-                                                style={{ backgroundColor: discTypeColors[profileData.disc_character] }}
-                                            >
-                                                {DISCData.disc_character}
+                                        <div className="flex justify-center items-center space-x-8">
+                                            <div className="flex flex-col items-center bg-white shadow-lg rounded-lg p-6 border border-gray-200 w-72 transform transition-transform duration-300 hover:scale-105 hover:cursor-pointer">
+                                                <div
+                                                    className="w-48 h-[60px] rounded-[20px] flex items-center justify-center text-white text-2xl font-bold mt-5"
+                                                    style={{ backgroundColor: discTypeColors[DISCCharacter] }}
+                                                >
+                                                    {DISCData.disc_character}
+                                                </div>
+                                                <img
+                                                    src={DISCData?.disc_img}
+                                                    alt={DISCData?.disc_character}
+                                                    className="w-44 h-44 mb-4 mt-4 rounded-full"
+                                                />
+                                                <div className="text-center max-w-xs text-gray-700 font-semibold">
+                                                    {DISCCharacterValue}%의 유저들의 선택
+                                                </div>
                                             </div>
-                                        ) : (
-                                            <div className="w-60 h-[60px] rounded-[20px] flex items-center justify-center bg-gray-200 text-2xl font-bold mt-5">
-                                                데이터 로딩 중...
+
+                                            <div className="flex flex-col items-center bg-white shadow-lg rounded-lg p-6 border border-gray-200 w-72 transform transition-transform duration-300 hover:scale-105 hover:cursor-pointer">
+                                                <div
+                                                    className="w-48 h-[60px] rounded-[20px] flex items-center justify-center text-white text-2xl font-bold mt-5"
+                                                    style={{ backgroundColor: discTypeColors[DISCCharacter2] }}
+                                                >
+                                                    {DISCData2.disc_character}
+                                                </div>
+                                                <img
+                                                    src={DISCData2?.disc_img}
+                                                    alt={DISCData2?.disc_character}
+                                                    className="w-44 h-44 mb-4 mt-4 rounded-full"
+                                                />
+                                                <div className="text-center max-w-xs text-gray-700 font-semibold">
+                                                    {DISCCharacterValue2}%의 유저들의 선택
+                                                </div>
                                             </div>
-                                        )}
-                                        <img
-                                            src={DISCData?.disc_img}
-                                            alt={DISCData?.disc_character}
-                                            className="w-44 h-44"
-                                        />
+                                        </div>
                                     </div>
+                                    <div className="mt-8 text-2xl md:text-3xl font-bold mb-4">
+                                        {DISCData.disc_character}는..
+                                    </div>
+
                                     <div className=" w-full md:w-[80%] text-xl mt-5">
                                         <p>{DISCData?.description}</p>
                                         <div className="font-semibold mt-8 mb-3">
@@ -409,25 +504,14 @@ function MyProfile() {
                                         ))}
                                     </div>
                                 </div>
+                                {/* AI 요약 */}
                                 <div className="mt-10">
-                                    <div className="flex items-center ml-8 mt-12">
-                                        <svg
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            className="w-8 h-12 mr-2"
-                                            viewBox="0 0 34 38"
-                                            fill="none"
-                                        >
-                                            <path
-                                                d="M22.4512 38C24.1716 38 25.7487 37.0663 26.6074 35.576C27.809 33.492 28.5 31.0791 28.5 28.5C28.5 25.8192 27.7519 23.3188 26.4634 21.1805L29.6875 17.9565L30.3837 18.6527C30.8475 19.1165 31.5994 19.1165 32.0632 18.6527L32.9019 17.8125C33.3658 17.3486 33.3658 16.5968 32.9019 16.1329L28.9913 12.2223C28.5275 11.7585 27.7756 11.7585 27.3118 12.2223L26.4723 13.0618C26.0085 13.5256 26.0085 14.2775 26.4723 14.7413L27.1685 15.4375L24.2436 18.3625C23.3856 17.5186 22.423 16.7794 21.375 16.1723V4.7307L22.5603 4.72922C23.2149 4.72848 23.7455 4.19781 23.7463 3.5432L23.7493 1.18899C23.75 0.532149 23.2171 -0.000741413 22.5603 7.74325e-07L5.93973 0.0192976C5.28512 0.0200398 4.75445 0.550704 4.75371 1.20531L4.75074 3.56027C4.75 4.21711 5.28289 4.74926 5.93973 4.74852L7.125 4.74703V16.1715C2.87004 18.6363 0 23.2282 0 28.5C0 31.0791 0.690977 33.4927 1.89258 35.576C2.75203 37.0663 4.32918 38 6.04883 38H22.4512ZM8.9107 19.2546L10.6875 18.2252V4.74332L17.8125 4.73516V18.2252L19.5893 19.2546C21.4307 20.3211 22.8638 21.9064 23.7871 23.75H4.71289C5.63691 21.9064 7.06934 20.3211 8.9107 19.2546Z"
-                                                fill="#4053FF"
-                                            />
-                                        </svg>
-                                        <h2 className="text-3xl font-bold text-[#4053ff]">AI 요약</h2>
-                                    </div>
-                                    <div className="bg-white rounded-[20px] p-5 mt-5">
-                                        <p className="text-2xl font-semibold text-center mb-12">
-                                            팀원들은 나의 협업 성향에 대해 다음과 같이 느꼈어요!
-                                        </p>
+                                    <h2 className="text-2xl md:text-3xl font-extrabold">
+                                        {' '}
+                                        <span className="ml-2">🤖 AI 요약 피드백</span>
+                                    </h2>
+                                    <hr className="border-t border-gray-300 my-3" />
+                                    <div className="bg-white rounded-[20px] p-5">
                                         <div className="flex flex-col justify-around mt-5">
                                             <h3 className="text-3xl font-bold text-[#4053ff]">Summary</h3>
                                             <div className="flex-1 bg-[rgba(204,209,255,0.2)] rounded-[20px] p-12 m-5 md:m-12 text-xl">
