@@ -101,7 +101,9 @@ function List() {
                                         className="absolute top-0 left-0 w-full text-center p-2 text-white text-xs font-bold rounded-t-2xl h-8 flex items-center justify-center"
                                         style={{
                                             backgroundColor:
-                                                discTypeColors[friend.disc_character] || discTypeColors.None,
+                                                friend.feedback_count >= 3
+                                                    ? discTypeColors[friend.disc_character]
+                                                    : discTypeColors.None,
                                         }}
                                     >
                                         {friend.disc_character !== 'None' ? friend.disc_character : '\u00A0'}

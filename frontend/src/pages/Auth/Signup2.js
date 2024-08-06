@@ -11,6 +11,7 @@ function Signup2({ signUpInfo, setSignUpInfo }) {
     const profileData = location.state?.profileData || {};
     const [selectedGender, setSelectedGender] = useState('');
     const [selectedAge, setSelectedAge] = useState('');
+    const [selectedStyle, setSelectedStyle] = useState('');
     const [file, setFile] = useState(null);
     const [fileName, setFileName] = useState('');
     const [imageUrl, setImageUrl] = useState('');
@@ -26,9 +27,11 @@ function Signup2({ signUpInfo, setSignUpInfo }) {
                     name: userProfileData.name,
                     age: userProfileData.age,
                     gender: userProfileData.gender,
+                    style: userProfileData.style,
                 });
                 setSelectedAge(userProfileData.age);
                 setSelectedGender(userProfileData.gender);
+                setSelectedStyle(userProfileData.style);
             } catch (error) {
                 console.error('Error fetching data:', error);
             }
@@ -139,6 +142,7 @@ function Signup2({ signUpInfo, setSignUpInfo }) {
                 name: signUpInfo.name === null ? signUpInfo.username : signUpInfo.name,
                 age: selectedAge,
                 gender: signUpInfo.gender === 'None' ? null : signUpInfo.gender,
+                style: selectedStyle,
             });
 
             if (isEditing) {
@@ -173,6 +177,11 @@ function Signup2({ signUpInfo, setSignUpInfo }) {
     const handleGenderClick = (gender) => {
         setSignUpInfo({ ...signUpInfo, gender });
         setSelectedGender(gender);
+    };
+
+    const handleStyleClick = (style) => {
+        setSignUpInfo({ ...signUpInfo, style });
+        setSelectedStyle(style);
     };
 
     const logoHandler = () => {
@@ -249,6 +258,27 @@ function Signup2({ signUpInfo, setSignUpInfo }) {
                                 onClick={() => handleGenderClick(gender)}
                             >
                                 {gender === 'M' ? 'Male' : gender === 'F' ? 'Female' : 'None'}
+                            </button>
+                        ))}
+                    </div>
+                    <span className="w-full text-base font-bold mb-1">선호하는 피드백 스타일</span>
+                    <div className="flex justify-around w-full mb-5">
+                        {['hard', 'soft'].map((style) => (
+                            <button
+                                key={style}
+                                type="button"
+                                className={`w-[40%] py-2 rounded-md text-sm font-bold transition-colors duration-200 ${
+                                    selectedStyle === style
+                                        ? 'bg-[#4053ff] text-white'
+                                        : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                                }`}
+                                onClick={() => handleStyleClick(style)}
+                            >
+                                {style === 'hard'
+                                    ? '솔직한 피드백'
+                                    : style === 'soft'
+                                    ? '배려있는 피드백'
+                                    : '솔직한 피드백'}
                             </button>
                         ))}
                     </div>
