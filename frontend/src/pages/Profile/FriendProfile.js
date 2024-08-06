@@ -78,8 +78,8 @@ function FriendProfile() {
                     console.error('DISC character not found:', profileData.disc_character);
                 }
 
-                if (profileData.profile_image && profileData.profile_image.image) {
-                    const signedUrl = await ProfileService.getSignedImageUrl(profileData.profile_image.image);
+                if (profileData?.profile_image && profileData?.profile_image.image) {
+                    const signedUrl = await ProfileService.getSignedImageUrl(profileData?.profile_image.image);
                     setImageUrl(signedUrl);
                 }
             } catch (error) {
