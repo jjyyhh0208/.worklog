@@ -26,12 +26,12 @@ const Feedback = ({
         setCurrentPage(data.selected);
     };
 
-    const currentPositiveFeedback = positiveFeedback.slice(
+    const currentPositiveFeedback = (positiveFeedback || []).slice(
         currentPage * itemsPerPage,
         (currentPage + 1) * itemsPerPage
     );
 
-    const currentConstructiveFeedback = constructiveFeedback.slice(
+    const currentConstructiveFeedback = (constructiveFeedback || []).slice(
         currentPage * itemsPerPage,
         (currentPage + 1) * itemsPerPage
     );
@@ -142,7 +142,7 @@ const Feedback = ({
                                 <h3 className="text-3xl font-bold text-[#4053ff]">긍정적 피드백</h3>
                                 <div className="flex-1 bg-[rgba(204,209,255,0.2)] rounded-[20px] p-12 m-5 md:m-12 text-xl">
                                     <Paginator
-                                        items={positiveFeedback}
+                                        items={positiveFeedback || []}
                                         itemsPerPage={itemsPerPage}
                                         handlePageClick={handlePageClick}
                                     />
@@ -151,7 +151,7 @@ const Feedback = ({
                                 <h3 className="text-3xl font-bold text-[#4053ff]">건설적 피드백</h3>
                                 <div className="flex-1 bg-[rgba(204,209,255,0.2)] rounded-[20px] p-12 m-5 md:m-12 text-xl">
                                     <Paginator
-                                        items={constructiveFeedback}
+                                        items={constructiveFeedback || []}
                                         itemsPerPage={itemsPerPage}
                                         handlePageClick={handlePageClick}
                                     />

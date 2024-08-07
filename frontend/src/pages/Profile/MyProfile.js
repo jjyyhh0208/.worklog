@@ -23,6 +23,10 @@ function MyProfile() {
     const [isAIOpen, setIsAIOpen] = useState(true);
     const navigate = useNavigate();
 
+    // GPT
+    const [positiveFeedback, setPositiveFeedback] = useState(null);
+    const [constructiveFeedback, setConstructiveFeedback] = useState(null);
+
     const toggleFeedbackOpen = () => {
         setIsFeedbackOpen(!isFeedbackOpen);
     };
@@ -45,6 +49,16 @@ function MyProfile() {
                     const signedUrl = await ProfileService.getSignedImageUrl(profileData.profile_image.image);
                     setImageUrl(signedUrl);
                 }
+
+                const parsedPersonality =
+                    profileData && profileData.gpt_summarized_personality
+                        ? typeof profileData.gpt_summarized_personality === 'string'
+                            ? JSON.parse(profileData.gpt_summarized_personality)
+                            : profileData.gpt_summarized_personality
+                        : {};
+
+                setPositiveFeedback(parsedPersonality.positive_feedback);
+                setConstructiveFeedback(parsedPersonality.constructive_feedback);
 
                 const discCharacterData = profileData.disc_character;
                 if (discCharacterData) {
@@ -148,9 +162,6 @@ function MyProfile() {
     const handleKeywordEdit = () => {
         navigate('/signup/3', { state: { isEditing: true, profileData } });
     };
-
-    const positiveFeedback = profileData?.gpt_summarized_personality?.positive_feedback || [];
-    const constructiveFeedback = profileData?.gpt_summarized_personality?.constructive_feedback || [];
 
     return (
         <div className="w-full bg-[#f6f6f6] min-h-screen py-6 px-4 sm:px-6 lg:px-8 mt-16">

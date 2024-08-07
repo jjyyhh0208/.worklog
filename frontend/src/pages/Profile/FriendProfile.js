@@ -23,8 +23,8 @@ function FriendProfile() {
     const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem('authToken'));
 
     // GPT
-    const [positiveFeedback, setPositiveFeedback] = useState(null);
-    const [constructiveFeedback, setConstructiveFeedback] = useState(null);
+    const [positiveFeedback, setPositiveFeedback] = useState({});
+    const [constructiveFeedback, setConstructiveFeedback] = useState({});
     // 아코디언
     const [isFeedbackOpen, setIsFeedbackOpen] = useState(true);
     const [isCharacterOpen, setIsCharacterOpen] = useState(true);
@@ -145,8 +145,6 @@ function FriendProfile() {
     if (isLoading) {
         return <div className="[w-100%] bg-[#f6f6f6] h-[1000px] min-h-screen flex items-center justify-center"></div>;
     }
-
-    console.log(positiveFeedback);
 
     return (
         <div className="w-full bg-[#f6f6f6] min-h-screen py-6 px-4 sm:px-6 lg:px-8 mt-16">
