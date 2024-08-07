@@ -21,7 +21,11 @@ class User(AbstractUser):
         ('F', '여성'),
         ('N', '없음')
     ]
-
+    STYLE_CHOICES = [
+        ('hard', '솔직한 피드백'),
+        ('soft', '배려있는 피드백'),
+    ]
+    feedback_style = models.CharField(max_length=10, choices=STYLE_CHOICES)
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
     age = models.PositiveIntegerField(null=True, blank=True)
     name = models.CharField(max_length=50)

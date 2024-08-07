@@ -3,6 +3,7 @@ import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import ProfileService from '../../utils/ProfileService';
 import keywordIcons from '../../components/KeywordIcons/KeywordIcons';
 import typeData from '../../data/typeData.json';
+import ReactPaginate from 'react-paginate';
 
 function FriendProfile() {
     const [isLoading, setIsLoading] = useState(true);
@@ -48,24 +49,190 @@ function FriendProfile() {
 
     const navigate = useNavigate();
 
+<<<<<<< HEAD
+=======
+    /*get_summaried_personality가 객체거나 스트링이거나 둘 다 처리할 수 있도록 수정 */
+>>>>>>> 9bcfa7f20a31346c3f328b476e1d68f7673538e6
     const parsedPersonality =
-        profileData && profileData.gpt_summarized_personality ? JSON.parse(profileData.gpt_summarized_personality) : {};
+        profileData && profileData.gpt_summarized_personality
+            ? typeof profileData.gpt_summarized_personality === 'string'
+                ? JSON.parse(profileData.gpt_summarized_personality)
+                : profileData.gpt_summarized_personality
+            : {};
+
     const positive_feedback = parsedPersonality.positive_feedback || [];
     const constructive_feedback = parsedPersonality.constructive_feedback || [];
-    const formatListWithIndex = (list) => {
+
+    const [currentPage, setCurrentPage] = useState(0);
+    // 한 페이지에 표시할 피드백 수
+    const itemsPerPage = 5;
+    // const renderFeedback = (feedbackList) => {
+    //     return feedbackList.map((feedback, index) => <div key={index}>{feedback}</div>);
+    // };
+
+    // 피드백 표시 로직
+
+    const formatListWithPagination = (list, isPositive) => {
         if (!Array.isArray(list) || list.length === 0) {
             return <p>저장된 피드백 데이터가 없습니다.</p>;
         }
-        return list.map((item, index) => (
-            <div key={index}>
-                <strong>팀원 {index + 1}:</strong>
-                <br />
-                {item}
-                <br />
-                <br />
-            </div>
-        ));
+
+        // 이름 목록을 섞습니다
+        const shuffledNames = [...animalNicknames].sort(() => 0.5 - Math.random());
+
+        const offset = currentPage * itemsPerPage;
+        const currentPageItems = list.slice(offset, offset + itemsPerPage);
+
+        const paginatedItems = currentPageItems.map((item, index) => {
+            const anonymousName =
+                offset + index < shuffledNames.length ? shuffledNames[offset + index] : `팀원 ${offset + index + 1}`;
+
+            return (
+                <div key={index} className="mb-4 p-4 bg-gray-100 rounded-lg">
+                    <strong className="text-blue-600">익명의 {anonymousName}:</strong>
+                    <p className="mt-2">{item}</p>
+                </div>
+            );
+        });
+
+        return (
+            <>
+                {paginatedItems}
+                <ReactPaginate
+                    previousLabel={'이전'}
+                    nextLabel={'다음'}
+                    breakLabel={'...'}
+                    pageCount={Math.ceil(list.length / itemsPerPage)}
+                    marginPagesDisplayed={2}
+                    pageRangeDisplayed={5}
+                    onPageChange={handlePageClick}
+                    containerClassName={'pagination flex justify-center items-center mt-4 select-none'}
+                    pageClassName={'mx-1'}
+                    pageLinkClassName={
+                        'flex items-center justify-center w-8 h-8 bg-white border rounded hover:bg-blue-100 transition-colors duration-200'
+                    }
+                    activeClassName={'bg-blue-500'}
+                    activeLinkClassName={'text-black hover:bg-blue-600 hover:text-white'}
+                    previousClassName={'mx-1'}
+                    nextClassName={'mx-1'}
+                    previousLinkClassName={
+                        'flex items-center justify-center px-3 py-2 bg-white border rounded hover:bg-gray-200 transition-colors duration-200'
+                    }
+                    nextLinkClassName={
+                        'flex items-center justify-center px-3 py-2 bg-white border rounded hover:bg-gray-200 transition-colors duration-200'
+                    }
+                    disabledClassName={'opacity-50 cursor-not-allowed'}
+                    breakClassName={'mx-1'}
+                    breakLinkClassName={
+                        'flex items-center justify-center w-8 h-8 bg-white border rounded hover:bg-gray-200 transition-colors duration-200'
+                    }
+                />
+            </>
+        );
     };
+    //익명 팀원 리스트
+    const animalNicknames = [
+        '호랑이',
+        '펭귄',
+        '코알라',
+        '기린',
+        '캥거루',
+        '팬더',
+        '부엉이',
+        '코끼리',
+        '다람쥐',
+        '여우',
+        '고릴라',
+        '카멜레온',
+        '나비',
+        '앵무새',
+        '돌고래',
+        '거북이',
+        '하마',
+        '콜리브리',
+        '코뿔소',
+        '알파카',
+        '미어캣',
+        '플라밍고',
+        '해달',
+        '타조',
+        '나무늘보',
+        '까마귀',
+        '청설모',
+        '살모사',
+        '치타',
+        '두더지',
+        '순록',
+        '바다표범',
+        '뱀부쥐',
+        '카피바라',
+        '햄스터',
+        '오리너구리',
+        '아르마딜로',
+        '시바견',
+        '레서판다',
+        '근육고양이',
+        '날다람쥐',
+        '큰바다사자',
+        '알비노악어',
+        '꿀오소리',
+        '사막여우',
+        '긴코털원숭이',
+        '큰뿔양',
+        '주머니쥐',
+        '미니피그',
+        '북극여우',
+        '청공작',
+        '큰입벌레',
+        '맹꽁이',
+        '슬로우로리스',
+        '쿠두',
+        '코요테',
+        '퓨마',
+        '딱따구리',
+        '안경원숭이',
+        '알락꼬리원숭이',
+        '프레리독',
+        '투칸',
+        '재규어',
+        '맹꽁이깨비',
+        '바다코끼리',
+        '킹코브라',
+        '랫스네이크',
+        '턱수염도마뱀',
+        '바다이구아나',
+        '검은맘바',
+        '큰돌고래',
+        '흰동가리',
+        '만타가오리',
+        '흰고래',
+        '범고래',
+        '북극곰',
+        '코뿔소',
+        '긴팔원숭이',
+        '왈라비',
+        '쥐lemur',
+        '큰개미핥기',
+        '킹펭귄',
+        '왕오징어',
+        '해마',
+        '해파리',
+        '바다뱀',
+        '전기뱀장어',
+        '박쥐',
+        '날다람쥐',
+        '날여우',
+        '긴꼬리원숭이',
+        '큰낚시개구리',
+        '독화살개구리',
+        '풍선물고기',
+        '블루탱',
+        '클라운피시',
+        '흰동가리',
+        '나폴레옹피시',
+        '만다린피시',
+        '푸들',
+    ];
     useEffect(() => {
         const checkAuth = () => {
             const authToken = localStorage.getItem('authToken');
@@ -170,6 +337,12 @@ function FriendProfile() {
         }
         navigate(`/feedback/intro/${username}`);
     };
+
+    //피드백 페이지네이션
+    const handlePageClick = ({ selected }) => {
+        setCurrentPage(selected);
+    };
+
     return (
         <div className="w-full bg-[#f6f6f6] min-h-screen py-6 px-4 sm:px-6 lg:px-8 mt-16">
             <div className="max-w-5xl mx-auto">
@@ -484,13 +657,13 @@ function FriendProfile() {
                                 {isAIOpen && (
                                     <div className="bg-white rounded-[20px] p-5">
                                         <div className="flex flex-col justify-around mt-5">
-                                            <h3 className="text-3xl font-bold text-[#4053ff]">Summary</h3>
+                                            <h3 className="text-3xl font-bold text-[#4053ff]">긍정적 피드백</h3>
                                             <div className="flex-1 bg-[rgba(204,209,255,0.2)] rounded-[20px] p-12 m-5 md:m-12 text-xl">
-                                                {formatListWithIndex(positive_feedback)}
+                                                {formatListWithPagination(positive_feedback, true)}
                                             </div>
                                             <h3 className="text-3xl font-bold text-[#4053ff]">발전적 피드백</h3>
                                             <div className="flex-1 bg-[rgba(204,209,255,0.2)] rounded-[20px] p-12 m-5 md:m-12 text-xl">
-                                                {formatListWithIndex(constructive_feedback)}
+                                                {formatListWithPagination(constructive_feedback, true)}
                                             </div>
                                         </div>
                                     </div>

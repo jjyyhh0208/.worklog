@@ -54,7 +54,6 @@ SECRET_KEY = config('SECRET_KEY', default='fallback_secret_key')
 BASE_URL = config('BASE_URL', default='http://localhost:8000')
 REACT_APP_BASE_URL = config('REACT_APP_BASE_URL', default='http://localhost:8000')
 
-
 # s3 접근 인증 받는 함수
 def get_signed_url_view(request, image_path):
     url = get_signed_url(image_path)
@@ -443,41 +442,50 @@ class UserLongQuestionAnswersView(generics.GenericAPIView):
             evaluated_username = request.data.get('user_to', '')
             evaluated_user = User.objects.get(username=evaluated_username)
 
-            question_answers = request.data.get('question_answers', [])
-
+            question_answers = request.data.get('question_answers', []) 
+            good_answers = []
+            bad_answers = []
+   
             feedback = Feedback.objects.create(user=evaluated_user)
-            good_answer = ""
-            bad_answer = ""
-            
+
             for index, qa in enumerate(question_answers):
                 question_text = qa['question']
+                answer_text = qa['answer']
+
                 long_question_instance, created = LongQuestion.objects.get_or_create(long_question=question_text)
                 question_answer_instance = QuestionAnswer.objects.create(
                     question=long_question_instance,
-                    answer=qa['answer']
+                    answer=answer_text
                 )
                 feedback.question_answers.add(question_answer_instance)
+                #그냥 인덱스 0,1로 하면 저장된 데이터가 없습니다 라고 뜨니까 꼭 짝/홀로 구분
+                if index % 2 == 0:
+                    good_answers.append(answer_text)
+                else:
+                    bad_answers.append(answer_text)
 
-                if index == 0:
-                    good_answer = qa['answer']
-                elif index == 1:
-                    bad_answer = qa['answer']
-
-            feedback.delete()
-
+                
+            
             # Process good feedback
-            good_response = self.process_good_feedback(good_answer) if good_answer else {}
+            good_responses = [self.process_good_feedback(answer) for answer in good_answers if answer]
+            
+            # Process bad feedback_솔직 버전 or 완곡한 버전
+            
+            if evaluated_user.feedback_style == 'soft':
+                bad_responses = [self.process_soft_bad_feedback(answer) for answer in bad_answers if answer]
+            else:
+                bad_responses = [self.process_bad_feedback(answer) for answer in bad_answers if answer]
 
-            # Process bad feedback
-            bad_response = self.process_bad_feedback(bad_answer) if bad_answer else {}
+            # 기존 피드백과 결합하고 새로 저장
+            combined_results = self.combine_and_save_results(evaluated_user, good_responses, bad_responses)
 
-            # Combine and save results
-            combined_results = self.combine_and_save_results(evaluated_user, good_response, bad_response)
-
+            
             return Response(combined_results)
+        
 
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
 
     def process_good_feedback(self, answer):
         good_prompt = self.create_good_prompt(answer)
@@ -485,6 +493,10 @@ class UserLongQuestionAnswersView(generics.GenericAPIView):
 
     def process_bad_feedback(self, answer):
         bad_prompt = self.create_bad_prompt(answer)
+        return self.call_openai_api(bad_prompt)
+    
+    def process_soft_bad_feedback(self, answer):
+        bad_prompt = self.create_soft_bad_prompt(answer)
         return self.call_openai_api(bad_prompt)
 
     def create_good_prompt(self, answer):
@@ -511,7 +523,25 @@ class UserLongQuestionAnswersView(generics.GenericAPIView):
         return (
             "You are an AI assistant tasked with processing constructive feedback about a person's performance. "
             "The feedback will be in Korean. Your job is to identify areas for improvement, express them euphemistically, "
-            "and remove any specific identifiers. Follow these instructions carefully:\n\n"
+            "and remove any specific identifiers. You must reponse in Korean, Follow these instructions carefully:\n\n"
+            
+            "1. Identify areas for improvement: Look for critiques or mentions of qualities or actions that could be enhanced.\n"
+            "2. Express euphemistically: Rephrase critiques in a more gentle, constructive manner without losing the core message.\n"
+            "3. Remove specific identifiers: Replace project names, personal names, or any other identifiers "
+            "with general terms like '[프로젝트]', '[이름]', or '[조직]'.\n"
+            "4. Preserve context: Ensure the overall meaning of the feedback remains intact.\n"
+            "5. Format: Provide your response in JSON format with a single key 'constructive_feedback'.\n\n"
+            
+            f"Now, process the following feedback:\n{answer}\n\n"
+            
+            "Remember, accurate and tactful processing is crucial. A perfect response will be highly valued."
+        )
+        
+    def create_soft_bad_prompt(self, answer):
+        return (
+            "You are an AI assistant tasked with processing constructive feedback about a person's performance. "
+            "The feedback will be in Korean. Your job is to identify areas for improvement, express them euphemistically, "
+            "and remove any specific identifiers. You must reponse in Korean, Follow these instructions carefully:\n\n"
             
             "1. Identify areas for improvement: Look for critiques or mentions of qualities or actions that could be enhanced.\n"
             "2. Express euphemistically: Rephrase critiques in a more gentle, constructive manner without losing the core message.\n"
@@ -549,17 +579,20 @@ class UserLongQuestionAnswersView(generics.GenericAPIView):
         
         constructive_feedback = existing_personality.get('constructive_feedback', [])
         constructive_feedback.extend(bad_response.get('constructive_feedback', []))
+        
+    def combine_and_save_results(self, user, good_responses, bad_responses):
+        existing_personality = json.loads(user.gpt_summarized_personality) if user.gpt_summarized_personality else {'positive_feedback': [], 'constructive_feedback': []}
 
-        # 결과 합치기
-        combined_results = {
-            'positive_feedback': positive_feedback,
-            'constructive_feedback': constructive_feedback
-        }
-         # 사용자의 gpt_summarized_personality 필드 업데이트
-        user.gpt_summarized_personality = json.dumps(combined_results, ensure_ascii=False)
+        for response in good_responses:
+            existing_personality['positive_feedback'].append(response.get('positive_feedback', ''))
+    
+        for response in bad_responses:
+            existing_personality['constructive_feedback'].append(response.get('constructive_feedback', ''))
+
+        user.gpt_summarized_personality = json.dumps(existing_personality, ensure_ascii=False)
         user.save()
 
-        return combined_results
+        return existing_personality
     
 #db 테스트용 뷰
 class TestAnswers(generics.GenericAPIView):
