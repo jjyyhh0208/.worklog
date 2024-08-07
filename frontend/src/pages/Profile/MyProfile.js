@@ -11,7 +11,6 @@ function MyProfile() {
     // Profile
     const [profileData, setProfileData] = useState(null);
     const [imageUrl, setImageUrl] = useState(null);
-    const [gptSummary, setGptSummary] = useState({ positive_feedback: [], constructive_feedback: [] });
     const [DISCData, setDISCData] = useState(null);
     const [DISCData2, setDISCData2] = useState(null);
     const [DISCCharacter, setDISCCharacter] = useState(null);
@@ -44,6 +43,7 @@ function MyProfile() {
 
     //피드백 페이지
     const [currentPage, setCurrentPage] = useState(0);
+
     /*get_summaried_personality가 객채거나 스트링이거나 둘 다 처리할 수 있도록 수정 */
     const parsedPersonality =
         profileData && profileData.gpt_summarized_personality
@@ -51,6 +51,7 @@ function MyProfile() {
                 ? JSON.parse(profileData.gpt_summarized_personality)
                 : profileData.gpt_summarized_personality
             : {};
+
     const positive_feedback = parsedPersonality.positive_feedback || [];
     const constructive_feedback = parsedPersonality.constructive_feedback || [];
 
@@ -63,10 +64,10 @@ function MyProfile() {
                 profileData.gender =
                     profileData.gender === 'F' ? 'Female' : profileData.gender === 'M' ? 'Male' : 'None';
                 setProfileData(profileData);
-                // //참고용으로 style 눈에 보이게 만듦
-                // profileData.style =
-                //     profileData.style === 'hard' ? 'hard' : profileData.style === 'soft' ? 'soft' : 'hard';
-                // setProfileData(profileData);
+                //참고용으로 style 눈에 보이게 만듦
+                profileData.style =
+                    profileData.style === 'hard' ? 'hard' : profileData.style === 'soft' ? 'soft' : 'hard';
+                setProfileData(profileData);
 
                 ProfileService.getSignedImageUrl(profileData.profile_image.image)
                     .then((imageUrl) => {
@@ -110,23 +111,6 @@ function MyProfile() {
                         setDISCData2(discData2);
                     } else {
                         console.error('DISC character not found:', discCharacter2, profileData.disc_character);
-                    }
-                }
-
-                // GPT summary
-                if (profileData.gpt_summarized_personality) {
-                    try {
-                        const parsedGptSummary = JSON.parse(profileData.gpt_summarized_personality);
-                        setGptSummary({
-                            positive_feedback: Array.isArray(parsedGptSummary.positive_feedback)
-                                ? parsedGptSummary.positive_feedback
-                                : [],
-                            constructive_feedback: Array.isArray(parsedGptSummary.constructive_feedback)
-                                ? parsedGptSummary.constructive_feedback
-                                : [],
-                        });
-                    } catch (error) {
-                        setGptSummary({ positive_feedback: [], constructive_feedback: [] });
                     }
                 }
             } catch (error) {
@@ -719,7 +703,7 @@ function MyProfile() {
                                 {/* AI 요약 */}
                                 <div className="flex items-center justify-between">
                                     <h2 className="text-2xl md:text-3xl font-extrabold">
-                                        🤖<span className="ml-1"> 🤖 AI 요약 피드백</span>
+                                        🤖<span className="ml-1"> AI 요약 피드백</span>
                                     </h2>
                                     <span className="flex items-center cursor-pointer" onClick={toggleAIOpen}>
                                         <i className={`fas fa-chevron-${isAIOpen ? 'up' : 'down'} fa-lg mr-2`}></i>

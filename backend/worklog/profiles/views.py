@@ -432,42 +432,50 @@ class UserLongQuestionAnswersView(generics.GenericAPIView):
             evaluated_username = request.data.get('user_to', '')
             evaluated_user = User.objects.get(username=evaluated_username)
 
-            question_answers = request.data.get('question_answers', [])
-            
-            feedbacks = []
+            question_answers = request.data.get('question_answers', []) 
+            good_answers = []
+            bad_answers = []
+   
+            feedback = Feedback.objects.create(user=evaluated_user)
 
             for index, qa in enumerate(question_answers):
                 question_text = qa['question']
+                answer_text = qa['answer']
+
                 long_question_instance, created = LongQuestion.objects.get_or_create(long_question=question_text)
                 question_answer_instance = QuestionAnswer.objects.create(
                     question=long_question_instance,
-                    answer=qa['answer']
+                    answer=answer_text
                 )
-                feedback = Feedback.objects.create(user=evaluated_user)
                 feedback.question_answers.add(question_answer_instance)
-                feedbacks.append(feedback)
-            
-            good_answer = question_answers[0]['answer'] if question_answers else ""
-            bad_answer = question_answers[1]['answer'] if len(question_answers) > 1 else ""
-
-            # Process good feedback
-            good_response = self.process_good_feedback(good_answer) if good_answer else {}
-            # Process bad feedback_솔직 버전 or 완곡한 버전
-            if bad_answer:
-                if evaluated_user.feedback_style == 'soft':
-                    bad_response = self.process_soft_bad_feedback(bad_answer)
+                #그냥 인덱스 0,1로 하면 저장된 데이터가 없습니다 라고 뜨니까 꼭 짝/홀로 구분
+                if index % 2 == 0:
+                    good_answers.append(answer_text)
                 else:
-                    bad_response = self.process_bad_feedback(bad_answer)
-            else:
-                bad_response = {}
-            
-            # Combine and save results
-            combined_results = self.combine_and_save_results(evaluated_user, good_response, bad_response)
+                    bad_answers.append(answer_text)
 
+                
+            
+            # Process good feedback
+            good_responses = [self.process_good_feedback(answer) for answer in good_answers if answer]
+            
+            # Process bad feedback_솔직 버전 or 완곡한 버전
+            
+            if evaluated_user.feedback_style == 'soft':
+                bad_responses = [self.process_soft_bad_feedback(answer) for answer in bad_answers if answer]
+            else:
+                bad_responses = [self.process_bad_feedback(answer) for answer in bad_answers if answer]
+
+            # 기존 피드백과 결합하고 새로 저장
+            combined_results = self.combine_and_save_results(evaluated_user, good_responses, bad_responses)
+
+            
             return Response(combined_results)
+        
 
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
 
     def process_good_feedback(self, answer):
         good_prompt = self.create_good_prompt(answer)
@@ -549,15 +557,15 @@ class UserLongQuestionAnswersView(generics.GenericAPIView):
         )
         return json.loads(response['choices'][0]['message']['content'].strip())
 
-    def combine_and_save_results(self, user, good_response, bad_response):
-        # 기존 데이터 로드
-        existing_personality = json.loads(user.gpt_summarized_personality) if user.gpt_summarized_personality else {}
-        
-        # 새로운 피드백 추가
-        existing_personality['positive_feedback'].append(good_response.get('positive_feedback', ''))
-        existing_personality['constructive_feedback'].append(bad_response.get('constructive_feedback', ''))
-        
-         # 사용자의 gpt_summarized_personality 필드 업데이트
+    def combine_and_save_results(self, user, good_responses, bad_responses):
+        existing_personality = json.loads(user.gpt_summarized_personality) if user.gpt_summarized_personality else {'positive_feedback': [], 'constructive_feedback': []}
+
+        for response in good_responses:
+            existing_personality['positive_feedback'].append(response.get('positive_feedback', ''))
+    
+        for response in bad_responses:
+            existing_personality['constructive_feedback'].append(response.get('constructive_feedback', ''))
+
         user.gpt_summarized_personality = json.dumps(existing_personality, ensure_ascii=False)
         user.save()
 

@@ -70,7 +70,7 @@ function App() {
         const pathsWithHeader = [
             '/',
             '/my-profile',
-            '/friend-profile',
+            '/friend-profile/:username',
             '/about-us',
             '/search',
             '/list/:username',

@@ -49,7 +49,7 @@ function FriendProfile() {
 
     const navigate = useNavigate();
 
-    /*get_summaried_personality가 객채거나 스트링이거나 둘 다 처리할 수 있도록 수정 */
+    /*get_summaried_personality가 객체거나 스트링이거나 둘 다 처리할 수 있도록 수정 */
     const parsedPersonality =
         profileData && profileData.gpt_summarized_personality
             ? typeof profileData.gpt_summarized_personality === 'string'
@@ -63,13 +63,18 @@ function FriendProfile() {
     const [currentPage, setCurrentPage] = useState(0);
     // 한 페이지에 표시할 피드백 수
     const itemsPerPage = 5;
+    // const renderFeedback = (feedbackList) => {
+    //     return feedbackList.map((feedback, index) => <div key={index}>{feedback}</div>);
+    // };
+
+    // 피드백 표시 로직
 
     const formatListWithPagination = (list, isPositive) => {
         if (!Array.isArray(list) || list.length === 0) {
             return <p>저장된 피드백 데이터가 없습니다.</p>;
         }
-        // 이름 목록을 섞습니다
 
+        // 이름 목록을 섞습니다
         const shuffledNames = [...animalNicknames].sort(() => 0.5 - Math.random());
 
         const offset = currentPage * itemsPerPage;
@@ -77,7 +82,7 @@ function FriendProfile() {
 
         const paginatedItems = currentPageItems.map((item, index) => {
             const anonymousName =
-                offset + index < shuffledNames.length ? shuffledNames[offset + index] : `팀원 ${offset + index + 1}`; //이름 100개가 부족하면 팀원+숫자로 전개된다.
+                offset + index < shuffledNames.length ? shuffledNames[offset + index] : `팀원 ${offset + index + 1}`;
 
             return (
                 <div key={index} className="mb-4 p-4 bg-gray-100 rounded-lg">
@@ -86,6 +91,7 @@ function FriendProfile() {
                 </div>
             );
         });
+
         return (
             <>
                 {paginatedItems}
@@ -102,8 +108,8 @@ function FriendProfile() {
                     pageLinkClassName={
                         'flex items-center justify-center w-8 h-8 bg-white border rounded hover:bg-blue-100 transition-colors duration-200'
                     }
-                    activeClassName={'bg-blue-500'} // 이 부분을 수정
-                    activeLinkClassName={'text-black hover:bg-blue-600 hover:text-white'} // hover 효과 추가
+                    activeClassName={'bg-blue-500'}
+                    activeLinkClassName={'text-black hover:bg-blue-600 hover:text-white'}
                     previousClassName={'mx-1'}
                     nextClassName={'mx-1'}
                     previousLinkClassName={
@@ -638,7 +644,7 @@ function FriendProfile() {
                                 {/* AI 요약 */}
                                 <div className="flex items-center justify-between">
                                     <h2 className="text-2xl md:text-3xl font-extrabold">
-                                        <span className="ml-1"> 🤖 AI 요약 피드백</span>
+                                        🤖 <span className="ml-1"> AI 요약 피드백</span>
                                     </h2>
                                     <span className="flex items-center cursor-pointer" onClick={toggleAIOpen}>
                                         <i className={`fas fa-chevron-${isAIOpen ? 'up' : 'down'} fa-lg mr-2`}></i>
@@ -654,7 +660,7 @@ function FriendProfile() {
                                             </div>
                                             <h3 className="text-3xl font-bold text-[#4053ff]">발전적 피드백</h3>
                                             <div className="flex-1 bg-[rgba(204,209,255,0.2)] rounded-[20px] p-12 m-5 md:m-12 text-xl">
-                                                {formatListWithPagination(constructive_feedback, false)}
+                                                {formatListWithPagination(constructive_feedback, true)}
                                             </div>
                                         </div>
                                     </div>
