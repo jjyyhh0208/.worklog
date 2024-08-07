@@ -60,40 +60,6 @@ def get_signed_url_view(request, image_path):
     if url is None:
         return JsonResponse({'error': 'Failed to generate signed URL'}, status=500)
     return JsonResponse({'signed_url': url})
-
-
-#유저의 정보를 불러오는 ViewSet -> retrieve인 경우: UserProfileSerializer를 사용하여 유저의 이름, 성별, 나이를 불러옴
-#update, partial_update인 경우: UserWorkInterestSerializer를 사용하여 유저의 업무 성향, 관심 직종을 불러옴
-class UserViewSet(viewsets.ModelViewSet):
-    queryset = User.objects.all()
-    permission_classes = [IsAuthenticated]
-
-    #기본 serializer를 아직 정해주지 않아서 오류 발생 가능성 있음
-    def get_serializer_class(self):
-        if self.action == 'retrieve':
-            return UserProfileSerializer
-        if self.action == 'update' or self.action == 'partial_update':
-            return super().get_serializer_class()
-        return super().get_serializer_class()
-
-    def get_object(self):
-        return self.request.user
-    
-    @action(detail=False, methods=['put'], serializer_class=UserWorkStyleSerializer)
-    def set_user_work_styles(self, request):
-        instance = self.get_object()
-        serializer = self.get_serializer(instance, data=request.data, partial=True)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data)
-
-    @action(detail=False, methods=['put'], serializer_class=UserInterestSerializer)
-    def set_user_interests(self, request):
-        instance = self.get_object()
-        serializer = self.get_serializer(instance, data=request.data, partial=True)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data)
     
     
 #업무 성향을 유저에게 제공하는 ViewSet
@@ -288,7 +254,7 @@ class UserCurrentProfileView(generics.RetrieveAPIView):
     
     
 #회원가입 이후 유저의 이름, 성별, 나이 설정하기 위한 ViewSet
-class UserGenderNameAgeView(generics.UpdateAPIView):
+class UserNameFeedbackStyleView(generics.UpdateAPIView):
     queryset = User.objects.all()
     serializer_class = UserGenderNameAgeSerializer
     permission_classes = [IsAuthenticated]
@@ -464,7 +430,7 @@ class UserLongQuestionAnswersView(generics.GenericAPIView):
                 else:
                     bad_answers.append(answer_text)
 
-                
+            feedback.delete()
             
             # Process good feedback
             good_responses = [self.process_good_feedback(answer) for answer in good_answers if answer]

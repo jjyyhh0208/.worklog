@@ -1,12 +1,10 @@
 import API from './API';
 
 const ProfileService = {
-    setUserBasicInfo: ({ name, age, gender, style }) => {
+    setUserBasicInfo: ({ name, feedback_style }) => {
         const requestData = {
             name: name,
-            age: age,
-            gender: gender,
-            style: style,
+            feedback_style: feedback_style,
         };
         return API.put(`/profiles/user/set/basic-info/`, requestData)
             .then((response) => {

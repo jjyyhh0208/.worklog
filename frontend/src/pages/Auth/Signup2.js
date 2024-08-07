@@ -9,8 +9,6 @@ function Signup2({ signUpInfo, setSignUpInfo }) {
     const location = useLocation();
     const isEditing = location.state?.isEditing || false;
     const profileData = location.state?.profileData || {};
-    const [selectedGender, setSelectedGender] = useState('');
-    const [selectedAge, setSelectedAge] = useState('');
     const [selectedStyle, setSelectedStyle] = useState('');
     const [file, setFile] = useState(null);
     const [fileName, setFileName] = useState('');
@@ -26,13 +24,9 @@ function Signup2({ signUpInfo, setSignUpInfo }) {
                 setSignUpInfo({
                     ...signUpInfo,
                     name: userProfileData.name,
-                    age: userProfileData.age,
-                    gender: userProfileData.gender,
-                    style: userProfileData.style,
+                    feedback_style: userProfileData.feedback_style,
                 });
-                setSelectedAge(userProfileData.age);
-                setSelectedGender(userProfileData.gender);
-                setSelectedStyle(userProfileData.style);
+                setSelectedStyle(userProfileData.feedback_style);
             } catch (error) {
                 console.error('Error fetching data:', error);
             }
@@ -152,11 +146,10 @@ function Signup2({ signUpInfo, setSignUpInfo }) {
         }
 
         try {
+            console.log(selectedStyle);
             await ProfileService.setUserBasicInfo({
                 name: signUpInfo.name === null ? signUpInfo.username : signUpInfo.name,
-                age: selectedAge,
-                gender: signUpInfo.gender === 'None' ? null : signUpInfo.gender,
-                style: selectedStyle,
+                feedback_style: selectedStyle,
             });
 
             if (isEditing) {
@@ -183,19 +176,10 @@ function Signup2({ signUpInfo, setSignUpInfo }) {
         setSignUpInfo({ ...signUpInfo, [e.target.name]: e.target.value });
     };
 
-    const handleAgeChange = (e) => {
-        setSelectedAge(e.target.value);
-        setSignUpInfo({ ...signUpInfo, age: e.target.value });
-    };
-
-    const handleGenderClick = (gender) => {
-        setSignUpInfo({ ...signUpInfo, gender });
-        setSelectedGender(gender);
-    };
-
     const handleStyleClick = (style) => {
         setSignUpInfo({ ...signUpInfo, style });
         setSelectedStyle(style);
+        console.log(style);
     };
 
     const logoHandler = () => {
@@ -253,39 +237,13 @@ function Signup2({ signUpInfo, setSignUpInfo }) {
                         value={signUpInfo.name}
                         onChange={handleInputChange}
                     />
-                    <span className="w-full text-base font-bold mb-1">출생연도</span>
-                    <select
-                        className="w-full h-10 px-3 border border-gray-300 rounded-md text-sm mb-5 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        value={selectedAge}
-                        onChange={handleAgeChange}
-                    >
-                        <option value="">출생연도를 선택하세요</option>
-                        {ageOptions}
-                    </select>
-                    <span className="w-full text-base font-bold mb-1">성별</span>
-                    <div className="flex justify-between w-full mb-5">
-                        {['M', 'F', 'N'].map((gender) => (
-                            <button
-                                key={gender}
-                                type="button"
-                                className={`w-[32%] py-2 rounded-md text-sm font-bold transition-colors duration-200 ${
-                                    selectedGender === gender
-                                        ? 'bg-[#4053ff] text-white'
-                                        : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                                }`}
-                                onClick={() => handleGenderClick(gender)}
-                            >
-                                {gender === 'M' ? 'Male' : gender === 'F' ? 'Female' : 'None'}
-                            </button>
-                        ))}
-                    </div>
                     <span className="w-full text-base font-bold mb-1">선호하는 피드백 스타일</span>
-                    <div className="flex justify-around w-full mb-5">
+                    <div className="flex items-center w-full mb-2">
                         {['hard', 'soft'].map((style) => (
                             <button
                                 key={style}
                                 type="button"
-                                className={`w-[40%] py-2 rounded-md text-sm font-bold transition-colors duration-200 ${
+                                className={`w-[40%] py-2 m-3 rounded-md text-sm font-bold transition-colors duration-200 ${
                                     selectedStyle === style
                                         ? 'bg-[#4053ff] text-white'
                                         : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
@@ -293,26 +251,30 @@ function Signup2({ signUpInfo, setSignUpInfo }) {
                                 onClick={() => handleStyleClick(style)}
                             >
                                 {style === 'hard'
-                                    ? '솔직한 피드백'
+                                    ? '직접적인 방식의 효율적인 피드백'
                                     : style === 'soft'
-                                    ? '배려있는 피드백'
-                                    : '솔직한 피드백'}
+                                    ? '완곡한 방식의 부드러운 피드백'
+                                    : '직접적인 방식의 효율적인 피드백'}
                             </button>
                         ))}
                     </div>
                     <span className="w-full text-base font-bold mb-1">프로필 이미지</span>
                     <div className="w-full flex items-center m-2">
-                        <input
-                            type="checkbox"
-                            id="defaultProfile"
-                            name="defaultProfile"
-                            checked={isDefaultProfile}
-                            onChange={handleCheckboxChange}
-                            className="mr-2"
-                        />
-                        <label htmlFor="defaultProfile" className="text-sm text-gray-700">
-                            기본 프로필 설정하기
-                        </label>
+                        {imageUrl && (
+                            <div className="w-full flex items-center m-2">
+                                <input
+                                    type="checkbox"
+                                    id="defaultProfile"
+                                    name="defaultProfile"
+                                    checked={isDefaultProfile}
+                                    onChange={handleCheckboxChange}
+                                    className="mr-2"
+                                />
+                                <label htmlFor="defaultProfile" className="text-sm text-gray-700">
+                                    기존 프로필 삭제하기
+                                </label>
+                            </div>
+                        )}
                     </div>
                     <label
                         className={`w-full h-40 border-2 border-dashed rounded-lg flex flex-col items-center justify-center cursor-pointer transition-colors duration-200 ${

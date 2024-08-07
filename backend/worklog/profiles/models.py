@@ -106,7 +106,7 @@ class User(AbstractUser):
         feedback_count = self.feedbacks_from.count()
 
         if feedback_count < 3:
-            return;
+            return; # 반환하지 않음!!
 
         character_counts = {name: 0 for name in CHARACTER.values()}
 
@@ -133,7 +133,6 @@ class User(AbstractUser):
                 if disc_character != 'None':
                     character_counts[disc_character] += 1
 
-        # Calculate percentages
         character_percentages = {
             name: round(100 * count / feedback_count, 2) for name, count in character_counts.items()
         }
