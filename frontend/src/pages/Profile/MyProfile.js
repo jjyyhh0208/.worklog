@@ -213,11 +213,15 @@ function MyProfile() {
                             className="w-24 h-24 sm:w-28 sm:h-28 rounded-full object-cover border border-gray-200"
                         />
                         <div className="text-center md:text-left flex-grow">
-                            <h1 className="text-2xl sm:text-3xl font-bold">{profileData.name}</h1>
-                            <p className="text-lg sm:text-xl text-gray-600 mt-1">@{profileData.username}</p>
+                            <h1 className="text-2xl sm:text-3xl font-bold">{profileData?.name}</h1>
+                            <p className="text-lg sm:text-xl text-gray-600 mt-1">@{profileData?.username}</p>
                             <div className="mt-2 flex flex-wrap justify-center md:justify-start gap-2">
-                                <span className="bg-gray-100 px-3 py-1 rounded-full text-sm">{profileData.old} 세</span>
-                                <span className="bg-gray-100 px-3 py-1 rounded-full text-sm">{profileData.gender}</span>
+                                <span className="bg-gray-100 px-3 py-1 rounded-full text-sm">
+                                    {profileData?.old} 세
+                                </span>
+                                <span className="bg-gray-100 px-3 py-1 rounded-full text-sm">
+                                    {profileData?.gender}
+                                </span>
                             </div>
                         </div>
                         <div className="mt-4 md:mt-0 self-center md:self-start">
@@ -277,7 +281,7 @@ function MyProfile() {
                                 </svg>
                             </button>
                             <div className="w-10 h-10 bg-white shadow-md rounded-full hover:bg-gray-200 transition duration-300 flex items-center justify-center">
-                                <KakaoShareButton username={profileData.username} />
+                                <KakaoShareButton username={profileData?.username} />
                             </div>
                             <button
                                 onClick={handleInstagramShare}
