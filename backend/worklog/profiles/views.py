@@ -446,7 +446,10 @@ class UserLongQuestionAnswersView(generics.GenericAPIView):
             question_answers = request.data.get('question_answers', [])
 
             feedback = Feedback.objects.create(user=evaluated_user)
-            for qa in question_answers:
+            good_answer = ""
+            bad_answer = ""
+            
+            for index, qa in enumerate(question_answers):
                 question_text = qa['question']
                 long_question_instance, created = LongQuestion.objects.get_or_create(long_question=question_text)
                 question_answer_instance = QuestionAnswer.objects.create(
@@ -455,15 +458,18 @@ class UserLongQuestionAnswersView(generics.GenericAPIView):
                 )
                 feedback.question_answers.add(question_answer_instance)
 
-            answers = [qa['answer'] for qa in question_answers]
-            answers_text = " ".join(answers)
+                if index == 0:
+                    good_answer = qa['answer']
+                elif index == 1:
+                    bad_answer = qa['answer']
+
             feedback.delete()
 
             # Process good feedback
-            good_response = self.process_good_feedback(answers_text)
+            good_response = self.process_good_feedback(good_answer) if good_answer else {}
 
             # Process bad feedback
-            bad_response = self.process_bad_feedback(answers_text)
+            bad_response = self.process_bad_feedback(bad_answer) if bad_answer else {}
 
             # Combine and save results
             combined_results = self.combine_and_save_results(evaluated_user, good_response, bad_response)
@@ -473,15 +479,15 @@ class UserLongQuestionAnswersView(generics.GenericAPIView):
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-    def process_good_feedback(self, answers_text):
-        good_prompt = self.create_good_prompt(answers_text)
+    def process_good_feedback(self, answer):
+        good_prompt = self.create_good_prompt(answer)
         return self.call_openai_api(good_prompt)
 
-    def process_bad_feedback(self, answers_text):
-        bad_prompt = self.create_bad_prompt(answers_text)
+    def process_bad_feedback(self, answer):
+        bad_prompt = self.create_bad_prompt(answer)
         return self.call_openai_api(bad_prompt)
 
-    def create_good_prompt(self, answers_text):
+    def create_good_prompt(self, answer):
         return (
             "You are an AI assistant tasked with processing feedback about a person's performance. "
             "The feedback will be in Korean. Your job is to identify and preserve positive feedback "
@@ -496,12 +502,12 @@ class UserLongQuestionAnswersView(generics.GenericAPIView):
             "4. Maintain context: Ensure the meaning and context of the feedback remains intact.\n"
             "5. Format: Provide your response in JSON format with a single key 'positive_feedback'.\n\n"
             
-            f"Now, process the following feedback:\n{answers_text}\n\n"
+            f"Now, process the following feedback:\n{answer}\n\n"
             
             "Remember, accurate processing is crucial. A perfect response will be highly valued."
         )
 
-    def create_bad_prompt(self, answers_text):
+    def create_bad_prompt(self, answer):
         return (
             "You are an AI assistant tasked with processing constructive feedback about a person's performance. "
             "The feedback will be in Korean. Your job is to identify areas for improvement, express them euphemistically, "
@@ -514,7 +520,7 @@ class UserLongQuestionAnswersView(generics.GenericAPIView):
             "4. Preserve context: Ensure the overall meaning of the feedback remains intact.\n"
             "5. Format: Provide your response in JSON format with a single key 'constructive_feedback'.\n\n"
             
-            f"Now, process the following feedback:\n{answers_text}\n\n"
+            f"Now, process the following feedback:\n{answer}\n\n"
             
             "Remember, accurate and tactful processing is crucial. A perfect response will be highly valued."
         )
