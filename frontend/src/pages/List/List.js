@@ -34,6 +34,7 @@ function List() {
                                 const imageUrl = await ProfileService.getSignedImageUrl(friend.profile_image.image);
                                 return { ...friend, profileImage: imageUrl };
                             } catch (error) {
+                                console.error('Error fetching signed URL:', error);
                                 return friend;
                             }
                         } else {
@@ -43,7 +44,9 @@ function List() {
                 );
                 setFriends(friendsWithImages);
             })
-            .catch((error) => {});
+            .catch((error) => {
+                console.error('오류가 발생했습니다.', error);
+            });
     }, []);
 
     const handleEvaluationClick = (username) => {
@@ -98,10 +101,12 @@ function List() {
                                         className="absolute top-0 left-0 w-full text-center p-2 text-white text-xs font-bold rounded-t-2xl h-8 flex items-center justify-center"
                                         style={{
                                             backgroundColor:
-                                                discTypeColors[friend.disc_character] || discTypeColors.None,
+                                                friend.feedback_count <= 3
+                                                    ? discTypeColors[friend.disc_character]
+                                                    : discTypeColors.None,
                                         }}
                                     >
-                                        {friend.disc_character !== 'None' ? friend.disc_character : '\u00A0'}
+                                        {friend.feedback_count <= 3 ? friend.disc_character : '\u00A0'}
                                     </div>
                                     <div className="pt-5 flex flex-col items-center mt-4">
                                         <img

@@ -39,13 +39,12 @@ class ProfileImageSerializer(serializers.ModelSerializer):
 class UserGenderNameAgeSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('name', 'gender', 'age')
+        fields = ('name', 'feedback_style')
         
     def update(self,instance, validated_data):
         #이름, 성별, 출생연도 설정
         instance.name = validated_data.get('name', instance.name)
-        instance.gender = validated_data.get('gender', instance.gender)
-        instance.age = validated_data.get('age', instance.age)
+        instance.feedback_style = validated_data.get('feedback_style', instance.feedback_style)
         
         instance.save()
         return instance       
@@ -156,7 +155,7 @@ class UserSearchResultSerializer(serializers.ModelSerializer):
     profile_image = ProfileImageSerializer(source='profile_image_object', read_only=True)
     class Meta:
         model = User
-        fields = ['username', 'name','profile_image']
+        fields = ['username', 'name', 'profile_image']
     
 # 아이디 중복 검사를 위한 로직
 class UserUniqueIdSerializer(serializers.ModelSerializer):
