@@ -16,6 +16,7 @@
 /frontend/.env
 /backend/Pipfile.lock
 
+
 # production
 /build
 
@@ -29,4 +30,11 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+__pycache__/
+staticfiles/
 
+__pycache__/
+staticfiles/
+*.sqlite3
+*.db
+*.log

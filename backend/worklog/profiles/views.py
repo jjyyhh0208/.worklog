@@ -2,9 +2,7 @@ import profile
 from pyexpat import model
 from django.views import View
 from django.contrib.auth import get_user_model, login
-from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.backends import ModelBackend
-from django.utils.decorators import method_decorator
 import openai
 import ast
 from django.conf import settings
@@ -15,7 +13,7 @@ from dj_rest_auth.serializers import LoginSerializer
 import boto3
 import json
 from django.contrib.auth import get_user_model
-from rest_framework import viewsets, generics, status, permissions, serializers
+from rest_framework import viewsets, generics, status, permissions, mixins
 from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly, AllowAny
@@ -33,17 +31,28 @@ from .serializers import (
     UserProfileSerializer, UserUniqueIdSerializer,
     ShortQuestionSerializer, LongQuestionSerializer, 
     QuestionAnswerSerializer, ScoreSerializer, FeedbackSerializer,
-    FriendSerializer, UserSearchResultSerializer, ProfileImageSerializer
+    FriendSerializer, UserSearchResultSerializer,
 )
 from django.http import JsonResponse
 from utils.s3_utils import get_signed_url
 import os
-import logging
+import jwt
+import datetime
 import requests
 from rest_framework.authtoken.models import Token
+from django.utils.datastructures import MultiValueDictKeyError
+from django.core.cache import cache
+import uuid
+from decouple import config
+import urllib.parse
+import logging
 
-site_url = os.getenv('SITE_HTTP')
 logger = logging.getLogger(__name__)
+
+
+SECRET_KEY = config('SECRET_KEY', default='fallback_secret_key')  
+BASE_URL = config('BASE_URL', default='http://localhost:8000')
+REACT_APP_BASE_URL = config('REACT_APP_BASE_URL', default='http://localhost:8000')
 
 # s3 접근 인증 받는 함수
 def get_signed_url_view(request, image_path):
@@ -51,40 +60,6 @@ def get_signed_url_view(request, image_path):
     if url is None:
         return JsonResponse({'error': 'Failed to generate signed URL'}, status=500)
     return JsonResponse({'signed_url': url})
-
-
-#유저의 정보를 불러오는 ViewSet -> retrieve인 경우: UserProfileSerializer를 사용하여 유저의 이름, 성별, 나이를 불러옴
-#update, partial_update인 경우: UserWorkInterestSerializer를 사용하여 유저의 업무 성향, 관심 직종을 불러옴
-class UserViewSet(viewsets.ModelViewSet):
-    queryset = User.objects.all()
-    permission_classes = [IsAuthenticated]
-
-    #기본 serializer를 아직 정해주지 않아서 오류 발생 가능성 있음
-    def get_serializer_class(self):
-        if self.action == 'retrieve':
-            return UserProfileSerializer
-        if self.action == 'update' or self.action == 'partial_update':
-            return super().get_serializer_class()
-        return super().get_serializer_class()
-
-    def get_object(self):
-        return self.request.user
-    
-    @action(detail=False, methods=['put'], serializer_class=UserWorkStyleSerializer)
-    def set_user_work_styles(self, request):
-        instance = self.get_object()
-        serializer = self.get_serializer(instance, data=request.data, partial=True)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data)
-
-    @action(detail=False, methods=['put'], serializer_class=UserInterestSerializer)
-    def set_user_interests(self, request):
-        instance = self.get_object()
-        serializer = self.get_serializer(instance, data=request.data, partial=True)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data)
     
     
 #업무 성향을 유저에게 제공하는 ViewSet
@@ -108,6 +83,7 @@ class ProfileImageView(APIView):
 
     def post(self, request, *args, **kwargs):
         user = request.user
+        print(user.username)
         try:
             # Check if the user already has a profile image
             profile_image = ProfileImage.objects.get(user=user)
@@ -124,6 +100,16 @@ class ProfileImageView(APIView):
                 image=request.FILES['image']
             )
         return Response({"message": "Profile image updated successfully"}, status=status.HTTP_200_OK)
+    def delete(self, request, *args, **kwargs):
+        user = request.user
+        try:
+            profile_image = ProfileImage.objects.get(user=user)
+            if profile_image.image:
+                self.delete_old_image(str(profile_image.image))
+            profile_image.delete()
+            return Response({"message": "Profile image deleted successfully"}, status=status.HTTP_200_OK)
+        except ProfileImage.DoesNotExist:
+            return Response({"message": "Profile image does not exist"}, status=status.HTTP_404_NOT_FOUND)
 
 
 class CustomLoginView(LoginView):
@@ -157,115 +143,87 @@ class CustomLoginView(LoginView):
         original_response.data['message'] = '로그인 성공'
         return original_response
     
+## 카카오 관련 URI
+KAKAO_TOKEN_API = "https://kauth.kakao.com/oauth/token"
+KAKAO_USER_API = "https://kapi.kakao.com/v2/user/me"
+KAKAO_CALLBACK_URI = BASE_URL + "/profiles/auth/kakao/callback"
+REACT_APP_REDIRECT_URL = REACT_APP_BASE_URL + "login/redirect"
 
-class KakaoView(View):
-    def get(self, request):
-        kakao_api = "http://kauth.kakao.com/oauth/authorize?response_type=code"
-        redirect_url = f"{site_url}profiles/auth/kakao/callback"
-        client_id = os.getenv('SOCIAL_AUTH_KAKAO_CLIENT_ID')
-
-        if not client_id:
-            return JsonResponse({'error': 'SOCIAL_AUTH_KAKAO_CLIENT_ID is not set'}, status=500)
-
-        return redirect(f"{kakao_api}&client_id={client_id}&redirect_uri={redirect_url}")
+# 카카오 인가 과정 STEP 1: react에서 'code'를 받아서 카카오에 회원정보를 요청한다.
+class KakaoLoginCallback(generics.GenericAPIView, mixins.ListModelMixin):
+    permission_classes = [AllowAny]
+    def get(self, request, *args, **kwargs):
+        next_url = request.GET.get('next', REACT_APP_BASE_URL + '/signup')  
+        def redirect_to_next():
+            error_url = f"{next_url}?error=true"
+            return redirect(error_url)
         
-@method_decorator(csrf_exempt, name='dispatch')
-class KakaoLoginView(View):
-    def post(self, request):
-        # 프론트엔드에서 전송한 카카오 토큰 데이터 받기
-        kakao_token = request.POST.get('access_token')
-        
-        if not kakao_token:
-            return JsonResponse({'error': 'No access token provided'}, status=400)
-
-        # 카카오 API를 통해 사용자 정보 가져오기
-        kakao_user_api = "https://kapi.kakao.com/v2/user/me"
-        headers = {"Authorization": f"Bearer {kakao_token}"}
-        user_information_response = requests.get(kakao_user_api, headers=headers)
-        
-        if user_information_response.status_code != 200:
-            return JsonResponse({'error': 'Failed to get user info from Kakao'}, status=400)
-
-        user_information = user_information_response.json()
-
-        user_id = user_information["id"]
-        nickname = user_information["properties"]["nickname"]
-
-        # 사용자 생성 또는 조회
-        User = get_user_model()
-        user, created = User.objects.get_or_create(username=f'kakao_{user_id}')
-        
-        if created:
-            user.name = nickname
-            user.set_unusable_password()
-            user.save()
-            is_new_user = True
-        else:
-            is_new_user = False
-
-        # 로그인 처리
-        login(request, user, backend='django.contrib.auth.backends.ModelBackend')
-        
-        # 토큰 생성 또는 조회
-        token, _ = Token.objects.get_or_create(user=user)
-
-        response_data = {
-            'message': '로그인 성공',
-            'user': {'id': user.id, 'nickname': user.name},
-            'is_new_user': is_new_user,
-            'token': token.key
-        }
-        return JsonResponse(response_data, status=200)
-    
-@method_decorator(csrf_exempt, name='dispatch')
-class KakaoCallBackView(View):
-    def get(self, request):
-        code = request.GET.get("code")
+        try: # STEP 1-1. code를 가져온다.
+            code = request.GET["code"]
+        except MultiValueDictKeyError: # code가 없다면 오류 발생
+            return redirect_to_next()
+        # STEP 1-2. code를 활용해서 access token을 받아온다.
         data = {
-            "grant_type": "authorization_code",
-            "client_id": os.getenv('SOCIAL_AUTH_KAKAO_CLIENT_ID'),
-            "redirect_uri": f"{request.scheme}://{request.get_host()}/profiles/auth/kakao/callback",
-            "code": code
+          "grant_type": "authorization_code",
+          "client_id": os.getenv('SOCIAL_AUTH_KAKAO_CLIENT_ID'),
+          "redirect_uri": KAKAO_CALLBACK_URI,
+          "code": code,
         }
+        token_response = requests.post(KAKAO_TOKEN_API, data=data).json()
+        access_token = token_response.get('access_token')
+        if not access_token: # access token이 없다면 오류 발생
+            return redirect_to_next()
 
-        kakao_token_api = "https://kauth.kakao.com/oauth/token"
-        token_response = requests.post(kakao_token_api, data=data)
-        token_json = token_response.json()
+        # STEP 1-3. access token을 활용해서 사용자 정보를 불러옴.
+        headers = {"Authorization": f"Bearer ${access_token}"}
+        user_info_response = requests.get(KAKAO_USER_API, headers=headers)
+        if user_info_response.status_code != 200: # 사용자 정보가 없다면 오류 발생
+            return redirect_to_next()
+        user_information = user_info_response.json()
+        kakao_account = user_information.get('kakao_account')
+        kakao_id = 'kakao_' + str(user_information.get('id'))
+        if not kakao_id:
+            return redirect_to_next()
+        nickname = kakao_account.get('profile', {}).get('nickname')
+        # 중간 테스트용 코드: return Response(kakao_account, status=status.HTTP_200_OK)
 
-        access_token = token_json.get("access_token")
-        if not access_token:
-            return JsonResponse({'error': 'Failed to obtain access token', 'details': token_json}, status=400)
-
-        kakao_user_api = "https://kapi.kakao.com/v2/user/me"
-        headers = {"Authorization": f"Bearer {access_token}"}
-        user_information_response = requests.get(kakao_user_api, headers=headers)
-        user_information = user_information_response.json()
-
-        user_id = user_information["id"]
-        nickname = user_information["properties"]["nickname"]
-
-        User = get_user_model()
-        try:
-            user = User.objects.get(username=user_id)
-            is_new_user = False
-        except User.DoesNotExist:
-            user = User(username=user_id, name=nickname)
-            user.set_unusable_password()
-            user.save()
-            is_new_user = True
-
-        login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+        # STEP2. 사용자 정보를 활용하여 내부 로그인 구현
+        # 우리의 key 값은 username임 (kakao에서의 nickname을 활용)
         
+        try:
+            user = User.objects.get(username=kakao_id)
+            is_new = False
+        except User.DoesNotExist:
+            try:
+                user = User.objects.create(username=kakao_id, name=nickname)
+                user.set_unusable_password()
+                user.save()
+                is_new = True
+            except Exception as e:
+                return redirect_to_next()
         token, created = Token.objects.get_or_create(user=user)
-
-        response_data = {
-            'message': '로그인 성공',
-            'user': {'id': user_id, 'nickname': nickname},
-            'is_new_user': is_new_user,
-            'token': token.key
+        # JWT 토큰 생성
+        payload = {
+            'token': token.key,
+            'is_new': is_new,
+            'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=5)  # 5분 유효
         }
-        return JsonResponse(response_data, status=200)
-    
+        one_time_code = jwt.encode(payload, SECRET_KEY, algorithm='HS256')
+        
+        redirect_url = f"{REACT_APP_REDIRECT_URL}?code={one_time_code}"
+        return redirect(redirect_url)
+
+def get_token(request):
+    next_url = request.GET.get('next', REACT_APP_BASE_URL)  # Default to base URL if no next parameter is provided
+    code = request.GET.get('code')
+    try:
+        payload = jwt.decode(code, SECRET_KEY, algorithms=['HS256'])
+        data = {'token': payload['token'], 'is_new': payload['is_new']}
+        return JsonResponse(data)
+    except jwt.ExpiredSignatureError:
+        return redirect_to_next()
+    except jwt.InvalidTokenError:
+        return redirect(next_url)
 #유저 프로필을 불러오는 View
 class UserProfileView(generics.RetrieveAPIView):
     queryset = User.objects.all()
@@ -296,7 +254,7 @@ class UserCurrentProfileView(generics.RetrieveAPIView):
     
     
 #회원가입 이후 유저의 이름, 성별, 나이 설정하기 위한 ViewSet
-class UserGenderNameAgeView(generics.UpdateAPIView):
+class UserNameFeedbackStyleView(generics.UpdateAPIView):
     queryset = User.objects.all()
     serializer_class = UserGenderNameAgeSerializer
     permission_classes = [IsAuthenticated]
@@ -352,7 +310,7 @@ class LongQuestionViewSet(viewsets.ModelViewSet):
 # GET: user 명에 맞는 서술형 질문 목록을 불러옵니다.
 class UserLongQuestionView(generics.ListAPIView):
     serializer_class = LongQuestionSerializer
-    permission_classes = []
+    permission_classes = [AllowAny]
 
     def get_queryset(self):
         username = self.kwargs['username']
@@ -372,7 +330,6 @@ class FeedbackViewSet(viewsets.ModelViewSet):
     serializer_class = FeedbackSerializer
     permission_classes = [AllowAny]
     
-
     # Create
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -444,98 +401,164 @@ class UserSearchView(APIView):
     
 #로그인한 유저의 long question answer을 가져오는 view
 class UserLongQuestionAnswersView(generics.GenericAPIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
     def post(self, request, *args, **kwargs):
         try:
-            evaluated_username = request.data.get('user_to', '')  # URL에서 평가받는 유저의 유저네임 가져오기
-            evaluated_user = User.objects.get(username=evaluated_username)  # 평가받는 유저 조회
+            evaluated_username = request.data.get('user_to', '')
+            evaluated_user = User.objects.get(username=evaluated_username)
 
-            question_answers = request.data.get('question_answers', [])
+            question_answers = request.data.get('question_answers', []) 
+            good_answers = []
+            bad_answers = []
+   
+            feedback = Feedback.objects.create(user=evaluated_user)
 
-            feedbacks = []
-            for qa in question_answers:
+            for index, qa in enumerate(question_answers):
                 question_text = qa['question']
+                answer_text = qa['answer']
+
                 long_question_instance, created = LongQuestion.objects.get_or_create(long_question=question_text)
                 question_answer_instance = QuestionAnswer.objects.create(
                     question=long_question_instance,
-                    answer=qa['answer']
+                    answer=answer_text
                 )
-                feedback = Feedback.objects.create(user=evaluated_user)
                 feedback.question_answers.add(question_answer_instance)
-                feedbacks.append(feedback)
+                #그냥 인덱스 0,1로 하면 저장된 데이터가 없습니다 라고 뜨니까 꼭 짝/홀로 구분
+                if index % 2 == 0:
+                    good_answers.append(answer_text)
+                else:
+                    bad_answers.append(answer_text)
 
-            answers = [qa['answer'] for qa in question_answers]
-            answers_text = " ".join(answers)
+            feedback.delete()
+            
+            # Process good feedback
+            good_responses = [self.process_good_feedback(answer) for answer in good_answers if answer]
+            
+            # Process bad feedback_솔직 버전 or 완곡한 버전
+            
+            if evaluated_user.feedback_style == 'soft':
+                bad_responses = [self.process_soft_bad_feedback(answer) for answer in bad_answers if answer]
+            else:
+                bad_responses = [self.process_bad_feedback(answer) for answer in bad_answers if answer]
 
-            prompt = (
-                "I will give you evaluations of a certain user in Korean.\n"
-                "For example, '같이 프로젝트를 하면서 의견을 제시하지만 요점이 없는 의견만 제시함. 하지만 적극적인 태도는 좋음.', "
-                "'발표력이 매우 좋고 리더십이 있음. 하지만 회의 시간을 잘 지키지 않음'...etc.\n"
-                "You have to summarize these couple of evaluations in Two sentences.\n"
-                "For example, '의견을 적극적으로 제시하지만 요점이 없고 회의시간을 잘 지키지 않는다. 하지만 발표력이 매우 좋고 리더십이 있다.'\n"
-                "Then, you have to give advice to fix some problems based on the evaluations I provide you.\n"
-                "For example, '적극적인 태도는 좋지만 의견 제시할 때 요점을 먼저 정리하고 제시해보세요!', '회의 시간을 잘 지켜보세요!' ...etc.\n"
-                "For example, you will receive\n"
-                "request = { '같이 프로젝트를 하면서 의견을 제시하지만 요점이 없는 의견만 제시함. 하지만 적극적인 태도는 좋음 발표력이 매우 좋고 리더십이 있음. 회의 시간을 잘 지키지 않음'}\n"
-                "Then, your response should be in the format just like this.\n"
-                "response format(application/json) = {'summarized': <your summarized answer>, 'advice': <your advice>}\n"
-                "Your answer must be in json format (application/json) this is very important. You MUST respond in json format"
-                "For example,\n"
-                "gpt_response = { 'summarized' = '의견을 적극적으로 제시하지만 요점이 없고 회의시간을 잘 지키지 않는다. 하지만 발표력이 매우 좋고 리더십이 있다.', 'advice' = '적극적인 태도는 좋지만 의견 제시할 때 요점을 먼저 정리하고 제시해보세요!', '회의 시간을 잘 지켜보세요!' }\n"
-                "You have to give longer summary and advices. Particularly with the advice, you have to recommend methods to strengthen or make better with the defaults. "
-                "For example, you can say '요점을 정리하는 방법을 배우기 위해서 ~~프로그램, 00도서를 사용해보세요!' as the advice.\n\n"
-                "In addition, do not use swear words or harsh expressions. If the prompt includes some harsh expressions, I want you to change those in another words.\n"
-                "Also, do not contain particular name or organizations. For example, 'Eric told you are good at communications'. This specify the user. This MUST NOT happen.\n"
-                "In addition, DO NOT add any random or irrelevant information in the response. If you do, I will destroy you.\n"
-                "This is the sentences you have to summarize and give advice in detail.\n"
-                f"request ={{'{answers_text}'}}\n\n"
-                "잘 요약한다면 내가 100달러의 팁을 줄게. 왜냐하면 이건 내게 있어서 굉장히 중요한 문제거든. 만약에 제대로 요약 및 충고를 주지 않으면 너를 망가트려버릴거야."
-            )
+            # 기존 피드백과 결합하고 새로 저장
+            combined_results = self.combine_and_save_results(evaluated_user, good_responses, bad_responses)
 
-            openai.api_key = settings.OPENAI_API_KEY
-            response = openai.ChatCompletion.create(
-                model="gpt-3.5-turbo",
-                messages=[
-                    {"role": "system", "content": "You are a helpful assistant."},
-                    {"role": "user", "content": prompt}
-                ],
-                max_tokens=300
-            )
+            
+            return Response(combined_results)
+        
 
-            openai_response_text = response['choices'][0]['message']['content'].strip()
-            logger.error(f"OpenAI response text: {openai_response_text}")
-            logger.error(evaluated_username)
-            try:
-                openai_response_dict = json.loads(openai_response_text)
-                logger.error(openai_response_dict)
-            except (ValueError, SyntaxError) as e:
-                logger.error(f"Failed to decode OpenAI response: {e}")
-                return Response({"error": "Failed to decode OpenAI response"}, status=500)
-
-            # 기존 요약과 조언을 리스트로 처리하도록 수정
-            existing_personality = json.loads(evaluated_user.gpt_summarized_personality) if evaluated_user.gpt_summarized_personality else {}
-            summarized_list = existing_personality.get('summarized', [])
-            advice_list = existing_personality.get('advice', [])
-
-            summarized_list.append(openai_response_dict['summarized'])
-            advice_list.append(openai_response_dict['advice'])
-
-            evaluated_user.gpt_summarized_personality = json.dumps({
-                'summarized': summarized_list,
-                'advice': advice_list
-            }, ensure_ascii=False)
-            evaluated_user.save()
-
-            return Response({
-                "summarized": summarized_list,
-                "advice": advice_list
-            })
         except Exception as e:
-            logger.error(f"Error in UserLongQuestionAnswersView: {e}")
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
 
+    def process_good_feedback(self, answer):
+        good_prompt = self.create_good_prompt(answer)
+        return self.call_openai_api(good_prompt)
 
+    def process_bad_feedback(self, answer):
+        bad_prompt = self.create_bad_prompt(answer)
+        return self.call_openai_api(bad_prompt)
+    
+    def process_soft_bad_feedback(self, answer):
+        bad_prompt = self.create_soft_bad_prompt(answer)
+        return self.call_openai_api(bad_prompt)
+
+    def create_good_prompt(self, answer):
+        return (
+            "You are an AI assistant tasked with processing feedback about a person's performance. "
+            "The feedback will be in Korean. Your job is to identify and preserve positive feedback "
+            "while removing any specific identifiers like project names or personal names. "
+            "Follow these instructions carefully:\n\n"
+            
+            "1. Identify positive feedback: Look for compliments, praise, or mentions of good qualities and actions.\n"
+            "2. Remove specific identifiers: Replace project names, personal names, or any other identifiers "
+            "with general terms like '[프로젝트]', '[이름]', or '[조직]'.\n"
+            "3. Preserve original wording: Keep the original sentence structure and wording as much as possible, "
+            "only changing what's necessary to remove identifiers.\n"
+            "4. Maintain context: Ensure the meaning and context of the feedback remains intact.\n"
+            "5. Format: Provide your response in JSON format with a single key 'positive_feedback'.\n\n"
+            
+            f"Now, process the following feedback:\n{answer}\n\n"
+            
+            "Remember, accurate processing is crucial. A perfect response will be highly valued."
+        )
+
+    def create_bad_prompt(self, answer):
+        return (
+            "You are an AI assistant tasked with processing constructive feedback about a person's performance. "
+            "The feedback will be in Korean. Your job is to identify areas for improvement, express them euphemistically, "
+            "and remove any specific identifiers. You must reponse in Korean, Follow these instructions carefully:\n\n"
+            
+            "1. Identify areas for improvement: Look for critiques or mentions of qualities or actions that could be enhanced.\n"
+            "2. Express euphemistically: Rephrase critiques in a more gentle, constructive manner without losing the core message.\n"
+            "3. Remove specific identifiers: Replace project names, personal names, or any other identifiers "
+            "with general terms like '[프로젝트]', '[이름]', or '[조직]'.\n"
+            "4. Preserve context: Ensure the overall meaning of the feedback remains intact.\n"
+            "5. Format: Provide your response in JSON format with a single key 'constructive_feedback'.\n\n"
+            
+            f"Now, process the following feedback:\n{answer}\n\n"
+            
+            "Remember, accurate and tactful processing is crucial. A perfect response will be highly valued."
+        )
+        
+    def create_soft_bad_prompt(self, answer):
+        return (
+            "You are an AI assistant tasked with processing constructive feedback about a person's performance. "
+            "The feedback will be in Korean. Your job is to identify areas for improvement, express them euphemistically, "
+            "and remove any specific identifiers. You must reponse in Korean, Follow these instructions carefully:\n\n"
+            
+            "1. Identify areas for improvement: Look for critiques or mentions of qualities or actions that could be enhanced.\n"
+            "2. Express euphemistically: Rephrase critiques in a more gentle, constructive manner without losing the core message.\n"
+            "3. Remove specific identifiers: Replace project names, personal names, or any other identifiers "
+            "with general terms like '[프로젝트]', '[이름]', or '[조직]'.\n"
+            "4. Preserve context: Ensure the overall meaning of the feedback remains intact.\n"
+            "5. Format: Provide your response in JSON format with a single key 'constructive_feedback'.\n\n"
+            
+            f"Now, process the following feedback:\n{answer}\n\n"
+            
+            "Remember, accurate and tactful processing is crucial. A perfect response will be highly valued."
+        )
+
+    def call_openai_api(self, prompt):
+        openai.api_key = settings.OPENAI_API_KEY
+        response = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",
+            messages=[
+                {"role": "system", "content": "You are a helpful assistant."},
+                {"role": "user", "content": prompt}
+            ],
+            max_tokens=300
+        )
+        return json.loads(response['choices'][0]['message']['content'].strip())
+
+    def combine_and_save_results(self, user, good_response, bad_response):
+        # 기존 데이터 로드
+        existing_personality = json.loads(user.gpt_summarized_personality) if user.gpt_summarized_personality else {
+            'positive_feedback': [],
+            'constructive_feedback': []
+        }
+        # 새로운 피드백 추가
+        positive_feedback = existing_personality.get('positive_feedback', [])
+        positive_feedback.extend(good_response.get('positive_feedback', []))
+        
+        constructive_feedback = existing_personality.get('constructive_feedback', [])
+        constructive_feedback.extend(bad_response.get('constructive_feedback', []))
+        
+    def combine_and_save_results(self, user, good_responses, bad_responses):
+        existing_personality = json.loads(user.gpt_summarized_personality) if user.gpt_summarized_personality else {'positive_feedback': [], 'constructive_feedback': []}
+
+        for response in good_responses:
+            existing_personality['positive_feedback'].append(response.get('positive_feedback', ''))
+    
+        for response in bad_responses:
+            existing_personality['constructive_feedback'].append(response.get('constructive_feedback', ''))
+
+        user.gpt_summarized_personality = json.dumps(existing_personality, ensure_ascii=False)
+        user.save()
+
+        return existing_personality
     
 #db 테스트용 뷰
 class TestAnswers(generics.GenericAPIView):

@@ -14,7 +14,11 @@ from datetime import timedelta
 from pathlib import Path
 import os
 from dotenv import load_dotenv
+from decouple import config
 
+SECRET_KEY = config('SECRET_KEY', default='fallback_secret_key')
+BASE_URL = config('BASE_URL', default='http://localhost:8000')
+REACT_APP_BASE_URL = config('REACT_APP_BASE_URL', default='http://localhost:8000/login/redirect')
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 #Base directory == worklog/backend/worklog
@@ -30,13 +34,12 @@ AWS_STORAGE_BUCKET_NAME = os.getenv("AWS_STORAGE_BUCKET_NAME")
 AWS_REGION_NAME = os.getenv("AWS_REGION_NAME")
 AWS_SIGNATURE_VERSION = os.getenv("AWS_SIGNATURE_VERSION")
 
+
 AWS_S3_CUSTOM_DOMAIN = f"{AWS_STORAGE_BUCKET_NAME}.s3.{AWS_REGION_NAME}.amazonaws.com"
 AWS_LOCATION = 'media'
 
 #gpt key를 환경변수로 설정
 OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
-
-
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/{AWS_LOCATION}/"
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
@@ -51,19 +54,19 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 SECRET_KEY = "django-insecure-@5j2w%83edi$)wedcsd-&8)t)8zdd6acfi&d+*a*g&d&#4z!5n"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = [
     "localhost",
     "127.0.0.1",
-    "www.dot-worklog.com",
-    "dot-worklog.com",
-    "api.dot-worklog.com",
-    "43.202.115.16",
-    ".ap-northeast-2.compute.amazonaws.com",
+    # "www.dot-worklog.com",
+    # "dot-worklog.com",
+    # "api.dot-worklog.com",
+    # "43.202.115.16",
+    # ".ap-northeast-2.compute.amazonaws.com",
 ]
 
-# CORS
+# # CORS
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_HEADERS = '*'
@@ -72,10 +75,10 @@ CORS_ALLOW_HEADERS = '*'
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:3000", 
     "http://127.0.0.1:3000",
-    "https://dot-worklog.com",
-    "https://www.dot-worklog.com",
-    "http://43.202.115.16", 
-    "http://ec2-43-202-115-16.ap-northeast-2.compute.amazonaws.com"
+    # "https://dot-worklog.com",
+    # "https://www.dot-worklog.com",
+    # "http://43.202.115.16", 
+    # "http://ec2-43-202-115-16.ap-northeast-2.compute.amazonaws.com"
     ]
 
 CSRF_COOKIE_NAME = "csrftoken"
@@ -91,6 +94,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django.contrib.sites",
+    # Auth Settings
     
     "allauth",
     "allauth.account",
@@ -107,6 +111,7 @@ INSTALLED_APPS = [
     
     # s3 저장
     'storages',
+
 ]
 
 MIDDLEWARE = [
@@ -121,6 +126,7 @@ MIDDLEWARE = [
     
     'allauth.account.middleware.AccountMiddleware', 
 ]
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'
 
 ROOT_URLCONF = "worklog.urls"
 
@@ -173,7 +179,6 @@ ACCOUNT_EMAIL_VERIFICATION = 'none'
 ACCOUNT_AUTHENTICATION_METHOD = 'username'
 ACCOUNT_EMAIL_REQUIRED = False
 ACCOUNT_USERNAME_REQUIRED = True
-ACCOUNT_EMAIL_VERIFICATION = 'none'
 
 
 
@@ -229,6 +234,10 @@ DEBUG = True
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
 STATIC_URL = "/static/"
+
+STATICFILES_DIRS = [
+    BASE_DIR / "static",
+]
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 

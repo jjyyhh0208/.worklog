@@ -1,12 +1,12 @@
 import API from './API';
 
 const ProfileService = {
-    setUserBasicInfo: (formData) => {
-        return API.put('/profiles/user/set/basic-info/', formData, {
-            headers: {
-                'Content-Type': 'multipart/form-data',
-            },
-        })
+    setUserBasicInfo: ({ name, feedback_style }) => {
+        const requestData = {
+            name: name,
+            feedback_style: feedback_style,
+        };
+        return API.put(`/profiles/user/set/basic-info/`, requestData)
             .then((response) => {
                 if (response.status === 200) {
                     console.log('사용자 기본 정보가 성공적으로 업데이트되었습니다.');
@@ -24,11 +24,12 @@ const ProfileService = {
                 }
             });
     },
-    setUserProfileInfo: (userData) => {
-        const formData = new FormData();
-        formData.append('image', userData.profileImage);
-
-        return API.put('/profiles/user/set/profile-image/', formData)
+    setUserProfileInfo: (formData) => {
+        return API.post('/profiles/user/set/profile-image/', formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        })
             .then((response) => {
                 if (response.status === 200) {
                     console.log('프로필 이미지가 성공적으로 업데이트되었습니다.');
@@ -37,7 +38,7 @@ const ProfileService = {
             })
             .catch((error) => {
                 if (error.response && error.response.data) {
-                    console.log(error.response);
+                    console.error('Failed to upload image:', error.response.data);
                     throw new Error('프로필 이미지를 업데이트하는 동안 오류가 발생했습니다.');
                 } else if (error.response) {
                     throw new Error('서버 오류가 발생했습니다.');
@@ -117,10 +118,6 @@ const ProfileService = {
                 console.error('사용자 프로필을 불러오는 동안 오류가 발생했습니다.', error);
                 throw error;
             });
-    },
-
-    getUserProfileLink: (username) => {
-        return `${window.location.origin}/friend-profile/${username}`;
     },
 
     fetchFriendProfile: (username) => {
