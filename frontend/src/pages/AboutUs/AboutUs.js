@@ -26,6 +26,15 @@ const AboutUs = () => {
         [discData.types]
     );
 
+    const scrollToType = (typeId) => {
+        const element = document.getElementById(typeId);
+        if (element) {
+            const yOffset = -40; // Adjust this value to control how far above the element to scroll
+            const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
+            window.scrollTo({ top: y, behavior: 'smooth' });
+        }
+    };
+
     if (discData.types.length === 0) {
         return <div>Loading...</div>;
     }
@@ -61,6 +70,7 @@ const AboutUs = () => {
                                         key={index}
                                         className="px-4 py-2 rounded-lg w-32 h-10 text-center cursor-pointer text-white font-bold duration-300 transform hover:scale-105"
                                         style={{ backgroundColor: type.color }}
+                                        onClick={() => scrollToType(type.disc_character)}
                                     >
                                         {type.disc_character}
                                     </span>
@@ -72,21 +82,20 @@ const AboutUs = () => {
                         ></div>
                     </div>
 
-                    <p className="text-xl text-black ml-8">
+                    <p className="text-xl text-black lg:ml-8">
                         모든 유저는 8가지의 유형으로 구분돼요. 공신력 있는 행동 유형 검사인 DISC 검사 속 설문 과정에서
                         착안된 질문들로 구성한 설문 결과 점수에 근거해요. 주도(D),사교(I),안정(C),신중(S) 네 가지 성향을
                         기준으로, 유저는 다음과 같은 8가지 세부 유형으로 구분됩니다.
                     </p>
                 </div>
-
                 {/* 그룹별 설명 */}
                 {Object.entries(groupedData).map(([groupTitle, types], groupIndex) => (
-                    <div key={groupIndex} className="mt-12 scroll-mt-12">
+                    <div key={groupIndex} className="mt-12">
                         <h2 className="text-3xl font-bold text-black mb-2">{groupTitle}</h2>
                         <p className="text-xl mt-5 text-black ml-8 mb-8">{discData.groupDescriptions[groupTitle]}</p>
                         {/* 유형별 설명 */}
                         {types.map((type, typeIndex) => (
-                            <div key={typeIndex} className="mt-10">
+                            <div key={typeIndex} id={type.disc_character} className="mt-12 pt-10">
                                 <div className="flex flex-col flex-wrap mt-5 justify-center items-center">
                                     <div
                                         className="text-xl w-60 h-16 mb-10 rounded-lg px-5 py-2 text-center flex items-center justify-center text-white font-bold"
