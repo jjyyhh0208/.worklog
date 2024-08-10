@@ -125,7 +125,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
         fields = (
             'username', 'name', 'gender', 'age', 'work_styles', 'interests', 
             'disc_character', 'gpt_summarized_personality', 'profile_image', 
-            'feedback_count','disc_scores', 'feedback_workstyles'
+            'feedback_count','disc_scores', 'feedback_workstyles','bio',
         )
 
     def get_feedback_count(self, obj):

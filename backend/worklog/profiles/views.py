@@ -627,4 +627,23 @@ class UnfollowFriendView(generics.GenericAPIView):
         user.friends.remove(friend)
         return Response({"detail": f"You have unfollowed {friend.name}"}, status=status.HTTP_200_OK)
 
-    
+
+# 바이오 업데이트 view 로직
+class UpdateBioView(generics.UpdateAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserProfileSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        return self.request.user
+
+    def update(self, request, *args, **kwargs):
+        user = self.get_object()
+        bio = request.data.get('bio', '')
+        user.bio = bio
+        user.save()
+        serializer = self.get_serializer(user)
+        return Response(serializer.data)
+
+    def patch(self, request, *args, **kwargs):
+        return self.update(request, *args, **kwargs)

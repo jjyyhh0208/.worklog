@@ -215,6 +215,17 @@ const ProfileService = {
                 throw error;
             });
     },
+    //  프로필 한줄소개 작성
+    updateBio: async (bio) => {
+        try {
+            const response = await API.put(`/profiles/user/bio/`, { bio });
+            console.log('Bio updated:', bio);
+            return response.data;
+        } catch (error) {
+            console.error('Failed to update bio:', error);
+            throw error;
+        }
+    },
 };
 
 export default ProfileService;
