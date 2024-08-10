@@ -103,7 +103,7 @@ const WorkStyle = ({
                             fillOpacity="0.25"
                         />
                     </svg>
-                    <p className="text-xl font-bold">
+                    <p className="text-xl font-semibold">
                         피드백을 좀 더 모아볼까요? 최소 3명의 응답이 모이면 응답이 공개됩니다.
                     </p>
                 </div>
@@ -111,7 +111,7 @@ const WorkStyle = ({
 
             {isMyProfile && (
                 <button
-                    className="absolute bottom-10 right-10 w-40 h-[50px] bg-[#9b8f8f] text-white text-xl font-bold rounded-[10px] "
+                    className="absolute bottom-8 right-8 w-40 h-12 bg-white text-gray-700 text-lg font-semibold rounded-full shadow-md hover:shadow-lg transition duration-300 ease-in-out flex items-center justify-center space-x-2 border border-gray-200"
                     onClick={handleKeywordEdit}
                 >
                     키워드 수정

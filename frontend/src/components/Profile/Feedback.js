@@ -176,7 +176,7 @@ const Feedback = ({
                             fillOpacity="0.25"
                         />
                     </svg>
-                    <p className="text-xl font-bold">
+                    <p className="text-xl font-semibold">
                         피드백을 3개 이상 모아야 AI 분석 결과가 표시됩니다. 친구들에게 피드백 요청을 보내보세요!
                     </p>
                 </div>

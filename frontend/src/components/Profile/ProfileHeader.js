@@ -116,7 +116,7 @@ const ProfileHeader = ({
                         </div>
                         <button
                             onClick={handleProfileEdit}
-                            className="w-40 h-[50px] bg-[#9b8f8f] text-white text-xl font-bold rounded-[10px]"
+                            className="w-40 h-12 bg-white text-gray-700 text-lg font-semibold rounded-full shadow-md hover:shadow-lg transition duration-300 ease-in-out flex items-center justify-center space-x-2 border border-gray-200"
                         >
                             프로필 수정
                         </button>
