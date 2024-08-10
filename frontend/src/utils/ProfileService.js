@@ -226,6 +226,18 @@ const ProfileService = {
             throw error;
         }
     },
+
+    //  프로필 도메인 한줄소개 작성
+    updateDomain: async (domain) => {
+        try {
+            const response = await API.put(`/profiles/user/domain/`, { domain });
+            console.log('Domain updated:', domain);
+            return response.data;
+        } catch (error) {
+            console.error('Failed to update domian:', error);
+            throw error;
+        }
+    },
 };
 
 export default ProfileService;

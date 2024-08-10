@@ -17,7 +17,6 @@ const ProfileHeader = ({
     isEditingBio,
     onBioChange,
     onBioEditToggle,
-    onBioBackToggle,
 }) => {
     return (
         <div className="bg-white rounded-[50px] shadow-md p-4 sm:p-6 md:p-8 mb-8 w-[100%] sm:w-[100%] md:w-[100%] lg:w-[100%] mx-auto">
@@ -46,10 +45,10 @@ const ProfileHeader = ({
                             </button>
                         </div>
                     ) : (
-                        <div className="mt-2">
+                        <div className="mt-2 flex w-[100%] justify-start">
                             <p className="text-gray-700 ">{bio || '한 줄 소개를 입력하세요!'}</p>
                             {isMyProfile && (
-                                <button onClick={onBioEditToggle} className="text-blue-500 mt-1">
+                                <button onClick={onBioEditToggle} className="text-blue-500 ml-10">
                                     {bio ? '수정' : '추가'}
                                 </button>
                             )}

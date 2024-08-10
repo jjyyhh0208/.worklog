@@ -9,7 +9,7 @@ from .views import (
     UserCurrentProfileView, UserSearchView, UserLongQuestionAnswersView,
     TestAnswers, FollowFriendView, UserDeleteView, CustomLoginView,
     ProfileImageView, get_signed_url_view, TestAnswers, 
-    FollowFriendView, UserDeleteView, UnfollowFriendView, UpdateBioView,
+    FollowFriendView, UserDeleteView, UnfollowFriendView, UpdateBioView,UpdateDomainView,
     # google_callback, google_login, GoogleLogin
     KakaoLoginCallback, get_token
     )
@@ -41,7 +41,9 @@ urlpatterns = [
     # User 그 외
     path('user/follow/', FollowFriendView.as_view(), name='user-follow'), # 유저 팔로우 엔드포인트
     path('user/get-signed-url/<path:image_path>/', get_signed_url_view, name='get_signed_url'), # s3 인증값을 받는 엔드포인트
-    path('profiles/user/bio/', UpdateBioView.as_view(), name='update_bio'), #한줄소개 업데이트 엔드포인트
+    path('profiles/user/bio/', UpdateBioView.as_view(), name='update-bio'), #한줄소개 업데이트 엔드포인트
+    path('profiles/user/domain/', UpdateDomainView.as_view(), name='update-domain'), #도메인 업데이트 엔드포인트
+
 
 
     #GPT용 답변 추출

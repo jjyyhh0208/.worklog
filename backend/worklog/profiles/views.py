@@ -647,3 +647,23 @@ class UpdateBioView(generics.UpdateAPIView):
 
     def patch(self, request, *args, **kwargs):
         return self.update(request, *args, **kwargs)
+    
+# 도메인 업데이트 view 로직
+class UpdateDomainView(generics.UpdateAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserProfileSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        return self.request.user
+
+    def update(self, request, *args, **kwargs):
+        user = self.get_object()
+        domain = request.data.get('domain', '')
+        user.domain = domain
+        user.save()
+        serializer = self.get_serializer(user)
+        return Response(serializer.data)
+
+    def patch(self, request, *args, **kwargs):
+        return self.update(request, *args, **kwargs)

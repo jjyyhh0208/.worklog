@@ -37,6 +37,8 @@ class User(AbstractUser):
     disc_character = models.CharField(max_length=50, blank=True)
     gpt_summarized_personality = models.TextField(blank=True, null=True)
     bio = models.TextField(max_length=500, blank=True)
+    domain = models.TextField(max_length=500, blank=True)
+
 
     
     @property
