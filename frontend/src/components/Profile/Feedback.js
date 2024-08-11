@@ -37,8 +37,8 @@ const Feedback = ({
     );
 
     return (
-        <div className="bg-white rounded-[50px] shadow-md mb-5 p-8 md:p-16 relative">
-            <div className="text-center bg-[#4053FF] px-4 py-2 rounded-[10px] text-l text-white font-semibold mb-20">
+        <div className="bg-white rounded-[50px] shadow-md mb-5 p-8 md:p-16 relative ">
+            <div className="w-[30%] text-center absolute t-1 aline-center right-20  h-10 bg-[#4053FF] px-4 py-2 rounded-[10px] text-l text-white font-semibold mb-20">
                 {profileData?.feedback_count}개의 피드백이 쌓였어요
             </div>
             <div className="flex items-center justify-between">

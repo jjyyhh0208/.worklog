@@ -148,7 +148,10 @@ function Main() {
 
             {/* Group details */}
             {groups.map((group, groupIndex) => (
-                <div key={groupIndex} className="mt-8 scroll-mt-12 w-[80%]">
+                <div
+                    key={groupIndex}
+                    className="mt-8 item-center scroll-mt-12 w-[80%] flex flex-col justify-center items-center"
+                >
                     {group.types.map(
                         (type, typeIndex) =>
                             type.title !== 'None' && (
@@ -171,7 +174,7 @@ function Main() {
                                 </div>
                             )
                     )}
-                    <p className="text-xl mt-5 text-black ml-8 mb-8">{group.description}</p>
+                    <p className="text-xl text-center w-[45%] mt-5 text-black mb-8">{group.description}</p>
                 </div>
             ))}
         </div>

@@ -27,6 +27,8 @@ function Signup2({ signUpInfo, setSignUpInfo }) {
                     feedback_style: userProfileData.feedback_style,
                 });
                 setSelectedStyle(userProfileData.feedback_style);
+                const savedStyle = localStorage.getItem('selectedFeedbackStyle');
+                setSelectedStyle(savedStyle || userProfileData.feedback_style || '');
             } catch (error) {
                 console.error('Error fetching data:', error);
             }
@@ -163,15 +165,6 @@ function Signup2({ signUpInfo, setSignUpInfo }) {
         }
     };
 
-    const ageOptions = [];
-    for (let year = 1960; year <= 2020; year++) {
-        ageOptions.push(
-            <option key={year} value={year}>
-                {year}
-            </option>
-        );
-    }
-
     const handleInputChange = (e) => {
         setSignUpInfo({ ...signUpInfo, [e.target.name]: e.target.value });
     };
@@ -179,6 +172,7 @@ function Signup2({ signUpInfo, setSignUpInfo }) {
     const handleStyleClick = (style) => {
         setSignUpInfo({ ...signUpInfo, style });
         setSelectedStyle(style);
+        localStorage.setItem('selectedFeedbackStyle', style);
         console.log(style);
     };
 

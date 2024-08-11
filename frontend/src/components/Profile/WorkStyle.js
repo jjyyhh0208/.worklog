@@ -11,19 +11,17 @@ const WorkStyle = ({
     onDomainEditToggle,
 }) => {
     return (
-        <div className="bg-white rounded-[50px] shadow-md mb-5 p-8 md:p-16 relative">
-            <h2 className="text-3xl md:text:3xl font-bold mb-2 mt-10">
-                {isMyProfile ? '내가' : '이 사람이'} 관심있는 도메인
-            </h2>
-            <hr className="border-t border-gray-300 my-3" />
+        <div className="bg-white rounded-[50px] shadow-md p-8 md:p-16 mb-16 relative">
+            <h2 className="text-3xl md:text:3xl font-bold ">{isMyProfile ? '내가' : '이 사람이'} 관심있는 도메인</h2>
+            <hr className="border-t border-gray-300 my-3 mb-8" />
             {isEditingDomain ? (
                 <div className="mt-2">
                     <input
                         type="text"
                         value={domain}
                         onChange={onDomainChange}
-                        className="w-[70%] p-2 text-s border rounded mr-2"
-                        placeholder="관심있는 도메인을 소개해주세요!"
+                        className="w-[100%] h-40 p-2 text-s border rounded mb-4 mr-2"
+                        placeholder="관심있는 도메인은 무엇인가요? 자유롭게 작성해주세요!"
                     />
                     <button
                         onClick={onDomainEditToggle}
@@ -43,10 +41,10 @@ const WorkStyle = ({
                 </div>
             )}
 
-            <h2 className="text-3xl md:text:3xl font-bold mb-2 mt-10">
+            <h2 className="text-3xl md:text:3xl font-bold mb-2 mt-24">
                 {isMyProfile ? '내가 관심 있는' : '이 사람이 관심 있는'} 업종/직군 분야
             </h2>
-            <hr className="border-t border-gray-300 my-3" />
+            <hr className="border-t border-gray-300 my-3 mb-8" />
             <div className="flex flex-wrap gap-3 mt-3 mb-8">
                 {profileData?.interests &&
                     profileData.interests.map((interest) => (
@@ -58,10 +56,10 @@ const WorkStyle = ({
                         </span>
                     ))}
             </div>
-            <h2 className="text-3xl md:text:3xl font-bold mb-2 mt-10">
+            <h2 className="text-3xl md:text:3xl font-bold mb-2 mt-24">
                 {isMyProfile ? '내가' : '이 사람이'} 추구하는 업무 스타일
             </h2>
-            <hr className="border-t border-gray-300 my-3" />
+            <hr className="border-t border-gray-300 my-3 mb-8" />
             <div className="flex flex-wrap gap-3 mt-3 mb-8">
                 {profileData?.work_styles.map((style) => (
                     <span
@@ -73,10 +71,10 @@ const WorkStyle = ({
                 ))}
             </div>
 
-            <h2 className="text-3xl md:text:3xl font-bold mb-2 mt-10">
+            <h2 className="text-3xl md:text:3xl font-bold mb-2 mt-24">
                 {isMyProfile ? '타인이 바라보는 나의' : '타인이 바라보는 이 사람의'} 업무 스타일
             </h2>
-            <hr className="border-t border-gray-300 my-3" />
+            <hr className="border-t border-gray-300 my-3 mb-8" />
             {profileData?.feedback_count >= 3 ? (
                 <div className="flex flex-wrap gap-3 mt-3 mb-20">
                     {profileData.feedback_workstyles &&
