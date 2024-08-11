@@ -124,12 +124,12 @@ const ProfileHeader = ({
                 ) : (
                     <>
                         <button
-                            className={`mr-5 px-6 py-2 h-12 w-44 text-xl font-bold rounded-[20px] ${
+                            className={`mr-5 px-6 py-2 h-12 w-48 text-xl font-bold rounded-[20px] ${
                                 isFollowing ? 'bg-gray-500' : 'bg-[#4053ff]'
                             } text-white`}
                             onClick={handleFollowClick}
                         >
-                            {isFollowing ? '친구 등록취소' : '친구 등록하기'}
+                            {isFollowing ? '친구 등록 취소' : '친구 등록하기'}
                         </button>
                         <button
                             className="mr-5 px-6 py-2 h-12 w-44 bg-[#f8bd23] text-white text-lg font-bold rounded-[20px] hover:bg-opacity-90 transition duration-300"
