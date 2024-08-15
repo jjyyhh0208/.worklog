@@ -63,7 +63,6 @@ function MyProfile() {
                             ? JSON.parse(profileData.gpt_summarized_personality)
                             : profileData.gpt_summarized_personality
                         : {};
-
                 setPositiveFeedback(parsedPersonality.positive_feedback);
                 setConstructiveFeedback(parsedPersonality.constructive_feedback);
 
@@ -228,8 +227,8 @@ function MyProfile() {
                 />
                 <Feedback
                     profileData={profileData}
-                    positive_feedback={positiveFeedback}
-                    constructive_feedback={constructiveFeedback}
+                    positiveFeedback={positiveFeedback}
+                    constructiveFeedback={constructiveFeedback}
                     DISCData={DISCData}
                     DISCData2={DISCData2}
                     DISCCharacter={DISCCharacter}

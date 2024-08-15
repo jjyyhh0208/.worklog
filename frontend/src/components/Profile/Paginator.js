@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import ReactPaginate from 'react-paginate';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import animalNicknames from '../../data/animalNicknames.json';
 
 const PaginatedItems = ({ items, currentPage, itemsPerPage }) => {
@@ -35,8 +37,8 @@ const Paginator = ({ items, itemsPerPage }) => {
         <div>
             <PaginatedItems items={items} currentPage={currentPage} itemsPerPage={itemsPerPage} />
             <ReactPaginate
-                previousLabel={'이전'}
-                nextLabel={'다음'}
+                previousLabel={<FontAwesomeIcon icon={faChevronLeft} />}
+                nextLabel={<FontAwesomeIcon icon={faChevronRight} />}
                 breakLabel={'...'}
                 pageCount={pageCount}
                 marginPagesDisplayed={2}
@@ -47,7 +49,6 @@ const Paginator = ({ items, itemsPerPage }) => {
                 pageLinkClassName={
                     'flex items-center justify-center w-8 h-8 bg-white border rounded hover:bg-blue-100 transition-colors duration-200'
                 }
-                activeClassName={'bg-blue-500'}
                 activeLinkClassName={'text-black hover:bg-blue-600 hover:text-white'}
                 previousClassName={'mx-1'}
                 nextClassName={'mx-1'}

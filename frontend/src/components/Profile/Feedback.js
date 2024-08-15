@@ -37,12 +37,14 @@ const Feedback = ({
     );
 
     return (
-        <div className="bg-white rounded-[50px] shadow-md mb-5 p-8 md:p-16 relative ">
-            <div className="w-[30%] text-center absolute t-1 aline-center right-20  h-10 bg-[#4053FF] px-4 py-2 rounded-[10px] text-l text-white font-semibold mb-20">
-                {profileData?.feedback_count}개의 피드백이 쌓였어요
+        <div className="bg-white rounded-[50px] shadow-md mb-5 p-8 md:p-16 relative">
+            <div className="flex justify-end">
+                <div className="w-[30%] text-center bg-[#4053FF] px-4 py-2 rounded-[10px] text-l text-white font-semibold ml-auto">
+                    {profileData?.feedback_count}개의 피드백이 쌓였어요
+                </div>
             </div>
-            <div className="flex items-center justify-between">
-                <h2 className="text-2xl md:text-3xl font-extrabold">타인이 평가하는 나</h2>
+            <div className="flex items-center justify-between mt-10">
+                <h2 className="text-3xl font-bold">타인이 평가하는 나</h2>
 
                 {profileData?.feedback_count >= 3 && (
                     <span className="flex items-center cursor-pointer" onClick={toggleFeedbackOpen}>
@@ -112,7 +114,7 @@ const Feedback = ({
                     </div>
 
                     <div className="flex items-center justify-between">
-                        <h2 className="text-2xl md:text-3xl font-extrabold">가장 많은 친구가 생각하는 내 업무 유형</h2>
+                        <h2 className="text-3xl font-bold mt-5">가장 많은 친구가 생각하는 내 업무 유형</h2>
                         <span className="flex items-center cursor-pointer" onClick={toggleCharacterOpen}>
                             <i className={`fas fa-chevron-${isCharacterOpen ? 'up' : 'down'} fa-lg mr-2`}></i>
                         </span>
@@ -130,7 +132,7 @@ const Feedback = ({
                     )}
 
                     <div className="flex items-center justify-between">
-                        <h2 className="text-2xl md:text-3xl font-extrabold">
+                        <h2 className="text-3xl font-bold mt-5">
                             🤖<span className="ml-1"> AI 요약 피드백</span>
                         </h2>
                         <span className="flex items-center cursor-pointer" onClick={toggleAIOpen}>
