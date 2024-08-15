@@ -19,6 +19,12 @@ function List() {
     const [friends, setFriends] = useState([]);
     const [profileData, setProfileData] = useState(null);
     const navigate = useNavigate();
+    const [currentPage, setCurrentPage] = useState(1);
+    const cardsPerPage = 9;
+    const indexOfLastCard = currentPage * cardsPerPage;
+    const indexOfFirstCard = indexOfLastCard - cardsPerPage;
+    const currentFriends = friends.slice(indexOfFirstCard, indexOfLastCard);
+    const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
     useEffect(() => {
         ProfileService.fetchUserProfile()
@@ -88,11 +94,11 @@ function List() {
                 <div className="flex justify-center">
                     <div
                         className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 ${
-                            friends.length < 3 ? 'sm:grid-cols-1 lg:grid-cols-2' : ''
+                            currentFriends.length < 3 ? 'sm:grid-cols-1 lg:grid-cols-2' : ''
                         }`}
                     >
-                        {friends.length > 0 ? (
-                            friends.map((friend) => (
+                        {currentFriends.length > 0 ? (
+                            currentFriends.map((friend) => (
                                 <div
                                     key={friend.id}
                                     className="bg-white rounded-2xl shadow-md p-4 text-center w-56 h-68 relative flex flex-col items-center duration-300   transform hover:scale-105"
@@ -162,6 +168,48 @@ function List() {
                         )}
                     </div>
                 </div>
+                {friends.length > cardsPerPage && (
+                    <div className="flex justify-center items-center mt-8 space-x-4">
+                        <button
+                            onClick={() => paginate(currentPage - 1)}
+                            disabled={currentPage === 1}
+                            className="p-2 rounded-full bg-white border border-gray-300 shadow-sm transition-colors duration-200 ease-in-out hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                className="h-6 w-6 text-gray-600"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                            >
+                                <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M15 19l-7-7 7-7"
+                                />
+                            </svg>
+                        </button>
+                        <span className="text-sm text-gray-700">
+                            {currentPage} / {Math.ceil(friends.length / cardsPerPage)}
+                        </span>
+                        <button
+                            onClick={() => paginate(currentPage + 1)}
+                            disabled={currentPage === Math.ceil(friends.length / cardsPerPage)}
+                            className="p-2 rounded-full bg-white border border-gray-300 shadow-sm transition-colors duration-200 ease-in-out hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                className="h-6 w-6 text-gray-600"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                            >
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                            </svg>
+                        </button>
+                    </div>
+                )}
             </div>
         </div>
     );

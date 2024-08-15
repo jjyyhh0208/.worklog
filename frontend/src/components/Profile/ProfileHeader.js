@@ -22,7 +22,7 @@ const ProfileHeader = ({
                     className="w-24 h-24 sm:w-28 sm:h-28 rounded-full object-cover border border-gray-200"
                 />
                 <div className="text-center md:text-left flex-grow">
-                    <h1 className="text-2xl sm:text-3xl font-bold">{profileData?.name}</h1>
+                    <h1 className="text-2xl sm:text-3xl font-bold ">{profileData?.name}</h1>
                     <p className="text-lg sm:text-xl text-gray-600 mt-1">@{profileData?.username}</p>
                 </div>
                 <div className="mt-4 md:mt-0 self-center md:self-start flex justify-center w-full">
@@ -94,12 +94,12 @@ const ProfileHeader = ({
                 ) : (
                     <>
                         <button
-                            className={`mr-5 px-6 py-2 h-12 w-44 text-xl font-bold rounded-[20px] ${
+                            className={`mr-5 px-6 py-2 h-12 w-48 text-xl font-bold rounded-[20px] ${
                                 isFollowing ? 'bg-gray-500' : 'bg-[#4053ff]'
                             } text-white`}
                             onClick={handleFollowClick}
                         >
-                            {isFollowing ? '친구 등록취소' : '친구 등록하기'}
+                            {isFollowing ? '친구 등록 취소' : '친구 등록하기'}
                         </button>
                         <button
                             className="mr-5 px-6 py-2 h-12 w-44 bg-[#f8bd23] text-white text-lg font-bold rounded-[20px] hover:bg-opacity-90 transition duration-300"
