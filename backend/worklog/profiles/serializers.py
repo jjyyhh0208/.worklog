@@ -148,7 +148,7 @@ class FriendSerializer(serializers.ModelSerializer):
     profile_image = ProfileImageSerializer(source='profile_image_object', read_only=True)
     class Meta:
         model = User
-        fields = ['username', 'name', 'disc_character', 'profile_image']
+        fields = ['username', 'name', 'disc_character', 'profile_image', 'feedback_count']
 
 # 유저 검색 모델
 class UserSearchResultSerializer(serializers.ModelSerializer):

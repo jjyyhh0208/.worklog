@@ -425,9 +425,9 @@ class UserLongQuestionAnswersView(generics.GenericAPIView):
                 )
                 feedback.question_answers.add(question_answer_instance)
                 #그냥 인덱스 0,1로 하면 저장된 데이터가 없습니다 라고 뜨니까 꼭 짝/홀로 구분
-                if index % 2 == 0:
+                if index % 2 == 0 and index == 0:
                     good_answers.append(answer_text)
-                else:
+                elif index % 2 == 1:
                     bad_answers.append(answer_text)
 
             feedback.delete()
