@@ -13,6 +13,10 @@ const ProfileHeader = ({
     isFollowing,
     handleFollowClick,
     handleFeedbackClick,
+    bio,
+    isEditingBio,
+    onBioChange,
+    onBioEditToggle,
 }) => {
     return (
         <div className="bg-white rounded-[50px] shadow-md p-4 sm:p-6 md:p-8 mb-8 w-[100%] sm:w-[100%] md:w-[100%] lg:w-[100%] mx-auto">
@@ -21,11 +25,37 @@ const ProfileHeader = ({
                     src={imageUrl || '/images/basicProfile.png'}
                     className="w-24 h-24 sm:w-28 sm:h-28 rounded-full object-cover border border-gray-200"
                 />
-                <div className="text-center md:text-left flex-grow">
-                    <h1 className="text-2xl sm:text-3xl font-bold ">{profileData?.name}</h1>
+                <div className="text-center md:text-left w-[50%] flex-grow">
+                    <h1 className="text-2xl sm:text-3xl font-bold w-20">{profileData?.name}</h1>
                     <p className="text-lg sm:text-xl text-gray-600 mt-1">@{profileData?.username}</p>
+                    {isEditingBio ? (
+                        <div className="mt-2 md:flex-row">
+                            <input
+                                type="text"
+                                value={bio}
+                                onChange={onBioChange}
+                                className="w-[70%] p-2 text-s border rounded mr-2"
+                                placeholder="한 줄 소개를 입력하세요"
+                            />
+                            <button
+                                onClick={onBioEditToggle}
+                                className="bg-blue-500 text-white text-xs px-4 py-2 rounded mr-2 "
+                            >
+                                저장
+                            </button>
+                        </div>
+                    ) : (
+                        <div className="mt-2 flex w-[100%] justify-start">
+                            <p className="text-gray-700 ">{bio || '한 줄 소개를 입력하세요!'}</p>
+                            {isMyProfile && (
+                                <button onClick={onBioEditToggle} className="text-blue-500 ml-10">
+                                    {bio ? '수정' : '추가'}
+                                </button>
+                            )}
+                        </div>
+                    )}
                 </div>
-                <div className="mt-4 md:mt-0 self-center md:self-start flex justify-center w-full">
+                <div className="mt-4 md:mt-0 self-center md:self-start flex justify-end w-full">
                     {profileData && (
                         <div
                             className="w-[200px] h-[50px] rounded-[10px] flex items-center justify-center text-white text-2xl font-semibold"
@@ -86,7 +116,7 @@ const ProfileHeader = ({
                         </div>
                         <button
                             onClick={handleProfileEdit}
-                            className="w-40 h-[50px] bg-[#9b8f8f] text-white text-xl font-bold rounded-[10px]"
+                            className="w-40 h-12 bg-white text-gray-700 text-lg font-semibold rounded-full shadow-md hover:shadow-lg transition duration-300 ease-in-out flex items-center justify-center space-x-2 border border-gray-200"
                         >
                             프로필 수정
                         </button>

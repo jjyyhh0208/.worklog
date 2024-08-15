@@ -215,6 +215,29 @@ const ProfileService = {
                 throw error;
             });
     },
+    //  프로필 한줄소개 작성
+    updateBio: async (bio) => {
+        try {
+            const response = await API.put(`/profiles/user/bio/`, { bio });
+            console.log('Bio updated:', bio);
+            return response.data;
+        } catch (error) {
+            console.error('Failed to update bio:', error);
+            throw error;
+        }
+    },
+
+    //  프로필 도메인 한줄소개 작성
+    updateDomain: async (domain) => {
+        try {
+            const response = await API.put(`/profiles/user/domain/`, { domain });
+            console.log('Domain updated:', domain);
+            return response.data;
+        } catch (error) {
+            console.error('Failed to update domian:', error);
+            throw error;
+        }
+    },
 };
 
 export default ProfileService;

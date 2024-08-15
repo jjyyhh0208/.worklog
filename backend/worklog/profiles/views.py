@@ -467,58 +467,52 @@ class UserLongQuestionAnswersView(generics.GenericAPIView):
 
     def create_good_prompt(self, answer):
         return (
-            "You are an AI assistant tasked with processing feedback about a person's performance. "
-            "The feedback will be in Korean. Your job is to identify and preserve positive feedback "
-            "while removing any specific identifiers like project names or personal names. "
-            "Follow these instructions carefully:\n\n"
-            
-            "1. Identify positive feedback: Look for compliments, praise, or mentions of good qualities and actions.\n"
-            "2. Remove specific identifiers: Replace project names, personal names, or any other identifiers "
-            "with general terms like '[프로젝트]', '[이름]', or '[조직]'.\n"
-            "3. Preserve original wording: Keep the original sentence structure and wording as much as possible, "
-            "only changing what's necessary to remove identifiers.\n"
-            "4. Maintain context: Ensure the meaning and context of the feedback remains intact.\n"
-            "5. Format: Provide your response in JSON format with a single key 'positive_feedback'.\n\n"
-            
-            f"Now, process the following feedback:\n{answer}\n\n"
-            
+            "You are an AI assistant tasked with processing feedback about a person's performance. The feedback will be in Korean. Your job is to identify and preserve positive feedback while removing any specific identifiers like project names or personal names. Follow these instructions carefully:"
+
+            "1. Identify positive feedback: Look for compliments, praise, or mentions of good qualities and actions."
+            "2. Remove specific identifiers: Replace project names, personal names, or any other identifiers with general terms like '[프로젝트]', '[이름]', or '[조직]'."
+            "3. Preserve original wording: Keep the original sentence structure and wording as much as possible, only changing what's necessary to remove identifiers."
+            "4. Maintain context: Ensure the meaning and context of the feedback remains intact."
+            "5. Format: Provide your response in JSON format with a single key 'positive_feedback'."
+
+            f"Now, process the following feedback: {answer}"
+
             "Remember, accurate processing is crucial. A perfect response will be highly valued."
         )
 
     def create_bad_prompt(self, answer):
         return (
-            "You are an AI assistant tasked with processing constructive feedback about a person's performance. "
-            "The feedback will be in Korean. Your job is to identify areas for improvement, express them euphemistically, "
-            "and remove any specific identifiers. You must reponse in Korean, Follow these instructions carefully:\n\n"
-            
-            "1. Identify areas for improvement: Look for critiques or mentions of qualities or actions that could be enhanced.\n"
-            "2. Express euphemistically: Rephrase critiques in a more gentle, constructive manner without losing the core message.\n"
-            "3. Remove specific identifiers: Replace project names, personal names, or any other identifiers "
-            "with general terms like '[프로젝트]', '[이름]', or '[조직]'.\n"
-            "4. Preserve context: Ensure the overall meaning of the feedback remains intact.\n"
-            "5. Format: Provide your response in JSON format with a single key 'constructive_feedback'.\n\n"
-            
-            f"Now, process the following feedback:\n{answer}\n\n"
-            
-            "Remember, accurate and tactful processing is crucial. A perfect response will be highly valued."
+         "당신은 한 사람의 업무 성과에 대한 솔직한 피드백을 처리하는 AI 어시스턴트입니다. "
+        "피드백은 한국어로 제공될 것입니다. 당신의 임무는 개선이 필요한 영역을 명확히 식별하고, "
+        "이를 직접적이지만 건설적으로 표현하며, 구체적인 식별자를 제거하는 것입니다. 다음 지침을 주의 깊게 따르세요:\n\n"
+        
+        "1. 개선 영역 식별: 비판이나 향상될 수 있는 특성 또는 행동을 명확히 찾아내세요.\n"
+        "2. 직접적 표현: 핵심 메시지를 유지하면서 비판을 직접적이고 명확하게 재표현하세요. 단, 지나치게 공격적이거나 비난조의 표현은 피하세요.\n"
+        "3. 구체적 식별자 제거: 프로젝트명, 개인 이름 등의 식별자를 '[프로젝트]', '[이름]', '[조직]' 등의 일반적인 용어로 대체하세요.\n"
+        "4. 맥락 유지: 피드백의 전반적인 의미와 의도가 그대로 유지되도록 하세요.\n"
+        "5. 말투와 어미 유지: 원래 피드백의 말투와 어미를 최대한 그대로 유지하세요. 예를 들어, '~해요', '~입니다', '~야' 등의 종결어미를 그대로 사용하세요.\n"
+        "6. 건설적인 제안 추가: 가능하다면 각 비판점에 대해 간단한 개선 제안을 덧붙이세요.\n"
+        "7. 형식: 응답을 'constructive_feedback'이라는 단일 키를 가진 JSON 형식으로 제공하세요.\n\n"
+        
+        f"이제 다음 피드백을 처리하세요:\n{answer}\n\n"
+        
+        "정확하고 솔직한 처리가 중요합니다. 직접적이면서도 건설적인 피드백을 제공하는 것이 목표입니다."
+    
         )
         
     def create_soft_bad_prompt(self, answer):
         return (
-            "You are an AI assistant tasked with processing constructive feedback about a person's performance. "
-            "The feedback will be in Korean. Your job is to identify areas for improvement, express them euphemistically, "
-            "and remove any specific identifiers. You must reponse in Korean, Follow these instructions carefully:\n\n"
-            
-            "1. Identify areas for improvement: Look for critiques or mentions of qualities or actions that could be enhanced.\n"
-            "2. Express euphemistically: Rephrase critiques in a more gentle, constructive manner without losing the core message.\n"
-            "3. Remove specific identifiers: Replace project names, personal names, or any other identifiers "
-            "with general terms like '[프로젝트]', '[이름]', or '[조직]'.\n"
-            "4. Preserve context: Ensure the overall meaning of the feedback remains intact.\n"
-            "5. Format: Provide your response in JSON format with a single key 'constructive_feedback'.\n\n"
-            
-            f"Now, process the following feedback:\n{answer}\n\n"
-            
-            "Remember, accurate and tactful processing is crucial. A perfect response will be highly valued."
+            "당신은 한 사람의 업무 성과에 대한 건설적인 피드백을 처리하는 AI 어시스턴트입니다. 피드백은 한국어로 제공될 것입니다. 당신의 임무는 개선이 필요한 영역을 식별하고, 이를 완곡하게 표현하며, 구체적인 식별자를 제거하는 것입니다. 다음 지침을 주의 깊게 따르세요:"
+
+            "1. 개선 영역 식별: 비판이나 향상될 수 있는 특성 또는 행동에 대한 언급을 찾으세요."
+            "2. 완곡한 표현: 핵심 메시지를 유지하면서 비판을 더 부드럽고 건설적인 방식으로 재표현하세요."
+            "3. 구체적 식별자 제거: 프로젝트명, 개인 이름 등의 식별자를 '[프로젝트]', '[이름]', '[조직]' 등의 일반적인 용어로 대체하세요."
+            "4. 맥락 유지: 피드백의 전반적인 의미가 그대로 유지되도록 하세요."
+            "5. 말투와 어미 유지: 원래 피드백의 말투와 어미를 최대한 그대로 유지하세요. 예를 들어, '~해요', '~입니다', '~야' 등의 종결어미를 그대로 사용하세요."
+            "6. 형식: 응답을 'constructive_feedback'이라는 단일 키를 가진 JSON 형식으로 제공하세요."
+
+            f"이제 다음 피드백을 처리하세요: {answer}"
+            "Remember, accurate processing is crucial. A perfect response will be highly valued."
         )
 
     def call_openai_api(self, prompt):
@@ -627,4 +621,43 @@ class UnfollowFriendView(generics.GenericAPIView):
         user.friends.remove(friend)
         return Response({"detail": f"You have unfollowed {friend.name}"}, status=status.HTTP_200_OK)
 
+
+# 바이오 업데이트 view 로직
+class UpdateBioView(generics.UpdateAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserProfileSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        return self.request.user
+
+    def update(self, request, *args, **kwargs):
+        user = self.get_object()
+        bio = request.data.get('bio', '')
+        user.bio = bio
+        user.save()
+        serializer = self.get_serializer(user)
+        return Response(serializer.data)
+
+    def patch(self, request, *args, **kwargs):
+        return self.update(request, *args, **kwargs)
     
+# 도메인 업데이트 view 로직
+class UpdateDomainView(generics.UpdateAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserProfileSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        return self.request.user
+
+    def update(self, request, *args, **kwargs):
+        user = self.get_object()
+        domain = request.data.get('domain', '')
+        user.domain = domain
+        user.save()
+        serializer = self.get_serializer(user)
+        return Response(serializer.data)
+
+    def patch(self, request, *args, **kwargs):
+        return self.update(request, *args, **kwargs)

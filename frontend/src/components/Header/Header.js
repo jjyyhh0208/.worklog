@@ -57,7 +57,7 @@ function Header({ isLoggedIn }) {
     return (
         <header className="fixed top-0 left-0 right-0 w-full p-3.5 h-16 bg-white flex justify-between items-center shadow-md z-50">
             <div className="flex items-center">
-                <Link to={profileData ? '/my-profile' : '/'}>
+                <Link to="/">
                     <h1 className="text-[#4053ff] text-2xl font-extrabold hover:cursor-pointer mr-6">.WORKLOG</h1>
                 </Link>
                 <nav className="flex">

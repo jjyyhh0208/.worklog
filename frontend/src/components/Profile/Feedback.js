@@ -37,18 +37,20 @@ const Feedback = ({
     );
 
     return (
-        <div className="bg-white rounded-[50px] shadow-md mb-5 p-8 md:p-16 relative">
-            <div className="absolute top-8 right-12 bg-[#e1e1e1] px-4 py-2 rounded-[10px] text-xl font-bold">
+        <div className="bg-white rounded-[50px] shadow-md mb-5 p-8 md:p-16 relative ">
+            <div className="w-[30%] text-center absolute t-1 aline-center right-20  h-10 bg-[#4053FF] px-4 py-2 rounded-[10px] text-l text-white font-semibold mb-20">
                 {profileData?.feedback_count}개의 피드백이 쌓였어요
             </div>
-            <div className="mt-16 flex items-center justify-between">
+            <div className="flex items-center justify-between">
                 <h2 className="text-2xl md:text-3xl font-extrabold">타인이 평가하는 나</h2>
+
                 {profileData?.feedback_count >= 3 && (
                     <span className="flex items-center cursor-pointer" onClick={toggleFeedbackOpen}>
                         <i className={`fas fa-chevron-${isFeedbackOpen ? 'up' : 'down'} fa-lg mr-2`}></i>
                     </span>
                 )}
             </div>
+
             <hr className="border-t border-gray-300 my-3 mb-5" />
             {profileData?.feedback_count >= 3 ? (
                 <>
@@ -161,10 +163,10 @@ const Feedback = ({
                     )}
                 </>
             ) : (
-                <div className="bg-white rounded-[20px] p-12 m-5 md:m-12">
+                <div className="text-center my-8 mb-20">
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
-                        className="w-40 h-40 mx-auto mb-5 opacity-50"
+                        className="w-24 h-24 mx-auto mb-5 opacity-50"
                         viewBox="0 0 164 187"
                         fill="none"
                     >
@@ -174,9 +176,9 @@ const Feedback = ({
                             fillOpacity="0.25"
                         />
                     </svg>
-                    <div className="text-xl font-bold">
+                    <p className="text-xl font-semibold">
                         피드백을 3개 이상 모아야 AI 분석 결과가 표시됩니다. 친구들에게 피드백 요청을 보내보세요!
-                    </div>
+                    </p>
                 </div>
             )}
         </div>

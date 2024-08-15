@@ -10,8 +10,13 @@ function MyProfile() {
     const [isLoading, setIsLoading] = useState(true);
     const [profileData, setProfileData] = useState(null);
     const [imageUrl, setImageUrl] = useState(null);
-    // DISC
-    const [DISCData, setDISCData] = useState(null);
+    const [bio, setBio] = useState(''); //프로필 한줄소개
+    const [tempBio, setTempBio] = useState('');
+    const [isEditingBio, setIsEditingBio] = useState(false);
+    const [domain, setDomain] = useState(''); //도메인 한줄소개
+    const [tempDomain, setTempDomain] = useState('');
+    const [isEditingDomain, setIsEditingDomain] = useState(false);
+    const [DISCData, setDISCData] = useState(null); // DISC
     const [DISCData2, setDISCData2] = useState(null);
     const [DISCCharacter, setDISCCharacter] = useState(null);
     const [DISCCharacter2, setDISCCharacter2] = useState('');
@@ -44,6 +49,8 @@ function MyProfile() {
             try {
                 const profileData = await ProfileService.fetchUserProfile();
                 setProfileData(profileData);
+                setBio(profileData.bio || '');
+                setTempBio(profileData.bio || '');
 
                 if (profileData.profile_image && profileData.profile_image.image) {
                     const signedUrl = await ProfileService.getSignedImageUrl(profileData.profile_image.image);
@@ -89,6 +96,9 @@ function MyProfile() {
                         console.error('DISC character not found:', discCharacter2, profileData.disc_character);
                     }
                 }
+
+                setDomain(profileData.domain || '');
+                setTempDomain(profileData.domain || '');
             } catch (error) {
                 console.error('프로필 정보를 불러오는 동안 오류가 발생했습니다.', error);
             } finally {
@@ -163,6 +173,28 @@ function MyProfile() {
         navigate('/signup/3', { state: { isEditing: true, profileData } });
     };
 
+    const handleBioChange = (event) => {
+        setBio(event.target.value);
+    };
+
+    const handleBioEditToggle = () => {
+        if (isEditingBio) {
+            setTempBio(bio);
+        }
+        setIsEditingBio(!isEditingDomain);
+    };
+
+    const handleDomainChange = (event) => {
+        setDomain(event.target.value);
+    };
+
+    const handleDomainEditToggle = () => {
+        if (isEditingDomain) {
+            setTempDomain(domain);
+        }
+        setIsEditingDomain(!isEditingDomain);
+    };
+
     return (
         <div className="w-full bg-[#f6f6f6] min-h-screen py-6 px-4 sm:px-6 lg:px-8 mt-16">
             <div className="max-w-5xl mx-auto">
@@ -178,8 +210,22 @@ function MyProfile() {
                     handleProfileEdit={handleProfileEdit}
                     imageUrl={imageUrl}
                     isMyProfile={true}
+                    bio={bio}
+                    tempBio={tempBio}
+                    isEditingBio={isEditingBio}
+                    onBioChange={handleBioChange}
+                    onBioEditToggle={handleBioEditToggle}
                 />
-                <WorkStyle profileData={profileData} handleKeywordEdit={handleKeywordEdit} isMyProfile={true} />
+                <WorkStyle
+                    profileData={profileData}
+                    handleKeywordEdit={handleKeywordEdit}
+                    isMyProfile={true}
+                    domain={domain}
+                    tempDomain={tempDomain}
+                    isEditingDomain={isEditingDomain}
+                    onDomainChange={handleDomainChange}
+                    onDomainEditToggle={handleDomainEditToggle}
+                />
                 <Feedback
                     profileData={profileData}
                     positive_feedback={positiveFeedback}
