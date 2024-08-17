@@ -29,32 +29,51 @@ const ProfileHeader = ({
                     <h1 className="text-2xl sm:text-3xl font-bold ">{profileData?.name}</h1>
                     <p className="text-lg sm:text-xl text-gray-600 mt-1">@{profileData?.username}</p>
                     {isEditingBio ? (
-                        <div className="mt-2 md:flex-row">
-                            <input
-                                type="text"
+                        <div className="mt-2 flex flex-col sm:flex-row items-center sm:items-start">
+                            <textarea
                                 value={bio}
                                 onChange={onBioChange}
-                                className="w-[70%] p-2 text-s border rounded mr-2"
+                                className="w-full sm:w-[calc(100%-100px)] p-2 text-sm border border-gray-300 rounded-md mb-2 sm:mb-0 sm:mr-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-150 ease-in-out resize-none"
                                 placeholder="한 줄 소개를 입력하세요"
+                                rows="3"
+                                style={{ minHeight: '30px' }}
                             />
                             <button
                                 onClick={onBioEditToggle}
-                                className="bg-blue-500 text-white text-xs px-4 py-2 rounded mr-2 "
+                                className="w-full sm:w-[60px] px-4 py-1 text-sm font-medium text-white bg-blue-500 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-150 ease-in-out"
                             >
                                 저장
                             </button>
                         </div>
                     ) : (
-                        <div className="flex text-center md:text-left w-[100%] flex-grow mt-4 ">
-                            {isMyProfile ? (
-                                <p className="text-gray-700 ">{bio || '한 줄 소개를 입력하세요!'}</p>
+                        <div className="mt-2 flex flex-col sm:flex-row items-center sm:items-start sm:justify-between w-full">
+                            {bio ? (
+                                <>
+                                    <div className="mt-2 flex flex-col sm:flex-row items-center sm:items-start sm:justify-center md:justify-start w-full">
+                                        <p className="text-sm text-gray-700 text-center sm:text-left mb-2 sm:mb-0 w-full sm:w-auto max-w-[70%] break-words">
+                                            {bio}
+                                        </p>
+                                        {isMyProfile && (
+                                            <button
+                                                onClick={onBioEditToggle}
+                                                className="text-sm text-blue-500 hover:text-blue-600 focus:outline-none transition duration-150 ease-in-out ml-0 sm:ml-2"
+                                            >
+                                                수정
+                                            </button>
+                                        )}
+                                    </div>
+                                </>
                             ) : (
-                                <p className="text-gray-700 ">{bio || '한 줄 소개가 없습니다.'}</p>
-                            )}
-                            {isMyProfile && (
-                                <button onClick={onBioEditToggle} className="text-blue-500 w-40">
-                                    {bio ? '수정' : '추가'}
-                                </button>
+                                isMyProfile && (
+                                    <div className="w-full flex justify-center sm:justify-center md:justify-start">
+                                        <button
+                                            onClick={onBioEditToggle}
+                                            className=" text-sm text-blue-500 hover:text-blue-600 focus:outline-none transition duration-150 ease-in-out"
+                                        >
+                                            Add bio
+                                        </button>
+                                    </div>
+                                )
                             )}
                         </div>
                     )}

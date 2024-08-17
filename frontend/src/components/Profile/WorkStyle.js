@@ -4,7 +4,7 @@ import keywordIcons from '../../components/KeywordIcons/KeywordIcons';
 const WorkStyle = ({ profileData, isMyProfile, handleKeywordEdit }) => {
     return (
         <div className="bg-white rounded-[50px] shadow-md p-4 md:p-16 mb-16 relative">
-            <h2 className="text-3xl font-bold mb-2 mt-1">
+            <h2 className=" text-3xl font-bold mb-2 mt-1">
                 {isMyProfile ? '내가 관심 있는' : '이 사람이 관심 있는'} 업종/직군 분야
             </h2>
             <hr className="border-t border-gray-300 my-3 mb-8" />
