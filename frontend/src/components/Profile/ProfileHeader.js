@@ -26,7 +26,7 @@ const ProfileHeader = ({
                     className="w-24 h-24 sm:w-28 sm:h-28 rounded-full object-cover border border-gray-200"
                 />
                 <div className="text-center md:text-left w-[50%] flex-grow">
-                    <h1 className="text-2xl sm:text-3xl font-bold w-20">{profileData?.name}</h1>
+                    <h1 className="text-2xl sm:text-3xl font-bold ">{profileData?.name}</h1>
                     <p className="text-lg sm:text-xl text-gray-600 mt-1">@{profileData?.username}</p>
                     {isEditingBio ? (
                         <div className="mt-2 md:flex-row">
@@ -45,20 +45,24 @@ const ProfileHeader = ({
                             </button>
                         </div>
                     ) : (
-                        <div className="mt-2 flex w-[100%] justify-start">
-                            <p className="text-gray-700 ">{bio || '한 줄 소개를 입력하세요!'}</p>
+                        <div className="flex text-center md:text-left w-[100%] flex-grow mt-4 ">
+                            {isMyProfile ? (
+                                <p className="text-gray-700 ">{bio || '한 줄 소개를 입력하세요!'}</p>
+                            ) : (
+                                <p className="text-gray-700 ">{bio || '한 줄 소개가 없습니다.'}</p>
+                            )}
                             {isMyProfile && (
-                                <button onClick={onBioEditToggle} className="text-blue-500 ml-10">
+                                <button onClick={onBioEditToggle} className="text-blue-500 w-40">
                                     {bio ? '수정' : '추가'}
                                 </button>
                             )}
                         </div>
                     )}
                 </div>
-                <div className="mt-4 md:mt-0 self-center md:self-start flex justify-end w-full">
+                <div className="mb-4 md:mt-0 self-center md:self-start flex justify-end ">
                     {profileData && (
                         <div
-                            className="w-[200px] h-[50px] rounded-[10px] flex items-center justify-center text-white text-2xl font-semibold"
+                            className="w-[200px] h-[50px] rounded-[10px] flex items-center justify-center text-white text-2xl font-semibold "
                             style={{
                                 backgroundColor: discTypeColors[DISCCharacter] || discTypeColors.None,
                             }}
@@ -84,7 +88,7 @@ const ProfileHeader = ({
             <div className="flex flex-col sm:flex-row justify-between items-center mt-6 md:mt-4">
                 {isMyProfile ? (
                     <>
-                        <div className="flex gap-3 mb-4 sm:mb-0">
+                        <div className="flex gap-5 mb-4 sm:mb-0">
                             <button
                                 onClick={handleCopyLink}
                                 className="w-10 h-10 bg-white shadow-md rounded-full hover:bg-gray-200 transition duration-300 flex items-center justify-center"
@@ -123,20 +127,22 @@ const ProfileHeader = ({
                     </>
                 ) : (
                     <>
-                        <button
-                            className={`mr-5 px-6 py-2 h-12 w-48 text-xl font-bold rounded-[20px] ${
-                                isFollowing ? 'bg-gray-500' : 'bg-[#4053ff]'
-                            } text-white`}
-                            onClick={handleFollowClick}
-                        >
-                            {isFollowing ? '친구 등록 취소' : '친구 등록하기'}
-                        </button>
-                        <button
-                            className="mr-5 px-6 py-2 h-12 w-44 bg-[#f8bd23] text-white text-lg font-bold rounded-[20px] hover:bg-opacity-90 transition duration-300"
-                            onClick={handleFeedbackClick}
-                        >
-                            협업 평가 작성
-                        </button>
+                        <div className="flex flex-col sm:flex-row items-center sm:items-left gap-5 w-[100%]">
+                            <button
+                                className={`w-36 h-12 text-lg font-medium shadow-md hover:shadow-lg rounded-full transition duration-300 ease-in-out flex items-center justify-center space-x-2 border border-gray-200 ${
+                                    isFollowing ? 'bg-gray-500' : 'bg-[#4053ff]'
+                                } text-white`}
+                                onClick={handleFollowClick}
+                            >
+                                {isFollowing ? '친구 등록 취소' : '친구 등록하기'}
+                            </button>
+                            <button
+                                className="w-36 h-12 bg-white text-gray-700 text-lg font-medium rounded-full shadow-md hover:shadow-lg transition duration-300 ease-in-out flex items-center justify-center space-x-2 border border-gray-200"
+                                onClick={handleFeedbackClick}
+                            >
+                                협업 평가 작성
+                            </button>
+                        </div>
                     </>
                 )}
             </div>
