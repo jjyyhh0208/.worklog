@@ -13,9 +13,6 @@ function MyProfile() {
     const [bio, setBio] = useState(''); //프로필 한줄소개
     const [tempBio, setTempBio] = useState('');
     const [isEditingBio, setIsEditingBio] = useState(false);
-    const [domain, setDomain] = useState(''); //도메인 한줄소개
-    const [tempDomain, setTempDomain] = useState('');
-    const [isEditingDomain, setIsEditingDomain] = useState(false);
     const [DISCData, setDISCData] = useState(null); // DISC
     const [DISCData2, setDISCData2] = useState(null);
     const [DISCCharacter, setDISCCharacter] = useState(null);
@@ -95,9 +92,6 @@ function MyProfile() {
                         console.error('DISC character not found:', discCharacter2, profileData.disc_character);
                     }
                 }
-
-                setDomain(profileData.domain || '');
-                setTempDomain(profileData.domain || '');
             } catch (error) {
                 console.error('프로필 정보를 불러오는 동안 오류가 발생했습니다.', error);
             } finally {
@@ -180,18 +174,7 @@ function MyProfile() {
         if (isEditingBio) {
             setTempBio(bio);
         }
-        setIsEditingBio(!isEditingDomain);
-    };
-
-    const handleDomainChange = (event) => {
-        setDomain(event.target.value);
-    };
-
-    const handleDomainEditToggle = () => {
-        if (isEditingDomain) {
-            setTempDomain(domain);
-        }
-        setIsEditingDomain(!isEditingDomain);
+        setIsEditingBio(!isEditingBio);
     };
 
     return (
@@ -215,16 +198,7 @@ function MyProfile() {
                     onBioChange={handleBioChange}
                     onBioEditToggle={handleBioEditToggle}
                 />
-                <WorkStyle
-                    profileData={profileData}
-                    handleKeywordEdit={handleKeywordEdit}
-                    isMyProfile={true}
-                    domain={domain}
-                    tempDomain={tempDomain}
-                    isEditingDomain={isEditingDomain}
-                    onDomainChange={handleDomainChange}
-                    onDomainEditToggle={handleDomainEditToggle}
-                />
+                <WorkStyle profileData={profileData} handleKeywordEdit={handleKeywordEdit} isMyProfile={true} />
                 <Feedback
                     profileData={profileData}
                     positiveFeedback={positiveFeedback}
