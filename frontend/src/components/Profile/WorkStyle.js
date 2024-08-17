@@ -1,47 +1,10 @@
 import React from 'react';
 import keywordIcons from '../../components/KeywordIcons/KeywordIcons';
 
-const WorkStyle = ({
-    profileData,
-    isMyProfile,
-    handleKeywordEdit,
-    domain,
-    isEditingDomain,
-    onDomainChange,
-    onDomainEditToggle,
-}) => {
+const WorkStyle = ({ profileData, isMyProfile, handleKeywordEdit }) => {
     return (
-        <div className="bg-white rounded-[50px] shadow-md p-8 md:p-16 mb-16 relative">
-            <h2 className="text-3xl font-bold">{isMyProfile ? '내가' : '이 사람이'} 관심있는 도메인</h2>
-            <hr className="border-t border-gray-300 my-3 mb-8" />
-            {isEditingDomain ? (
-                <div className="mt-2">
-                    <input
-                        type="text"
-                        value={domain}
-                        onChange={onDomainChange}
-                        className="w-[100%] h-40 p-2 text-s border rounded mb-4 mr-2"
-                        placeholder="관심있는 도메인은 무엇인가요? 자유롭게 작성해주세요!"
-                    />
-                    <button
-                        onClick={onDomainEditToggle}
-                        className="bg-blue-500 text-white text-xs px-4 py-2 rounded mr-2 "
-                    >
-                        저장
-                    </button>
-                </div>
-            ) : (
-                <div className="mt-2 flex w-[100%] ">
-                    <p className="text-gray-700 ">{domain || '관심있는 도메인을 소개해주세요!'}</p>
-                    {isMyProfile && (
-                        <button onClick={onDomainEditToggle} className="text-blue-500 ml-10 ">
-                            {domain ? '수정' : '추가'}
-                        </button>
-                    )}
-                </div>
-            )}
-
-            <h2 className="text-3xl font-bold mb-2 mt-24">
+        <div className="bg-white rounded-[50px] shadow-md p-4 md:p-16 mb-16 relative">
+            <h2 className="text-3xl font-bold mb-2 mt-1">
                 {isMyProfile ? '내가 관심 있는' : '이 사람이 관심 있는'} 업종/직군 분야
             </h2>
             <hr className="border-t border-gray-300 my-3 mb-8" />
