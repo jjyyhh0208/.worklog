@@ -85,13 +85,14 @@ function Main() {
                     </h2>
                     <div className="space-y-4">
                         <div className="p-4">
-                            <div className="text-gray-800 font-bold text-lg">v. 0.1 배포완료</div>
-                            <div className="text-gray-600">2024-07-22</div>
+                            <div className="text-gray-800 font-bold text-lg">v. 0.2 배포완료</div>
+                            <div className="text-gray-600">2024-09-01</div>
                             <hr className="my-4" />
                             <div className="text-black mb-10">
                                 안녕하세요, WORKLOG 운영팀입니다. <br />
                                 <br />
-                                타인에게 받는 내 업무 유형 테스트, WORKLOG가 드디어 출시 되었습니다. <br />
+                                타인에게 받는 내 업무 유형 테스트, WORKLOG가 새로 업데이트를 마쳤습니다. 서버 안정성을
+                                더 확보하고, 한줄소개 추가, 피드백 레포트 구체화 등이 추가적으로 반영되었습니다. <br />
                                 일하는 모두를 위한 더 나은 서비스가 되도록 하겠습니다. <br />
                                 <br /> 많은 관심과 응원 부탁드립니다.
                             </div>

@@ -135,11 +135,14 @@ const Feedback = ({
                         <h2 className="text-3xl font-bold mt-5">
                             🤖<span className="ml-1"> AI 요약 피드백</span>
                         </h2>
+
                         <span className="flex items-center cursor-pointer" onClick={toggleAIOpen}>
                             <i className={`fas fa-chevron-${isAIOpen ? 'up' : 'down'} fa-lg mr-2`}></i>
                         </span>
                     </div>
                     <hr className="border-t border-gray-300 my-3" />
+                    <h3>▶︎ AI 요약 피드백은 팀원들이 남겨 준 서술형 피드백을 바탕으로 AI가 재구성한 답변이에요.</h3>
+
                     {isAIOpen && (
                         <div className="bg-white rounded-[20px] p-5">
                             <div className="flex flex-col justify-around mt-5">

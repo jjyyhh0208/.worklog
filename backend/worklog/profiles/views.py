@@ -402,6 +402,9 @@ class UserSearchView(APIView):
 #로그인한 유저의 long question answer을 가져오는 view
 class UserLongQuestionAnswersView(generics.GenericAPIView):
     permission_classes = [AllowAny]
+    
+    def is_valid_answer(self, answer):
+        return len(answer.strip()) > 4
 
     def post(self, request, *args, **kwargs):
         try:
@@ -417,6 +420,11 @@ class UserLongQuestionAnswersView(generics.GenericAPIView):
             for index, qa in enumerate(question_answers):
                 question_text = qa['question']
                 answer_text = qa['answer']
+                
+                # 5자 이상인 텍스트만 처리한다.
+                if not self.is_valid_answer(answer_text):
+                    continue  
+
 
                 long_question_instance, created = LongQuestion.objects.get_or_create(long_question=question_text)
                 question_answer_instance = QuestionAnswer.objects.create(
@@ -424,11 +432,14 @@ class UserLongQuestionAnswersView(generics.GenericAPIView):
                     answer=answer_text
                 )
                 feedback.question_answers.add(question_answer_instance)
+                
                 #그냥 인덱스 0,1로 하면 저장된 데이터가 없습니다 라고 뜨니까 꼭 짝/홀로 구분
                 if index % 2 == 0 and index == 0:
-                    good_answers.append(answer_text)
+                    
+                        good_answers.append(answer_text)
                 elif index % 2 == 1:
-                    bad_answers.append(answer_text)
+                   
+                        bad_answers.append(answer_text)
 
             feedback.delete()
             
@@ -469,16 +480,17 @@ class UserLongQuestionAnswersView(generics.GenericAPIView):
         return (
             "You are an AI assistant tasked with processing feedback about a person's performance. "
             "The feedback will be in Korean. Your job is to identify and preserve positive feedback "
-            "while removing any specific identifiers like project names or personal names. "
             "Follow these instructions carefully:\n\n"
             
             "1. Identify positive feedback: Look for compliments, praise, or mentions of good qualities and actions.\n"
-            "2. Remove specific identifiers: Replace project names, personal names, or any other identifiers "
-            "with general terms like '[프로젝트]', '[이름]', or '[조직]'.\n"
+            "2. Remove specific identifiers: Replace project names, personal names, or any other identifiers. "
+            "with general terms like '프로젝트'.\n"
             "3. Preserve original wording: Keep the original sentence structure and wording as much as possible, "
             "only changing what's necessary to remove identifiers.\n"
             "4. Maintain context: Ensure the meaning and context of the feedback remains intact.\n"
             "5. Format: Provide your response in JSON format with a single key 'positive_feedback'.\n\n"
+            "6.don't use any symbol like []\n"
+
             
             f"Now, process the following feedback:\n{answer}\n\n"
             
@@ -489,14 +501,17 @@ class UserLongQuestionAnswersView(generics.GenericAPIView):
         return (
             "You are an AI assistant tasked with processing constructive feedback about a person's performance. "
             "The feedback will be in Korean. Your job is to identify areas for improvement, express them euphemistically, "
-            "and remove any specific identifiers. You must reponse in Korean, Follow these instructions carefully:\n\n"
+            " You must reponse in Korean, Follow these instructions carefully:\n\n"
             
             "1. Identify areas for improvement: Look for critiques or mentions of qualities or actions that could be enhanced.\n"
             "2. Express euphemistically: Rephrase critiques in a more gentle, constructive manner without losing the core message.\n"
-            "3. Remove specific identifiers: Replace project names, personal names, or any other identifiers "
-            "with general terms like '[프로젝트]', '[이름]', or '[조직]'.\n"
-            "4. Preserve context: Ensure the overall meaning of the feedback remains intact.\n"
+            "2. Remove specific identifiers: Replace project names, personal names, or any other identifiers. "
+            "with general terms like '프로젝트'.\n"
+            "3. Preserve original wording: Keep the original sentence structure and wording as much as possible, "
+            "only changing what's necessary to remove identifiers.\n"
             "5. Format: Provide your response in JSON format with a single key 'constructive_feedback'.\n\n"
+            "6.don't use any symbol like []\n"
+
             
             f"Now, process the following feedback:\n{answer}\n\n"
             
@@ -507,15 +522,17 @@ class UserLongQuestionAnswersView(generics.GenericAPIView):
         return (
             "You are an AI assistant tasked with processing constructive feedback about a person's performance. "
             "The feedback will be in Korean. Your job is to identify areas for improvement, express them euphemistically, "
-            "and remove any specific identifiers. You must reponse in Korean, Follow these instructions carefully:\n\n"
+            " You must reponse in Korean, Follow these instructions carefully:\n\n"
             
             "1. Identify areas for improvement: Look for critiques or mentions of qualities or actions that could be enhanced.\n"
             "2. Express euphemistically: Rephrase critiques in a more gentle, constructive manner without losing the core message.\n"
-            "3. Remove specific identifiers: Replace project names, personal names, or any other identifiers "
-            "with general terms like '[프로젝트]', '[이름]', or '[조직]'.\n"
+            "3. Remove specific identifiers: Replace project names, personal names, or any other identifiers. "
+            "with general terms like '프로젝트'.\n"
             "4. Preserve context: Ensure the overall meaning of the feedback remains intact.\n"
             "5. Format: Provide your response in JSON format with a single key 'constructive_feedback'.\n\n"
-            
+            "6.don't use any symbol like []\n"
+            "7.soft way to convey: please use soft wordings and consider feeling of the person who reads this feedback"
+
             f"Now, process the following feedback:\n{answer}\n\n"
             
             "Remember, accurate and tactful processing is crucial. A perfect response will be highly valued."
