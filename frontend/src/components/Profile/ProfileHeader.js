@@ -12,11 +12,14 @@ const ProfileHeader = ({
     isMyProfile,
     isFollowing,
     handleFollowClick,
-    handleFeedbackClick,
     bio,
     isEditingBio,
     onBioChange,
     onBioEditToggle,
+
+    canLeaveFeedback,
+    feedbackMessage,
+    handleFeedbackClick,
 }) => {
     return (
         <div className="bg-white rounded-[50px] shadow-md p-4 sm:p-6 md:p-8 mb-8 w-[100%] sm:w-[100%] md:w-[100%] lg:w-[100%] mx-auto">
@@ -155,12 +158,16 @@ const ProfileHeader = ({
                             >
                                 {isFollowing ? '친구 등록 취소' : '친구 등록하기'}
                             </button>
+
                             <button
-                                className="w-36 h-12 bg-white text-gray-700 text-lg font-medium rounded-full shadow-md hover:shadow-lg transition duration-300 ease-in-out flex items-center justify-center space-x-2 border border-gray-200"
+                                className={`w-36 h-12 bg-white text-gray-700 text-lg font-medium rounded-full shadow-md transition duration-300 ease-in-out flex items-center justify-center space-x-2 border border-gray-200 ${
+                                    !canLeaveFeedback ? 'opacity-50' : 'hover:shadow-lg'
+                                }`}
                                 onClick={handleFeedbackClick}
                             >
                                 협업 평가 작성
                             </button>
+                            <div className="text-sm font-medium text-gray-400">{feedbackMessage}</div>
                         </div>
                     </>
                 )}

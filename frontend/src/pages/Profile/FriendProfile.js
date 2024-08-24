@@ -31,6 +31,11 @@ function FriendProfile() {
     const [isAIOpen, setIsAIOpen] = useState(true);
     const navigate = useNavigate();
 
+    //남은 시간
+    const [remainingTime, setRemainingTime] = useState(null);
+    //피드백을 다시 남길 수 있는 상태 (시간 제한 풀린 상태)
+    const [canLeaveFeedback, setCanLeaveFeedback] = useState(false);
+
     const toggleFeedbackOpen = () => {
         setIsFeedbackOpen(!isFeedbackOpen);
     };
@@ -58,6 +63,10 @@ function FriendProfile() {
                 const profileData = await ProfileService.fetchFriendProfile(username);
                 setProfileData(profileData);
                 setIsFollowing(profileData.is_following);
+
+                // 초기 남은 시간 설정
+                setCanLeaveFeedback(profileData.can_leave_feedback);
+                setRemainingTime(profileData.remaining_time);
 
                 if (profileData.profile_image && profileData.profile_image.image) {
                     const signedUrl = await ProfileService.getSignedImageUrl(profileData.profile_image.image);
@@ -113,6 +122,51 @@ function FriendProfile() {
         fetchData();
     }, [username]);
 
+    // 남은 시간을 실시간으로 업데이트하는 useEffect
+    useEffect(() => {
+        let timer;
+        if (remainingTime && remainingTime > 0) {
+            timer = setInterval(() => {
+                setRemainingTime((prevTime) => {
+                    if (prevTime <= 1) {
+                        clearInterval(timer);
+                        setCanLeaveFeedback(true);
+                        return 0;
+                    }
+                    return prevTime - 1;
+                });
+            }, 1000);
+        }
+
+        return () => {
+            if (timer) clearInterval(timer);
+        };
+    }, [remainingTime]);
+
+    // 남은 시간을 포맷팅하는 함수
+    const formatRemainingTime = (seconds) => {
+        if (!seconds || seconds <= 0) return '지금 바로 협업 피드백을 남겨 보세요!';
+        const hours = Math.floor(seconds / 3600);
+        const minutes = Math.floor((seconds % 3600) / 60);
+        return `${hours}시간 ${minutes}분`;
+    };
+
+    const handleFeedbackClick = () => {
+        if (canLeaveFeedback) {
+            if (localStorage.getItem('workStyles')) {
+                localStorage.removeItem('workStyles');
+            }
+            navigate(`/feedback/intro/${username}`);
+        } else {
+            alert(` ${formatRemainingTime(remainingTime)} 후에 다시 협업 평가를 남길 수 있어요!`);
+        }
+    };
+    const getFeedbackMessage = () => {
+        if (canLeaveFeedback) {
+            return '지금 바로 협업 평가를 남겨보세요!';
+        }
+    };
+
     const handleFollowClick = async () => {
         if (!isAuthenticated) {
             alert('로그인이 필요한 기능입니다.');
@@ -135,17 +189,6 @@ function FriendProfile() {
         }
     };
 
-    const handleFeedbackClick = () => {
-        if (localStorage.getItem('workStyles')) {
-            localStorage.removeItem('workStyles');
-        }
-        navigate(`/feedback/intro/${username}`);
-    };
-
-    if (isLoading) {
-        return <div className="[w-100%] bg-[#f6f6f6] h-[1000px] min-h-screen flex items-center justify-center"></div>;
-    }
-
     return (
         <div className="w-full bg-[#f6f6f6] min-h-screen py-6 px-4 sm:px-6 lg:px-8 mt-16">
             <div className="max-w-5xl mx-auto">
@@ -158,9 +201,12 @@ function FriendProfile() {
                     }, {})}
                     imageUrl={imageUrl}
                     handleFollowClick={handleFollowClick}
-                    handleFeedbackClick={handleFeedbackClick}
                     isFollowing={isFollowing}
                     isMyProfile={false}
+                    remainingTime={formatRemainingTime(remainingTime)}
+                    canLeaveFeedback={canLeaveFeedback}
+                    feedbackMessage={getFeedbackMessage()}
+                    handleFeedbackClick={handleFeedbackClick}
                 />
                 <WorkStyle profileData={profileData} isMyProfile={false} />
                 <Feedback

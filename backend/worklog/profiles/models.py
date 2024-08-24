@@ -3,6 +3,8 @@ from django.db import models
 from collections import Counter
 import os
 from django.utils.deconstruct import deconstructible
+from django.utils import timezone
+
 
 # 유저명을 기준으로 프로필 저장
 @deconstructible
@@ -207,7 +209,13 @@ class Feedback(models.Model):
     work_styles = models.ManyToManyField('WorkStyle', blank=False)
     score = models.OneToOneField('Score', on_delete=models.CASCADE, blank=True, null=True)
     question_answers = models.ManyToManyField('QuestionAnswer', blank=True, related_name='feedbacks')
+    last_time = models.DateTimeField(default=timezone.now)  # 새로운 필드 추가
+
 
     def __str__(self):
         return f"Feedback to {self.user} by {self.user_by}"
+    
+    def save(self, *args, **kwargs):
+        self.last_time = timezone.now()  # 저장할 때마다 현재 시간으로 업데이트
+        super().save(*args, **kwargs)
     

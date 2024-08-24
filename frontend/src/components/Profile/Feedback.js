@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Paginator from './Paginator';
 import DISCInfo from './DISCInfo';
 
@@ -25,16 +25,29 @@ const Feedback = ({
     const handlePageClick = (data) => {
         setCurrentPage(data.selected);
     };
+    //.slice method에서 에러가 나서, usestate&useeffect을 이용해 데이터가 배열이 아닐 때도 에러가 나지 않도록 수정
+    const [processedPositiveFeedback, setProcessedPositiveFeedback] = useState([]);
+    const [processedConstructiveFeedback, setProcessedConstructiveFeedback] = useState([]);
 
-    const currentPositiveFeedback = (positiveFeedback || []).slice(
-        currentPage * itemsPerPage,
-        (currentPage + 1) * itemsPerPage
-    );
+    useEffect(() => {
+        // positiveFeedback 처리
+        if (positiveFeedback) {
+            setProcessedPositiveFeedback(
+                Array.isArray(positiveFeedback) ? positiveFeedback : Object.values(positiveFeedback)
+            );
+        } else {
+            setProcessedPositiveFeedback([]);
+        }
 
-    const currentConstructiveFeedback = (constructiveFeedback || []).slice(
-        currentPage * itemsPerPage,
-        (currentPage + 1) * itemsPerPage
-    );
+        // constructiveFeedback 처리
+        if (constructiveFeedback) {
+            setProcessedConstructiveFeedback(
+                Array.isArray(constructiveFeedback) ? constructiveFeedback : Object.values(constructiveFeedback)
+            );
+        } else {
+            setProcessedConstructiveFeedback([]);
+        }
+    }, [positiveFeedback, constructiveFeedback]);
 
     return (
         <div className="bg-white rounded-[50px] shadow-md mb-5 p-8 md:p-16 relative">
@@ -149,7 +162,7 @@ const Feedback = ({
                                 <h3 className="text-3xl font-bold text-[#4053ff]">긍정적 피드백</h3>
                                 <div className="flex-1 bg-[rgba(204,209,255,0.2)] rounded-[20px] p-12 m-5 md:m-12 text-xl">
                                     <Paginator
-                                        items={positiveFeedback || []}
+                                        items={processedPositiveFeedback}
                                         itemsPerPage={itemsPerPage}
                                         handlePageClick={handlePageClick}
                                     />
@@ -158,7 +171,7 @@ const Feedback = ({
                                 <h3 className="text-3xl font-bold text-[#4053ff]">건설적 피드백</h3>
                                 <div className="flex-1 bg-[rgba(204,209,255,0.2)] rounded-[20px] p-12 m-5 md:m-12 text-xl">
                                     <Paginator
-                                        items={constructiveFeedback || []}
+                                        items={processedConstructiveFeedback}
                                         itemsPerPage={itemsPerPage}
                                         handlePageClick={handlePageClick}
                                     />

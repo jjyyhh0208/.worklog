@@ -125,7 +125,10 @@ const ProfileService = {
             .then((response) => {
                 if (response.status === 200) {
                     console.log('Fetched profile data:', response.data);
-                    return response.data;
+                    const profileData = response.data;
+                    profileData.remaining_time = profileData.remaining_time || 0;
+
+                    return profileData;
                 }
                 throw new Error('프로필 정보를 불러오는 동안 오류가 발생했습니다.');
             })

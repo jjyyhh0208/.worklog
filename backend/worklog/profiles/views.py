@@ -22,6 +22,8 @@ from rest_framework.views import APIView
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from dj_rest_auth.views import LoginView
+from django.utils import timezone
+from datetime import timedelta
 from dj_rest_auth.registration.views import RegisterView
 from .models import User, WorkStyle, Interest, ShortQuestion, LongQuestion, QuestionAnswer, Score, Feedback, ProfileImage
 from .serializers import (
@@ -228,7 +230,7 @@ def get_token(request):
 class UserProfileView(generics.RetrieveAPIView):
     queryset = User.objects.all()
     serializer_class = UserProfileSerializer
-    permission_classes = []
+    permission_classes = [IsAuthenticated]
     lookup_field = 'username'
 
     def retrieve(self, request, *args, **kwargs):
@@ -236,11 +238,23 @@ class UserProfileView(generics.RetrieveAPIView):
         serializer = self.get_serializer(instance)
         data = serializer.data
         
-        if request.user.is_authenticated:
-            data['is_following'] = request.user.friends.filter(username=instance.username).exists()
-        else:
-            data['is_following'] = False
-        
+        # 팔로우 상태 확인
+        data['is_following'] = request.user.friends.filter(username=instance.username).exists()
+
+        # 피드백 관련 정보 추가
+        current_user = request.user
+        last_feedback = Feedback.objects.filter(user=instance, user_by=current_user).order_by('-last_time').first()
+
+        data['can_leave_feedback'] = True
+        data['remaining_time'] = 0
+
+        if last_feedback:
+            time_since_last_feedback = timezone.now() - last_feedback.last_time
+            if time_since_last_feedback < timedelta(hours=24):
+                data['can_leave_feedback'] = False
+                remaining_time = timedelta(hours=24) - time_since_last_feedback
+                data['remaining_time'] = int(remaining_time.total_seconds())  # 남은 시간을 초 단위로 변환
+
         return Response(data)
 
 # 현재 내 프로필을 불러오는 View
@@ -334,9 +348,11 @@ class FeedbackViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
+        feedback = serializer.save(user_by=request.user, last_time=timezone.now())
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
+
 
     # Update
     def update(self, request, *args, **kwargs):
@@ -344,9 +360,7 @@ class FeedbackViewSet(viewsets.ModelViewSet):
         instance = self.get_object()
         serializer = self.get_serializer(instance, data=request.data, partial=partial)
         serializer.is_valid(raise_exception=True)
-        self.perform_update(serializer)
-        if getattr(instance, '_prefetched_objects_cache', None):
-            instance._prefetched_objects_cache = {}
+        feedback = serializer.save(last_time=timezone.now())
         return Response(serializer.data)
 
     # Delete
@@ -664,3 +678,4 @@ class UpdateBioView(generics.UpdateAPIView):
 
     def patch(self, request, *args, **kwargs):
         return self.update(request, *args, **kwargs)
+  
