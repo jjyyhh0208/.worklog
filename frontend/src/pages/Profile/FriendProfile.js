@@ -5,6 +5,7 @@ import ProfileHeader from '../../components/Profile/ProfileHeader';
 import WorkStyle from '../../components/Profile/WorkStyle';
 import Feedback from '../../components/Profile/Feedback';
 import typeData from '../../data/typeData.json';
+import FeedbackAccessModal from '../../components/Profile/FeedbackAccessModal';
 
 function FriendProfile() {
     const [isLoading, setIsLoading] = useState(true);
@@ -35,6 +36,9 @@ function FriendProfile() {
     const [remainingTime, setRemainingTime] = useState(null);
     //피드백을 다시 남길 수 있는 상태 (시간 제한 풀린 상태)
     const [canLeaveFeedback, setCanLeaveFeedback] = useState(false);
+    // 접근코드 입력 모달
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [correctCode, setCorrectCode] = useState(null);
 
     const toggleFeedbackOpen = () => {
         setIsFeedbackOpen(!isFeedbackOpen);
@@ -63,6 +67,7 @@ function FriendProfile() {
                 const profileData = await ProfileService.fetchFriendProfile(username);
                 setProfileData(profileData);
                 setIsFollowing(profileData.is_following);
+                setCorrectCode(profileData.access_code);
 
                 if (isLoggedIn) {
                     const myData = await ProfileService.fetchUserProfile();
@@ -134,29 +139,6 @@ function FriendProfile() {
         fetchData();
     }, [username]);
 
-    // 남은 시간을 실시간으로 업데이트하는 useEffect
-    useEffect(() => {
-        if (isLoggedIn) {
-            let timer;
-            if (remainingTime && remainingTime > 0) {
-                timer = setInterval(() => {
-                    setRemainingTime((prevTime) => {
-                        if (prevTime <= 1) {
-                            clearInterval(timer);
-                            setCanLeaveFeedback(true);
-                            return 0;
-                        }
-                        return prevTime - 1;
-                    });
-                }, 10000);
-            }
-
-            return () => {
-                if (timer) clearInterval(timer);
-            };
-        }
-    }, [remainingTime]);
-
     // 남은 시간을 포맷팅하는 함수
     const formatRemainingTime = (seconds) => {
         if (!seconds || seconds <= 0) return '지금 바로 협업 피드백을 남겨 보세요!';
@@ -166,13 +148,17 @@ function FriendProfile() {
     };
 
     const handleFeedbackClick = () => {
-        if (canLeaveFeedback) {
-            if (localStorage.getItem('workStyles')) {
-                localStorage.removeItem('workStyles');
+        if (isLoggedIn) {
+            if (canLeaveFeedback) {
+                if (localStorage.getItem('workStyles')) {
+                    localStorage.removeItem('workStyles');
+                }
+                navigate(`/feedback/intro/${username}`);
+            } else {
+                alert(` ${formatRemainingTime(remainingTime)} 후에 다시 협업 평가를 남길 수 있어요!`);
             }
-            navigate(`/feedback/intro/${username}`);
         } else {
-            alert(` ${formatRemainingTime(remainingTime)} 후에 다시 협업 평가를 남길 수 있어요!`);
+            setIsModalOpen(true); // 모달을 열도록 상태 업데이트
         }
     };
     const getFeedbackMessage = () => {
@@ -239,6 +225,12 @@ function FriendProfile() {
                     toggleFeedbackOpen={toggleFeedbackOpen}
                     toggleCharacterOpen={toggleCharacterOpen}
                     toggleAIOpen={toggleAIOpen}
+                />
+                <FeedbackAccessModal
+                    isOpen={isModalOpen}
+                    onClose={() => setIsModalOpen(false)}
+                    onAccessGranted={() => navigate(`/feedback/intro/${username}`)}
+                    correctCode={correctCode}
                 />
             </div>
         </div>

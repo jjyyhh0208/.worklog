@@ -48,15 +48,6 @@ const ProfileService = {
             });
     },
 
-    submitLongAnswers: (questionAnswers) => {
-        return API.post('/profiles/user/feedback-answers/', { question_answers: questionAnswers })
-            .then((response) => response.data)
-            .catch((error) => {
-                console.error('Error submitting answers:', error);
-                throw error;
-            });
-    },
-
     fetchWorkStyles: () => {
         return API.get(`/profiles/workstyles/`)
             .then((response) => response.data)
@@ -221,7 +212,7 @@ const ProfileService = {
     //  프로필 한줄소개 작성
     updateBio: async (bio) => {
         try {
-            const response = await API.put(`/profiles/user/bio/`, { bio });
+            const response = await API.put(`/profiles/user/set/bio/`, { bio });
             console.log('Bio updated:', bio);
             return response.data;
         } catch (error) {

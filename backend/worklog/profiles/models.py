@@ -4,6 +4,8 @@ from collections import Counter
 import os
 from django.utils.deconstruct import deconstructible
 from django.utils import timezone
+import string
+import random
 
 
 # 유저명을 기준으로 프로필 저장
@@ -39,6 +41,24 @@ class User(AbstractUser):
     disc_character = models.CharField(max_length=50, blank=True)
     gpt_summarized_personality = models.TextField(blank=True, null=True)
     bio = models.TextField(max_length=500, blank=True)
+    access_code = models.CharField(max_length=50, blank=True)
+
+    def generate_access_code(self):
+        characters = string.ascii_uppercase + string.digits
+        code = ''.join(random.choice(characters) for _ in range(5))
+
+        # 코드 중복 체크
+        while User.objects.filter(access_code=code).exists():
+            code = ''.join(random.choice(characters) for _ in range(5))
+
+        self.access_code = code
+        self.save(update_fields=['access_code'])
+
+        return code
+
+    def invalidate_access_code(self):
+        self.access_code = ''
+        self.save(update_fields=['access_code'])
 
     @property
     def feedback_count(self):

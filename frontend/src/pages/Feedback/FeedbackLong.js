@@ -5,7 +5,7 @@ import FeedbackService from '../../utils/FeedbackService';
 import ProfileService from '../../utils/ProfileService';
 import Modal from '../../components/Modal/Modal';
 
-const FeedbackLong = ({ isLoggedIn }) => {
+const FeedbackLong = () => {
     const navigate = useNavigate();
     const { username } = useParams();
     const location = useLocation();
@@ -24,6 +24,18 @@ const FeedbackLong = ({ isLoggedIn }) => {
     const [remainingTime, setRemainingTime] = useState(null);
     //피드백을 다시 남길 수 있는 상태 (시간 제한 풀린 상태)
     const [canLeaveFeedback, setCanLeaveFeedback] = useState(false);
+    const [isLoggedIn, setisLoggedIn] = useState(!!localStorage.getItem('authToken'));
+    // 동시 접속 등의 문제가 있는 것은 참고해주세요!
+    const [accessCode, setAccessCode] = useState(null);
+
+    useEffect(() => {
+        const checkAuth = () => {
+            const authToken = localStorage.getItem('authToken');
+            setisLoggedIn(!!authToken);
+        };
+
+        checkAuth();
+    }, []);
 
     useEffect(() => {
         if (showModal) {
@@ -40,6 +52,7 @@ const FeedbackLong = ({ isLoggedIn }) => {
                 setProfileData(data);
                 setCanLeaveFeedback(data.can_leave_feedback);
                 setRemainingTime(data.remaining_time);
+                setAccessCode(data.access_code);
             })
             .catch((error) => console.error('Error fetching profile data:', error));
     }, [username]);
@@ -51,9 +64,6 @@ const FeedbackLong = ({ isLoggedIn }) => {
                 .catch((error) => console.error('Error fetching profile data:', error));
         }
     }, [isLoggedIn]);
-
-    console.log(canLeaveFeedback);
-    console.log(remainingTime);
 
     const handleInputChange = (event, question) => {
         const { value } = event.target;
@@ -69,7 +79,16 @@ const FeedbackLong = ({ isLoggedIn }) => {
     const handleFormSubmit = (event) => {
         event.preventDefault();
 
-        if (!canLeaveFeedback) {
+        // 비회원로직: 접근 코드 확인
+        if (!isLoggedIn) {
+            const correctCode = localStorage.getItem('correctCode') || '';
+            if (correctCode !== accessCode) {
+                alert('만료된 접근코드입니다. 다시 접근코드를 받아서 시도해주세요.');
+                navigate(`/friend-profile/${username}`);
+            }
+        }
+        // 회원로직: 피드백 중복 방지
+        if (isLoggedIn && !canLeaveFeedback) {
             const formatRemainingTime = (seconds) => {
                 if (!seconds || seconds <= 0) return '지금 바로 협업 피드백을 남겨 보세요!';
                 const hours = Math.floor(seconds / 3600);
@@ -81,6 +100,7 @@ const FeedbackLong = ({ isLoggedIn }) => {
             navigate(`/friend-profile/${username}`);
         }
 
+        // 질문 처리
         const { question1, question2, question3 } = feedbackData.long_questions;
 
         if (!question1 || !question2 || !question3) {
@@ -88,6 +108,7 @@ const FeedbackLong = ({ isLoggedIn }) => {
             return;
         }
 
+        // 프로필 오류 대비
         if (!profileData) {
             alert('프로필을 불러오는 데에 실패했습니다.');
             return;

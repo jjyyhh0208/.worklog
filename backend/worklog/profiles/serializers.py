@@ -119,13 +119,15 @@ class UserProfileSerializer(serializers.ModelSerializer):
     feedback_workstyles = serializers.SerializerMethodField()
     disc_scores = serializers.SerializerMethodField()
     disc_character = serializers.SerializerMethodField()
-     
+    access_code = serializers.SerializerMethodField()
+    
     class Meta:
         model = User
         fields = (
             'username', 'name', 'gender', 'age', 'work_styles', 'interests', 
             'disc_character', 'gpt_summarized_personality', 'profile_image', 
-            'feedback_count','disc_scores', 'feedback_workstyles','bio'
+            'feedback_count','disc_scores', 'feedback_workstyles','bio',
+            'access_code'
         )
 
     def get_feedback_count(self, obj):
@@ -139,9 +141,11 @@ class UserProfileSerializer(serializers.ModelSerializer):
     
     def get_disc_character(self, obj):
         return obj.calculate_disc_character
-
-
-
+    
+    def get_access_code(self, obj):
+        if obj.access_code == '':
+            obj.generate_access_code()
+        return obj.access_code
 
 # 친구목록을 보여주는 모델    
 class FriendSerializer(serializers.ModelSerializer):

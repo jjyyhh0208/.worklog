@@ -229,8 +229,8 @@ def get_token(request):
     
 #유저 프로필을 불러오는 View
 class UserProfileView(generics.RetrieveAPIView):
-    queryset = User.objects.all()
     permission_classes = [AllowAny]
+    queryset = User.objects.all()
     serializer_class = UserProfileSerializer
     lookup_field = 'username'
 
@@ -351,7 +351,12 @@ class FeedbackViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        feedback = serializer.save(user_by=request.user, last_time=timezone.now())
+        user_by = request.user if request.user.is_authenticated else None
+        feedback = serializer.save(user_by=user_by, last_time=timezone.now())
+
+        main_user = serializer.validated_data.get('user')
+        if user_by is None:
+            main_user.generate_access_code()
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 

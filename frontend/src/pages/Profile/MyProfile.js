@@ -29,6 +29,9 @@ function MyProfile() {
     const [positiveFeedback, setPositiveFeedback] = useState(null);
     const [constructiveFeedback, setConstructiveFeedback] = useState(null);
 
+    // 접근 코드
+    const [correctCode, setCorrectCode] = useState(null);
+
     const toggleFeedbackOpen = () => {
         setIsFeedbackOpen(!isFeedbackOpen);
     };
@@ -48,6 +51,7 @@ function MyProfile() {
                 setProfileData(profileData);
                 setBio(profileData.bio || '');
                 setTempBio(profileData.bio || '');
+                setCorrectCode(profileData.access_code);
 
                 if (profileData.profile_image && profileData.profile_image.image) {
                     const signedUrl = await ProfileService.getSignedImageUrl(profileData.profile_image.image);
@@ -113,7 +117,7 @@ function MyProfile() {
             navigator.clipboard
                 .writeText(profileLink)
                 .then(() => {
-                    alert('프로필 링크가 복사되었습니다.');
+                    alert(`피드백 접근 코드: ${correctCode}\n프로필 링크가 복사되었습니다.`);
                 })
                 .catch((error) => {
                     console.error('링크 복사 중 오류가 발생했습니다.', error);
@@ -135,7 +139,7 @@ function MyProfile() {
     };
 
     const handleInstagramShare = () => {
-        const profileLink = ProfileService.getUserProfileLink(profileData?.username);
+        const profileLink = `${window.location.origin}/friend-profile/${profileData?.username}`;
         const instagramUrl = `instagram://story-camera?text=${encodeURIComponent(profileLink)}`;
 
         setTimeout(() => {
@@ -149,11 +153,15 @@ function MyProfile() {
             navigator.clipboard
                 .writeText(profileLink)
                 .then(() => {
-                    alert('인스타그램 앱이 설치되어 있지 않습니다. 프로필 링크가 클립보드에 복사되었습니다.');
+                    alert(
+                        `피드백 접근 코드: ${correctCode}\n인스타그램 앱이 설치되어 있지 않습니다. 프로필 링크가 클립보드에 복사되었습니다.`
+                    );
                 })
                 .catch((err) => {
                     console.error('클립보드 복사 실패:', err);
-                    alert('링크 복사에 실패했습니다. 수동으로 복사해주세요: ' + profileLink);
+                    alert(
+                        `피드백 접근 코드: ${correctCode}\n링크 복사에 실패했습니다. 수동으로 복사해주세요: ' + profileLink`
+                    );
                 });
         }, 2000);
     };
