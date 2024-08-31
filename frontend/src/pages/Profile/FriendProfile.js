@@ -64,6 +64,12 @@ function FriendProfile() {
                 setProfileData(profileData);
                 setIsFollowing(profileData.is_following);
 
+                const myData = await ProfileService.fetchUserProfile();
+
+                if (profileData.username === myData.username) {
+                    navigate('/my-profile');
+                }
+
                 // 초기 남은 시간 설정
                 setCanLeaveFeedback(profileData.can_leave_feedback);
                 setRemainingTime(profileData.remaining_time);

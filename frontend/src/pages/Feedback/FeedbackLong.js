@@ -4,7 +4,6 @@ import ProgressBar from '../../components/ProgressBar/ProgressBar';
 import FeedbackService from '../../utils/FeedbackService';
 import ProfileService from '../../utils/ProfileService';
 import Modal from '../../components/Modal/Modal';
-import { faHouseMedicalCircleExclamation } from '@fortawesome/free-solid-svg-icons';
 
 const FeedbackLong = ({ isLoggedIn }) => {
     const navigate = useNavigate();

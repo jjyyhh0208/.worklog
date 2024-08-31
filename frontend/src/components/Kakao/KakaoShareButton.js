@@ -5,6 +5,9 @@ const KakaoShareButton = ({ username }) => {
     const [profileData, setProfileData] = useState(null);
 
     useEffect(() => {
+        if (window.Kakao && !window.Kakao.isInitialized()) {
+            window.Kakao.init(process.env.REACT_APP_KAKAO_APP_KEY);
+        }
         const fetchProfileData = async () => {
             try {
                 const data = await ProfileService.fetchFriendProfile(username);
@@ -27,16 +30,18 @@ const KakaoShareButton = ({ username }) => {
                 description: `${profileData.name}님이 더 발전할 수 있도록, 협업 피드백을 남겨주세요. 팀원의 솔직한 피드백은 서로를 성장 시킵니다.`,
                 imageUrl: 'https://dot-worklog.com/images/logo.png?v=1',
                 link: {
-                    mobileWebUrl: `https://dot-worklog.com/friend-profile/${username}`,
-                    webUrl: `https://dot-worklog.com/friend-profile/${username}`,
+                    mobileWebUrl: `http://localhost:3000/friend-profile/${username}`,
+                    webUrl: `http://localhost:3000/friend-profile/${username}`,
+                    // 실제 배포시에는 https://dot-worklog.com으로 변경
                 },
             },
             buttons: [
                 {
                     title: '웹으로 보기',
                     link: {
-                        mobileWebUrl: `https://dot-worklog.com/friend-profile/${username}`,
-                        webUrl: `https://dot-worklog.com/friend-profile/${username}`,
+                        mobileWebUrl: `http://localhost:3000/friend-profile/${username}`,
+                        webUrl: `http://localhost:3000/friend-profile/${username}`,
+                        // 실제 배포시에는 https://dot-worklog.com으로 변경
                     },
                 },
             ],
