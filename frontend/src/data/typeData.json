@@ -161,6 +161,7 @@
         },
         {
             "disc_character": "None",
+            "disc_img": "/images/basicProfile.png",
             "color": "#f6f6f6"
         }
     ]

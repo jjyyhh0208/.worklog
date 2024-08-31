@@ -16,10 +16,6 @@ function Main() {
         navigate('/signup/1');
     };
 
-    const handleGuestClick = () => {
-        navigate('/search');
-    };
-
     const scrollToSection = (index) => {
         const offset = 100;
         const top = refs.current[index].current.getBoundingClientRect().top + window.pageYOffset - offset;
@@ -57,30 +53,7 @@ function Main() {
         ],
     }));
     return (
-        <div className="relative flex flex-col items-center min-h-screen w-full overflow-y-auto mb-0">
-            <header className="fixed top-0 mb-0 mt-0 left-0 right-0 w-full h-16 bg-white flex justify-between items-center shadow-md z-50">
-                <h1 className="text-[#4053ff] text-2xl font-extrabold hover:cursor-default mr-6 ml-3.5">.WORKLOG</h1>
-                <div className="flex space-x-4 mr-4">
-                    <button
-                        className="text-gray-500 py-2 text-sm font-bold hover:bg-transparent hover:text-[#0453FF]"
-                        onClick={handleLoginClick}
-                    >
-                        로그인
-                    </button>
-                    <button
-                        className="text-gray-500 py-2 text-sm font-bold hover:bg-transparent hover:text-[#0453FF]"
-                        onClick={handleSignUpClick}
-                    >
-                        회원가입
-                    </button>
-                    <button
-                        className="text-gray-500 py-2 text-sm font-bold hover:bg-transparent hover:text-[#0453FF]"
-                        onClick={handleGuestClick}
-                    >
-                        비회원으로 평가하기
-                    </button>
-                </div>
-            </header>
+        <div className="relative flex flex-col items-center w-full overflow-y-auto mb-0">
             <main className="flex flex-col items-center w-full pt-16">
                 <div className="carousel w-[80%] h-[40%] md:w-[90%]">
                     <Carousel
@@ -112,13 +85,14 @@ function Main() {
                     </h2>
                     <div className="space-y-4">
                         <div className="p-4">
-                            <div className="text-gray-800 font-bold text-lg">v. 0.1 배포완료</div>
-                            <div className="text-gray-600">2024-07-22</div>
+                            <div className="text-gray-800 font-bold text-lg">v. 0.2 배포완료</div>
+                            <div className="text-gray-600">2024-09-01</div>
                             <hr className="my-4" />
                             <div className="text-black mb-10">
                                 안녕하세요, WORKLOG 운영팀입니다. <br />
                                 <br />
-                                익명 팀원 피드백 서비스, .WORKLOG가 드디어 출시 되었습니다. <br />
+                                타인에게 받는 내 업무 유형 테스트, WORKLOG가 새로 업데이트를 마쳤습니다. 서버 안정성을
+                                더 확보하고, 한줄소개 추가, 피드백 레포트 구체화 등이 추가적으로 반영되었습니다. <br />
                                 일하는 모두를 위한 더 나은 서비스가 되도록 하겠습니다. <br />
                                 <br /> 많은 관심과 응원 부탁드립니다.
                             </div>
@@ -132,13 +106,15 @@ function Main() {
                         className="text-[#4053ff] text-3xl font-extrabold mb-4 inline-block pb-6 border-b border-gray-300"
                         style={{ marginBottom: '16px' }}
                     >
-                        .WORKLOG<span className="text-gray-400"> : 익명 팀원 피드백 서비스 </span>
+                        .WORKLOG
+                        <span className="text-gray-400"> : 팀원에게 나는 어떤 업무 스타일의 사람일까? </span>
                     </div>
                     <br />
                     <span className="text-xl text-black leading-relaxed">
                         나는 일할 때 어떤 사람일까요? 함께 일했던 사람들의 피드백을 모아, 본인의 업무 페르소나를
                         파악하고 싶은 당신께 워크로그가 찾아 왔습니다! <br />
-                        .WORKLOG는 웹 브라우저 기반의 서비스로, 협업으로 일하는 모두를 위한 일종의 자기이해 서비스예요.
+                        WORKLOG는 업무 유형 알아보기 테스트 서비스로, 협업으로 일하는 모두를 위한 일종의 자기이해
+                        서비스예요.
                         <br />
                         세분화 된 설문지 문항과 AI를 활용해 타인이 평가하는 '협업 활동에서의 나' 를 체계적으로
                         분석하면서, 본인의 실제로 팀 내의 모습을 객관적인 시선에서 이해할 수 있도록 도와줍니다.
@@ -173,7 +149,10 @@ function Main() {
 
             {/* Group details */}
             {groups.map((group, groupIndex) => (
-                <div key={groupIndex} className="mt-8 scroll-mt-12 w-[80%]">
+                <div
+                    key={groupIndex}
+                    className="mt-8 item-center scroll-mt-12 w-[80%] flex flex-col justify-center items-center"
+                >
                     {group.types.map(
                         (type, typeIndex) =>
                             type.title !== 'None' && (
@@ -196,7 +175,7 @@ function Main() {
                                 </div>
                             )
                     )}
-                    <p className="text-xl mt-5 text-black ml-8 mb-8">{group.description}</p>
+                    <p className="text-xl text-center w-[45%] mt-5 text-black mb-8">{group.description}</p>
                 </div>
             ))}
         </div>
