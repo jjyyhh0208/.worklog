@@ -20,7 +20,7 @@ function FriendProfile() {
     const [DISCCharacterValue2, setDISCCharacterValue2] = useState('');
     // Friend Data
     const [isFollowing, setIsFollowing] = useState(false);
-    const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem('authToken'));
+    const [isLoggedIn, setisLoggedIn] = useState(!!localStorage.getItem('authToken'));
 
     // GPT
     const [positiveFeedback, setPositiveFeedback] = useState({});
@@ -51,7 +51,7 @@ function FriendProfile() {
     useEffect(() => {
         const checkAuth = () => {
             const authToken = localStorage.getItem('authToken');
-            setIsAuthenticated(!!authToken);
+            setisLoggedIn(!!authToken);
         };
 
         checkAuth();
@@ -64,15 +64,21 @@ function FriendProfile() {
                 setProfileData(profileData);
                 setIsFollowing(profileData.is_following);
 
-                const myData = await ProfileService.fetchUserProfile();
+                if (isLoggedIn) {
+                    const myData = await ProfileService.fetchUserProfile();
 
-                if (profileData.username === myData.username) {
-                    navigate('/my-profile');
+                    if (profileData.username === myData.username) {
+                        navigate('/my-profile');
+                    }
                 }
 
                 // 초기 남은 시간 설정
-                setCanLeaveFeedback(profileData.can_leave_feedback);
-                setRemainingTime(profileData.remaining_time);
+                if (isLoggedIn) {
+                    setCanLeaveFeedback(profileData.can_leave_feedback);
+                    setRemainingTime(profileData.remaining_time);
+                } else {
+                    setCanLeaveFeedback(true);
+                }
 
                 if (profileData.profile_image && profileData.profile_image.image) {
                     const signedUrl = await ProfileService.getSignedImageUrl(profileData.profile_image.image);
@@ -130,23 +136,25 @@ function FriendProfile() {
 
     // 남은 시간을 실시간으로 업데이트하는 useEffect
     useEffect(() => {
-        let timer;
-        if (remainingTime && remainingTime > 0) {
-            timer = setInterval(() => {
-                setRemainingTime((prevTime) => {
-                    if (prevTime <= 1) {
-                        clearInterval(timer);
-                        setCanLeaveFeedback(true);
-                        return 0;
-                    }
-                    return prevTime - 1;
-                });
-            }, 10000);
-        }
+        if (isLoggedIn) {
+            let timer;
+            if (remainingTime && remainingTime > 0) {
+                timer = setInterval(() => {
+                    setRemainingTime((prevTime) => {
+                        if (prevTime <= 1) {
+                            clearInterval(timer);
+                            setCanLeaveFeedback(true);
+                            return 0;
+                        }
+                        return prevTime - 1;
+                    });
+                }, 10000);
+            }
 
-        return () => {
-            if (timer) clearInterval(timer);
-        };
+            return () => {
+                if (timer) clearInterval(timer);
+            };
+        }
     }, [remainingTime]);
 
     // 남은 시간을 포맷팅하는 함수
@@ -174,7 +182,7 @@ function FriendProfile() {
     };
 
     const handleFollowClick = async () => {
-        if (!isAuthenticated) {
+        if (!isLoggedIn) {
             alert('로그인이 필요한 기능입니다.');
             return;
         }

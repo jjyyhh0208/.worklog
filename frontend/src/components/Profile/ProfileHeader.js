@@ -16,7 +16,6 @@ const ProfileHeader = ({
     isEditingBio,
     onBioChange,
     onBioEditToggle,
-
     canLeaveFeedback,
     feedbackMessage,
     handleFeedbackClick,

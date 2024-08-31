@@ -223,14 +223,15 @@ def get_token(request):
         data = {'token': payload['token'], 'is_new': payload['is_new']}
         return JsonResponse(data)
     except jwt.ExpiredSignatureError:
-        return redirect_to_next()
+        return redirect(next_url)
     except jwt.InvalidTokenError:
         return redirect(next_url)
+    
 #유저 프로필을 불러오는 View
 class UserProfileView(generics.RetrieveAPIView):
     queryset = User.objects.all()
+    permission_classes = [AllowAny]
     serializer_class = UserProfileSerializer
-    permission_classes = [IsAuthenticated]
     lookup_field = 'username'
 
     def retrieve(self, request, *args, **kwargs):
@@ -239,21 +240,22 @@ class UserProfileView(generics.RetrieveAPIView):
         data = serializer.data
         
         # 팔로우 상태 확인
-        data['is_following'] = request.user.friends.filter(username=instance.username).exists()
+        if request.user.is_authenticated:
+            data['is_following'] = request.user.friends.filter(username=instance.username).exists()
 
-        # 피드백 관련 정보 추가
-        current_user = request.user
-        last_feedback = Feedback.objects.filter(user=instance, user_by=current_user).order_by('-last_time').first()
+            # 피드백 관련 정보 추가
+            current_user = request.user
+            last_feedback = Feedback.objects.filter(user=instance, user_by=current_user).order_by('-last_time').first()
 
-        data['can_leave_feedback'] = True
-        data['remaining_time'] = 0
+            data['can_leave_feedback'] = True
+            data['remaining_time'] = 0
 
-        if last_feedback:
-            time_since_last_feedback = timezone.now() - last_feedback.last_time
-            if time_since_last_feedback < timedelta(hours=24):
-                data['can_leave_feedback'] = False
-                remaining_time = timedelta(hours=24) - time_since_last_feedback
-                data['remaining_time'] = int(remaining_time.total_seconds())  # 남은 시간을 초 단위로 변환
+            if last_feedback:
+                time_since_last_feedback = timezone.now() - last_feedback.last_time
+                if time_since_last_feedback < timedelta(hours=24):
+                    data['can_leave_feedback'] = False
+                    remaining_time = timedelta(hours=24) - time_since_last_feedback
+                    data['remaining_time'] = int(remaining_time.total_seconds())  # 남은 시간을 초 단위로 변환
 
         return Response(data)
 
