@@ -135,7 +135,7 @@ function FriendProfile() {
                     }
                     return prevTime - 1;
                 });
-            }, 1000);
+            }, 10000);
         }
 
         return () => {

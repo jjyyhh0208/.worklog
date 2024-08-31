@@ -4,6 +4,7 @@ import ProgressBar from '../../components/ProgressBar/ProgressBar';
 import FeedbackService from '../../utils/FeedbackService';
 import ProfileService from '../../utils/ProfileService';
 import Modal from '../../components/Modal/Modal';
+import { faHouseMedicalCircleExclamation } from '@fortawesome/free-solid-svg-icons';
 
 const FeedbackLong = ({ isLoggedIn }) => {
     const navigate = useNavigate();
@@ -20,6 +21,10 @@ const FeedbackLong = ({ isLoggedIn }) => {
         },
     });
     const [showModal, setShowModal] = useState(false);
+    //남은 시간
+    const [remainingTime, setRemainingTime] = useState(null);
+    //피드백을 다시 남길 수 있는 상태 (시간 제한 풀린 상태)
+    const [canLeaveFeedback, setCanLeaveFeedback] = useState(false);
 
     useEffect(() => {
         if (showModal) {
@@ -30,10 +35,13 @@ const FeedbackLong = ({ isLoggedIn }) => {
             return () => clearTimeout(timer);
         }
     }, [showModal, navigate, username]);
-
     useEffect(() => {
         ProfileService.fetchFriendProfile(username)
-            .then((data) => setProfileData(data))
+            .then((data) => {
+                setProfileData(data);
+                setCanLeaveFeedback(data.can_leave_feedback);
+                setRemainingTime(data.remaining_time);
+            })
             .catch((error) => console.error('Error fetching profile data:', error));
     }, [username]);
 
@@ -44,6 +52,9 @@ const FeedbackLong = ({ isLoggedIn }) => {
                 .catch((error) => console.error('Error fetching profile data:', error));
         }
     }, [isLoggedIn]);
+
+    console.log(canLeaveFeedback);
+    console.log(remainingTime);
 
     const handleInputChange = (event, question) => {
         const { value } = event.target;
@@ -59,6 +70,18 @@ const FeedbackLong = ({ isLoggedIn }) => {
     const handleFormSubmit = (event) => {
         event.preventDefault();
 
+        if (!canLeaveFeedback) {
+            const formatRemainingTime = (seconds) => {
+                if (!seconds || seconds <= 0) return '지금 바로 협업 피드백을 남겨 보세요!';
+                const hours = Math.floor(seconds / 3600);
+                const minutes = Math.floor((seconds % 3600) / 60);
+                return `${hours}시간 ${minutes}분`;
+            };
+
+            alert(` ${formatRemainingTime(remainingTime)} 후에 다시 협업 평가를 남길 수 있어요!`);
+            navigate(`/friend-profile/${username}`);
+        }
+
         const { question1, question2, question3 } = feedbackData.long_questions;
 
         if (!question1 || !question2 || !question3) {
@@ -67,7 +90,7 @@ const FeedbackLong = ({ isLoggedIn }) => {
         }
 
         if (!profileData) {
-            console.error('프로필을 불러오는 데에 실패했습니다.');
+            alert('프로필을 불러오는 데에 실패했습니다.');
             return;
         }
 
@@ -111,7 +134,10 @@ const FeedbackLong = ({ isLoggedIn }) => {
                 // 두 번째 API 호출: 질문과 답변 데이터 제출
                 return FeedbackService.submitQuestionAnswers({
                     user_to: profileData.username,
-                    question_answers: questionAnswers,
+                    question_answers: questionAnswers.map((qa) => ({
+                        question: { long_question: qa.question.long_question },
+                        answer: qa.answer,
+                    })),
                 });
             })
             .catch((error) => setShowModal(false));

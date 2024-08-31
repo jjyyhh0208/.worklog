@@ -40,8 +40,6 @@ class User(AbstractUser):
     gpt_summarized_personality = models.TextField(blank=True, null=True)
     bio = models.TextField(max_length=500, blank=True)
 
-
-    
     @property
     def feedback_count(self):
         return self.feedbacks_from.count()

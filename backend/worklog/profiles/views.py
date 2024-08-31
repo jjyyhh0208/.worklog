@@ -331,6 +331,7 @@ class UserLongQuestionView(generics.ListAPIView):
         user = get_object_or_404(User, username=username)
         return LongQuestion.objects.filter(user__isnull=True) | LongQuestion.objects.filter(user=user)
 
+
 class QuestionAnswerViewSet(viewsets.ModelViewSet):
     queryset = QuestionAnswer.objects.all()
     serializer_class = QuestionAnswerSerializer
@@ -351,8 +352,6 @@ class FeedbackViewSet(viewsets.ModelViewSet):
         feedback = serializer.save(user_by=request.user, last_time=timezone.now())
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
-
-
 
     # Update
     def update(self, request, *args, **kwargs):
