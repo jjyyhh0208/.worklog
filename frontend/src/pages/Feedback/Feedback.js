@@ -17,11 +17,11 @@ const Feedback = () => {
     useEffect(() => {
         ProfileService.fetchFriendProfile(username)
             .then((data) => setProfileData(data))
-            .catch(error);
+            .catch((error) => {});
 
         FeedbackService.fetchQuestions()
             .then((questions) => setQuestionsTemplate(questions))
-            .catch(error);
+            .catch((error) => {});
     }, [username]);
 
     const handleAnswerChange = (question, option, value) => {

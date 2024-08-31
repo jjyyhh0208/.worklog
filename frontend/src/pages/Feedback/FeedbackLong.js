@@ -54,14 +54,14 @@ const FeedbackLong = () => {
                 setRemainingTime(data.remaining_time);
                 setAccessCode(data.access_code);
             })
-            .catch(error);
+            .catch((error) => {});
     }, [username]);
 
     useEffect(() => {
         if (isLoggedIn) {
             ProfileService.fetchUserProfile()
                 .then((data) => setMyProfileData(data))
-                .catch(error);
+                .catch((error) => {});
         }
     }, [isLoggedIn]);
 
@@ -160,7 +160,9 @@ const FeedbackLong = () => {
                     })),
                 });
             })
-            .catch((error) => setShowModal(false));
+            .catch((error) => {
+                setShowModal(false);
+            });
     };
 
     const handleBackClick = () => {
