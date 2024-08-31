@@ -119,18 +119,15 @@ function FriendProfile() {
                     if (discData) {
                         setDISCData(discData);
                     } else {
-                        console.error('DISC character not found:', discCharacter1, profileData.disc_character);
                     }
 
                     const discData2 = typeData.types.find((item) => item.disc_character === discCharacter2);
                     if (discData) {
                         setDISCData2(discData2);
                     } else {
-                        console.error('DISC character not found:', discCharacter2, profileData.disc_character);
                     }
                 }
             } catch (error) {
-                console.error('프로필 정보를 불러오는 동안 오류가 발생했습니다.', error);
             } finally {
                 setIsLoading(false);
             }
@@ -183,10 +180,7 @@ function FriendProfile() {
                 updatedFollowingStatus = true;
             }
             setIsFollowing(updatedFollowingStatus);
-            console.log('Updated following state:', updatedFollowingStatus);
-        } catch (error) {
-            console.error('팔로우/팔로우 취소 중 오류가 발생했습니다.', error);
-        }
+        } catch (error) {}
     };
 
     return (

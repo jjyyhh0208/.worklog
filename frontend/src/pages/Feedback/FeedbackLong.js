@@ -54,14 +54,14 @@ const FeedbackLong = () => {
                 setRemainingTime(data.remaining_time);
                 setAccessCode(data.access_code);
             })
-            .catch((error) => console.error('Error fetching profile data:', error));
+            .catch(error);
     }, [username]);
 
     useEffect(() => {
         if (isLoggedIn) {
             ProfileService.fetchUserProfile()
                 .then((data) => setMyProfileData(data))
-                .catch((error) => console.error('Error fetching profile data:', error));
+                .catch(error);
         }
     }, [isLoggedIn]);
 

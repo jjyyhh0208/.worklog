@@ -12,7 +12,6 @@ const LoginRedirect = () => {
             const code = params.get('code');
 
             if (!code) {
-                console.error('No code found in URL');
                 navigate('/login');
                 return;
             }
@@ -31,7 +30,6 @@ const LoginRedirect = () => {
                     throw new Error('Invalid token data received');
                 }
             } catch (error) {
-                console.error('Error fetching token:', error);
                 navigate('/login', { state: { error: error.message } });
             }
         };

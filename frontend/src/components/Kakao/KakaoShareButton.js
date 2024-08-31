@@ -12,9 +12,7 @@ const KakaoShareButton = ({ username }) => {
             try {
                 const data = await ProfileService.fetchFriendProfile(username);
                 setProfileData(data);
-            } catch (error) {
-                console.error('Error fetching profile data:', error);
-            }
+            } catch (error) {}
         };
 
         fetchProfileData();
@@ -30,8 +28,8 @@ const KakaoShareButton = ({ username }) => {
                 description: `피드백 접근 코드: ${profileData.access_code}\n${profileData.name}님이 더 발전할 수 있도록, 협업 피드백을 남겨주세요.`,
                 imageUrl: 'https://dot-worklog.com/images/logo.png?v=1',
                 link: {
-                    mobileWebUrl: `http://localhost:3000/friend-profile/${username}`,
-                    webUrl: `http://localhost:3000/friend-profile/${username}`,
+                    mobileWebUrl: `https://dot-worklog.com/friend-profile/${username}`,
+                    webUrl: `https://dot-worklog.com/friend-profile/${username}`,
                     // 실제 배포시에는 https://dot-worklog.com으로 변경
                 },
             },
@@ -39,8 +37,8 @@ const KakaoShareButton = ({ username }) => {
                 {
                     title: '웹으로 보기',
                     link: {
-                        mobileWebUrl: `http://localhost:3000/friend-profile/${username}`,
-                        webUrl: `http://localhost:3000/friend-profile/${username}`,
+                        mobileWebUrl: `https://dot-worklog.com/friend-profile/${username}`,
+                        webUrl: `https://dot-worklog.com/friend-profile/${username}`,
                         // 실제 배포시에는 https://dot-worklog.com으로 변경
                     },
                 },

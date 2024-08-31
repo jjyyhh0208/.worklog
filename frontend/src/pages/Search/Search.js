@@ -20,7 +20,6 @@ function Search() {
 
     const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
-
     useEffect(() => {
         const params = new URLSearchParams(location.search);
         const query = params.get('q');
@@ -41,9 +40,7 @@ function Search() {
         try {
             const userProfile = await ProfileService.fetchUserProfile();
             setCurrentUser(userProfile);
-        } catch (error) {
-            console.error('Error fetching current user profile:', error);
-        }
+        } catch (error) {}
     };
 
     const handleInputChange = (e) => {
@@ -75,7 +72,6 @@ function Search() {
                                 const imageUrl = await ProfileService.getSignedImageUrl(result.profile_image.image);
                                 return { ...result, profileImage: imageUrl };
                             } catch (error) {
-                                console.error('Error fetching signed URL:', error);
                                 return result;
                             }
                         } else {
@@ -90,7 +86,6 @@ function Search() {
                 setNotFound(true);
             }
         } catch (error) {
-            console.error('Search error:', error);
             setResultsWithImages([]);
             setNotFound(true);
         }
@@ -120,9 +115,7 @@ function Search() {
             }
             const updatedResults = await ProfileService.fetchSearchResults(searchTerm);
             setSearchResults(updatedResults);
-        } catch (error) {
-            console.error('팔로우/팔로우 취소 중 오류가 발생했습니다.', error);
-        }
+        } catch (error) {}
     };
 
     const handleKeyPress = (e) => {

@@ -15,9 +15,7 @@ function Header({ isLoggedIn }) {
                 .then((data) => {
                     setProfileData(data);
                 })
-                .catch((error) => {
-                    console.error('프로필 정보를 불러오는 동안 오류가 발생했습니다.', error);
-                });
+                .catch((error) => {});
         }
     }, [isLoggedIn]);
 
@@ -26,9 +24,7 @@ function Header({ isLoggedIn }) {
             .then(() => {
                 window.location.href = '/';
             })
-            .catch((error) => {
-                console.error('로그아웃 중 오류가 발생했습니다.', error);
-            });
+            .catch((error) => {});
     };
 
     const onDeleteAccountClick = () => {
@@ -41,9 +37,7 @@ function Header({ isLoggedIn }) {
                 window.location.href = '/';
                 localStorage.removeItem('authToken');
             })
-            .catch((error) => {
-                console.error('회원 탈퇴 중 오류가 발생했습니다.', error);
-            });
+            .catch((error) => {});
     };
 
     const toggleMenu = () => {

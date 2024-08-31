@@ -11,10 +11,7 @@ class ErrorBoundary extends React.Component {
         return { hasError: true };
     }
 
-    componentDidCatch(error, errorInfo) {
-        // 여기에 에러 로깅 로직을 추가할 수 있습니다.
-        console.log(error, errorInfo);
-    }
+    componentDidCatch(error, errorInfo) {}
 
     render() {
         if (this.state.hasError) {
