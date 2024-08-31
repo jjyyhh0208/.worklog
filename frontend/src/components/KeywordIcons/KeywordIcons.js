@@ -1,5 +1,4 @@
 import React from 'react';
-import styles from './KeywordIcons.module.css';
 
 // 키워드와 SVG 아이콘 매핑
 

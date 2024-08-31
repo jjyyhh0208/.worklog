@@ -82,7 +82,7 @@ CSRF_TRUSTED_ORIGINS = [
     ]
 
 CSRF_COOKIE_NAME = "csrftoken"
-CSRF_COOKIE_HTTPONLY = False
+CSRF_COOKIE_SAMESITE = 'None'
 
 # Application definition
 

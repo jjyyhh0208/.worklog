@@ -39,13 +39,12 @@ class ProfileImageSerializer(serializers.ModelSerializer):
 class UserGenderNameAgeSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('name', 'gender', 'age')
+        fields = ('name', 'feedback_style')
         
     def update(self,instance, validated_data):
         #이름, 성별, 출생연도 설정
         instance.name = validated_data.get('name', instance.name)
-        instance.gender = validated_data.get('gender', instance.gender)
-        instance.age = validated_data.get('age', instance.age)
+        instance.feedback_style = validated_data.get('feedback_style', instance.feedback_style)
         
         instance.save()
         return instance       
@@ -120,13 +119,15 @@ class UserProfileSerializer(serializers.ModelSerializer):
     feedback_workstyles = serializers.SerializerMethodField()
     disc_scores = serializers.SerializerMethodField()
     disc_character = serializers.SerializerMethodField()
-     
+    access_code = serializers.SerializerMethodField()
+    
     class Meta:
         model = User
         fields = (
             'username', 'name', 'gender', 'age', 'work_styles', 'interests', 
             'disc_character', 'gpt_summarized_personality', 'profile_image', 
-            'feedback_count','disc_scores', 'feedback_workstyles'
+            'feedback_count','disc_scores', 'feedback_workstyles','bio',
+            'access_code'
         )
 
     def get_feedback_count(self, obj):
@@ -140,23 +141,25 @@ class UserProfileSerializer(serializers.ModelSerializer):
     
     def get_disc_character(self, obj):
         return obj.calculate_disc_character
-
-
-
+    
+    def get_access_code(self, obj):
+        if obj.access_code == '':
+            obj.generate_access_code()
+        return obj.access_code
 
 # 친구목록을 보여주는 모델    
 class FriendSerializer(serializers.ModelSerializer):
     profile_image = ProfileImageSerializer(source='profile_image_object', read_only=True)
     class Meta:
         model = User
-        fields = ['username', 'name', 'disc_character', 'profile_image']
+        fields = ['username', 'name', 'disc_character', 'profile_image', 'feedback_count']
 
 # 유저 검색 모델
 class UserSearchResultSerializer(serializers.ModelSerializer):
     profile_image = ProfileImageSerializer(source='profile_image_object', read_only=True)
     class Meta:
         model = User
-        fields = ['username', 'name','profile_image']
+        fields = ['username', 'name', 'profile_image']
     
 # 아이디 중복 검사를 위한 로직
 class UserUniqueIdSerializer(serializers.ModelSerializer):

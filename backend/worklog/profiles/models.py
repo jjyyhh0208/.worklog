@@ -3,6 +3,10 @@ from django.db import models
 from collections import Counter
 import os
 from django.utils.deconstruct import deconstructible
+from django.utils import timezone
+import string
+import random
+
 
 # 유저명을 기준으로 프로필 저장
 @deconstructible
@@ -21,7 +25,11 @@ class User(AbstractUser):
         ('F', '여성'),
         ('N', '없음')
     ]
-
+    STYLE_CHOICES = [
+        ('hard', '솔직한 피드백'),
+        ('soft', '배려있는 피드백'),
+    ]
+    feedback_style = models.CharField(max_length=10, choices=STYLE_CHOICES)
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
     age = models.PositiveIntegerField(null=True, blank=True)
     name = models.CharField(max_length=50)
@@ -32,7 +40,26 @@ class User(AbstractUser):
     profile_image = models.OneToOneField('ProfileImage', on_delete=models.SET_NULL, null=True, blank=True, related_name='user_profile')
     disc_character = models.CharField(max_length=50, blank=True)
     gpt_summarized_personality = models.TextField(blank=True, null=True)
-    
+    bio = models.TextField(max_length=500, blank=True)
+    access_code = models.CharField(max_length=50, blank=True)
+
+    def generate_access_code(self):
+        characters = string.ascii_uppercase + string.digits
+        code = ''.join(random.choice(characters) for _ in range(5))
+
+        # 코드 중복 체크
+        while User.objects.filter(access_code=code).exists():
+            code = ''.join(random.choice(characters) for _ in range(5))
+
+        self.access_code = code
+        self.save(update_fields=['access_code'])
+
+        return code
+
+    def invalidate_access_code(self):
+        self.access_code = ''
+        self.save(update_fields=['access_code'])
+
     @property
     def feedback_count(self):
         return self.feedbacks_from.count()
@@ -97,42 +124,49 @@ class User(AbstractUser):
             'DC': '목표 달성자',
             'DI': '불도저'
         }
-    
+
         feedbacks = self.feedbacks_from.all()
-        d_score_total, i_score_total = 0, 0
-        s_score_total, c_score_total = 0, 0
+        feedback_count = self.feedbacks_from.count()
 
-        if self.feedbacks_from.count() >= 3: # 피드백 3개 이상 있는 경우
-            for feedback in feedbacks:
-                if feedback.score:
-                    d_score_total += feedback.score.d_score
-                    i_score_total += feedback.score.i_score
-                    s_score_total += feedback.score.s_score
-                    c_score_total += feedback.score.c_score
+        if feedback_count < 3:
+            return; # 반환하지 않음!!
 
-            scores = {
-                'D': d_score_total,
-                'I': i_score_total,
-                'S': s_score_total,
-                'C': c_score_total
-            }
+        character_counts = {name: 0 for name in CHARACTER.values()}
 
-            sorted_scores = sorted(scores.items(), key=lambda item: item[1], reverse=True)
-            top_disc = str(sorted_scores[0][0]) + str(sorted_scores[1][0])
-            if top_disc not in CHARACTER:  # 1,2등 type 내로 설명이 불가능할 때 1,3 등 값 활용
-                top_disc = str(sorted_scores[0][0]) + str(sorted_scores[2][0])
-            new_disc_character = CHARACTER.get(top_disc, 'None')
-        else:
-            new_disc_character = 'None'
+        for feedback in feedbacks:
+            if feedback.score:
+                d_score = feedback.score.d_score
+                i_score = feedback.score.i_score
+                s_score = feedback.score.s_score
+                c_score = feedback.score.c_score
 
-        if self.disc_character != new_disc_character:
-            self.disc_character = new_disc_character
+                scores = {
+                    'D': d_score,
+                    'I': i_score,
+                    'S': s_score,
+                    'C': c_score
+                }
+
+                sorted_scores = sorted(scores.items(), key=lambda item: item[1], reverse=True)
+                top_disc = str(sorted_scores[0][0]) + str(sorted_scores[1][0])
+                if top_disc not in CHARACTER:  # If top two can't describe, use first and third
+                    top_disc = str(sorted_scores[0][0]) + str(sorted_scores[2][0])
+                disc_character = CHARACTER.get(top_disc, 'None')
+
+                if disc_character != 'None':
+                    character_counts[disc_character] += 1
+
+        character_percentages = {
+            name: round(100 * count / feedback_count, 2) for name, count in character_counts.items()
+        }
+
+        # Determine the most common character for saving
+        overall_character = max(character_counts, key=character_counts.get)
+        if self.disc_character != overall_character:
+            self.disc_character = overall_character
             self.save()
 
-        return self.disc_character
-
-    def __str__(self):
-        return self.username
+        return character_percentages
 
 class WorkStyle(models.Model):
     name = models.CharField(max_length=50, unique=True)
@@ -193,7 +227,13 @@ class Feedback(models.Model):
     work_styles = models.ManyToManyField('WorkStyle', blank=False)
     score = models.OneToOneField('Score', on_delete=models.CASCADE, blank=True, null=True)
     question_answers = models.ManyToManyField('QuestionAnswer', blank=True, related_name='feedbacks')
+    last_time = models.DateTimeField(default=timezone.now)  # 새로운 필드 추가
+
 
     def __str__(self):
         return f"Feedback to {self.user} by {self.user_by}"
+    
+    def save(self, *args, **kwargs):
+        self.last_time = timezone.now()  # 저장할 때마다 현재 시간으로 업데이트
+        super().save(*args, **kwargs)
     

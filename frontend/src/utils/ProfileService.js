@@ -1,11 +1,10 @@
 import API from './API';
 
 const ProfileService = {
-    setUserBasicInfo: ({ name, age, gender }) => {
+    setUserBasicInfo: ({ name, feedback_style }) => {
         const requestData = {
             name: name,
-            age: age,
-            gender: gender,
+            feedback_style: feedback_style,
         };
         return API.put(`/profiles/user/set/basic-info/`, requestData)
             .then((response) => {
@@ -16,6 +15,7 @@ const ProfileService = {
             })
             .catch((error) => {
                 if (error.response && error.response.data) {
+                    console.error('API Error:', error.response.data);
                     throw new Error('기본 정보를 업데이트하는 동안 오류가 발생했습니다.');
                 } else if (error.response) {
                     throw new Error('서버 오류가 발생했습니다.');
@@ -24,11 +24,12 @@ const ProfileService = {
                 }
             });
     },
-    setUserProfileInfo: (userData) => {
-        const formData = new FormData();
-        formData.append('image', userData.profileImage);
-
-        return API.put('/profiles/user/set/profile-image/', formData)
+    setUserProfileInfo: (formData) => {
+        return API.post('/profiles/user/set/profile-image/', formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        })
             .then((response) => {
                 if (response.status === 200) {
                     console.log('프로필 이미지가 성공적으로 업데이트되었습니다.');
@@ -37,6 +38,7 @@ const ProfileService = {
             })
             .catch((error) => {
                 if (error.response && error.response.data) {
+                    console.error('Failed to upload image:', error.response.data);
                     throw new Error('프로필 이미지를 업데이트하는 동안 오류가 발생했습니다.');
                 } else if (error.response) {
                     throw new Error('서버 오류가 발생했습니다.');
@@ -46,18 +48,11 @@ const ProfileService = {
             });
     },
 
-    submitLongAnswers: (questionAnswers) => {
-        return API.post('/profiles/user/feedback-answers/', { question_answers: questionAnswers })
-            .then((response) => response.data)
-            .catch((error) => {
-                throw error;
-            });
-    },
-
     fetchWorkStyles: () => {
         return API.get(`/profiles/workstyles/`)
             .then((response) => response.data)
             .catch((error) => {
+                console.error('업무 스타일을 불러오는 동안 오류가 발생했습니다.', error);
                 throw error;
             });
     },
@@ -75,6 +70,7 @@ const ProfileService = {
                 return response.data;
             })
             .catch((error) => {
+                console.error('업무 스타일을 업데이트하는 동안 오류가 발생했습니다.', error);
                 throw error;
             });
     },
@@ -83,6 +79,7 @@ const ProfileService = {
         return API.get(`/profiles/interests/`)
             .then((response) => response.data)
             .catch((error) => {
+                console.error('관심 분야를 불러오는 동안 오류가 발생했습니다.', error);
                 throw error;
             });
     },
@@ -100,6 +97,7 @@ const ProfileService = {
                 return response.data;
             })
             .catch((error) => {
+                console.error('관심 분야를 업데이트하는 동안 오류가 발생했습니다.', error);
                 throw error;
             });
     },
@@ -108,23 +106,25 @@ const ProfileService = {
         return API.get(`/profiles/user/current`)
             .then((response) => response.data)
             .catch((error) => {
+                console.error('사용자 프로필을 불러오는 동안 오류가 발생했습니다.', error);
                 throw error;
             });
-    },
-
-    getUserProfileLink: (username) => {
-        return `${window.location.origin}/friend-profile/${username}`;
     },
 
     fetchFriendProfile: (username) => {
         return API.get(`/profiles/user/view/${username}`)
             .then((response) => {
                 if (response.status === 200) {
-                    return response.data;
+                    console.log('Fetched profile data:', response.data);
+                    const profileData = response.data;
+                    profileData.remaining_time = profileData.remaining_time || 0;
+
+                    return profileData;
                 }
                 throw new Error('프로필 정보를 불러오는 동안 오류가 발생했습니다.');
             })
             .catch((error) => {
+                console.error('프로필 정보를 가져오는 동안 오류가 발생했습니다.', error);
                 throw error;
             });
     },
@@ -133,6 +133,7 @@ const ProfileService = {
         return API.get(`/profiles/user/friends/`)
             .then((response) => response.data)
             .catch((error) => {
+                console.error('친구 목록을 가져오는 동안 오류가 발생했습니다.', error);
                 throw error;
             });
     },
@@ -146,6 +147,7 @@ const ProfileService = {
                 return response.data;
             })
             .catch((error) => {
+                console.error('사용자의 서술형 질문을 가져오는 동안 오류가 발생했습니다.', error);
                 throw error;
             });
     },
@@ -159,6 +161,7 @@ const ProfileService = {
                 return response.data;
             })
             .catch((error) => {
+                console.error('사용자의 친구 목록을 가져오는 동안 오류가 발생했습니다.', error);
                 throw error;
             });
     },
@@ -169,6 +172,7 @@ const ProfileService = {
             });
             return response.data;
         } catch (error) {
+            console.error('Error fetching search results:', error);
             throw error;
         }
     },
@@ -177,6 +181,7 @@ const ProfileService = {
         return API.post(`/profiles/user/follow/`, { friend_name })
             .then((response) => response.data)
             .catch((error) => {
+                console.error('팔로우하는 동안 오류가 발생했습니다.', error);
                 throw error;
             });
     },
@@ -186,6 +191,7 @@ const ProfileService = {
         return API.post(`/profiles/user/unfollow/`, { friend_name })
             .then((response) => response.data)
             .catch((error) => {
+                console.error('팔로우 취소하는 동안 오류가 발생했습니다.', error);
                 throw error;
             });
     },
@@ -202,6 +208,17 @@ const ProfileService = {
             .catch((error) => {
                 throw error;
             });
+    },
+    //  프로필 한줄소개 작성
+    updateBio: async (bio) => {
+        try {
+            const response = await API.put(`/profiles/user/set/bio/`, { bio });
+            console.log('Bio updated:', bio);
+            return response.data;
+        } catch (error) {
+            console.error('Failed to update bio:', error);
+            throw error;
+        }
     },
 };
 
