@@ -11,8 +11,6 @@ const AdminService = {
         return API.post('/profiles/auth/registration/', requestData)
             .then((response) => {
                 if (response.status === 201) {
-                    // Typically, registration would return a 201 status code
-                    console.log('사용자가 성공적으로 등록되었습니다.');
                 }
                 return response.data; // Return the response data for further use if needed
             })
@@ -41,7 +39,6 @@ const AdminService = {
                 return response.data; // Return response data for further use
             })
             .catch((error) => {
-                console.log(error);
                 if (error.response && error.response.data) {
                     throw new Error('아이디는 3자 이상 30자 이하로 설정해주세요.');
                 } else {
@@ -85,7 +82,6 @@ const AdminService = {
         return API.post('/profiles/auth/logout/')
             .then((response) => {
                 if (response.status === 200) {
-                    console.log('사용자가 성공적으로 로그아웃하였습니다.');
                     localStorage.removeItem('authToken');
                 }
                 return response.data; // Return response data for further use
@@ -100,7 +96,6 @@ const AdminService = {
             const response = await API.delete('/profiles/auth/delete/');
 
             if (response.status === 204) {
-                console.log('성공적으로 회원 탈퇴가 이루어졌습니다.');
                 return true;
             } else {
                 throw new Error('예상치 못한 응답 상태: ' + response.status);
