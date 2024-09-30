@@ -25,7 +25,7 @@ REACT_APP_BASE_URL = config('REACT_APP_BASE_URL', default='http://localhost:8000
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-dotenv_path = BASE_DIR / '.env'
+dotenv_path = BASE_DIR.parent / '.env'
 load_dotenv(dotenv_path)
 
 AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
@@ -34,10 +34,16 @@ AWS_STORAGE_BUCKET_NAME = os.getenv("AWS_STORAGE_BUCKET_NAME")
 AWS_REGION_NAME = os.getenv("AWS_REGION_NAME")
 AWS_SIGNATURE_VERSION = os.getenv("AWS_SIGNATURE_VERSION")
 
+#POSTGRESQL data
+POSTGRESQL_USER = os.getenv("POSTGRESQL_USER")
+POSTGRESQL_PASSWORD = os.getenv("POSTGRESQL_PASSWORD")
+POSTGRESQL_DB_NAME = os.getenv("POSTGRESQL_DB_NAME")
+POSTGRESQL_PORT = os.getenv("POSTGRESQL_PORT")
+POSTGRESQL_HOST = os.getenv("POSTGRESQL_HOST")
+
 
 AWS_S3_CUSTOM_DOMAIN = f"{AWS_STORAGE_BUCKET_NAME}.s3.{AWS_REGION_NAME}.amazonaws.com"
 AWS_LOCATION = 'media'
-
 #gpt key를 환경변수로 설정
 OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
@@ -54,11 +60,12 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 SECRET_KEY = "django-insecure-@5j2w%83edi$)wedcsd-&8)t)8zdd6acfi&d+*a*g&d&#4z!5n"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = [
     "localhost",
     "127.0.0.1",
+    "[::1]",
     "www.dot-worklog.com",
     "dot-worklog.com",
     "api.dot-worklog.com",
@@ -73,8 +80,10 @@ ALLOWED_HOSTS = [
 
 # CSRF
 CSRF_TRUSTED_ORIGINS = [
-    "http://localhost:3000", 
+    "http://localhost:3000",
     "http://127.0.0.1:3000",
+    'http://localhost:8000',
+    'http://127.0.0.1:8000',
     "https://dot-worklog.com",
     "https://www.dot-worklog.com",
     "http://43.202.115.16", 
@@ -82,7 +91,13 @@ CSRF_TRUSTED_ORIGINS = [
     ]
 
 CSRF_COOKIE_NAME = "csrftoken"
-CSRF_COOKIE_SAMESITE = 'None'
+CSRF_COOKIE_SAMESITE = 'Lax'
+CSRF_COOKIE_SECURE = False
+
+CSRF_COOKIE_HTTPONLY = False
+
+SESSION_COOKIE_SECURE = False
+SESSION_COOKIE_SAMESITE = 'Lax'
 
 # Application definition
 
@@ -119,7 +134,7 @@ MIDDLEWARE = [
     "django.contrib.sessions.middleware.SessionMiddleware",
     # "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
-    "django.middleware.csrf.CsrfViewMiddleware",
+    # "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
@@ -154,8 +169,13 @@ WSGI_APPLICATION = "worklog.wsgi.application"
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": POSTGRESQL_DB_NAME,
+        "USER": POSTGRESQL_USER,
+        "PASSWORD": POSTGRESQL_PASSWORD,
+        "HOST": POSTGRESQL_HOST,
+        "PORT": POSTGRESQL_PORT,
+        
     }
 }
 
@@ -184,7 +204,7 @@ ACCOUNT_USERNAME_REQUIRED = True
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.SessionAuthentication',
+        # 'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.TokenAuthentication',
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
@@ -236,7 +256,8 @@ DEBUG = True
 STATIC_URL = "/static/"
 
 STATICFILES_DIRS = [
-    BASE_DIR / "static",
+    # BASE_DIR / "static",
+    BASE_DIR,
 ]
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field

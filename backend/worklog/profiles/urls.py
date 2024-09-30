@@ -3,13 +3,12 @@ from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from .views import (
     UserProfileView, UserWorkStyleView, UserInterestView, 
-    UserNameFeedbackStyleView, WorkStyleViewSet, InterestViewSet, 
-    UniqueIdCheck, ShortQuestionViewSet, LongQuestionViewSet,
+    UserNameFeedbackStyleView, WorkStyleViewSet, InterestViewSet, ShortQuestionViewSet, LongQuestionViewSet,
     FeedbackViewSet, UserLongQuestionView, UserFriendView,
     UserCurrentProfileView, UserSearchView, UserLongQuestionAnswersView,
-    TestAnswers, FollowFriendView, UserDeleteView, CustomLoginView,
+    TestAnswers, FollowFriendView,
     ProfileImageView, get_signed_url_view, TestAnswers, 
-    FollowFriendView, UserDeleteView, UnfollowFriendView, UpdateBioView,
+    FollowFriendView, UnfollowFriendView, UpdateBioView,
     # google_callback, google_login, GoogleLogin
     KakaoLoginCallback, get_token
     )
@@ -51,13 +50,6 @@ urlpatterns = [
     # 친구 추가
     path('user/follow/', FollowFriendView.as_view(), name='user-follow'), # 유저 팔로우 엔드포인트
     path('user/unfollow/', UnfollowFriendView.as_view(), name='user-unfollow'), # 유저 언팔로우 엔드포인트
-
-    # Auth
-    path('auth/login/', CustomLoginView.as_view(), name='custom_login'), # 로그인 오류메시지 추가한 Custom ViewSet 사용
-    path('auth/', include('dj_rest_auth.urls')),  # 로그인, 로그아웃, 비밀번호 변경, 비밀번호 초기화 등을 위한 엔드포인트 기본 제공 기능
-    path('auth/registration/', include('dj_rest_auth.registration.urls')),  # 회원가입을 위한 엔드포인트 기본 제공 기능
-    path('auth/check-username/', UniqueIdCheck.as_view(), name='check-username'), # 유저 이름 중복 검사
-    path('auth/delete/', UserDeleteView.as_view(), name='user-delete'), # 유저 삭제 엔드포인트
 
     # Social Account
     path('auth/kakao/callback', KakaoLoginCallback.as_view(), name='kakao_login_callback'),
