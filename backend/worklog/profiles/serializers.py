@@ -1,3 +1,4 @@
+from attr import field
 from .models import *
 from rest_framework import serializers
 from dj_rest_auth.registration.serializers import RegisterSerializer
@@ -35,7 +36,7 @@ class ProfileImageSerializer(serializers.ModelSerializer):
 
 
 #유저가 이름, 피드백 성향을 수정할 때 사용하는 직렬화기
-class UserGenderNameAgeSerializer(serializers.ModelSerializer):
+class UserFeedbackStyleSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('name', 'feedback_style')
@@ -73,6 +74,17 @@ class UserInterestSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):        
         interests_data = validated_data.pop('interests', [])        
         instance.interests.set(interests_data)
+        instance.save()
+        return instance
+    
+class UserBioSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('bio', )
+        
+    def update(self, instance, validated_data):
+        bio_data = validated_data.get('bio', "")
+        instance.bio = bio_data
         instance.save()
         return instance
         

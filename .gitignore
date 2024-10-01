@@ -10,6 +10,7 @@
 
 # env
 /venv
+/myvenv
 .env
 /backend/.env
 /backend/worklog/.env

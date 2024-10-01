@@ -1,37 +1,25 @@
-import profile
-from pyexpat import model
-from django.views import View
-from django.contrib.auth import get_user_model, login
-from django.contrib.auth.backends import ModelBackend
 import openai
-import ast
 from django.conf import settings
 from django.core.files.storage import default_storage
-from django.contrib.auth import authenticate
 from django.shortcuts import redirect
-from dj_rest_auth.serializers import LoginSerializer
-import boto3
 import json
-from rest_framework import viewsets, generics, status, permissions, mixins
+from rest_framework import viewsets, generics, status, mixins
 from rest_framework.response import Response
-from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly, AllowAny
-from rest_framework.decorators import action
 from rest_framework.views import APIView
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from datetime import timedelta
-from dj_rest_auth.registration.views import RegisterView
 from .models import User, WorkStyle, Interest, ShortQuestion, LongQuestion, QuestionAnswer, Score, Feedback, ProfileImage
 from .serializers import (
-    UserGenderNameAgeSerializer, UserWorkStyleSerializer,
+    UserFeedbackStyleSerializer, UserWorkStyleSerializer,
     UserInterestSerializer, WorkStyleSerializer,
-    InterestSerializer, UserRegisterSerializer,
-    UserProfileSerializer, UserUniqueIdSerializer,
+    InterestSerializer, UserProfileSerializer,
     ShortQuestionSerializer, LongQuestionSerializer, 
     QuestionAnswerSerializer, ScoreSerializer, FeedbackSerializer,
     FriendSerializer, UserSearchResultSerializer,
+    UserBioSerializer
 )
 from django.http import JsonResponse
 from utils.s3_utils import get_signed_url
@@ -71,6 +59,45 @@ class InterestViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Interest.objects.all()
     serializer_class = InterestSerializer
     permission_classes = []
+    
+#읽기 전용으로 함으로써 get 메서드만 허용
+class ShortQuestionViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = ShortQuestion.objects.all()
+    serializer_class = ShortQuestionSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
+
+#유저가 질문하고 싶은 내용 추가가능
+class LongQuestionViewSet(viewsets.ModelViewSet):
+    queryset = LongQuestion.objects.all()
+    serializer_class = LongQuestionSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
+    
+#회원가입 이후 유저의 이름, 피드백 강도 설정하기 위한 ViewSet
+class UserNameFeedbackStyleView(generics.UpdateAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserFeedbackStyleSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        return self.request.user
+
+#회원가입 이후 유저의 업무 성향 설정하기 위한 ViewSet    
+class UserWorkStyleView(generics.UpdateAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserWorkStyleSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        return self.request.user
+    
+#회원가입 이후 유저의 관심 직종 설정하기 위한 ViewSet       
+class UserInterestView(generics.UpdateAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserInterestSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        return self.request.user
 
 class ProfileImageView(APIView):
     def delete_old_image(self, image_path):
@@ -80,7 +107,6 @@ class ProfileImageView(APIView):
 
     def post(self, request, *args, **kwargs):
         user = request.user
-        print(user.username)
         try:
             # Check if the user already has a profile image
             profile_image = ProfileImage.objects.get(user=user)
@@ -108,6 +134,28 @@ class ProfileImageView(APIView):
         except ProfileImage.DoesNotExist:
             return Response({"message": "Profile image does not exist"}, status=status.HTTP_404_NOT_FOUND)
 
+# 바이오 업데이트 view 로직
+class UpdateBioView(generics.UpdateAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserBioSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        return self.request.user
+    
+    def update(self, request, *args, **kwargs):
+        user = self.get_object()
+        serializer = self.get_serializer(user, data=request.data)
+        # 유효성 검사 및 예외 처리
+        if serializer.is_valid():
+            serializer.save()
+            return Response({
+                "message": "Bio updated successfully!",
+                "bio": serializer.data['bio']
+            }, status=status.HTTP_200_OK)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            
     
 ## 카카오 관련 URI
 KAKAO_TOKEN_API = "https://kauth.kakao.com/oauth/token"
@@ -232,45 +280,6 @@ class UserCurrentProfileView(generics.RetrieveAPIView):
     def get_object(self):
         return self.request.user
     
-    
-#회원가입 이후 유저의 이름, 성별, 나이 설정하기 위한 ViewSet
-class UserNameFeedbackStyleView(generics.UpdateAPIView):
-    queryset = User.objects.all()
-    serializer_class = UserGenderNameAgeSerializer
-    permission_classes = [IsAuthenticated]
-
-    def get_object(self):
-        return self.request.user
-    
-    
-#회원가입 이후 유저의 업무 성향 설정하기 위한 ViewSet    
-class UserWorkStyleView(generics.UpdateAPIView):
-    queryset = User.objects.all()
-    serializer_class = UserWorkStyleSerializer
-    permission_classes = [IsAuthenticated]
-
-    def get_object(self):
-        return self.request.user
-    
-#회원가입 이후 유저의 관심 직종 설정하기 위한 ViewSet       
-class UserInterestView(generics.UpdateAPIView):
-    queryset = User.objects.all()
-    serializer_class = UserInterestSerializer
-    permission_classes = [IsAuthenticated]
-
-    def get_object(self):
-        return self.request.user
-    
-        
-class ShortQuestionViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = ShortQuestion.objects.all()
-    serializer_class = ShortQuestionSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly]
-
-class LongQuestionViewSet(viewsets.ModelViewSet):
-    queryset = LongQuestion.objects.all()
-    serializer_class = LongQuestionSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly]
 
 # GET: user 명에 맞는 서술형 질문 목록을 불러옵니다.
 class UserLongQuestionView(generics.ListAPIView):
@@ -600,24 +609,4 @@ class UnfollowFriendView(generics.GenericAPIView):
         user.friends.remove(friend)
         return Response({"detail": f"You have unfollowed {friend.name}"}, status=status.HTTP_200_OK)
 
-
-# 바이오 업데이트 view 로직
-class UpdateBioView(generics.UpdateAPIView):
-    queryset = User.objects.all()
-    serializer_class = UserProfileSerializer
-    permission_classes = [IsAuthenticated]
-
-    def get_object(self):
-        return self.request.user
-
-    def update(self, request, *args, **kwargs):
-        user = self.get_object()
-        bio = request.data.get('bio', '')
-        user.bio = bio
-        user.save()
-        serializer = self.get_serializer(user)
-        return Response(serializer.data)
-
-    def patch(self, request, *args, **kwargs):
-        return self.update(request, *args, **kwargs)
   

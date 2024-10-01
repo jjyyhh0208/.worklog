@@ -10,5 +10,4 @@ urlpatterns = [
     path('signup/', include('dj_rest_auth.registration.urls')),  # 회원가입을 위한 엔드포인트 기본 제공 기능
     path('check-username/', UniqueIdCheck.as_view(), name='check-username'), # 유저 이름 중복 검사
     path('delete/', UserDeleteView.as_view(), name='user-delete'), # 유저 삭제 엔드포인트
-
 ]
