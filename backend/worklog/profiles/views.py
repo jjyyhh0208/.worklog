@@ -156,88 +156,15 @@ class UpdateBioView(generics.UpdateAPIView):
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
             
+            
+# 현재 내 프로필을 불러오는 View
+class UserCurrentProfileView(generics.RetrieveAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserProfileSerializer
+    permission_classes = [IsAuthenticated]
     
-## 카카오 관련 URI
-KAKAO_TOKEN_API = "https://kauth.kakao.com/oauth/token"
-KAKAO_USER_API = "https://kapi.kakao.com/v2/user/me"
-KAKAO_CALLBACK_URI = BASE_URL + "/profiles/auth/kakao/callback"
-REACT_APP_REDIRECT_URL = REACT_APP_BASE_URL + "login/redirect"
-
-# 카카오 인가 과정 STEP 1: react에서 'code'를 받아서 카카오에 회원정보를 요청한다.
-class KakaoLoginCallback(generics.GenericAPIView, mixins.ListModelMixin):
-    permission_classes = [AllowAny]
-    def get(self, request, *args, **kwargs):
-        next_url = request.GET.get('next', REACT_APP_BASE_URL + '/signup')  
-        def redirect_to_next():
-            error_url = f"{next_url}?error=true"
-            return redirect(error_url)
-        
-        try: # STEP 1-1. code를 가져온다.
-            code = request.GET["code"]
-        except MultiValueDictKeyError: # code가 없다면 오류 발생
-            return redirect_to_next()
-        # STEP 1-2. code를 활용해서 access token을 받아온다.
-        data = {
-          "grant_type": "authorization_code",
-          "client_id": os.getenv('SOCIAL_AUTH_KAKAO_CLIENT_ID'),
-          "redirect_uri": KAKAO_CALLBACK_URI,
-          "code": code,
-        }
-        token_response = requests.post(KAKAO_TOKEN_API, data=data).json()
-        access_token = token_response.get('access_token')
-        if not access_token: # access token이 없다면 오류 발생
-            return redirect_to_next()
-
-        # STEP 1-3. access token을 활용해서 사용자 정보를 불러옴.
-        headers = {"Authorization": f"Bearer ${access_token}"}
-        user_info_response = requests.get(KAKAO_USER_API, headers=headers)
-        if user_info_response.status_code != 200: # 사용자 정보가 없다면 오류 발생
-            return redirect_to_next()
-        user_information = user_info_response.json()
-        kakao_account = user_information.get('kakao_account')
-        kakao_id = 'kakao_' + str(user_information.get('id'))
-        if not kakao_id:
-            return redirect_to_next()
-        nickname = kakao_account.get('profile', {}).get('nickname')
-        # 중간 테스트용 코드: return Response(kakao_account, status=status.HTTP_200_OK)
-
-        # STEP2. 사용자 정보를 활용하여 내부 로그인 구현
-        # 우리의 key 값은 username임 (kakao에서의 nickname을 활용)
-        
-        try:
-            user = User.objects.get(username=kakao_id)
-            is_new = False
-        except User.DoesNotExist:
-            try:
-                user = User.objects.create(username=kakao_id, name=nickname)
-                user.set_unusable_password()
-                user.save()
-                is_new = True
-            except Exception as e:
-                return redirect_to_next()
-        token, created = Token.objects.get_or_create(user=user)
-        # JWT 토큰 생성
-        payload = {
-            'token': token.key,
-            'is_new': is_new,
-            'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=5)  # 5분 유효
-        }
-        one_time_code = jwt.encode(payload, SECRET_KEY, algorithm='HS256')
-        
-        redirect_url = f"{REACT_APP_REDIRECT_URL}?code={one_time_code}"
-        return redirect(redirect_url)
-
-def get_token(request):
-    next_url = request.GET.get('next', REACT_APP_BASE_URL)  # Default to base URL if no next parameter is provided
-    code = request.GET.get('code')
-    try:
-        payload = jwt.decode(code, SECRET_KEY, algorithms=['HS256'])
-        data = {'token': payload['token'], 'is_new': payload['is_new']}
-        return JsonResponse(data)
-    except jwt.ExpiredSignatureError:
-        return redirect(next_url)
-    except jwt.InvalidTokenError:
-        return redirect(next_url)
+    def get_object(self):
+        return self.request.user
     
 #유저 프로필을 불러오는 View
 class UserProfileView(generics.RetrieveAPIView):
@@ -262,6 +189,7 @@ class UserProfileView(generics.RetrieveAPIView):
             data['can_leave_feedback'] = True
             data['remaining_time'] = 0
 
+            #무제한 피드백 금지 -> 피드백 남기고 24시간 후에 다시 피드백 제공 가능
             if last_feedback:
                 time_since_last_feedback = timezone.now() - last_feedback.last_time
                 if time_since_last_feedback < timedelta(hours=24):
@@ -270,17 +198,7 @@ class UserProfileView(generics.RetrieveAPIView):
                     data['remaining_time'] = int(remaining_time.total_seconds())  # 남은 시간을 초 단위로 변환
 
         return Response(data)
-
-# 현재 내 프로필을 불러오는 View
-class UserCurrentProfileView(generics.RetrieveAPIView):
-    queryset = User.objects.all()
-    serializer_class = UserProfileSerializer
-    permission_classes = [IsAuthenticated]
     
-    def get_object(self):
-        return self.request.user
-    
-
 # GET: user 명에 맞는 서술형 질문 목록을 불러옵니다.
 class UserLongQuestionView(generics.ListAPIView):
     serializer_class = LongQuestionSerializer
@@ -289,59 +207,7 @@ class UserLongQuestionView(generics.ListAPIView):
     def get_queryset(self):
         username = self.kwargs['username']
         user = get_object_or_404(User, username=username)
-        return LongQuestion.objects.filter(user__isnull=True) | LongQuestion.objects.filter(user=user)
-
-
-class QuestionAnswerViewSet(viewsets.ModelViewSet):
-    queryset = QuestionAnswer.objects.all()
-    serializer_class = QuestionAnswerSerializer
-
-class ScoreViewSet(viewsets.ModelViewSet):
-    queryset = Score.objects.all()
-    serializer_class = ScoreSerializer
-
-class FeedbackViewSet(viewsets.ModelViewSet):
-    queryset = Feedback.objects.all()
-    serializer_class = FeedbackSerializer
-    permission_classes = [AllowAny]
-    
-    # Create
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        user_by = request.user if request.user.is_authenticated else None
-        feedback = serializer.save(user_by=user_by, last_time=timezone.now())
-
-        main_user = serializer.validated_data.get('user')
-        if user_by is None:
-            main_user.generate_access_code()
-        headers = self.get_success_headers(serializer.data)
-        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
-
-    # Update
-    def update(self, request, *args, **kwargs):
-        partial = kwargs.pop('partial', False)
-        instance = self.get_object()
-        serializer = self.get_serializer(instance, data=request.data, partial=partial)
-        serializer.is_valid(raise_exception=True)
-        feedback = serializer.save(last_time=timezone.now())
-        return Response(serializer.data)
-
-    # Delete
-    def destroy(self, request, *args, **kwargs):
-        instance = self.get_object()
-        self.perform_destroy(instance)
-        return Response(status=status.HTTP_204_NO_CONTENT)
-    
-# GET: user 명에 맞는 피드백 목록을 불러옵니다.
-class FeedbackByUserView(generics.ListAPIView):
-    serializer_class = FeedbackSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly]
-
-    def get_queryset(self):
-        username = self.kwargs['username']
-        user = get_object_or_404(User, username=username)
-        return Feedback.objects.filter(user=user) | Feedback.objects.filter(user_by=user)
+        return LongQuestion.objects.filter(user__isnull=True) | LongQuestion.objects.filter(user=user)    
 
 # GET: 유저명에 맞는 친구목록을 불러옵니다.    
 class UserFriendView(generics.GenericAPIView):
@@ -376,6 +242,82 @@ class UserSearchView(APIView):
         serializer = UserSearchResultSerializer(users, many=True)
         return Response(serializer.data)
     
+class FollowFriendView(generics.GenericAPIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        user = request.user
+        friend_name = request.data.get('friend_name')
+        
+        # 유저 팔로우 요청에 필요한 검증
+        if not friend_name:
+            return Response({"detail": "Friend name is required."}, status=status.HTTP_400_BAD_REQUEST)
+        
+        friend = get_object_or_404(User, username=friend_name)
+        
+        # 자기 자신을 팔로우하는 것을 방지
+        if friend == user:
+            return Response({"detail": "You cannot follow yourself."}, status=status.HTTP_400_BAD_REQUEST)
+
+        user.friends.add(friend)
+        return Response({"detail": f"You are now following {friend.username}"}, status=status.HTTP_200_OK)
+    
+
+class UnfollowFriendView(generics.GenericAPIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        user = request.user
+        friend_name = request.data.get('friend_name')
+        
+        # 유저 언팔로우 요청에 필요한 검증
+        if not friend_name:
+            return Response({"detail": "Friend name is required."}, status=status.HTTP_400_BAD_REQUEST)
+        
+        friend = get_object_or_404(User, username=friend_name)
+        
+        # 자기 자신을 언팔로우하는 것을 방지
+        if friend == user:
+            return Response({"detail": "You cannot unfollow yourself."}, status=status.HTTP_400_BAD_REQUEST)
+
+        user.friends.remove(friend)
+        return Response({"detail": f"You have unfollowed {friend.username}"}, status=status.HTTP_200_OK)
+
+
+class FeedbackViewSet(viewsets.ModelViewSet):
+    queryset = Feedback.objects.all()
+    serializer_class = FeedbackSerializer
+    permission_classes = [AllowAny]
+    
+    # Create
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user_by = request.user if request.user.is_authenticated else None
+        
+        serializer.save(user_by=user_by, last_time=timezone.now())
+
+        main_user = serializer.validated_data.get('user')
+        if user_by is None:
+            main_user.generate_access_code()
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
+    # Update
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        serializer.save(last_time=timezone.now())
+        return Response(serializer.data)
+
+    # Delete
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        self.perform_destroy(instance)
+        return Response({"message": "삭제가 성공적으로 완료되었습니다."}, status=status.HTTP_204_NO_CONTENT)
+    
     
 #로그인한 유저의 long question answer을 가져오는 view
 class UserLongQuestionAnswersView(generics.GenericAPIView):
@@ -386,6 +328,7 @@ class UserLongQuestionAnswersView(generics.GenericAPIView):
 
     def post(self, request, *args, **kwargs):
         try:
+            #피드백을 받는 유저
             evaluated_username = request.data.get('user_to', '')
             evaluated_user = User.objects.get(username=evaluated_username)
 
@@ -413,10 +356,8 @@ class UserLongQuestionAnswersView(generics.GenericAPIView):
                 
                 #그냥 인덱스 0,1로 하면 저장된 데이터가 없습니다 라고 뜨니까 꼭 짝/홀로 구분
                 if index % 2 == 0 and index == 0:
-                    
                         good_answers.append(answer_text)
                 elif index % 2 == 1:
-                   
                         bad_answers.append(answer_text)
 
             feedback.delete()
@@ -555,6 +496,15 @@ class UserLongQuestionAnswersView(generics.GenericAPIView):
 
         return existing_personality
     
+
+class QuestionAnswerViewSet(viewsets.ModelViewSet):
+    queryset = QuestionAnswer.objects.all()
+    serializer_class = QuestionAnswerSerializer
+
+class ScoreViewSet(viewsets.ModelViewSet):
+    queryset = Score.objects.all()
+    serializer_class = ScoreSerializer
+    
 #db 테스트용 뷰
 class TestAnswers(generics.GenericAPIView):
     permission_classes = [IsAuthenticated]
@@ -566,47 +516,97 @@ class TestAnswers(generics.GenericAPIView):
         for feedback in feedbacks:
             answers.extend(feedback.question_answers.values_list('answer', flat=True))
         return Response(answers)
+
     
+## 카카오 관련 URI
+KAKAO_TOKEN_API = "https://kauth.kakao.com/oauth/token"
+KAKAO_USER_API = "https://kapi.kakao.com/v2/user/me"
+KAKAO_CALLBACK_URI = BASE_URL + "/profiles/auth/kakao/callback"
+REACT_APP_REDIRECT_URL = REACT_APP_BASE_URL + "login/redirect"
+
+# 카카오 인가 과정 STEP 1: react에서 'code'를 받아서 카카오에 회원정보를 요청한다.
+class KakaoLoginCallback(generics.GenericAPIView, mixins.ListModelMixin):
+    permission_classes = [AllowAny]
+    def get(self, request, *args, **kwargs):
+        next_url = request.GET.get('next', REACT_APP_BASE_URL + '/signup')  
+        def redirect_to_next():
+            error_url = f"{next_url}?error=true"
+            return redirect(error_url)
+        
+        try: # STEP 1-1. code를 가져온다.
+            code = request.GET["code"]
+        except MultiValueDictKeyError: # code가 없다면 오류 발생
+            return redirect_to_next()
+        # STEP 1-2. code를 활용해서 access token을 받아온다.
+        data = {
+          "grant_type": "authorization_code",
+          "client_id": os.getenv('SOCIAL_AUTH_KAKAO_CLIENT_ID'),
+          "redirect_uri": KAKAO_CALLBACK_URI,
+          "code": code,
+        }
+        token_response = requests.post(KAKAO_TOKEN_API, data=data).json()
+        access_token = token_response.get('access_token')
+        if not access_token: # access token이 없다면 오류 발생
+            return redirect_to_next()
+
+        # STEP 1-3. access token을 활용해서 사용자 정보를 불러옴.
+        headers = {"Authorization": f"Bearer ${access_token}"}
+        user_info_response = requests.get(KAKAO_USER_API, headers=headers)
+        if user_info_response.status_code != 200: # 사용자 정보가 없다면 오류 발생
+            return redirect_to_next()
+        user_information = user_info_response.json()
+        kakao_account = user_information.get('kakao_account')
+        kakao_id = 'kakao_' + str(user_information.get('id'))
+        if not kakao_id:
+            return redirect_to_next()
+        nickname = kakao_account.get('profile', {}).get('nickname')
+        # 중간 테스트용 코드: return Response(kakao_account, status=status.HTTP_200_OK)
+
+        # STEP2. 사용자 정보를 활용하여 내부 로그인 구현
+        # 우리의 key 값은 username임 (kakao에서의 nickname을 활용)
+        
+        try:
+            user = User.objects.get(username=kakao_id)
+            is_new = False
+        except User.DoesNotExist:
+            try:
+                user = User.objects.create(username=kakao_id, name=nickname)
+                user.set_unusable_password()
+                user.save()
+                is_new = True
+            except Exception as e:
+                return redirect_to_next()
+        token, created = Token.objects.get_or_create(user=user)
+        # JWT 토큰 생성
+        payload = {
+            'token': token.key,
+            'is_new': is_new,
+            'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=5)  # 5분 유효
+        }
+        one_time_code = jwt.encode(payload, SECRET_KEY, algorithm='HS256')
+        
+        redirect_url = f"{REACT_APP_REDIRECT_URL}?code={one_time_code}"
+        return redirect(redirect_url)
+
+def get_token(request):
+    next_url = request.GET.get('next', REACT_APP_BASE_URL)  # Default to base URL if no next parameter is provided
+    code = request.GET.get('code')
+    try:
+        payload = jwt.decode(code, SECRET_KEY, algorithms=['HS256'])
+        data = {'token': payload['token'], 'is_new': payload['is_new']}
+        return JsonResponse(data)
+    except jwt.ExpiredSignatureError:
+        return redirect(next_url)
+    except jwt.InvalidTokenError:
+        return redirect(next_url)
     
-class FollowFriendView(generics.GenericAPIView):
-    permission_classes = [IsAuthenticated]
 
-    def post(self, request, *args, **kwargs):
-        user = request.user
-        friend_name = request.data.get('friend_name')
-        
-        # 유저 팔로우 요청에 필요한 검증
-        if not friend_name:
-            return Response({"detail": "Friend name is required."}, status=status.HTTP_400_BAD_REQUEST)
-        
-        friend = get_object_or_404(User, username=friend_name)
-        
-        # 자기 자신을 팔로우하는 것을 방지
-        if friend == user:
-            return Response({"detail": "You cannot follow yourself."}, status=status.HTTP_400_BAD_REQUEST)
+# GET: user 명에 맞는 피드백 목록을 불러옵니다. -> 피드백 목록 테스트용 뷰
+# class FeedbackByUserView(generics.ListAPIView):
+#     serializer_class = FeedbackSerializer
+#     permission_classes = [IsAuthenticatedOrReadOnly]
 
-        user.friends.add(friend)
-        return Response({"detail": f"You are now following {friend.name}"}, status=status.HTTP_200_OK)
-    
-
-class UnfollowFriendView(generics.GenericAPIView):
-    permission_classes = [IsAuthenticated]
-
-    def post(self, request, *args, **kwargs):
-        user = request.user
-        friend_name = request.data.get('friend_name')
-        
-        # 유저 언팔로우 요청에 필요한 검증
-        if not friend_name:
-            return Response({"detail": "Friend name is required."}, status=status.HTTP_400_BAD_REQUEST)
-        
-        friend = get_object_or_404(User, username=friend_name)
-        
-        # 자기 자신을 언팔로우하는 것을 방지
-        if friend == user:
-            return Response({"detail": "You cannot unfollow yourself."}, status=status.HTTP_400_BAD_REQUEST)
-
-        user.friends.remove(friend)
-        return Response({"detail": f"You have unfollowed {friend.name}"}, status=status.HTTP_200_OK)
-
-  
+#     def get_queryset(self):
+#         username = self.kwargs['username']
+#         user = get_object_or_404(User, username=username)
+#         return Feedback.objects.filter(user=user) | Feedback.objects.filter(user_by=user)

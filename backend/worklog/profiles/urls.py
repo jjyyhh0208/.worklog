@@ -38,20 +38,17 @@ urlpatterns = [
     path('user/set/bio/', UpdateBioView.as_view(), name='update-bio'), # 한줄소개 업데이트 엔드포인트
     
     
-    # User 그 외
-    path('user/follow/', FollowFriendView.as_view(), name='user-follow'), # 유저 팔로우 엔드포인트
-    path('user/get-signed-url/<path:image_path>/', get_signed_url_view, name='get_signed_url'), # s3 인증값을 받는 엔드포인트
-
-
-    #GPT용 답변 추출
-    path('user/feedback-answers/', UserLongQuestionAnswersView.as_view(), name='user-feedback-answers'), # 유저의 답변을 저장하는 엔드포인트
-    path('user/test/', TestAnswers.as_view(), name='test-answers'), # 테스트용 답변을 저장하는 엔드포인트
-    
     # 친구 추가
     path('user/follow/', FollowFriendView.as_view(), name='user-follow'), # 유저 팔로우 엔드포인트
     path('user/unfollow/', UnfollowFriendView.as_view(), name='user-unfollow'), # 유저 언팔로우 엔드포인트
 
+    #GPT용 답변 추출
+    path('user/feedback-answers/', UserLongQuestionAnswersView.as_view(), name='user-feedback-answers'), # 유저의 답변을 저장하는 엔드포인트
+     
     # Social Account
     path('auth/kakao/callback', KakaoLoginCallback.as_view(), name='kakao_login_callback'),
     path('auth/kakao/get-token', get_token, name='get_token'),
+    
+    #그 외
+    path('user/get-signed-url/<path:image_path>/', get_signed_url_view, name='get_signed_url'), # s3 인증값을 받는 엔드포인트
 ]

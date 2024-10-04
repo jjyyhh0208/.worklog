@@ -201,7 +201,6 @@ class ShortQuestionSerializer(serializers.ModelSerializer):
 
 class FeedbackSerializer(serializers.ModelSerializer):
     user = serializers.SlugRelatedField(slug_field='username', queryset=User.objects.all(), allow_null=True)
-    user_by = serializers.SlugRelatedField(slug_field='username', queryset=User.objects.all(), allow_null=True)
     work_styles = serializers.ListField(write_only=True, child=serializers.DictField())
     score = ScoreSerializer(allow_null=True)
     question_answers = QuestionAnswerSerializer(many=True)  # Removed source keyword
