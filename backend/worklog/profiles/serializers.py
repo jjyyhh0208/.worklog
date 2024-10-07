@@ -1,22 +1,22 @@
+from attr import field
 from .models import *
 from rest_framework import serializers
 from dj_rest_auth.registration.serializers import RegisterSerializer
 from rest_framework.authtoken.models import Token
-from rest_framework.validators import UniqueValidator
 
-
+#초기 선택 창에서 본인의 업무 스타일 설정 시 사용
 class WorkStyleSerializer(serializers.ModelSerializer):
     class Meta:
         model = WorkStyle
         fields = '__all__'
     
-    
+#초기 선택 창에서 본인의 관심사 설정 시 사용
 class InterestSerializer(serializers.ModelSerializer):
     class Meta:
         model = Interest
         fields = '__all__'
 
-
+#유저의 프로필 사진을 클라이언트에게 보낼 때 사용
 class ProfileImageSerializer(serializers.ModelSerializer):
     image = serializers.SerializerMethodField()
 
@@ -35,8 +35,8 @@ class ProfileImageSerializer(serializers.ModelSerializer):
 
 
 
-#회원가입 후 유저의 이름, 성별, 나이 설정하기 위해 사용    
-class UserGenderNameAgeSerializer(serializers.ModelSerializer):
+#유저가 이름, 피드백 성향을 수정할 때 사용하는 직렬화기
+class UserFeedbackStyleSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('name', 'feedback_style')
@@ -49,9 +49,7 @@ class UserGenderNameAgeSerializer(serializers.ModelSerializer):
         instance.save()
         return instance       
         
-# 이름, 성별, 나이 설정 이후 유저의 업무 성향, 관심 직종 설정하기 위해 사용
-# PrimaryKeyRelatedField를 사용하여 유저의 업무 성향, 관심 직종을 설정할 수 있도록 함 -> 유저가 선택하여 특정 업무 성향, 관심 직종을 선택할 수 있도록 함
-# (참고) 온보딩 과정 분리로 인해 엔드포인트도 분리하여 진행함
+#유저의 업무 성향 설정하기 위해 사용
 class UserWorkStyleSerializer(serializers.ModelSerializer):
     work_styles = serializers.PrimaryKeyRelatedField(queryset=WorkStyle.objects.all(), many=True)
     
@@ -60,17 +58,12 @@ class UserWorkStyleSerializer(serializers.ModelSerializer):
         fields = ('work_styles', )
         
     def update(self, instance, validated_data):
-        
-        #클라이언트에서 보낸 유저의 (초기 설정) 데이터를 가지고 유저 인스턴스의 work_styles, interests 필드에 추가
-        #왜 변수에 따로 빼놓은건가요? -> 클라이언트가 보낸 요청(validated_data)의 work_styles, interests 데이터를 따로 빼놓고 유저 인스턴스의 work_styles, interests 필드에 추가하는 작업을 하기 위함
         work_styles_data = validated_data.pop('work_styles', [])
-        
-        #클라이언트에서 보낸 유저의 초기 설정 데이터를 가지고 유저 인스턴스의 work_styles, interests 필드에 추가
         instance.work_styles.set(work_styles_data)
-
         instance.save()
         return instance
-    
+
+#유저의 관심사 설정하기 위해 사용
 class UserInterestSerializer(serializers.ModelSerializer):
     interests = serializers.PrimaryKeyRelatedField(queryset = Interest.objects.all(), many = True)
     
@@ -78,15 +71,20 @@ class UserInterestSerializer(serializers.ModelSerializer):
         model = User
         fields = ('interests', )
         
-    def update(self, instance, validated_data):
-        
-        #클라이언트에서 보낸 유저의 (초기 설정) 데이터를 가지고 유저 인스턴스의 work_styles, interests 필드에 추가
-        #왜 변수에 따로 빼놓은건가요? -> 클라이언트가 보낸 요청(validated_data)의 work_styles, interests 데이터를 따로 빼놓고 유저 인스턴스의 work_styles, interests 필드에 추가하는 작업을 하기 위함
-        interests_data = validated_data.pop('interests', [])
-        
-        #클라이언트에서 보낸 유저의 초기 설정 데이터를 가지고 유저 인스턴스의 work_styles, interests 필드에 추가
+    def update(self, instance, validated_data):        
+        interests_data = validated_data.pop('interests', [])        
         instance.interests.set(interests_data)
-
+        instance.save()
+        return instance
+    
+class UserBioSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('bio', )
+        
+    def update(self, instance, validated_data):
+        bio_data = validated_data.get('bio', "")
+        instance.bio = bio_data
         instance.save()
         return instance
         
@@ -203,7 +201,6 @@ class ShortQuestionSerializer(serializers.ModelSerializer):
 
 class FeedbackSerializer(serializers.ModelSerializer):
     user = serializers.SlugRelatedField(slug_field='username', queryset=User.objects.all(), allow_null=True)
-    user_by = serializers.SlugRelatedField(slug_field='username', queryset=User.objects.all(), allow_null=True)
     work_styles = serializers.ListField(write_only=True, child=serializers.DictField())
     score = ScoreSerializer(allow_null=True)
     question_answers = QuestionAnswerSerializer(many=True)  # Removed source keyword

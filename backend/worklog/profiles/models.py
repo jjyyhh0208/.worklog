@@ -62,16 +62,16 @@ class User(AbstractUser):
 
     @property
     def feedback_count(self):
-        return self.feedbacks_from.count()
+        return self.feedbacks_of.count()
     
     @property
     def calculate_disc_scores(self):
-        feedbacks = self.feedbacks_from.all()
+        feedbacks = self.feedbacks_of.all()
         d_score_total, i_score_total = 0, 0
         s_score_total, c_score_total = 0, 0
 
-        if self.feedbacks_from.count() >= 3: 
-            feedback_count = self.feedbacks_from.count()
+        if self.feedbacks_of.count() >= 3: 
+            feedback_count = self.feedbacks_of.count()
             for feedback in feedbacks:
                 if feedback.score:
                     d_score_total += feedback.score.d_score
@@ -95,7 +95,7 @@ class User(AbstractUser):
     def calculate_workstyles(self):
         from .serializers import WorkStyleSerializer
 
-        feedbacks = self.feedbacks_from.all()
+        feedbacks = self.feedbacks_of.all()
         workstyle_counter = Counter() # counter를 활용하여 개수를 셈.
 
         for feedback in feedbacks:
@@ -125,8 +125,8 @@ class User(AbstractUser):
             'DI': '불도저'
         }
 
-        feedbacks = self.feedbacks_from.all()
-        feedback_count = self.feedbacks_from.count()
+        feedbacks = self.feedbacks_of.all()
+        feedback_count = self.feedbacks_of.count()
 
         if feedback_count < 3:
             return; # 반환하지 않음!!
@@ -222,7 +222,7 @@ class Score(models.Model):
         return f"D: {self.d_score}, I: {self.i_score}, S: {self.s_score}, C: {self.c_score}"
 
 class Feedback(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, related_name='feedbacks_from')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, related_name='feedbacks_of')
     user_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='feedbacks_by')
     work_styles = models.ManyToManyField('WorkStyle', blank=False)
     score = models.OneToOneField('Score', on_delete=models.CASCADE, blank=True, null=True)
