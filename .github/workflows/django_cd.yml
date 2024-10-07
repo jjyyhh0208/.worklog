@@ -1,0 +1,60 @@
+name: Django CD
+
+on:
+    push:
+        branches:
+            - main # main 브랜치에 push될 때 트리거
+
+jobs:
+    deploy:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v2
+
+            - name: Set up Docker Buildx
+              uses: docker/setup-buildx-action@v1
+
+            - name: Log in to Docker Hub
+              uses: docker/login-action@v1
+              with:
+                  username: ${{ secrets.DOCKER_USERNAME }}
+                  password: ${{ secrets.DOCKER_PASSWORD }}
+
+            - name: Build and push Docker image
+              run: |
+                  docker build -t myapp:latest .
+                  docker tag myapp:latest username/myapp:latest
+                  docker push username/myapp:latest
+
+            - name: Deploy to server
+              run: |
+                  ssh -o StrictHostKeyChecking=no user@server_ip << 'EOF'
+                  docker pull username/myapp:latest
+                  docker stop myapp || true
+                  docker rm myapp || true
+
+                  docker run -d \
+                    --name myapp \
+                    -p 8000:8000 \
+                    --env-file .env \  # 외부의 .env 파일을 주입
+                    username/myapp:latest
+                  EOF
+              env:
+                  REACT_APP_BASE_URL: ${{ secrets.REACT_APP_BASE_URL }}
+                  BASE_URL: ${{ secrets.BASE_URL }}
+                  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+                  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+                  AWS_STORAGE_BUCKET_NAME: ${{ secrets.AWS_STORAGE_BUCKET_NAME }}
+                  AWS_REGION_NAME: ${{ secrets.AWS_REGION_NAME }}
+                  AWS_SIGNATURE_VERSION: ${{ secrets.AWS_SIGNATURE_VERSION }}
+                  SOCIAL_AUTH_KAKAO_CLIENT_ID: ${{ secrets.SOCIAL_AUTH_KAKAO_CLIENT_ID }}
+                  SOCIAL_AUTH_KAKAO_SECRET: ${{ secrets.SOCIAL_AUTH_KAKAO_SECRET }}
+                  SECRET_KEY: ${{ secrets.SECRET_KEY }}
+                  OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+                  POSTGRESQL_USER: ${{ secrets.POSTGRESQL_USER }}
+                  POSTGRESQL_PASSWORD: ${{ secrets.POSTGRESQL_PASSWORD }}
+                  POSTGRESQL_DB_NAME: ${{ secrets.POSTGRESQL_DB_NAME }}
+                  POSTGRESQL_PORT: ${{ secrets.POSTGRESQL_PORT }}
+                  POSTGRESQL_HOST: ${{ secrets.POSTGRESQL_HOST }}
