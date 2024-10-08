@@ -10,7 +10,6 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
-from datetime import timedelta
 from pathlib import Path
 import os
 from dotenv import load_dotenv
@@ -61,24 +60,31 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')  # 파일이 저장될 경로
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-@5j2w%83edi$)wedcsd-&8)t)8zdd6acfi&d+*a*g&d&#4z!5n"
+
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
+
+# ALLOWED_HOSTS = [
+#     "localhost",
+#     "127.0.0.1",
+#     "[::1]",
+#     "www.dot-worklog.com",
+#     "dot-worklog.com",
+#     "api.dot-worklog.com",
+#     "15.164.56.168",
+#     ".ap-northeast-2.compute.amazonaws.com",
+# ]
 
 ALLOWED_HOSTS = [
-    "localhost",
-    "127.0.0.1",
-    "[::1]",
-    "www.dot-worklog.com",
-    "dot-worklog.com",
-    "api.dot-worklog.com",
-    "43.202.115.16",
-    ".ap-northeast-2.compute.amazonaws.com",
+    "15.164.56.168",
 ]
 
-# # CORS
-# CORS_ALLOW_ALL_ORIGINS = True
+# CORS
+CORS_ALLOW_ALL_ORIGINS = False
+CORS_ALLOWED_ORIGINS = [
+
+]
 # CORS_ALLOW_CREDENTIALS = True
 # CORS_ALLOW_HEADERS = '*'
 
@@ -90,17 +96,17 @@ CSRF_TRUSTED_ORIGINS = [
     'http://127.0.0.1:8000',
     "https://dot-worklog.com",
     "https://www.dot-worklog.com",
-    "http://43.202.115.16", 
+    "http://15.164.56.168", 
     "http://ec2-43-202-115-16.ap-northeast-2.compute.amazonaws.com"
     ]
 
 CSRF_COOKIE_NAME = "csrftoken"
 CSRF_COOKIE_SAMESITE = 'Lax'
-CSRF_COOKIE_SECURE = False
+CSRF_COOKIE_SECURE = True
 
 CSRF_COOKIE_HTTPONLY = False
 
-SESSION_COOKIE_SECURE = False
+SESSION_COOKIE_SECURE = True
 SESSION_COOKIE_SAMESITE = 'Lax'
 
 # Application definition
@@ -250,7 +256,6 @@ USE_I18N = True
 
 USE_TZ = True
 
-DEBUG = True
 
 
 
