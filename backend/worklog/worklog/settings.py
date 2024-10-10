@@ -315,11 +315,11 @@ else:
             },
         },
         'handlers': {  # 로그 메시지 처리 방법 정의
-            'console': {
-                'level': 'ERROR',
-                'class': 'logging.StreamHandler',
-                'formatter': 'simple',  # 사용할 포맷터
-            },
+            # 'slack': {
+            #     'level': 'ERROR',
+            #     'class': '',
+            #     'formatter': 'verbose',
+            # },
             'file': {
                 'level': 'ERROR',
                 'class': 'logging.FileHandler',
@@ -329,12 +329,7 @@ else:
         },
         'loggers': {  # 특정 로거 설정
             'django': {
-                'handlers': ['console', 'file'],
-                'level': 'ERROR',
-                'propagate': True,
-            },
-            'slack': {
-                'handlers': ['console', 'file'],
+                'handlers': ['file'],
                 'level': 'ERROR',
                 'propagate': True,
             },
