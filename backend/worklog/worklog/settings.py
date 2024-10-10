@@ -328,6 +328,11 @@ else:
             }
         },
         'loggers': {  # 특정 로거 설정
+            'django': {
+                'handlers': ['console', 'file'],
+                'level': 'ERROR',
+                'propagate': True,
+            },
             'slack': {
                 'handlers': ['console', 'file'],
                 'level': 'ERROR',
