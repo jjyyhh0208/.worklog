@@ -272,32 +272,70 @@ STATIC_ROOT = BASE_DIR / 'staticfiles/'
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,  # 기존 로거 비활성화 여부
-    'formatters': {  # 로그 메시지 형식 정의
-        'verbose': {
-            'format': '{levelname} {asctime} {module} {message}',
-            'style': '{',
+#개발 환경에서는 console에 로깅 출력
+if DEBUG:
+    LOGGING = {
+        'version': 1,
+        'disable_existing_loggers': False,  # 기존 로거 비활성화 여부
+        'formatters': {  # 로그 메시지 형식 정의
+            'verbose': {
+                'format': '{levelname} {asctime} {module} {message}',
+                'style': '{',
+            },
+            'simple': {
+                'format': '{levelname} {module} {message}',
+                'style': '{',
+            },
         },
-        'simple': {
-            'format': '{levelname} {message}',
-            'style': '{',
+        'handlers': {  # 로그 메시지 처리 방법 정의
+            'console': {
+                'level': 'ERROR',
+                'class': 'logging.StreamHandler',
+                'formatter': 'simple',  # 사용할 포맷터
+            },
         },
-    },
-    'handlers': {  # 로그 메시지 처리 방법 정의
-        'console': {
-            'level': 'ERROR',
-            'class': 'logging.StreamHandler',
-            'formatter': 'simple',  # 사용할 포맷터
+        'loggers': {  # 특정 로거 설정
+            'django': {
+                'handlers': ['console'],
+                'level': 'ERROR',
+                'propagate': True,
+            },
         },
-    },
-    'loggers': {  # 특정 로거 설정
-        'django': {
-            'handlers': ['console'],
-            'level': 'ERROR',
-            'propagate': True,
+    }
+    
+#배포 환경에서는 slack, file에 로깅 출력
+else:
+    LOGGING = {
+        'version': 1,
+        'disable_existing_loggers': False,  # 기존 로거 비활성화 여부
+        'formatters': {  # 로그 메시지 형식 정의
+            'verbose': {
+                'format': '{levelname} {asctime} {module} {message}',
+                'style': '{',
+            },
+            'simple': {
+                'format': '{levelname} {module} {message}',
+                'style': '{',
+            },
         },
-    },
-}
+        'handlers': {  # 로그 메시지 처리 방법 정의
+            'console': {
+                'level': 'ERROR',
+                'class': 'logging.StreamHandler',
+                'formatter': 'simple',  # 사용할 포맷터
+            },
+            'file': {
+                'level': 'ERROR',
+                'class': 'logging.FileHandler',
+                'filename': os.path.join(BASE_DIR, 'log', 'django_errors.log'),
+                'formatter': 'verbose',
+            }
+        },
+        'loggers': {  # 특정 로거 설정
+            'slack': {
+                'handlers': ['console', 'file'],
+                'level': 'ERROR',
+                'propagate': True,
+            },
+        },
+    }

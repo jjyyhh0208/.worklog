@@ -32,6 +32,7 @@ from django.utils.datastructures import MultiValueDictKeyError
 from decouple import config
 import logging
 
+#로거 정의
 logger = logging.getLogger(__name__)
 
 
@@ -49,16 +50,34 @@ def get_signed_url_view(request, image_path):
     
 #업무 성향을 유저에게 제공하는 ViewSet
 class WorkStyleViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = WorkStyle.objects.all()
     serializer_class = WorkStyleSerializer
     permission_classes = []
+    
+    def get_queryset(self):
+        try:
+            return WorkStyle.objects.all()
+        except WorkStyle.DoesNotExist:
+            logger.error("No workstyles found")
+            return WorkStyle.objects.none()
+        except Exception as e:
+            logger.error(f"Error: {e}")
+            raise e
     
     
 #관심 직종을 유저에게 제공하는 ViewSet
 class InterestViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = Interest.objects.all()
     serializer_class = InterestSerializer
     permission_classes = []
+    
+    def get_queryset(self):
+        try:
+            return Interest.objects.all()
+        except Interest.DoesNotExist:
+            logger.error("No interests found")
+            return Interest.objects.none()
+        except Exception as e:
+            logger.error(f"Error: {e}")
+            raise e
     
 #읽기 전용으로 함으로써 get 메서드만 허용
 class ShortQuestionViewSet(viewsets.ReadOnlyModelViewSet):
