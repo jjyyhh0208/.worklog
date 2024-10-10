@@ -95,6 +95,7 @@ CSRF_TRUSTED_ORIGINS = [
     'http://localhost:8000',
     'http://127.0.0.1:8000',
     "http://15.164.56.168",
+    "https://15.164.56.168",
     ]
 
 CSRF_COOKIE_NAME = "csrftoken"
