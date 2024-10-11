@@ -1,9 +1,6 @@
 from rest_framework import generics, status, permissions
 from rest_framework.response import Response
 
-from django.views.decorators.csrf import ensure_csrf_cookie
-from django.utils.decorators import method_decorator
-
 from dj_rest_auth.views import LoginView
 
 from django.contrib.auth import get_user_model
