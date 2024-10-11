@@ -80,6 +80,8 @@ ALLOWED_HOSTS = [
     "localhost",
     "127.0.0.1",
     "15.164.56.168",
+    "api.worklog.my",
+    "worklog.my"
 ]
 
 # CORS
@@ -96,6 +98,10 @@ CSRF_TRUSTED_ORIGINS = [
     'http://127.0.0.1:8000',
     "http://15.164.56.168",
     "https://15.164.56.168",
+    "http://worklog.my",
+    "http://api.worklog.my",
+    "https://worklog.my",
+    "https://api.worklog.my",
     ]
 
 CSRF_COOKIE_NAME = "csrftoken"
@@ -138,9 +144,9 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    # "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
-    # "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
