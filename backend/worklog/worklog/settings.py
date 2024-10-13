@@ -166,21 +166,27 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "worklog.wsgi.application"
 
-
-# Database
-# https://docs.djangoproject.com/en/5.0/ref/settings/#databases
-
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": POSTGRESQL_DB_NAME,
-        "USER": POSTGRESQL_USER,
-        "PASSWORD": POSTGRESQL_PASSWORD,
-        "HOST": POSTGRESQL_HOST,
-        "PORT": POSTGRESQL_PORT,
-        
+# 테스트 환경에서는 SQLite 데이터베이스를 사용
+if os.environ.get('GITHUB_ACTIONS'):
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        }
     }
-}
+#배포환경에서는 postgre 사용
+else:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": POSTGRESQL_DB_NAME,
+            "USER": POSTGRESQL_USER,
+            "PASSWORD": POSTGRESQL_PASSWORD,
+            "HOST": POSTGRESQL_HOST,
+            "PORT": POSTGRESQL_PORT,
+
+        }
+    }
 
 
 # Password validation
