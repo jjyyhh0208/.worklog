@@ -72,7 +72,7 @@ jobs:
                       source worklogvenv/bin/activate
                       cd worklog/backend/
                       pip install -r requirements.txt
-                      cd worklog/backend/worklog/
+                      cd worklog/
                       python manage.py makemigrations
                       python manage.py migrate
                       python manage.py collectstatic --noinput
