@@ -70,6 +70,7 @@ jobs:
                       git pull origin main
                       cd ../..
                       source worklogvenv/bin/activate
+                      cd worklog/backend/
                       pip install -r requirements.txt
                       cd worklog/backend/worklog/
                       python manage.py makemigrations
