@@ -65,17 +65,6 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')  # 파일이 저장될 경로
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-# ALLOWED_HOSTS = [
-#     "localhost",
-#     "127.0.0.1",
-#     "[::1]",
-#     "www.dot-worklog.com",
-#     "dot-worklog.com",
-#     "api.dot-worklog.com",
-#     "15.164.56.168",
-#     ".ap-northeast-2.compute.amazonaws.com",
-# ]
-
 ALLOWED_HOSTS = [
     "localhost",
     "127.0.0.1",
