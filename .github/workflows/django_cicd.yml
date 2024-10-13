@@ -13,7 +13,7 @@ jobs:
         strategy:
             max-parallel: 4
             matrix:
-                python-version: [3.11]
+                python-version: ['3.9', '3.10', '3.11']
 
         steps:
             #코드 체크아웃
@@ -43,6 +43,7 @@ jobs:
             #테스트 실행
             - name: Run Tests
               run: |
+                  cd backend/worklog
                   python manage.py test
 
             #빌드 실패 시 오류 보고 후 정지
