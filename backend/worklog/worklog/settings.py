@@ -167,9 +167,10 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "worklog.wsgi.application"
 
+#테스트 코드 경로를 탐색기
 TEST_RUNNER = 'django.test.runner.DiscoverRunner'
 
-# 테스트 환경에서는 SQLite 데이터베이스를 사용
+# 테스트 환경에서는 sqlite 사용
 if os.environ.get('GITHUB_ACTIONS'):
     DATABASES = {
         'default': {
@@ -177,6 +178,7 @@ if os.environ.get('GITHUB_ACTIONS'):
             'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
         }
     }
+#테스트 코드 작동 시 sqlite 사용
 elif 'test' in sys.argv:
     DATABASES = {
         'default': {
@@ -197,11 +199,6 @@ else:
 
         }
     }
-
-
-# Password validation
-# https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
-
 
 AUTH_USER_MODEL = 'profiles.User'
 
