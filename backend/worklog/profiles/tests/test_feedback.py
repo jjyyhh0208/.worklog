@@ -83,43 +83,44 @@ class TestFeedbackViewSet(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertEqual(Feedback.objects.count(), 0)
 
-class UserLongQuestionAnswersViewTest(APITestCase):
-    def setUp(self):
-        self.user = User.objects.create_user(
-            username="testuser", password="password123"
-        )
-        self.evaluated_user = User.objects.create_user(
-            username="evaluated_user", password="password123"
-        )
-        self.url = reverse("user-feedback-answers")
 
-        self.question1 = LongQuestion.objects.create(
-            user = self.evaluated_user,
-            long_question="OO과의 협업 경험에서 좋았던 점은 무엇이었나요?"
-        )
-        self.question2 = LongQuestion.objects.create(
-            user = self.evaluated_user,
-            long_question="OO과의 협업 경험에서 아쉬웠던 점은 무엇이었나요?"
-        )
+####----------테스트 코드 돌아갈 때마다 GPT API 호출 -> 비용문제로 주석처리------------------
 
-    def test_post_answers(self):
-        # 답변 데이터 생성
-        data = {
-            "user_to": self.evaluated_user.username,
-            "question_answers": [
-                {
-                    "question": self.question1.long_question,
-                    "answer": "적극적이고 리더십이 뛰어났습니다.",
-                },
-                {
-                    "question": self.question2.long_question,
-                    "answer": "가끔 의견 조율이 어려웠습니다.",
-                },
-            ],
-        }
+# class UserLongQuestionAnswersViewTest(APITestCase):
+#     def setUp(self):
+#         self.user = User.objects.create_user(
+#             username="testuser", password="password123"
+#         )
+#         self.evaluated_user = User.objects.create_user(
+#             username="evaluated_user", password="password123"
+#         )
+#         self.url = reverse("user-feedback-answers")
 
-        # POST 요청으로 Long Question 답변 저장
-        response = self.client.post(self.url, data, format="json")
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertIn("positive_feedback", response.data)
-        self.assertIn("constructive_feedback", response.data)
+#         self.question1 = LongQuestion.objects.create(
+#             user = self.evaluated_user,
+#             long_question="OO과의 협업 경험에서 좋았던 점은 무엇이었나요?"
+#         )
+#         self.question2 = LongQuestion.objects.create(
+#             user = self.evaluated_user,
+#             long_question="OO과의 협업 경험에서 아쉬웠던 점은 무엇이었나요?"
+#         )
+
+#     def test_post_answers(self):
+#         # 답변 데이터 생성
+#         data = {
+#             "user_to": self.evaluated_user.username,
+#             "question_answers": [
+#                 {
+#                     "question": self.question1.long_question,
+#                     "answer": "적극적이고 리더십이 뛰어났습니다.",
+#                 },
+#                 {
+#                     "question": self.question2.long_question,
+#                     "answer": "가끔 의견 조율이 어려웠습니다.",
+#                 },
+#             ],
+#         }
+#         response = self.client.post(self.url, data, format="json")
+#         self.assertEqual(response.status_code, status.HTTP_200_OK)
+#         self.assertIn("positive_feedback", response.data)
+#         self.assertIn("constructive_feedback", response.data)
