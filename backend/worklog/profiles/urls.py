@@ -15,14 +15,17 @@ from .views import (
 
 
 router = DefaultRouter()
-router.register(r'workstyles', WorkStyleViewSet, basename='workstyle')
-router.register(r'interests', InterestViewSet, basename='interest')
 router.register(r'short-questions', ShortQuestionViewSet, basename='short-question')
 router.register(r'long-questions', LongQuestionViewSet)
 router.register(r'feedbacks', FeedbackViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),
+    
+    #workstyle, interest 조회 URL
+    path('workstyles/', WorkStyleViewSet.as_view(), name = 'get-workstyles'),
+    path('interests/', InterestViewSet.as_view(), name = 'get-interests'),
+    
     # User View
     path('user/current/', UserCurrentProfileView.as_view(), name='user-current-profile-view'), # 현재 로그인한 user의 정보를 불러올 수 있는 엔드포인트
     path('user/view/<str:username>/', UserProfileView.as_view(), name='user-profile-view'), # username 별로 user 값을 불러올 수 있는 엔드포인트

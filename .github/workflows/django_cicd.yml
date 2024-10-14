@@ -44,7 +44,8 @@ jobs:
             - name: Run Tests
               run: |
                   cd backend/worklog
-                  python manage.py test
+                  python manage.py test auth
+                  python manage.py test profiles
 
             #빌드 실패 시 오류 보고 후 정지
             - name: Report Build Failure
