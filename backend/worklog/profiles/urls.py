@@ -3,7 +3,7 @@ from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from .views import (
     UserProfileView, UserWorkStyleView, UserInterestView, 
-    UserNameFeedbackStyleView, WorkStyleViewSet, InterestViewSet, ShortQuestionViewSet, LongQuestionViewSet,
+    UserNameFeedbackStyleView, WorkStyleView, InterestView, ShortQuestionView, LongQuestionViewSet,
     FeedbackViewSet, UserLongQuestionView, UserFriendView,
     UserCurrentProfileView, UserSearchView, UserLongQuestionAnswersView,
     TestAnswers, FollowFriendView,
@@ -15,16 +15,16 @@ from .views import (
 
 
 router = DefaultRouter()
-router.register(r'short-questions', ShortQuestionViewSet, basename='short-question')
 router.register(r'long-questions', LongQuestionViewSet)
-router.register(r'feedbacks', FeedbackViewSet)
+router.register(r'feedbacks', FeedbackViewSet, basename='feedback')
 
 urlpatterns = [
     path('', include(router.urls)),
     
-    #workstyle, interest 조회 URL
-    path('workstyles/', WorkStyleViewSet.as_view(), name = 'get-workstyles'),
-    path('interests/', InterestViewSet.as_view(), name = 'get-interests'),
+    #Options 조회 URL
+    path('workstyles/', WorkStyleView.as_view(), name = 'get-workstyles'),
+    path('interests/', InterestView.as_view(), name = 'get-interests'),
+    path('shortquestions/', ShortQuestionView.as_view(), name='get-shortquestions'),
     
     # User View
     path('user/current/', UserCurrentProfileView.as_view(), name='user-current-profile-view'), # 현재 로그인한 user의 정보를 불러올 수 있는 엔드포인트
@@ -39,7 +39,6 @@ urlpatterns = [
     path('user/set/basic-info/', UserNameFeedbackStyleView.as_view(), name='user-info-update'),  # 유저의 이름, 성별, 나이 설정 엔드포인트
     path('user/set/profile-image/', ProfileImageView.as_view(), name='profile-image-upload'), # 유저의 프로필 이미지를 업로드하는 엔드포인트
     path('user/set/bio/', UpdateBioView.as_view(), name='update-bio'), # 한줄소개 업데이트 엔드포인트
-    
     
     # 친구 추가
     path('user/follow/', FollowFriendView.as_view(), name='user-follow'), # 유저 팔로우 엔드포인트

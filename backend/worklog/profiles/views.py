@@ -9,6 +9,8 @@ from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly, AllowAny
 from rest_framework.views import APIView
+from rest_framework.exceptions import ParseError, NotAuthenticated
+from django.core.exceptions import ValidationError
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
@@ -51,7 +53,7 @@ def get_signed_url_view(request, image_path):
     
     
 #업무 성향을 유저에게 제공하는 ViewSet
-class WorkStyleViewSet(ListAPIView):
+class WorkStyleView(ListAPIView):
     serializer_class = WorkStyleSerializer
     permission_classes = []
     
@@ -74,7 +76,7 @@ class WorkStyleViewSet(ListAPIView):
     
     
 #관심 직종을 유저에게 제공하는 ViewSet
-class InterestViewSet(ListAPIView):
+class InterestView(ListAPIView):
     serializer_class = InterestSerializer
     permission_classes = []
     
@@ -95,10 +97,25 @@ class InterestViewSet(ListAPIView):
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
 #읽기 전용으로 함으로써 get 메서드만 허용
-class ShortQuestionViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = ShortQuestion.objects.all()
+class ShortQuestionView(ListAPIView):
     serializer_class = ShortQuestionSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
+    
+    def get_queryset(self):
+        try:
+            return ShortQuestion.objects.all()
+        except DatabaseError as db_error:
+            logger.error(f"Database error occurred: {db_error}")
+            return Response({
+                "error": "A database error occurred.",
+                "details": str(db_error)
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        except Exception as e:
+            logger.error(f"An unexpected error occurred: {e}")
+            return Response({
+                "error": "An unexpected error occurred.",
+                "details": str(e)
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 #유저가 질문하고 싶은 내용 추가가능
 class LongQuestionViewSet(viewsets.ModelViewSet):
@@ -221,26 +238,57 @@ class ProfileImageView(APIView):
     def delete_old_image(self, image_path):
         # Delete the old image file from storage
         if default_storage.exists(image_path):
-            default_storage.delete(image_path)
+            try:
+                default_storage.delete(image_path)
+            except Exception as e:
+                logger.error(f"Error deleting image: {e}")
+                raise ParseError("Failed to delete the old profile image.")
 
     def post(self, request, *args, **kwargs):
         user = request.user
         try:
-            # Check if the user already has a profile image
             profile_image = ProfileImage.objects.get(user=user)
-            # Delete the old profile image if it exists
+            
+            #유저가 이미 프사가 있으면 삭제 먼저 해버리기
             if profile_image.image:
                 self.delete_old_image(str(profile_image.image))
-            # Update the existing profile image
             profile_image.image = request.FILES['image']
             profile_image.save()
+            
         except ProfileImage.DoesNotExist:
-            # Create a new profile image if one does not exist
-            profile_image = ProfileImage.objects.create(
-                user=user, 
-                image=request.FILES['image']
-            )
+            try:
+                profile_image = ProfileImage.objects.create(
+                    user=user,
+                    image=request.FILES['image']
+                )
+            except ValidationError as ve:
+                logger.error(f"Validation error: {ve}")
+                return Response({"message": "Invalid image file"}, status=status.HTTP_400_BAD_REQUEST)
+            except DatabaseError as db_error:
+                logger.error(f"Database error: {db_error}")
+                return Response({
+                    "error": "A database error occurred.",
+                    "details": str(db_error)
+                }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            except Exception as e:
+                logger.error(f"Unexpected error: {e}")
+                return Response({
+                    "error": "An unexpected error occurred.",
+                    "details": str(e)
+                }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        except ParseError as parse_error:
+            return Response({"error": str(parse_error)}, status=status.HTTP_400_BAD_REQUEST)
+
+        except Exception as e:
+            logger.error(f"Unexpected error: {e}")
+            return Response({
+                "error": "An unexpected error occurred.",
+                "details": str(e)
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
         return Response({"message": "Profile image updated successfully"}, status=status.HTTP_200_OK)
+    
     def delete(self, request, *args, **kwargs):
         user = request.user
         try:
@@ -251,6 +299,18 @@ class ProfileImageView(APIView):
             return Response({"message": "Profile image deleted successfully"}, status=status.HTTP_200_OK)
         except ProfileImage.DoesNotExist:
             return Response({"message": "Profile image does not exist"}, status=status.HTTP_404_NOT_FOUND)
+        except DatabaseError as db_error:
+            logger.error(f"Database error: {db_error}")
+            return Response({
+                "error": "A database error occurred.",
+                "details": str(db_error)
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        except Exception as e:
+            logger.error(f"Unexpected error: {e}")
+            return Response({
+                "error": "An unexpected error occurred.",
+                "details": str(e)
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 # 바이오 업데이트 view 로직
 class UpdateBioView(generics.UpdateAPIView):
@@ -264,16 +324,36 @@ class UpdateBioView(generics.UpdateAPIView):
     def update(self, request, *args, **kwargs):
         user = self.get_object()
         serializer = self.get_serializer(user, data=request.data)
-        # 유효성 검사 및 예외 처리
-        if serializer.is_valid():
-            serializer.save()
+        try:
+            if serializer.is_valid():
+                serializer.save()
+                return Response({
+                    "message": "Bio updated successfully!",
+                    "bio": serializer.data['bio']
+                }, status=status.HTTP_200_OK)
+            else:
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        except ValidationError as ve:
+            logger.error(f"Validation error: {ve}")
             return Response({
-                "message": "Bio updated successfully!",
-                "bio": serializer.data['bio']
-            }, status=status.HTTP_200_OK)
-        else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-            
+                "error": "Invalid data.",
+                "details": str(ve)
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        except DatabaseError as db_error:
+            logger.error(f"Database error occurred: {db_error}")
+            return Response({
+                "error": "A database error occurred.",
+                "details": str(db_error)
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        except Exception as e:
+            logger.error(f"An unexpected error occurred: {e}")
+            return Response({
+                "error": "An unexpected error occurred.",
+                "details": str(e)
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
             
 # 현재 내 프로필을 불러오는 View
 class UserCurrentProfileView(generics.RetrieveAPIView):
@@ -282,7 +362,25 @@ class UserCurrentProfileView(generics.RetrieveAPIView):
     permission_classes = [IsAuthenticated]
     
     def get_object(self):
-        return self.request.user
+        try:
+            if not self.request.user.is_authenticated:
+                raise NotAuthenticated("User is not authenticated")
+
+            return self.request.user
+        
+        except DatabaseError as db_error:
+            logger.error(f"Database error occurred: {db_error}")
+            return Response({
+                "error": "A database error occurred.",
+                "details": str(db_error)
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        except Exception as e:
+            logger.error(f"An unexpected error occurred: {e}")
+            return Response({
+                "error": "An unexpected error occurred.",
+                "details": str(e)
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
 #유저 프로필을 불러오는 View
 class UserProfileView(generics.RetrieveAPIView):
@@ -292,30 +390,50 @@ class UserProfileView(generics.RetrieveAPIView):
     lookup_field = 'username'
 
     def retrieve(self, request, *args, **kwargs):
-        instance = self.get_object()
-        serializer = self.get_serializer(instance)
-        data = serializer.data
-        
-        # 팔로우 상태 확인
-        if request.user.is_authenticated:
-            data['is_following'] = request.user.friends.filter(username=instance.username).exists()
+        try:
+            instance = self.get_object()
+            serializer = self.get_serializer(instance)
+            data = serializer.data
+            
+            # 팔로우 상태 확인
+            if request.user.is_authenticated:
+                data['is_following'] = request.user.friends.filter(username=instance.username).exists()
 
-            # 피드백 관련 정보 추가
-            current_user = request.user
-            last_feedback = Feedback.objects.filter(user=instance, user_by=current_user).order_by('-last_time').first()
+                # 피드백 관련 정보 추가
+                current_user = request.user
+                last_feedback = Feedback.objects.filter(user=instance, user_by=current_user).order_by('-last_time').first()
 
-            data['can_leave_feedback'] = True
-            data['remaining_time'] = 0
+                data['can_leave_feedback'] = True
+                data['remaining_time'] = 0
 
-            #무제한 피드백 금지 -> 피드백 남기고 24시간 후에 다시 피드백 제공 가능
-            if last_feedback:
-                time_since_last_feedback = timezone.now() - last_feedback.last_time
-                if time_since_last_feedback < timedelta(hours=24):
-                    data['can_leave_feedback'] = False
-                    remaining_time = timedelta(hours=24) - time_since_last_feedback
-                    data['remaining_time'] = int(remaining_time.total_seconds())  # 남은 시간을 초 단위로 변환
+                #무제한 피드백 금지 -> 피드백 남기고 24시간 후에 다시 피드백 제공 가능
+                if last_feedback:
+                    time_since_last_feedback = timezone.now() - last_feedback.last_time
+                    if time_since_last_feedback < timedelta(hours=24):
+                        data['can_leave_feedback'] = False
+                        remaining_time = timedelta(hours=24) - time_since_last_feedback
+                        data['remaining_time'] = int(remaining_time.total_seconds())  # 남은 시간을 초 단위로 변환
 
-        return Response(data)
+            return Response(data)
+
+        except User.DoesNotExist:
+            return Response({
+                "error": "User not found."
+            }, status=status.HTTP_404_NOT_FOUND)
+
+        except DatabaseError as db_error:
+            logger.error(f"Database error occurred: {db_error}")
+            return Response({
+                "error": "A database error occurred.",
+                "details": str(db_error)
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        except Exception as e:
+            logger.error(f"An unexpected error occurred: {e}")
+            return Response({
+                "error": "An unexpected error occurred.",
+                "details": str(e)
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
 # GET: user 명에 맞는 서술형 질문 목록을 불러옵니다.
 class UserLongQuestionView(generics.ListAPIView):
@@ -323,9 +441,29 @@ class UserLongQuestionView(generics.ListAPIView):
     permission_classes = [AllowAny]
 
     def get_queryset(self):
-        username = self.kwargs['username']
-        user = get_object_or_404(User, username=username)
-        return LongQuestion.objects.filter(user__isnull=True) | LongQuestion.objects.filter(user=user)    
+        try:
+            username = self.kwargs['username']
+            user = get_object_or_404(User, username=username)
+            return LongQuestion.objects.filter(user__isnull=True) | LongQuestion.objects.filter(user=user)
+
+        except User.DoesNotExist:
+            return Response({
+                "error": "User not found."
+            }, status=status.HTTP_404_NOT_FOUND)
+
+        except DatabaseError as db_error:
+            logger.error(f"Database error occurred: {db_error}")
+            return Response({
+                "error": "A database error occurred.",
+                "details": str(db_error)
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        except Exception as e:
+            logger.error(f"An unexpected error occurred: {e}")
+            return Response({
+                "error": "An unexpected error occurred.",
+                "details": str(e)
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)    
 
 # GET: 유저명에 맞는 친구목록을 불러옵니다.    
 class UserFriendView(generics.GenericAPIView):
@@ -336,29 +474,63 @@ class UserFriendView(generics.GenericAPIView):
     def get(self, request, username):
         try:
             user = User.objects.get(username=username)
-        except User.DoesNotExist:
-            return Response({"detail": "User not found"}, status=404)
+            friends = user.friends.all()
+            serializer = self.get_serializer(friends, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
 
-        friends = user.friends.all()
-        serializer = self.get_serializer(friends, many=True)
-        return Response(serializer.data)
+        except User.DoesNotExist:
+            return Response({
+                "error": "User not found."
+            }, status=status.HTTP_404_NOT_FOUND)
+
+        except DatabaseError as db_error:
+            logger.error(f"Database error occurred: {db_error}")
+            return Response({
+                "error": "A database error occurred.",
+                "details": str(db_error)
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        except Exception as e:
+            logger.error(f"An unexpected error occurred: {e}")
+            return Response({
+                "error": "An unexpected error occurred.",
+                "details": str(e)
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
 # 유저ID 찾기
 class UserSearchView(APIView):
     permission_classes = []
 
     def get(self, request):
-        query = request.query_params.get('q', '')
-        if not query:
-            return Response({"detail": "Query parameter 'q' is required."}, status=400)
+        try:
+            query = request.query_params.get('q', '')
+            if not query:
+                logger.warning("Query parameter 'q' is missing.")
+                return Response({"detail": "Query parameter 'q' is required."}, status=status.HTTP_400_BAD_REQUEST)
 
-        # Search for users whose username or name contains the query (case insensitive)
-        users = User.objects.filter(
-            Q(username__icontains=query) | Q(name__icontains=query)
-        )
+            users = User.objects.filter(
+                Q(username__icontains=query) | Q(name__icontains=query)
+            )
 
-        serializer = UserSearchResultSerializer(users, many=True)
-        return Response(serializer.data)
+            if not users.exists():
+                return Response({"detail": "No users found."}, status=status.HTTP_404_NOT_FOUND)
+
+            serializer = UserSearchResultSerializer(users, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+        except DatabaseError as db_error:
+            logger.error(f"Database error occurred during user search: {db_error}")
+            return Response({
+                "error": "A database error occurred.",
+                "details": str(db_error)
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        except Exception as e:
+            logger.error(f"An unexpected error occurred during user search: {e}")
+            return Response({
+                "error": "An unexpected error occurred.",
+                "details": str(e)
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
 class FollowFriendView(generics.GenericAPIView):
     permission_classes = [IsAuthenticated]
@@ -367,18 +539,42 @@ class FollowFriendView(generics.GenericAPIView):
         user = request.user
         friend_name = request.data.get('friend_name')
         
-        # 유저 팔로우 요청에 필요한 검증
         if not friend_name:
             return Response({"detail": "Friend name is required."}, status=status.HTTP_400_BAD_REQUEST)
-        
-        friend = get_object_or_404(User, username=friend_name)
-        
-        # 자기 자신을 팔로우하는 것을 방지
-        if friend == user:
-            return Response({"detail": "You cannot follow yourself."}, status=status.HTTP_400_BAD_REQUEST)
 
-        user.friends.add(friend)
-        return Response({"detail": f"You are now following {friend.username}"}, status=status.HTTP_200_OK)
+        try:
+            friend = get_object_or_404(User, username=friend_name)
+            
+            # 자기 자신을 팔로우하는 것을 막음
+            if friend == user:
+                return Response({"detail": "You cannot follow yourself."}, status=status.HTTP_400_BAD_REQUEST)
+
+            user.friends.add(friend)
+            return Response({"detail": f"You are now following {friend.username}"}, status=status.HTTP_200_OK)
+
+        except User.DoesNotExist:
+            return Response({"detail": "User not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        except DatabaseError as db_error:
+            logger.error(f"Database error occurred while following friend: {db_error}")
+            return Response({
+                "error": "A database error occurred.",
+                "details": str(db_error)
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        except ValidationError as v_error:
+            logger.error(f"Validation error occurred: {v_error}")
+            return Response({
+                "error": "Validation error occurred.",
+                "details": str(v_error)
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        except Exception as e:
+            logger.error(f"An unexpected error occurred: {e}")
+            return Response({
+                "error": "An unexpected error occurred.",
+                "details": str(e)
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
 
 class UnfollowFriendView(generics.GenericAPIView):
@@ -388,18 +584,35 @@ class UnfollowFriendView(generics.GenericAPIView):
         user = request.user
         friend_name = request.data.get('friend_name')
         
-        # 유저 언팔로우 요청에 필요한 검증
         if not friend_name:
             return Response({"detail": "Friend name is required."}, status=status.HTTP_400_BAD_REQUEST)
-        
-        friend = get_object_or_404(User, username=friend_name)
-        
-        # 자기 자신을 언팔로우하는 것을 방지
-        if friend == user:
-            return Response({"detail": "You cannot unfollow yourself."}, status=status.HTTP_400_BAD_REQUEST)
 
-        user.friends.remove(friend)
-        return Response({"detail": f"You have unfollowed {friend.username}"}, status=status.HTTP_200_OK)
+        try:
+            friend = get_object_or_404(User, username=friend_name)
+            
+            # 자기 자신을 언팔로우하는 것을 방지
+            if friend == user:
+                return Response({"detail": "You cannot unfollow yourself."}, status=status.HTTP_400_BAD_REQUEST)
+
+            user.friends.remove(friend)
+            return Response({"detail": f"You have unfollowed {friend.username}"}, status=status.HTTP_200_OK)
+
+        except User.DoesNotExist:
+            return Response({"detail": "User not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        except DatabaseError as db_error:
+            logger.error(f"Database error occurred while unfollowing friend: {db_error}")
+            return Response({
+                "error": "A database error occurred.",
+                "details": str(db_error)
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        except Exception as e:
+            logger.error(f"An unexpected error occurred: {e}")
+            return Response({
+                "error": "An unexpected error occurred.",
+                "details": str(e)
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 class FeedbackViewSet(viewsets.ModelViewSet):
@@ -518,6 +731,7 @@ class UserLongQuestionAnswersView(generics.GenericAPIView):
             "You are an AI assistant tasked with processing feedback about a person's performance. "
             "The feedback will be in Korean. Your job is to identify and preserve positive feedback "
             "Follow these instructions carefully:\n\n"
+            "You must provide response with format of JSON ('double quote' format)\n"
             
             "1. Identify positive feedback: Look for compliments, praise, or mentions of good qualities and actions.\n"
             "2. Remove specific identifiers: Replace project names, personal names, or any other identifiers. "
@@ -539,6 +753,7 @@ class UserLongQuestionAnswersView(generics.GenericAPIView):
             "You are an AI assistant tasked with processing constructive feedback about a person's performance. "
             "The feedback will be in Korean. Your job is to identify areas for improvement, express them euphemistically, "
             " You must reponse in Korean, Follow these instructions carefully:\n\n"
+            "You must provide response with format of JSON ('double quote' format)\n"
             
             "1. Identify areas for improvement: Look for critiques or mentions of qualities or actions that could be enhanced.\n"
             "2. Express euphemistically: Rephrase critiques in a more gentle, constructive manner without losing the core message.\n"
@@ -560,6 +775,7 @@ class UserLongQuestionAnswersView(generics.GenericAPIView):
             "You are an AI assistant tasked with processing constructive feedback about a person's performance. "
             "The feedback will be in Korean. Your job is to identify areas for improvement, express them euphemistically, "
             " You must reponse in Korean, Follow these instructions carefully:\n\n"
+            "You must provide response with format of JSON ('double quote' format)\n"
             
             "1. Identify areas for improvement: Look for critiques or mentions of qualities or actions that could be enhanced.\n"
             "2. Express euphemistically: Rephrase critiques in a more gentle, constructive manner without losing the core message.\n"
