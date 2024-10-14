@@ -167,6 +167,8 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "worklog.wsgi.application"
 
+TEST_RUNNER = 'django.test.runner.DiscoverRunner'
+
 # 테스트 환경에서는 SQLite 데이터베이스를 사용
 if os.environ.get('GITHUB_ACTIONS'):
     DATABASES = {

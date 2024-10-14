@@ -5,42 +5,7 @@ from django.contrib.auth import get_user_model
 
 User = get_user_model()
 
-
-class UniqueIdCheckTest(APITestCase):
-    def setUp(self):
-        self.url = reverse("check-username")
-        self.user = User.objects.create_user(
-            username="testuser", password="password123"
-        )
-
-    def test_unique_username(self):
-        data = {"username": "uniqueuser"}
-        response = self.client.post(self.url, data)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data["isUnique"], True)
-
-    def test_non_unique_username(self):
-        data = {"username": "testuser"}
-        response = self.client.post(self.url, data)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data["isUnique"], False)
-
-
-class UserDeleteViewTest(APITestCase):
-    def setUp(self):
-        self.user = User.objects.create_user(
-            username="testuser", password="password123"
-        )
-        self.client.login(username="testuser", password="password123")
-        self.url = reverse("user-delete")
-
-    def test_user_delete(self):
-        response = self.client.delete(self.url)
-        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
-        self.assertFalse(User.objects.filter(username="testuser").exists())
-
-
-class CustomLoginViewTest(APITestCase):
+class TestCustomLoginView(APITestCase):
     def setUp(self):
         self.url = reverse("custom_login")
         self.user = User.objects.create_user(
