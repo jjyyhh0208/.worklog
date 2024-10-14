@@ -1,25 +1,28 @@
 from rest_framework import generics, status, permissions
 from rest_framework.response import Response
+from rest_framework.views import APIView
+from rest_framework.permissions import AllowAny
 
 from dj_rest_auth.views import LoginView
 
 from django.contrib.auth import get_user_model
+from django.db import DatabaseError
 
 from profiles.models import User
 from profiles.serializers import UserUniqueIdSerializer
 
-class UniqueIdCheck(generics.GenericAPIView):
-    queryset = User.objects.all()
-    serializer_class = UserUniqueIdSerializer
-    permission_classes = []
+import logging
 
+logger = logging.getLogger(__name__)
+
+class UniqueIdCheck(APIView):
+    permission_classes = [AllowAny]
+    
     def post(self, request):
-        serializer = self.get_serializer(data=request.data)
+        serializer = UserUniqueIdSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         username = serializer.validated_data['username']
 
-        #true 반환 시 회원가입 허용
-        #false 반환 시 회원가입 불가 (id 중복)
         try:
             User.objects.get(username=username)
             return Response({'isUnique': False}, status=status.HTTP_200_OK)
@@ -34,9 +37,22 @@ class UserDeleteView(generics.DestroyAPIView):
         return self.request.user
 
     def delete(self, request, *args, **kwargs):
-        user = self.get_object()
-        user.delete()
-        return Response({"detail": "User account deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
+        try:
+            user = self.get_object()
+            user.delete()
+            return Response({"detail": "User account deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
+        except DatabaseError as db_error:
+            logger.error(f"DB Error: {db_error}")
+            return Response({
+                "error": "A database error occurred. Please try again later.",
+                "details": str(db_error)
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        except Exception as e:
+            logger.error(f"Unexpected Error: {e}")
+            return Response({
+                "error": "An unexpected error occurred.",
+                "details": str(e)
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
 class CustomLoginView(LoginView):
     def post(self, request, *args, **kwargs):

@@ -1,9 +1,11 @@
 import openai
 from django.conf import settings
+from django.db import DatabaseError
 from django.core.files.storage import default_storage
 from django.shortcuts import redirect
 import json
 from rest_framework import viewsets, generics, status, mixins
+from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly, AllowAny
 from rest_framework.views import APIView
@@ -49,35 +51,48 @@ def get_signed_url_view(request, image_path):
     
     
 #업무 성향을 유저에게 제공하는 ViewSet
-class WorkStyleViewSet(viewsets.ReadOnlyModelViewSet):
+class WorkStyleViewSet(ListAPIView):
     serializer_class = WorkStyleSerializer
     permission_classes = []
     
     def get_queryset(self):
         try:
             return WorkStyle.objects.all()
-        except WorkStyle.DoesNotExist:
-            logger.error("No workstyles found")
-            return WorkStyle.objects.none()
+        except DatabaseError as db_error:
+            logger.error(f"Database error occurred: {db_error}")
+            return Response({
+                "error": "A database error occurred.",
+                "details": str(db_error)
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         except Exception as e:
-            logger.error(f"Error: {e}")
-            raise e
+            logger.error(f"An unexpected error occurred: {e}")
+            return Response({
+                "error": "An unexpected error occurred.",
+                "details": str(e)
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
     
     
 #관심 직종을 유저에게 제공하는 ViewSet
-class InterestViewSet(viewsets.ReadOnlyModelViewSet):
+class InterestViewSet(ListAPIView):
     serializer_class = InterestSerializer
     permission_classes = []
     
     def get_queryset(self):
         try:
             return Interest.objects.all()
-        except Interest.DoesNotExist:
-            logger.error("No interests found")
-            return Interest.objects.none()
+        except DatabaseError as db_error:
+            logger.error(f"Database error occurred: {db_error}")
+            return Response({
+                "error": "A database error occurred.",
+                "details": str(db_error)
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         except Exception as e:
-            logger.error(f"Error: {e}")
-            raise e
+            logger.error(f"An unexpected error occurred: {e}")
+            return Response({
+                "error": "An unexpected error occurred.",
+                "details": str(e)
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
 #읽기 전용으로 함으로써 get 메서드만 허용
 class ShortQuestionViewSet(viewsets.ReadOnlyModelViewSet):
@@ -99,6 +114,34 @@ class UserNameFeedbackStyleView(generics.UpdateAPIView):
 
     def get_object(self):
         return self.request.user
+    
+    def update(self, request, *args, **kwargs):
+        user = self.get_object()
+        serializer = self.get_serializer(user, data=request.data)
+
+        try:
+            if serializer.is_valid():
+                serializer.save()  # serializer의 update 메서드 적용
+                return Response({
+                    "message": "User profile updated successfully!",
+                    "data": serializer.data
+                }, status=status.HTTP_200_OK)
+            else:
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        except DatabaseError as db_error:
+            logger.error(f"Database error occurred: {db_error}")
+            return Response({
+                "error": "A database error occurred.",
+                "details": str(db_error)
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        except Exception as e:
+            logger.error(f"An unexpected error occurred: {e}")
+            return Response({
+                "error": "An unexpected error occurred.",
+                "details": str(e)
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 #회원가입 이후 유저의 업무 성향 설정하기 위한 ViewSet    
 class UserWorkStyleView(generics.UpdateAPIView):
@@ -109,6 +152,34 @@ class UserWorkStyleView(generics.UpdateAPIView):
     def get_object(self):
         return self.request.user
     
+    def update(self, request, *args, **kwargs):
+        user = self.get_object()
+        serializer = self.get_serializer(user, data=request.data)
+
+        try:
+            if serializer.is_valid():
+                serializer.save()  # serializer의 update 메서드 적용
+                return Response({
+                    "message": "User profile updated successfully!",
+                    "data": serializer.data
+                }, status=status.HTTP_200_OK)
+            else:
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        except DatabaseError as db_error:
+            logger.error(f"Database error occurred: {db_error}")
+            return Response({
+                "error": "A database error occurred.",
+                "details": str(db_error)
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        except Exception as e:
+            logger.error(f"An unexpected error occurred: {e}")
+            return Response({
+                "error": "An unexpected error occurred.",
+                "details": str(e)
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
 #회원가입 이후 유저의 관심 직종 설정하기 위한 ViewSet       
 class UserInterestView(generics.UpdateAPIView):
     queryset = User.objects.all()
@@ -117,6 +188,34 @@ class UserInterestView(generics.UpdateAPIView):
 
     def get_object(self):
         return self.request.user
+    
+    def update(self, request, *args, **kwargs):
+        user = self.get_object()
+        serializer = self.get_serializer(user, data=request.data)
+
+        try:
+            if serializer.is_valid():
+                serializer.save()  # serializer의 update 메서드 적용
+                return Response({
+                    "message": "User profile updated successfully!",
+                    "data": serializer.data
+                }, status=status.HTTP_200_OK)
+            else:
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        except DatabaseError as db_error:
+            logger.error(f"Database error occurred: {db_error}")
+            return Response({
+                "error": "A database error occurred.",
+                "details": str(db_error)
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        except Exception as e:
+            logger.error(f"An unexpected error occurred: {e}")
+            return Response({
+                "error": "An unexpected error occurred.",
+                "details": str(e)
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class ProfileImageView(APIView):
     def delete_old_image(self, image_path):
@@ -618,14 +717,3 @@ def get_token(request):
         return redirect(next_url)
     except jwt.InvalidTokenError:
         return redirect(next_url)
-    
-
-# GET: user 명에 맞는 피드백 목록을 불러옵니다. -> 피드백 목록 테스트용 뷰
-# class FeedbackByUserView(generics.ListAPIView):
-#     serializer_class = FeedbackSerializer
-#     permission_classes = [IsAuthenticatedOrReadOnly]
-
-#     def get_queryset(self):
-#         username = self.kwargs['username']
-#         user = get_object_or_404(User, username=username)
-#         return Feedback.objects.filter(user=user) | Feedback.objects.filter(user_by=user)

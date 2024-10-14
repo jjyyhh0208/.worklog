@@ -47,7 +47,7 @@ class UserFeedbackStyleSerializer(serializers.ModelSerializer):
         instance.feedback_style = validated_data.get('feedback_style', instance.feedback_style)
         
         instance.save()
-        return instance       
+        return instance
         
 #유저의 업무 성향 설정하기 위해 사용
 class UserWorkStyleSerializer(serializers.ModelSerializer):
