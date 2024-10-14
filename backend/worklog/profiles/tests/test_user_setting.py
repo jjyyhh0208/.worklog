@@ -5,6 +5,11 @@ from django.contrib.auth import get_user_model
 from profiles.models import ProfileImage
 from django.core.files.uploadedfile import SimpleUploadedFile
 from profiles.models import Interest, WorkStyle
+from django.core.files.storage import default_storage
+from django.conf import settings
+
+import shutil
+import os
 
 User = get_user_model()
 
@@ -73,7 +78,6 @@ class TestUserInterestView(APITestCase):
         self.assertEqual(response.data["data"]["interests"], [2, 4, 6])
         
 
-# ProfileImageView Test
 class TestProfileImageView(APITestCase):
     def setUp(self):
         self.user = User.objects.create_user(
@@ -95,6 +99,17 @@ class TestProfileImageView(APITestCase):
         response = self.client.delete(self.url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["message"], "Profile image deleted successfully")
+
+    def tearDown(self):
+        profile_image = ProfileImage.objects.filter(user=self.user).first()
+        if profile_image and profile_image.image:
+            if default_storage.exists(profile_image.image.path):
+                default_storage.delete(profile_image.image.path)
+
+        # 프로필 이미지 디렉토리 삭제
+        profile_images_dir = os.path.join(settings.MEDIA_ROOT, 'profile_images')
+        if os.path.exists(profile_images_dir):
+            shutil.rmtree(profile_images_dir)
         
         
 # UpdateBioView Test
