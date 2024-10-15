@@ -28,8 +28,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 dotenv_path = BASE_DIR.parent / '.env'
 load_dotenv(dotenv_path)
 
-AWS_ACCESS_KEY_ID = None  # EC2 인스턴스에 IAM 역할을 부여했으므로 명시할 필요 X
-AWS_SECRET_ACCESS_KEY = None  # EC2 인스턴스에 IAM 역할을 부여했으므로 명시할 필요 X
+#s3 접근용 키
+AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
+AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
 AWS_STORAGE_BUCKET_NAME = os.getenv("AWS_STORAGE_BUCKET_NAME")
 AWS_REGION_NAME = os.getenv("AWS_REGION_NAME")
 
@@ -94,11 +95,11 @@ CSRF_TRUSTED_ORIGINS = [
 
 CSRF_COOKIE_NAME = "csrftoken"
 CSRF_COOKIE_SAMESITE = 'Lax'
-CSRF_COOKIE_SECURE = False
+CSRF_COOKIE_SECURE = True
 
 CSRF_COOKIE_HTTPONLY = False
 
-SESSION_COOKIE_SECURE = False
+SESSION_COOKIE_SECURE = True
 SESSION_COOKIE_SAMESITE = 'Lax'
 
 # Application definition
@@ -178,6 +179,14 @@ if os.environ.get('GITHUB_ACTIONS'):
     }
 #테스트 코드 작동 시 sqlite 사용
 elif 'test' in sys.argv:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': os.path.join(BASE_DIR, 'db_test.sqlite3'),
+        }
+    }
+#개발환경에서는 splite 사용
+elif DEBUG:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
@@ -324,7 +333,7 @@ elif DEBUG:
             'console': {
                 'level': 'ERROR',
                 'class': 'logging.StreamHandler',
-                'formatter': 'simple',
+                'formatter': 'verbose',
             },
         },
         'loggers': {
