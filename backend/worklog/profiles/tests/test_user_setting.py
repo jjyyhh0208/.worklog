@@ -101,15 +101,19 @@ class TestProfileImageView(APITestCase):
         self.assertEqual(response.data["message"], "Profile image deleted successfully")
 
     def tearDown(self):
-        profile_image = ProfileImage.objects.filter(user=self.user).first()
-        if profile_image and profile_image.image:
-            if default_storage.exists(profile_image.image.path):
-                default_storage.delete(profile_image.image.path)
-
+        try:
+            profile_image = ProfileImage.objects.filter(user=self.user).first()
+            if profile_image and profile_image.image:
+                if default_storage.exists(profile_image.image.path):
+                    default_storage.delete(profile_image.image.path)
+        except Exception as e:
+            print(f"Error during tearDown: {e}")
+    
         # 프로필 이미지 디렉토리 삭제
         profile_images_dir = os.path.join(settings.MEDIA_ROOT, 'profile_images')
         if os.path.exists(profile_images_dir):
             shutil.rmtree(profile_images_dir)
+
         
         
 # UpdateBioView Test
