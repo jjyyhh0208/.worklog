@@ -34,6 +34,15 @@ AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
 AWS_STORAGE_BUCKET_NAME = os.getenv("AWS_STORAGE_BUCKET_NAME")
 AWS_REGION_NAME = os.getenv("AWS_REGION_NAME")
 
+
+# s3 설정
+AWS_S3_CUSTOM_DOMAIN = f"{AWS_STORAGE_BUCKET_NAME}.s3.{AWS_REGION_NAME}.amazonaws.com"
+
+# S3 파일 캐싱 및 압축 처리
+AWS_S3_OBJECT_PARAMETERS = {
+    'CacheControl': 'max-age=86400',  # 24시간 캐시
+}
+
 # 테스트 환경에서는 로컬 스토리지를 사용
 if 'test' in sys.argv:
     DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
@@ -49,14 +58,6 @@ else:
     
     #로컬 환경에서 사용하는 media 경로
     MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-
-# s3 설정
-AWS_S3_CUSTOM_DOMAIN = f"{AWS_STORAGE_BUCKET_NAME}.s3.{AWS_REGION_NAME}.amazonaws.com"
-
-# S3 파일 캐싱 및 압축 처리
-AWS_S3_OBJECT_PARAMETERS = {
-    'CacheControl': 'max-age=86400',  # 24시간 캐시
-}
 
 #POSTGRESQL data
 POSTGRESQL_USER = os.getenv("POSTGRESQL_USER")
