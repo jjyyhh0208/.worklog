@@ -276,8 +276,6 @@ STATIC_ROOT = BASE_DIR / 'staticfiles/'
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-import os
-
 # GitHub Actions 환경에서 테스트할 때는 콘솔에 출력
 if os.environ.get('GITHUB_ACTIONS'):
     LOGGING = {

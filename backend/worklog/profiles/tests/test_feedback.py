@@ -83,8 +83,9 @@ class TestFeedbackViewSet(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertEqual(Feedback.objects.count(), 0)
 
-
-####----------테스트 코드 돌아갈 때마다 GPT API 호출 -> 비용문제로 주석처리------------------
+##############################################################################
+####----------테스트 코드 돌아갈 때마다 GPT API 호출 -> 비용문제로 주석처리-----------####
+##############################################################################
 
 # class UserLongQuestionAnswersViewTest(APITestCase):
 #     def setUp(self):
@@ -106,7 +107,6 @@ class TestFeedbackViewSet(APITestCase):
 #         )
 
 #     def test_post_answers(self):
-#         # 답변 데이터 생성
 #         data = {
 #             "user_to": self.evaluated_user.username,
 #             "question_answers": [
