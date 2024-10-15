@@ -34,6 +34,12 @@ AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
 AWS_STORAGE_BUCKET_NAME = os.getenv("AWS_STORAGE_BUCKET_NAME")
 AWS_REGION_NAME = os.getenv("AWS_REGION_NAME")
 
+# 테스트 환경에서는 로컬 스토리지를 사용
+if 'test' in sys.argv:
+    DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
+    MEDIA_URL = '/media/' 
+    MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
 # s3 설정
 AWS_S3_CUSTOM_DOMAIN = f"{AWS_STORAGE_BUCKET_NAME}.s3.{AWS_REGION_NAME}.amazonaws.com"
 
