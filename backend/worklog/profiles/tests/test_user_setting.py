@@ -100,6 +100,7 @@ class TestProfileImageView(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["message"], "Profile image deleted successfully")
 
+    #테스트 후 생성된 이미지 다시 삭제해주기
     def tearDown(self):
         try:
             profile_image = ProfileImage.objects.filter(user=self.user).first()
