@@ -15,6 +15,9 @@ import os
 import sys
 from dotenv import load_dotenv
 from decouple import config
+import logging
+
+logger = logging.getLogger(__name__)
 
 SECRET_KEY = config('SECRET_KEY', default='fallback_secret_key')
 BASE_URL = config('BASE_URL', default='http://localhost:8000')
@@ -27,6 +30,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 dotenv_path = BASE_DIR.parent / '.env'
 load_dotenv(dotenv_path)
+
+# SECURITY WARNING: don't run with debug turned on in production!
+DEBUG = False
 
 #s3 접근용 키
 AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
@@ -46,17 +52,17 @@ AWS_S3_OBJECT_PARAMETERS = {
 # 테스트 환경에서는 로컬 스토리지를 사용
 if 'test' in sys.argv:
     DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
-    MEDIA_URL = '/media/' 
+    MEDIA_URL = '/media/'
     MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-else:
-    #media 파일 경로 설정
+#배포 환경에서는 s3 사용
+elif DEBUG == False:
     DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-    # DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
-    
     MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/media/"
-    # MEDIA_URL = '/media/'  # 이 URL을 통해 미디어 파일에 접근
-    
-    #로컬 환경에서 사용하는 media 경로
+    MEDIA_ROOT = None
+
+else:
+    DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
+    MEDIA_URL = '/media/'
     MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 #POSTGRESQL data
@@ -68,9 +74,6 @@ POSTGRESQL_HOST = os.getenv("POSTGRESQL_HOST")
 
 #gpt key를 환경변수로 설정
 OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
-
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
 
 ALLOWED_HOSTS = [
     "localhost",
