@@ -331,7 +331,7 @@ elif DEBUG:
         'disable_existing_loggers': False,
         'formatters': {
             'verbose': {
-                'format': '{levelname} {asctime} {module} {message}',
+                'format': '{levelname} {asctime} {pathname} {funcName}:{lineno} {message}',
                 'style': '{',
             },
             'simple': {
@@ -362,7 +362,7 @@ else:
         'disable_existing_loggers': False,
         'formatters': {
             'verbose': {
-                'format': '{levelname} {asctime} {module} {message}',
+                'format': '{levelname} {asctime} {pathname} {funcName}:{lineno} {message}',
                 'style': '{',
             },
             'simple': {
