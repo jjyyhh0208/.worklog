@@ -28,11 +28,28 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 dotenv_path = BASE_DIR.parent / '.env'
 load_dotenv(dotenv_path)
 
-AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
-AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
+AWS_ACCESS_KEY_ID = None  # EC2 인스턴스에 IAM 역할을 부여했으므로 명시할 필요 X
+AWS_SECRET_ACCESS_KEY = None  # EC2 인스턴스에 IAM 역할을 부여했으므로 명시할 필요 X
 AWS_STORAGE_BUCKET_NAME = os.getenv("AWS_STORAGE_BUCKET_NAME")
 AWS_REGION_NAME = os.getenv("AWS_REGION_NAME")
-AWS_SIGNATURE_VERSION = os.getenv("AWS_SIGNATURE_VERSION")
+
+# s3 설정
+AWS_S3_CUSTOM_DOMAIN = f"{AWS_STORAGE_BUCKET_NAME}.s3.{AWS_REGION_NAME}.amazonaws.com"
+
+#media 파일 경로 설정
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+# DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
+
+MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/media/"
+# MEDIA_URL = '/media/'  # 이 URL을 통해 미디어 파일에 접근
+
+#로컬 환경에서 사용하는 media 경로
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+# S3 파일 캐싱 및 압축 처리
+AWS_S3_OBJECT_PARAMETERS = {
+    'CacheControl': 'max-age=86400',  # 24시간 캐시
+}
 
 #POSTGRESQL data
 POSTGRESQL_USER = os.getenv("POSTGRESQL_USER")
@@ -41,27 +58,8 @@ POSTGRESQL_DB_NAME = os.getenv("POSTGRESQL_DB_NAME")
 POSTGRESQL_PORT = os.getenv("POSTGRESQL_PORT")
 POSTGRESQL_HOST = os.getenv("POSTGRESQL_HOST")
 
-
-AWS_S3_CUSTOM_DOMAIN = f"{AWS_STORAGE_BUCKET_NAME}.s3.{AWS_REGION_NAME}.amazonaws.com"
-AWS_LOCATION = 'media'
 #gpt key를 환경변수로 설정
 OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
-# DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-# MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/{AWS_LOCATION}/"
-# MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-
-DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
-MEDIA_URL = '/media/'  # 이 URL을 통해 미디어 파일에 접근
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')  # 파일이 저장될 경로
-
-
-
-
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
-
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
