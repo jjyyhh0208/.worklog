@@ -300,7 +300,7 @@ if os.environ.get('GITHUB_ACTIONS'):
         'disable_existing_loggers': False,
         'formatters': {
             'verbose': {
-                'format': '{levelname} {asctime} {module} {message}',
+                'format': '{levelname} {asctime} {pathname} {funcName}:{lineno} {message}',
                 'style': '{',
             },
             'simple': {
@@ -331,7 +331,7 @@ elif DEBUG:
         'disable_existing_loggers': False,
         'formatters': {
             'verbose': {
-                'format': '{levelname} {asctime} {module} {message}',
+                'format': '{levelname} {asctime} {pathname} {funcName}:{lineno} {message}',
                 'style': '{',
             },
             'simple': {
@@ -343,7 +343,7 @@ elif DEBUG:
             'console': {
                 'level': 'ERROR',
                 'class': 'logging.StreamHandler',
-                'formatter': 'verbose',
+                'formatter': 'simple',
             },
         },
         'loggers': {
@@ -362,7 +362,7 @@ else:
         'disable_existing_loggers': False,
         'formatters': {
             'verbose': {
-                'format': '{levelname} {asctime} {module} {message}',
+                'format': '{levelname} {asctime} {pathname} {funcName}:{lineno} {message}',
                 'style': '{',
             },
             'simple': {
