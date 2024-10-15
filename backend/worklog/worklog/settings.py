@@ -39,19 +39,19 @@ if 'test' in sys.argv:
     DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
     MEDIA_URL = '/media/' 
     MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+else:
+    #media 파일 경로 설정
+    DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+    # DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
+    
+    MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/media/"
+    # MEDIA_URL = '/media/'  # 이 URL을 통해 미디어 파일에 접근
+    
+    #로컬 환경에서 사용하는 media 경로
+    MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # s3 설정
 AWS_S3_CUSTOM_DOMAIN = f"{AWS_STORAGE_BUCKET_NAME}.s3.{AWS_REGION_NAME}.amazonaws.com"
-
-#media 파일 경로 설정
-DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-# DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
-
-MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/media/"
-# MEDIA_URL = '/media/'  # 이 URL을 통해 미디어 파일에 접근
-
-#로컬 환경에서 사용하는 media 경로
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # S3 파일 캐싱 및 압축 처리
 AWS_S3_OBJECT_PARAMETERS = {
@@ -183,7 +183,7 @@ if os.environ.get('GITHUB_ACTIONS'):
             'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
         }
     }
-#테스트 코드 작동 시 sqlite 사용
+#로컬 테스트 코드 작동 시 sqlite 사용
 elif 'test' in sys.argv:
     DATABASES = {
         'default': {
