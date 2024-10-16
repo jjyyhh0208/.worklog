@@ -246,13 +246,15 @@ class ProfileImageView(APIView):
 
     def post(self, request, *args, **kwargs):
         user = request.user
-        try:
-            profile_image = ProfileImage.objects.get(user=user)
-            
+        profile_image = ProfileImage.objects.get(user=user)
+        try:            
             #유저가 이미 프사가 있으면 삭제 먼저 해버리기
             if profile_image.image:
+                logging.error(f"{user}, your image already exitsts!")
                 self.delete_old_image(str(profile_image.image))
+                logging.error("Image deleted")
             profile_image.image = request.FILES['image']
+            logging.error(f"New Image: {profile_image}")
             profile_image.save()
             
         except ProfileImage.DoesNotExist:
