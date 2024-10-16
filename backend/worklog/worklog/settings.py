@@ -17,7 +17,7 @@ from dotenv import load_dotenv
 from decouple import config
 import logging
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger('django')
 
 SECRET_KEY = config('SECRET_KEY', default='fallback_secret_key')
 BASE_URL = config('BASE_URL', default='http://localhost:8000')
@@ -26,6 +26,7 @@ REACT_APP_BASE_URL = config('REACT_APP_BASE_URL', default='http://localhost:8000
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 #Base directory == worklog/backend/worklog
 BASE_DIR = Path(__file__).resolve().parent.parent
+print(BASE_DIR)
 
 
 dotenv_path = BASE_DIR.parent / '.env'

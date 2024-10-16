@@ -37,7 +37,7 @@ from decouple import config
 import logging
 
 #로거 정의
-logger = logging.getLogger(__name__)
+logger = logging.getLogger('django')
 
 
 SECRET_KEY = config('SECRET_KEY', default='fallback_secret_key')  
@@ -250,11 +250,8 @@ class ProfileImageView(APIView):
             profile_image = ProfileImage.objects.get(user=user)
             #유저가 이미 프사가 있으면 삭제 먼저 해버리기
             if profile_image.image:
-                logger.error(f"{user}, your image already exitsts!")
                 self.delete_old_image(str(profile_image.image))
-                logger.error("Image deleted")
             profile_image.image = request.FILES['image']
-            logger.error(f"New Image: {profile_image}")
             profile_image.save()
             
         except ProfileImage.DoesNotExist:
@@ -274,6 +271,7 @@ class ProfileImageView(APIView):
                 }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
             except Exception as e:
                 logger.error(f"Unexpected error: {e}", exc_info=True)
+                logger.error(f"Exception details: {str(e)}")
                 return Response({
                     "error": "An unexpected error occurred.",
                     "details": str(e)
@@ -285,8 +283,10 @@ class ProfileImageView(APIView):
 
         except Exception as e:
             logger.error(f"Unexpected error: {e}", exc_info=True)
+            logger.error(f"Exception details: {str(e)}")
+            print(f"Exception caught: {e}")
             return Response({
-                "error": "An unexpected error occurred.",
+                "error": "An unexpected error occurred during 1st step",
                 "details": str(e)
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
