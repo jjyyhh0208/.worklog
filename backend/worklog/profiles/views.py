@@ -271,7 +271,6 @@ class ProfileImageView(APIView):
                 }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
             except Exception as e:
                 logger.error(f"Unexpected error: {e}", exc_info=True)
-                logger.error(f"Exception details: {str(e)}")
                 return Response({
                     "error": "An unexpected error occurred.",
                     "details": str(e)
