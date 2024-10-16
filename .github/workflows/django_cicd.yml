@@ -59,13 +59,6 @@ jobs:
         needs: build
         if: success()
         steps:
-            # AWS S3 관련 환경 변수 설정
-            - name: Set AWS Credentials
-              run: |
-                  export AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}
-                  export AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}
-                  export AWS_REGION=${{ secrets.AWS_REGION }}
-                  export AWS_STORAGE_BUCKET_NAME=${{ secrets.AWS_STORAGE_BUCKET_NAME }}
             #AWS EC2로 배포
             - name: Deploy to EC2
               uses: appleboy/ssh-action@master
@@ -74,6 +67,13 @@ jobs:
                   username: ${{ secrets.EC2_USER }}
                   key: ${{ secrets.EC2_SSH_KEY }}
                   script: |
+                      export AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}
+                      export AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}
+                      export AWS_REGION=${{ secrets.AWS_REGION }}
+                      export AWS_STORAGE_BUCKET_NAME=${{ secrets.AWS_STORAGE_BUCKET_NAME }}
+
+                      source ~/.bashrc
+
                       cd worklog/backend/
                       git fetch origin
                       git reset --hard origin/main
