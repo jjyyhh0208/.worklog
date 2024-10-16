@@ -42,13 +42,13 @@ class UserDeleteView(generics.DestroyAPIView):
             user.delete()
             return Response({"detail": "User account deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
         except DatabaseError as db_error:
-            logger.error(f"DB Error: {db_error}")
+            logger.error(f"DB Error: {db_error}", exc_info=True)
             return Response({
                 "error": "A database error occurred. Please try again later.",
                 "details": str(db_error)
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         except Exception as e:
-            logger.error(f"Unexpected Error: {e}")
+            logger.error(f"Unexpected Error: {e}", exc_info=True)
             return Response({
                 "error": "An unexpected error occurred.",
                 "details": str(e)
