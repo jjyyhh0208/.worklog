@@ -61,13 +61,13 @@ class WorkStyleView(ListAPIView):
         try:
             return WorkStyle.objects.all()
         except DatabaseError as db_error:
-            logger.error(f"Database error occurred: {db_error}")
+            logger.error(f"Database error occurred: {db_error}", exc_info=True)
             return Response({
                 "error": "A database error occurred.",
                 "details": str(db_error)
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         except Exception as e:
-            logger.error(f"An unexpected error occurred: {e}")
+            logger.error(f"An unexpected error occurred: {e}", exc_info=True)
             return Response({
                 "error": "An unexpected error occurred.",
                 "details": str(e)
@@ -84,13 +84,13 @@ class InterestView(ListAPIView):
         try:
             return Interest.objects.all()
         except DatabaseError as db_error:
-            logger.error(f"Database error occurred: {db_error}")
+            logger.error(f"Database error occurred: {db_error}", exc_info=True)
             return Response({
                 "error": "A database error occurred.",
                 "details": str(db_error)
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         except Exception as e:
-            logger.error(f"An unexpected error occurred: {e}")
+            logger.error(f"An unexpected error occurred: {e}", exc_info=True)
             return Response({
                 "error": "An unexpected error occurred.",
                 "details": str(e)
@@ -105,13 +105,13 @@ class ShortQuestionView(ListAPIView):
         try:
             return ShortQuestion.objects.all()
         except DatabaseError as db_error:
-            logger.error(f"Database error occurred: {db_error}")
+            logger.error(f"Database error occurred: {db_error}", exc_info=True)
             return Response({
                 "error": "A database error occurred.",
                 "details": str(db_error)
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         except Exception as e:
-            logger.error(f"An unexpected error occurred: {e}")
+            logger.error(f"An unexpected error occurred: {e}", exc_info=True)
             return Response({
                 "error": "An unexpected error occurred.",
                 "details": str(e)
@@ -147,14 +147,14 @@ class UserNameFeedbackStyleView(generics.UpdateAPIView):
                 return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         except DatabaseError as db_error:
-            logger.error(f"Database error occurred: {db_error}")
+            logger.error(f"Database error occurred: {db_error}", exc_info=True)
             return Response({
                 "error": "A database error occurred.",
                 "details": str(db_error)
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
         except Exception as e:
-            logger.error(f"An unexpected error occurred: {e}")
+            logger.error(f"An unexpected error occurred: {e}", exc_info=True)
             return Response({
                 "error": "An unexpected error occurred.",
                 "details": str(e)
@@ -184,14 +184,14 @@ class UserWorkStyleView(generics.UpdateAPIView):
                 return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         except DatabaseError as db_error:
-            logger.error(f"Database error occurred: {db_error}")
+            logger.error(f"Database error occurred: {db_error}", exc_info=True)
             return Response({
                 "error": "A database error occurred.",
                 "details": str(db_error)
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
         except Exception as e:
-            logger.error(f"An unexpected error occurred: {e}")
+            logger.error(f"An unexpected error occurred: {e}", exc_info=True)
             return Response({
                 "error": "An unexpected error occurred.",
                 "details": str(e)
@@ -221,14 +221,14 @@ class UserInterestView(generics.UpdateAPIView):
                 return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         except DatabaseError as db_error:
-            logger.error(f"Database error occurred: {db_error}")
+            logger.error(f"Database error occurred: {db_error}", exc_info=True)
             return Response({
                 "error": "A database error occurred.",
                 "details": str(db_error)
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
         except Exception as e:
-            logger.error(f"An unexpected error occurred: {e}")
+            logger.error(f"An unexpected error occurred: {e}", exc_info=True)
             return Response({
                 "error": "An unexpected error occurred.",
                 "details": str(e)
@@ -241,7 +241,7 @@ class ProfileImageView(APIView):
             try:
                 default_storage.delete(image_path)
             except Exception as e:
-                logger.error(f"Error deleting image: {e}")
+                logger.error(f"Error deleting image: {e}", exc_info=True)
                 raise ParseError("Failed to delete the old profile image.")
 
     def post(self, request, *args, **kwargs):
@@ -262,26 +262,27 @@ class ProfileImageView(APIView):
                     image=request.FILES['image']
                 )
             except ValidationError as ve:
-                logger.error(f"Validation error: {ve}")
+                logger.error(f"Validation error: {ve}", exc_info=True)
                 return Response({"message": "Invalid image file"}, status=status.HTTP_400_BAD_REQUEST)
             except DatabaseError as db_error:
-                logger.error(f"Database error: {db_error}")
+                logger.error(f"Database error: {db_error}", exc_info=True)
                 return Response({
                     "error": "A database error occurred.",
                     "details": str(db_error)
                 }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
             except Exception as e:
-                logger.error(f"Unexpected error: {e}")
+                logger.error(f"Unexpected error: {e}", exc_info=True)
                 return Response({
                     "error": "An unexpected error occurred.",
                     "details": str(e)
                 }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
         except ParseError as parse_error:
+            logger.error(f"Parse error: {parse_error}", exc_info=True)
             return Response({"error": str(parse_error)}, status=status.HTTP_400_BAD_REQUEST)
 
         except Exception as e:
-            logger.error(f"Unexpected error: {e}")
+            logger.error(f"Unexpected error: {e}", exc_info=True)
             return Response({
                 "error": "An unexpected error occurred.",
                 "details": str(e)
@@ -300,13 +301,13 @@ class ProfileImageView(APIView):
         except ProfileImage.DoesNotExist:
             return Response({"message": "Profile image does not exist"}, status=status.HTTP_404_NOT_FOUND)
         except DatabaseError as db_error:
-            logger.error(f"Database error: {db_error}")
+            logger.error(f"Database error: {db_error}", exc_info=True)
             return Response({
                 "error": "A database error occurred.",
                 "details": str(db_error)
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         except Exception as e:
-            logger.error(f"Unexpected error: {e}")
+            logger.error(f"Unexpected error: {e}", exc_info=True)
             return Response({
                 "error": "An unexpected error occurred.",
                 "details": str(e)
@@ -335,21 +336,21 @@ class UpdateBioView(generics.UpdateAPIView):
                 return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         except ValidationError as ve:
-            logger.error(f"Validation error: {ve}")
+            logger.error(f"Validation error: {ve}", exc_info=True)
             return Response({
                 "error": "Invalid data.",
                 "details": str(ve)
             }, status=status.HTTP_400_BAD_REQUEST)
 
         except DatabaseError as db_error:
-            logger.error(f"Database error occurred: {db_error}")
+            logger.error(f"Database error occurred: {db_error}", exc_info=True)
             return Response({
                 "error": "A database error occurred.",
                 "details": str(db_error)
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
         except Exception as e:
-            logger.error(f"An unexpected error occurred: {e}")
+            logger.error(f"An unexpected error occurred: {e}", exc_info=True)
             return Response({
                 "error": "An unexpected error occurred.",
                 "details": str(e)
@@ -369,14 +370,14 @@ class UserCurrentProfileView(generics.RetrieveAPIView):
             return self.request.user
         
         except DatabaseError as db_error:
-            logger.error(f"Database error occurred: {db_error}")
+            logger.error(f"Database error occurred: {db_error}", exc_info=True)
             return Response({
                 "error": "A database error occurred.",
                 "details": str(db_error)
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
         except Exception as e:
-            logger.error(f"An unexpected error occurred: {e}")
+            logger.error(f"An unexpected error occurred: {e}", exc_info=True)
             return Response({
                 "error": "An unexpected error occurred.",
                 "details": str(e)
@@ -422,14 +423,14 @@ class UserProfileView(generics.RetrieveAPIView):
             }, status=status.HTTP_404_NOT_FOUND)
 
         except DatabaseError as db_error:
-            logger.error(f"Database error occurred: {db_error}")
+            logger.error(f"Database error occurred: {db_error}", exc_info=True)
             return Response({
                 "error": "A database error occurred.",
                 "details": str(db_error)
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
         except Exception as e:
-            logger.error(f"An unexpected error occurred: {e}")
+            logger.error(f"An unexpected error occurred: {e}", exc_info=True)
             return Response({
                 "error": "An unexpected error occurred.",
                 "details": str(e)
@@ -452,14 +453,14 @@ class UserLongQuestionView(generics.ListAPIView):
             }, status=status.HTTP_404_NOT_FOUND)
 
         except DatabaseError as db_error:
-            logger.error(f"Database error occurred: {db_error}")
+            logger.error(f"Database error occurred: {db_error}", exc_info=True)
             return Response({
                 "error": "A database error occurred.",
                 "details": str(db_error)
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
         except Exception as e:
-            logger.error(f"An unexpected error occurred: {e}")
+            logger.error(f"An unexpected error occurred: {e}", exc_info=True)
             return Response({
                 "error": "An unexpected error occurred.",
                 "details": str(e)
@@ -484,14 +485,14 @@ class UserFriendView(generics.GenericAPIView):
             }, status=status.HTTP_404_NOT_FOUND)
 
         except DatabaseError as db_error:
-            logger.error(f"Database error occurred: {db_error}")
+            logger.error(f"Database error occurred: {db_error}", exc_info=True)
             return Response({
                 "error": "A database error occurred.",
                 "details": str(db_error)
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
         except Exception as e:
-            logger.error(f"An unexpected error occurred: {e}")
+            logger.error(f"An unexpected error occurred: {e}", exc_info=True)
             return Response({
                 "error": "An unexpected error occurred.",
                 "details": str(e)
@@ -519,14 +520,14 @@ class UserSearchView(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
 
         except DatabaseError as db_error:
-            logger.error(f"Database error occurred during user search: {db_error}")
+            logger.error(f"Database error occurred during user search: {db_error}", exc_info=True)
             return Response({
                 "error": "A database error occurred.",
                 "details": str(db_error)
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
         except Exception as e:
-            logger.error(f"An unexpected error occurred during user search: {e}")
+            logger.error(f"An unexpected error occurred during user search: {e}", exc_info=True)
             return Response({
                 "error": "An unexpected error occurred.",
                 "details": str(e)
@@ -556,21 +557,21 @@ class FollowFriendView(generics.GenericAPIView):
             return Response({"detail": "User not found."}, status=status.HTTP_404_NOT_FOUND)
 
         except DatabaseError as db_error:
-            logger.error(f"Database error occurred while following friend: {db_error}")
+            logger.error(f"Database error occurred while following friend: {db_error}", exc_info=True)
             return Response({
                 "error": "A database error occurred.",
                 "details": str(db_error)
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
         except ValidationError as v_error:
-            logger.error(f"Validation error occurred: {v_error}")
+            logger.error(f"Validation error occurred: {v_error}", exc_info=True)
             return Response({
                 "error": "Validation error occurred.",
                 "details": str(v_error)
             }, status=status.HTTP_400_BAD_REQUEST)
 
         except Exception as e:
-            logger.error(f"An unexpected error occurred: {e}")
+            logger.error(f"An unexpected error occurred: {e}", exc_info=True)
             return Response({
                 "error": "An unexpected error occurred.",
                 "details": str(e)
@@ -601,14 +602,14 @@ class UnfollowFriendView(generics.GenericAPIView):
             return Response({"detail": "User not found."}, status=status.HTTP_404_NOT_FOUND)
 
         except DatabaseError as db_error:
-            logger.error(f"Database error occurred while unfollowing friend: {db_error}")
+            logger.error(f"Database error occurred while unfollowing friend: {db_error}", exc_info=True)
             return Response({
                 "error": "A database error occurred.",
                 "details": str(db_error)
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
         except Exception as e:
-            logger.error(f"An unexpected error occurred: {e}")
+            logger.error(f"An unexpected error occurred: {e}", exc_info=True)
             return Response({
                 "error": "An unexpected error occurred.",
                 "details": str(e)
