@@ -281,8 +281,7 @@ class ProfileImageView(APIView):
             return Response({"error": str(parse_error)}, status=status.HTTP_400_BAD_REQUEST)
 
         except Exception as e:
-            logger.error(f"Unexpected error: {e}", exc_info=True)
-            logger.error(f"Exception details: {str(e)}")
+            logger.error(f"Unexpected error 1st step: {e}", exc_info=True)
             print(f"Exception caught: {e}")
             return Response({
                 "error": "An unexpected error occurred during 1st step",
