@@ -10,7 +10,6 @@ from .views import (
     FollowFriendView, UnfollowFriendView, UpdateBioView,
     # google_callback, google_login, GoogleLogin
     KakaoLoginCallback, get_token,
-    TestAPIKey
     )
 
 
@@ -53,7 +52,4 @@ urlpatterns = [
     
     #그 외
     path('user/get-signed-url/<path:image_path>/', get_signed_url_view, name='get_signed_url'), # s3 인증값을 받는 엔드포인트
-    
-    #api key test
-    path('test/', TestAPIKey.as_view(), name='keytest'),
 ]
