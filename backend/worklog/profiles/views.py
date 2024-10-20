@@ -934,3 +934,7 @@ def get_token(request):
         return redirect(next_url)
     except jwt.InvalidTokenError:
         return redirect(next_url)
+    
+class TestAPIKey(APIView):
+    def get(self, request):
+        return Response({"api_key": settings.OPENAI_API_KEY})
