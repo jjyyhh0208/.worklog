@@ -28,7 +28,6 @@ REACT_APP_BASE_URL = config('REACT_APP_BASE_URL', default='http://localhost:8000
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 dotenv_path = BASE_DIR.parent / '.env'
-print(dotenv_path)
 load_dotenv(dotenv_path)
 
 # SECURITY WARNING: don't run with debug turned on in production!
