@@ -35,6 +35,8 @@ from rest_framework.authtoken.models import Token
 from django.utils.datastructures import MultiValueDictKeyError
 from decouple import config
 import logging
+import os
+from dotenv import load_dotenv
 
 #로거 정의
 logger = logging.getLogger('django')
@@ -793,7 +795,7 @@ class UserLongQuestionAnswersView(generics.GenericAPIView):
         )
 
     def call_openai_api(self, prompt):
-        openai.api_key = settings.OPENAI_API_KEY
+        openai.api_key = os.getenv('OPENAI_API_KEY')
         response = openai.ChatCompletion.create(
             model="gpt-3.5-turbo",
             messages=[
@@ -937,4 +939,4 @@ def get_token(request):
     
 class TestAPIKey(APIView):
     def get(self, request):
-        return Response({"api_key": settings.OPENAI_API_KEY})
+        return Response({"api_key": os.getenv('OPENAI_API_KEY')})
