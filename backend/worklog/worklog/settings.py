@@ -26,10 +26,9 @@ REACT_APP_BASE_URL = config('REACT_APP_BASE_URL', default='http://localhost:8000
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 #Base directory == worklog/backend/worklog
 BASE_DIR = Path(__file__).resolve().parent.parent
-print(BASE_DIR)
-
 
 dotenv_path = BASE_DIR.parent / '.env'
+print(dotenv_path)
 load_dotenv(dotenv_path)
 
 # SECURITY WARNING: don't run with debug turned on in production!
