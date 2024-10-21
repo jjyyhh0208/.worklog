@@ -1,16 +1,25 @@
-
 from django.urls import path, include
+
 from rest_framework.routers import DefaultRouter
-from .views import (
-    UserProfileView, UserWorkStyleView, UserInterestView, 
-    UserNameFeedbackStyleView, WorkStyleView, InterestView, ShortQuestionView, LongQuestionViewSet,
-    FeedbackViewSet, UserLongQuestionView, UserFriendView,
-    UserCurrentProfileView, UserSearchView, UserLongQuestionAnswersView, FollowFriendView,
-    ProfileImageView, get_signed_url_view, 
-    FollowFriendView, UnfollowFriendView, UpdateBioView,
-    # google_callback, google_login, GoogleLogin
-    KakaoLoginCallback, get_token,
-    )
+
+from profiles.views.feedbacks_views import (FeedbackViewSet)
+from profiles.views.friends_views import (
+    UnfollowFriendView, FollowFriendView,
+    UserSearchView,UserFriendView
+)
+from profiles.views.gpt_summarize_views import UserLongQuestionAnswersView
+from profiles.views.kakao_login_views import KakaoLoginCallback, get_token
+from profiles.views.register_fixed_data_views import (
+    WorkStyleView, InterestView, ShortQuestionView, LongQuestionViewSet
+)
+from profiles.views.user_register_views import (
+    UserCurrentProfileView, UserProfileView, UserLongQuestionView
+)
+from profiles.views.user_setting_views import (
+    UserNameFeedbackStyleView, UserWorkStyleView,
+    UserInterestView, ProfileImageView,
+    UpdateBioView
+)
 
 
 router = DefaultRouter()
@@ -49,7 +58,4 @@ urlpatterns = [
     # Social Account
     path('auth/kakao/callback', KakaoLoginCallback.as_view(), name='kakao_login_callback'),
     path('auth/kakao/get-token', get_token, name='get_token'),
-    
-    #그 외
-    path('user/get-signed-url/<path:image_path>/', get_signed_url_view, name='get_signed_url'), # s3 인증값을 받는 엔드포인트
 ]
