@@ -5,16 +5,7 @@ import 'react-responsive-carousel/lib/styles/carousel.min.css';
 import typeData from '../../data/typeData.json';
 
 function Main() {
-    const navigate = useNavigate();
     const refs = useRef(typeData.types.map(() => React.createRef()));
-
-    const handleLoginClick = () => {
-        navigate('/login');
-    };
-
-    const handleSignUpClick = () => {
-        navigate('/signup/1');
-    };
 
     const scrollToSection = (index) => {
         const offset = 100;
