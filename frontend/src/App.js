@@ -35,6 +35,7 @@ import Header from './components/Header/Header';
 import AuthRedirect from './components/Auth/AuthRedirect';
 import ProtectedRoute from './components/Auth/ProtectedRoute';
 
+//django에서 csrf 토큰을 쿠키에 포함에서 주기 때문에 어디서 이를 확인할지와 어떻게 보낼지 설정
 axios.defaults.xsrfCookieName = 'csrftoken';
 axios.defaults.xsrfHeaderName = 'X-CSRFToken';
 
@@ -61,6 +62,7 @@ function App() {
     });
     const [profileData, setProfileData] = useState(null);
 
+    //localStorage에 authToken이 있으면 true, 없으면 false
     const isLoggedIn = () => {
         return !!localStorage.getItem('authToken');
     };
@@ -80,10 +82,12 @@ function App() {
             '/friend-profile/:id',
         ];
 
+        //root url이면 항상 true 반환
         if (location.pathname === '/') {
             return true;
         }
 
+        //위 리스트의 url에 현재 url이 존재하면 true 반환
         return pathsWithHeader.some((path) => {
             const regexPath = new RegExp('^' + path.replace(/:[^\s/]+/g, '([^/]+)') + '$');
             return regexPath.test(location.pathname);

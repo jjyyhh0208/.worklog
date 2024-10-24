@@ -34,7 +34,7 @@ const AdminService = {
     },
 
     checkUserName: (userName) => {
-        return API.post('/profiles/auth/check-username/', { username: userName }) // Pass the username as an object
+        return API.post('accounts/check-username/', { username: userName }) // Pass the username as an object
             .then((response) => {
                 return response.data; // Return response data for further use
             })
