@@ -134,18 +134,22 @@ const FeedbackLong = () => {
 
         // 피드백 데이터 객체
         const feedbackPayload = {
-            id: profileData.id,
             user: profileData.username,
-            user_by: myprofileData?.username || '',
-            work_styles: workStylesData,
+            user_by: myprofileData?.id || '',
+            work_styles: workStylesData.map((style) => ({ name: style.name })),
             score: {
                 d_score: scoresData.D,
                 i_score: scoresData.I,
                 s_score: scoresData.S,
                 c_score: scoresData.C,
             },
-            question_answers: questionAnswers,
+            question_answers: questionAnswers.map((answer) => ({
+                question: { long_question: answer.question.long_question },
+                answer: answer.answer,
+            })),
         };
+
+        console.log('feedbackPayload:', feedbackPayload);
 
         // 첫 번째 API 호출: 피드백 데이터 제출
         FeedbackService.submitAnswers(feedbackPayload)

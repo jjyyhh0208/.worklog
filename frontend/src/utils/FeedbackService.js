@@ -2,7 +2,7 @@ import API from './API';
 
 const FeedbackService = {
     fetchQuestions: () => {
-        return API.get('/profiles/short-questions/')
+        return API.get('/profiles/shortquestions/')
             .then((response) => {
                 const apiData = response.data;
                 let transformedQuestions = Array.from({ length: 3 }, () => []);
@@ -31,7 +31,6 @@ const FeedbackService = {
 
     submitAnswers: (answers) => {
         const transformedAnswers = {
-            id: answers.id,
             user: answers.user,
             user_by: answers.user_by,
             work_styles: answers.work_styles,
@@ -42,14 +41,16 @@ const FeedbackService = {
         return API.post('/profiles/feedbacks/', transformedAnswers)
             .then((response) => response.data)
             .catch((error) => {
+                console.error('Error in submitAnswers:', error.response ? error.response.data : error.message);
                 throw error;
             });
     },
 
     submitQuestionAnswers: (questionAnswers) => {
-        return API.post('/profiles/user/feedback-answers/', JSON.stringify(questionAnswers))
+        return API.post('/profiles/user/feedback-answers/', questionAnswers)
             .then((response) => response.data)
             .catch((error) => {
+                console.error('Error in submitQuestionAnswers:', error.response ? error.response.data : error.message);
                 throw error;
             });
     },
