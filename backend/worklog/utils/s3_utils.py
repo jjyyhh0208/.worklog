@@ -1,16 +1,16 @@
 from django.http import JsonResponse
-from django.conf import settings
+import os
 import boto3
 from botocore.client import Config
 from botocore.exceptions import ClientError
 
 def get_signed_url(image_path):
     s3_client = boto3.client('s3', 
-                             region_name=settings.AWS_REGION_NAME,
+                             region_name=os.getenv('AWS_REGION_NAME'),
                              config=Config(signature_version='s3v4'))  # Use AWS4-HMAC-SHA256
     try:
         url = s3_client.generate_presigned_url('get_object',
-                                               Params={'Bucket': settings.AWS_STORAGE_BUCKET_NAME,
+                                               Params={'Bucket': os.getenv("AWS_STORAGE_BUCKET_NAME"),
                                                        'Key': image_path},
                                                ExpiresIn=3600)  # URL expires in 1 hour
     except ClientError as e:

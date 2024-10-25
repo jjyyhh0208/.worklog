@@ -8,7 +8,7 @@ const AdminService = {
             password2: userData.password2,
         };
 
-        return API.post('/profiles/auth/registration/', requestData)
+        return API.post('accounts/signup/', requestData)
             .then((response) => {
                 if (response.status === 201) {
                 }
@@ -53,7 +53,7 @@ const AdminService = {
             password: userData.password,
         };
 
-        return API.post('/profiles/auth/login/', requestData)
+        return API.post('accounts/login/', requestData)
             .then((response) => {
                 if (response.status === 200) {
                     const token = response.data.key;
@@ -79,7 +79,7 @@ const AdminService = {
     },
 
     logout: () => {
-        return API.post('/profiles/auth/logout/')
+        return API.post('accounts/auth/logout/')
             .then((response) => {
                 if (response.status === 200) {
                     localStorage.removeItem('authToken');
@@ -93,7 +93,7 @@ const AdminService = {
 
     userDelete: async () => {
         try {
-            const response = await API.delete('/profiles/auth/delete/');
+            const response = await API.delete('accounts/delete/');
 
             if (response.status === 204) {
                 return true;
