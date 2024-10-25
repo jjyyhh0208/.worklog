@@ -6,7 +6,7 @@ const ProfileService = {
             name: name,
             feedback_style: feedback_style,
         };
-        return API.put(`/profiles/user/set/basic-info/`, requestData)
+        return API.put(`profiles/user/set/basic-info/`, requestData)
             .then((response) => {
                 if (response.status === 200) {
                 }
@@ -23,7 +23,7 @@ const ProfileService = {
             });
     },
     setUserProfileInfo: (formData) => {
-        return API.post('/profiles/user/set/profile-image/', formData, {
+        return API.post('profiles/user/set/profile-image/', formData, {
             headers: {
                 'Content-Type': 'multipart/form-data',
             },
@@ -45,7 +45,7 @@ const ProfileService = {
     },
 
     fetchWorkStyles: () => {
-        return API.get(`/profiles/workstyles/`)
+        return API.get(`profiles/workstyles/`)
             .then((response) => response.data)
             .catch((error) => {
                 throw error;
@@ -57,7 +57,7 @@ const ProfileService = {
             work_styles: workStyles,
         };
 
-        return API.put(`/profiles/user/set/work-style/`, requestData)
+        return API.put(`profiles/user/set/work-style/`, requestData)
             .then((response) => {
                 if (response.status === 200) {
                 }

@@ -20,8 +20,8 @@ import logging
 logger = logging.getLogger('django')
 
 SECRET_KEY = config('SECRET_KEY', default='fallback_secret_key')
-BASE_URL = config('BASE_URL', default='http://localhost:8000')
-REACT_APP_BASE_URL = config('REACT_APP_BASE_URL', default='http://localhost:8000/login/redirect')
+BASE_URL = config('BASE_URL', default='http://127.0.0.1:8000')
+REACT_APP_BASE_URL = config('REACT_APP_BASE_URL', default='http://127.0.0.1:3000/login/redirect')
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 #Base directory == worklog/backend/worklog
@@ -36,7 +36,6 @@ DEBUG = False
 #s3 접근용 키
 AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
 AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
-# AWS_STORAGE_BUCKET_NAME = os.getenv("AWS_STORAGE_BUCKET_NAME")
 AWS_STORAGE_BUCKET_NAME = os.getenv("AWS_STORAGE_BUCKET_NAME")
 AWS_REGION_NAME = os.getenv("AWS_REGION_NAME")
 
