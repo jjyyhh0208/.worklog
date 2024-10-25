@@ -20,6 +20,7 @@ from profiles.views.user_setting_views import (
     UserInterestView, ProfileImageView,
     UpdateBioView
 )
+from utils.s3_utils import get_signed_url_view
 
 
 router = DefaultRouter()
@@ -47,6 +48,9 @@ urlpatterns = [
     path('user/set/basic-info/', UserNameFeedbackStyleView.as_view(), name='user-info-update'),  # 유저의 이름, 성별, 나이 설정 엔드포인트
     path('user/set/profile-image/', ProfileImageView.as_view(), name='profile-image-upload'), # 유저의 프로필 이미지를 업로드하는 엔드포인트
     path('user/set/bio/', UpdateBioView.as_view(), name='update-bio'), # 한줄소개 업데이트 엔드포인트
+    
+    #S3 이미지 가져오는 URL
+    path('user/get-signed-url/<path:image_path>/', get_signed_url_view, name='get_signed_url'),
     
     # 친구 추가
     path('user/follow/', FollowFriendView.as_view(), name='user-follow'), # 유저 팔로우 엔드포인트
