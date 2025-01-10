@@ -11,7 +11,8 @@
 -   AI 기반 서술형 평가 요약 및 추후 행동 조언
 
 <h3>배포 링크</h3>
-[title](https://worklog.my/)
+<h5>배포 링크</h5>
+[배포링크](https://worklog.my/)
 
 <h3>아키텍쳐</h3>
 <a href='https://ifh.cc/v-2fx258' target='_blank'><img src='https://ifh.cc/g/2fx258.jpg' border='0'></a>
